@@ -1,0 +1,6 @@
+django-comments-xtd by Daniel Rus Morales <http://danir.us/>
+http://github.com/danirus/django-comments-xtd/
+
+A reusable Django app to extend the built-in Django comments framework with follow up notifications and comment confirmation by email.
+
+Read the docs at http://readthedocs.org/docs/django-comments-xtd/

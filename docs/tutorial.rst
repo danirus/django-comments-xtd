@@ -1,0 +1,243 @@
+.. _ref-tutorial:
+
+========
+Tutorial
+========
+
+Django-comments-xtd is a reusable app that relies on its own code and doesn't require any other third party app, just the built-in `Django Comments Framework <https://docs.djangoproject.com/en/1.3/ref/contrib/comments/>`_.
+
+
+Installation
+============
+
+Installing Django-comments-xtd is as simple as checking out the source and adding it to your project or ``PYTHONPATH``.
+
+Use git, pip or easy_install to check out Django-comments-xtd from Github_ or get a release from PyPI_:
+
+  1. Use **git** to clone the repository, and then install the package (read more about git_):
+
+    * ``git clone git://github.com/danirus/django-comments-xtd.git`` and
+
+    * ``python setup.py install``
+
+  2. Or use **pip** (read more about pip_):
+
+    * Do ``pip install django-comments-xtd``, or
+
+    * Edit your project's ``requirements`` file and append either the Github_ URL or the package name ``django-comments-xtd``, and then do ``pip install -r requirements``.
+
+  3. Or use **easy_install** (read more about easy_install_): 
+
+    * Do ``easy_install django-comments-xtd``
+
+
+.. _Github: http://github.com/danirus/django-comments-xtd
+.. _PyPI: http://pypi.python.org/
+.. _pip: http://www.pip-installer.org/
+.. _easy_install: http://packages.python.org/distribute/easy_install.html
+.. _git: http://git-scm.com/
+
+
+Configuration
+=============
+
+Configuring Django-comments-xtd comprehends the following steps:
+
+1. Add ``'django.contrib.comments'`` and ``'django_comments_xtd'`` to your ``INSTALLED_APPS`` setting.
+
+2. Add ``COMMENTS_XTD_CONFIRM_EMAIL = True`` to the settings file in order to require comment confirmation by email.
+
+2. Add ``url(r'^comments/', include('django_comments_xtd.urls'))`` to your ``urls.py``.
+
+3. Create a ``comments`` directory in your templates directory and copy the default templates from the Django Comments Framework that you want to customise. Maybe the following:
+
+  * ``comments/list.html`` used by templatetag ``render_comments_list``
+  * ``comments/form.html`` used by templatetag ``render_comment_form``
+  * ``comments/preview.html`` used when the user wants to preview the comment or when there are form errors
+
+4. Create a ``django_comments_xtd`` directory in your templates directory. Then copy the default templates from Django-comments-xtd that you would like to customise into the new directory.
+
+5. Run ``python manage.py syncdb`` that creates the ``django_comments_xtd_xtdcomment`` table.
+
+Optionally you can add an extra setting to control Django-comments-xtd behaviour (see :doc:`settings`), but it has a sane default.
+
+
+.. _workflow-label:
+
+Workflow
+========
+
+Workflow described in 4 actions:
+
+1. The user **clicks on an article's link**, Your app or a 3rd. party app handles the request:
+ 
+ #. Renders a template with the article's body, *the list of comments* already posted and the *comment form* (list and form may be rendered by using the ``comments`` templatetag module and its tags ``render_comment_list`` and ``render_comment_form``, available with the *Django built-in Comments Framework*).
+
+2. The user **clicks on preview**. The Django Comments Framework's view ``post_comment`` handles the request:
+
+ #. Renders ``comments/preview.html`` either with the comment preview or with form errors if any.
+
+3. The user **clicks on post**. The Django Comments Framework's view ``post_comment`` handles the request:
+
+ 1. If there were form errors it does the same as in point 2. 
+
+ 2. Otherwise creates an instance of the comment using *django-comments-xtd* model ``TmpXtdComment``, an in-memory representation of the future in-database comment.
+
+ 3. Send signal ``comment_will_be_posted`` and ``comment_was_posted``. The *django-comments-xtd* receiver ``on_comment_was_posted`` receives the second signal with the ``TmpXtdComment`` instance and does as follow:
+
+   1. If the user is authenticated or confirmation by email is not required (see :doc:`settings`):
+
+     #. An instance of ``XtdComment`` hits the database.
+
+     #. An email notification is sent to previous comments followers telling them about the new comment following up theirs. Comment followers are those who ticked the box *Notify me of follow up comments via email*.
+
+   2. Otherwise a confirmation email is sent to the user with a link to confirm the comment. The link contains a secured token with the ``TmpXtdComment``. See below :ref:`the-secure-token-label`.
+
+ 4. Pass control to the ``next`` parameter handler. That must be ``{% url comments-xtd-confirmation-requested %}``:
+
+   #. If the instance of ``XtdComment`` has already been created, redirect to the the comments's absolute URL.
+
+   #. Otherwise inform the user about the confirmation request sent by email.
+
+4. The user **clicks on the confirmation link**, in the email message. *Django-comments-xtd* view ``confirm`` handles the request:
+
+ #. Checks the secured token in the URL. If it's wrong returns a 404 code.
+ 
+ #. Otherwise checks whether the comment was already confirmed, in such a case returns a 404 code.
+
+ #. Otherwise send *django-comments-xtd* signal ``confirmation_received``. You can register a receiver on this signal to do some extra process before approving the comment. See :ref:`signal-and-receiver-label`. If any receiver returns False the comment will be rejected and the template ``django_comments_xtd/discarded.html`` will be rendered.
+
+ #. Otherwise an instance of ``XtdComment`` finally hits the database, and
+
+ #. An email notification is sent to previous comments followers telling them about the new comment following up theirs.
+
+
+.. _the-secure-token-label:
+
+Creating the secure token for the confirmation URL
+--------------------------------------------------
+
+The Confirmation URL sent by email to the user has a secured token with the comment. To create the token Django-comments-xtd uses the module ``signed.py`` authored by Simon Willison and provided in `Django-OpenID <http://github.com/simonw/django-openid>`_. 
+
+``django_openid.signed`` offers two high level functions:
+
+* **dumps**: Returns URL-safe, sha1 signed base64 compressed pickle of a given object.
+
+* **loads**: Reverse of dumps(), raises ValueError if signature fails.
+
+A brief example::
+
+    >>> signed.dumps("hello")
+    'UydoZWxsbycKcDAKLg.QLtjWHYe7udYuZeQyLlafPqAx1E'
+
+    >>> signed.loads('UydoZWxsbycKcDAKLg.QLtjWHYe7udYuZeQyLlafPqAx1E')
+    'hello'
+
+    >>> signed.loads('UydoZWxsbycKcDAKLg.QLtjWHYe7udYuZeQyLlafPqAx1E-modified')
+    BadSignature: Signature failed: QLtjWHYe7udYuZeQyLlafPqAx1E-modified
+
+
+There are two components in dump's output ``UydoZWxsbycKcDAKLg.QLtjWHYe7udYuZeQyLlafPqAx1E``, separatad by a '.'. The first component is a URLsafe base64 encoded pickle of the object passed to dumps(). The second component is a base64 encoded hmac/SHA1 hash of "$first_component.$secret".
+
+Calling signed.loads(s) checks the signature BEFORE unpickling the object -this protects against malformed pickle attacks. If the signature fails, a ValueError subclass is raised (actually a BadSignature).
+
+
+.. _signal-and-receiver-label:
+
+Signal and receiver
+===================
+
+Django-comments-xtd sends a signal in addition to the `signals sent by the Django Comments Framework <https://docs.djangoproject.com/en/1.3/ref/contrib/comments/signals/>`_. 
+
+Django-comments-xtd allows the user to receive the signal:
+
+ * **confirmation_received**: Sent when the user clicks on the confirmation link and before the ``XtdComment`` instance is created in the database.
+
+You might want to register a receiver for this signal. An example function receiver might check the datetime a user submitted a comment and the datetime the confirmation URL has been clicked. Say that if the difference between them is over 7 days the message should be discarded with a graceful `"sorry, too old comment"` template.
+
+Extending the demo site with the following code would do the job::
+
+    #----------------------------------------
+    # append the code below to demo/views.py:
+
+    from datetime import datetime, timedelta
+    from django_comments_xtd import signals
+
+    def check_submit_date_is_within_last_7days(sender, data, request, **kwargs):
+	plus7days = timedelta(days=7)
+	if data["submit_date"] + plus7days < datetime.now():
+	    return False
+    signals.confirmation_received.connect(check_submit_date_is_within_last_7days)
+    
+    
+    #-----------------------------------------------------
+    # change get_comment_create_data in django_comments_xtd/forms.py to cheat a
+    # bit and make Django believe that the comment was submitted 7 days ago:
+
+    def get_comment_create_data(self):
+	from datetime import timedelta                                     # ADD THIS
+
+        data = super(CommentForm, self).get_comment_create_data()
+        data['followup'] = self.cleaned_data['followup']
+        if settings.COMMENTS_XTD_CONFIRM_EMAIL:
+            # comment must be verified before getting approved
+            data['is_public'] = False
+        data['submit_date'] = datetime.datetime.now() - timedelta(days=8)  # ADD THIS
+        return data
+
+Try the demo site again and see that the `django_comments_xtd/discarded.html` template is rendered after clicking on the confirmation URL.
+
+
+The ``next`` parameter
+======================
+
+Django_comments_xtd has an additional controller called ``confirmation_requested`` that must be called right after a comment is posted. 
+
+``confirmation_requested`` either redirects to the comment page if the comment has been accepted without further confirmation, or renders an informative template telling the user that a confirmation request has been sent by email.
+
+To make ``confirmation_requested`` take control after the comment is posted you have to pass its URL in the ``next`` parameter in the comment form. There are a couple of choices to do this:
+
+ 1. Passing the ``next`` parameter to the context in the view code, or
+ 2. Manually adding ``next`` to the templates ``comments/form.html`` and ``comments/preview.html``.
+
+The first option is suitable when you are adding comments to a model you have coded. The second option is the choice when you are adding comments to a third party app. Keep reading.
+
+
+Comments for your own model
+---------------------------
+
+In the :doc:`example` the ``next`` parameter gets its value in the ``ArticleDetail`` view class, in the ``demo/articles/views.py`` file::
+
+    class ArticleDetail(DateDetailView):
+	model = Article
+	date_field = "publish"
+	month_format = "%m"
+
+	def get_context_data(self, **kwargs):
+	    context = super(DateDetailView, self).get_context_data(**kwargs)
+	    context['next'] = reverse("comments-xtd-confirmation-requested")
+	    return context    
+
+The ``ArticleDetail`` view handles the article detail URL. As it shows the ``demo/articles/urls.py`` file::
+
+    urlpatterns = patterns('',
+        [...]
+
+    	url(r'^(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<slug>[-\w]+)/$',
+	    ArticleDetail.as_view(), 
+	    name='articles-article-detail'),
+    )
+
+
+Comments for a third party model
+--------------------------------
+
+If you want to add comments to a 3rd. party model, you would prefer to customise the ``comments/form.html`` and ``comments/preview.html`` templates rather than the view code in the 3rd party model. This is the case when using the **blog** app from the `Django-basic-apps <https://github.com/nathanborror/django-basic-apps>`_.
+
+The ``comments/form.html`` would start with something like::
+
+    {% load comments i18n %}
+    <form action="{% comment_form_target %}" method="post">{% csrf_token %}
+    <input type="hidden" name="next" value="{% url comments-xtd-confirmation-requested %}" />
+
+    [...]

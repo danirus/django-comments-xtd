@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block header %}{{ block.super }}Homepage{% endblock %}
+
+{% block content %}
+<p>The demo site has an Articles App, which contains a Model Article, each of which accepts comments.<br/> Comments for Articles are provided by <span style="font-weight:bold">django-comments-xtd</span>.</p>
+<p><a href="{% url articles-index %}">See the article list.</a></p>
+{% endblock %}

@@ -5,3 +5,5 @@
 *.egg-info
 *.db
 docs/_build
+build/
+dist/

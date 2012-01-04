@@ -9,7 +9,7 @@ test.run_tests = run_tests
 
 setup(
     name = "django-comments-xtd",
-    version = "1.0a",
+    version = "1.0a1",
     packages = find_packages(),
     license = "MIT",
     description = "Django Comments Framework extension app with follow up notifications and email confirmations",

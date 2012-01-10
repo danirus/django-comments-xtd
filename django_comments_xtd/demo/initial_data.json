@@ -1,0 +1,21 @@
+[
+    {
+        "pk": 1, 
+        "model": "sites.site", 
+        "fields": {
+            "domain": "localhost:8000", 
+            "name": "testing.django-comments-xtd.info"
+        }
+    },
+    {
+        "pk": 1, 
+        "model": "articles.article", 
+        "fields": {
+            "body": "Did you know that in addition to the hCard markup on profile pages, we support a number of other completely open, standards-based formats for accessing profile data on Gravatar? These formats are all accessed using a similar method to how Gravatar images have been requested. Full details are provided in the Developer Resources section of the site which has been completely refreshed! Here are the formats that are available: http://gravatar.wordpress.com/2011/07/12/open-profile-data/", 
+            "allow_comments": true, 
+            "slug": "article-number-one", 
+            "publish": "2012-01-10 15:53:23", 
+            "title": "Article Number One"
+        }
+    }
+]

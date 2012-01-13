@@ -14,13 +14,24 @@ Demo setup
 ==========
 
 1. Go to the ``django_comments_xtd/demo`` directory.
+
 2. Customise *email settings* at the end of the ``settings.py`` file.
-3. Do ``python manage syncdb`` to create a simple SQLite db file for the demo.
-4. Run the server ``python manage runserver``
-5. Visit http://localhost:8000/admin/ and:
-  * Go to *Sites* and replace ``example.com`` with ``localhost:8000``
-  * Go to *Articles* and add a couple of items, be sure to tick the box *allow comments*, otherwise comments won't be allowed.
-6. Visit http://localhost:8000/ and visit your articles' detail page.
-7. Try to post comments:
-  * Logged out, to receive confirmation requests by email
-  * Logged in, to get your comments accepted without requiring confirmation
+
+3. Do ``python manage syncdb --noinput`` to create a simple SQLite db file for the demo. Admin access granted for ``admin``, password ``admin``.
+
+4. Run the server: ``python manage runserver``
+
+Demo in action
+==============
+
+1. Visit http://localhost:8000/ and look at your articles' detail page. 
+
+2. As ``COMMENTS_XTD_LIST_URL`` is ``True`` in the demo site the comments list page is active:
+ * Visit http://localhost:8000/comments/list/
+ * Change the ``COMMENTS_XTD_LIST_PAGINATE_BY`` to paginate by any count of comments.
+
+3. Try to post comments:
+ * Logged out, to receive confirmation requests by email
+ * Logged in, to get your comments accepted without requiring confirmation
+
+4. When adding new articles in the admin interface be sure to tick the box *allow comments*, otherwise comments won't be allowed.

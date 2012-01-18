@@ -11,34 +11,6 @@ In order to use Django-comments-xtd it is required to declare the setting `COMME
 Additionally, Django-comments-xtd's behaviour may change depending on the following two settings.
 
 
-``COMMENTS_XTD_LIST_URL_ACTIVE``
-================================
-
-**Optional**
-
-This setting establishes whether the comment list URL is active or not. If set to True the URL to ``<your_comments_base_url>/list/`` will retrieve the list of comments of your site.
-
-An example::
-
-     COMMENTS_XTD_LIST_URL_ACTIVE = True
-
-Defaults to False.
-
-
-``COMMENTS_XTD_LIST_PAGINATE_BY``
-=================================
-
-**Optional**
-
-This setting establishes how many comments must be listed in the comment list page.
-
-An example::
-
-     COMMENTS_XTD_LIST_PAGINATE_BY = 20
-
-Defaults to 10.
-
-
 ``COMMENTS_XTD_CONFIRM_EMAIL``
 ==============================
 

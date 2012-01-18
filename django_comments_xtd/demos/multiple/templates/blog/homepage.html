@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load i18n comments comments_xtd %}
+
+{% block header %}{{ block.super }}{% trans "Blog" %}{% endblock %}
+
+{% block content %}
+<div style="width:100%; margin: 20px 0;">
+  <div style="display:inline-block; width:35%; padding: 0 2% 0 1%; vertical-align: top">
+    <H3 style="padding:0 5px 5px; border-bottom:1px solid #ddd">Last story</H3>
+    {% if stories %}
+    {% for item in stories %}
+    {% get_comment_count for item as comment_count %}
+    <div style="padding:5px">
+      <H4><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></H4>
+      <div style="padding:10px 15px; background:#eee">
+	{{ item.body|truncatewords:50|linebreaks }}
+
+	<p style="text-align:right; font-size:0.7em; color:#666">{{ comment_count }} comment{{ comment_count|pluralize }}</p>
+      </div>
+    </div>
+    {% endfor %}
+    <p>
+      <a href="{% url blog-story-index %}">
+	{% trans "all stories" %}
+      </a>
+    </p>
+    {% else %}
+    <div style="padding:10px 15px; background:#eee">No story yet.</div>
+    {% endif %}
+  </div>
+
+  <div style="display: inline-block; width:30%; padding: 0 2%; vertical-align: top">
+    <H3 style="padding:0 5px 5px; border-bottom:1px solid #ddd">Last 5 quotes</H3>
+    {% if quotes %}
+    <div style="padding:5px">
+      <UL>
+	{% for item in quotes %}
+	{% get_comment_count for item as comment_count %}
+	<li style="list-style-type:circle">
+	  <a href="{{ item.get_absolute_url }}">{{ item.title }}</a> &sdot;
+	  <span style="text-align:right; font-size:0.7em; color:#666">
+	    {{ comment_count }} comment{{ comment_count|pluralize }}
+	  </span>
+	  <br/>
+	  <span style="display:inline-block; padding-left:10px">
+	    {% trans "by" %} {{ item.author }}
+	  </span>
+	</li>
+	{% endfor %}
+      </UL>
+    </div>
+    <p>
+      <a href="{% url blog-quote-index %}">
+	{% trans "all quotes" %}
+      </a>
+    </p>
+    {% else %}
+    <div style="padding:10px 15px; background:#eee">No quote yet.</div>
+    {% endif %}
+  </div>
+
+  <div style="display: inline-block; width:24%; padding: 0 1% 0 2%; vertical-align: top">
+    <H3 style="padding:0 5px 5px; border-bottom:1px solid #ddd">Last 5 comments</H3>
+    {% get_xtdcomment_count as comment_count for blog.story blog.quote %}
+    {% if comment_count %}
+    {% render_last_xtdcomments 5 for blog.story blog.quote %}
+    {% else %}
+    <div style="padding:10px 15px; background:#eee">No comments yet.</div>
+    {% endif %}
+    <p>
+      <a href="{% url blog-comments %}">
+	{% trans "all comments" %}
+      </a>
+    </p>
+  </div>
+
+  <p style="padding: 5px 15px; background:#ddd">
+    <a href="{% url homepage %}">{% trans "Home" %}</a>
+  </p>
+</div>
+{% endblock %}

@@ -1,6 +1,14 @@
 [
     {
         "pk": 1, 
+        "model": "sites.site", 
+        "fields": {
+            "domain": "localhost:8000", 
+            "name": "localhost:8000"
+        }
+    }, 
+    {
+        "pk": 1, 
         "model": "auth.user", 
         "fields": {
             "username": "admin", 
@@ -9,22 +17,14 @@
             "is_active": true, 
             "is_superuser": true, 
             "is_staff": true, 
-            "last_login": "2012-01-12 10:50:13", 
+            "last_login": "2012-01-17 14:22:26", 
             "groups": [], 
             "user_permissions": [], 
             "password": "sha1$804a4$67ca78fa25b7dbf13499810b59233683da852c57", 
             "email": "admin@example.com", 
             "date_joined": "2012-01-12 10:49:55"
         }
-    },
-    {
-        "pk": 1, 
-        "model": "sites.site", 
-        "fields": {
-            "domain": "localhost:8000", 
-            "name": "testing.django-comments-xtd.info"
-        }
-    },
+    }, 
     {
         "pk": 2, 
         "model": "articles.article", 
@@ -46,49 +46,7 @@
             "publish": "2012-01-10 15:53:23", 
             "title": "Net Neutrality in Jeopardy"
         }
-    },
-    {
-        "pk": 1, 
-        "model": "django_comments_xtd.xtdcomment", 
-        "fields": {
-            "followup": true
-        }
     }, 
-    {
-        "pk": 2, 
-        "model": "django_comments_xtd.xtdcomment", 
-        "fields": {
-            "followup": true
-        }
-    }, 
-    {
-        "pk": 3, 
-        "model": "django_comments_xtd.xtdcomment", 
-        "fields": {
-            "followup": true
-        }
-    }, 
-    {
-        "pk": 4, 
-        "model": "django_comments_xtd.xtdcomment", 
-        "fields": {
-            "followup": true
-        }
-    }, 
-    {
-        "pk": 5, 
-        "model": "django_comments_xtd.xtdcomment", 
-        "fields": {
-            "followup": true
-        }
-    }, 
-    {
-        "pk": 6, 
-        "model": "django_comments_xtd.xtdcomment", 
-        "fields": {
-            "followup": true
-        }
-    },
     {
         "pk": 1, 
         "model": "comments.comment", 
@@ -195,6 +153,48 @@
             "is_public": true, 
             "user_name": "Bilbo Baggings", 
             "user_email": "bilbo@example.com"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true
         }
     }
 ]

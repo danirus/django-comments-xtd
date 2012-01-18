@@ -1,6 +1,5 @@
 #-*- coding: utf-8 -*-
 
-import imp
 import os
 
 DEBUG = True
@@ -83,7 +82,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.comments',
 
-    'demo.articles',
+    'simple.articles',
     'django_comments_xtd',
 )
 

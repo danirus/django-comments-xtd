@@ -28,8 +28,7 @@ class OnCommentWasPostedTestCase(TestCase):
         
     def post_valid_data(self):
         data = {"name":"Bob", "email":"bob@example.com", "followup": True, 
-                "comment":"Es war einmal iene kleine...",
-                "next": reverse("comments-xtd-confirmation-requested") }
+                "comment":"Es war einmal iene kleine..."}
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data, follow=True)
@@ -46,9 +45,7 @@ class OnCommentWasPostedTestCase(TestCase):
         self.assertEqual(len(mail.outbox), 0)
         self.post_valid_data()
         self.assertEqual(len(mail.outbox), 1)
-        self.assertTemplateUsed(
-            self.response, 
-            "django_comments_xtd/confirmation_requested.html")
+        self.assertTemplateUsed(self.response, "comments/posted.html")
 
 
 class ConfirmCommentTestCase(TestCase):

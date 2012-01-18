@@ -10,14 +10,15 @@ Introduction
 
 1. Optional notification of follow-up comments via email
 2. Comment confirmation via email when users are not authenticated
-3. Comment hits the database only when have been confirmed
-
+3. Comments hit the database only when have been confirmed
+4. Template tags to list/render the last N comments posted to any list of models
 
 .. toctree::
    :maxdepth: 2
 
    example
    tutorial
+   templatetags
    settings
    templates
 
@@ -35,12 +36,28 @@ Quick start
   * ``{% get_comment_count for object as comment_count %}``
   * ``{% render_comment_list for object %}`` (uses ``comments/list.html``)
   * ``{% render_comment_form for post %}`` (uses both ``comments/form.html`` and ``comments/preview.html``)
-5. Add a ``next`` parameter with ``{% url comments-xtd-confirmation-requested %}`` either to:
-  * The forms in ``comments/form.html`` and ``comments/preview.html``, or
-  * To the view that renders them. (see :doc:`example`)
-6. ``syncdb``, ``runserver``, and
-7. Hit your App's URL!
+5. ``syncdb``, ``runserver``, and
+6. Hit your App's URL!
 
+
+Highlights
+==========
+
+1. Load the templatetag module ``comments_xtd`` and use any of the tags:
+
+ * To know how many comments one or more ``app.model`` have:
+
+   * ``{% get_xtdcomment_count as [varname] for [app].[model] [[app].[model]] %}``
+
+ * To get the list of the last N comments posted to one or more ``app.model``:
+   
+   * ``{% get_last_xtdcomments [N] as [varname] for [app].[model] [[app].[model]] %}``
+
+ * Or to render the list of the last N comments posted to one or more ``app.model``:
+
+   * ``{% render_last_xtdcomments [N] for [app].[model] [[app].[model]] %}``
+
+2. Or use the ``XtdCommentManager`` with a generic class view to list all the comments one or more ``app.model`` have received. An example of this is a blog with two models, Story and Quote, where instances of both of them may receive comments. Look at the *multiple demo site* to see this particular example in action.
 
 Indices and tables
 ==================

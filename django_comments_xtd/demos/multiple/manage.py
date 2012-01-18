@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-sys.path.insert(0, '../..') # parent of django_comments_xtd directory
+sys.path.insert(0, '../../..') # parent of django_comments_xtd directory
 
 from django.core.management import execute_manager
 import imp

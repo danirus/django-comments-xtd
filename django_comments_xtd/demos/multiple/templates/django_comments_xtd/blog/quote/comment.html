@@ -1,0 +1,19 @@
+{% load i18n comments %}
+
+<div id="c{{ comment.id }}" style="font-size:0.8em">
+  <div style="padding:1px 5px;background:#eee;font-size:0.9em">
+    <a href="{% get_comment_permalink comment %}">permalink</a>&nbsp;&sdot;
+    <span>{{ comment.submit_date|date:"DATETIME_FORMAT" }}</span><br/>
+    {% trans "sent by" %} <span style="font-weight:bold">{{ comment.name }}</span> {% trans "to" %} <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+  </div>
+  
+  <div>
+    {% if comment.is_removed %}
+    <span style="font-style: italic">
+      -- {% trans "Inappropriate comments like this one are removed." %} --
+    </span>
+    {% else %}
+    {{ comment.comment|linebreaks }}
+    {% endif %}
+  </div>
+</div>

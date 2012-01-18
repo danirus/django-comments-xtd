@@ -9,7 +9,7 @@ test.run_tests = run_tests
 
 setup(
     name = "django-comments-xtd",
-    version = "1.0a2",
+    version = "1.0a3",
     packages = find_packages(),
     license = "MIT",
     description = "Django Comments Framework extension app with follow up notifications and email confirmations",
@@ -18,7 +18,7 @@ setup(
     author_email = "inbox@danir.us",
     maintainer = "Daniel Rus Morales",
     maintainer_email = "inbox@danir.us",
-    url = "http://github.com/danirus/django-comments-xtd/",
+    url = "http://pypi.python.org/pypi/django-comments-xtd",
     classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

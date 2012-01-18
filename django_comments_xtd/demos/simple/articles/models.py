@@ -23,7 +23,7 @@ class Article(models.Model):
     objects = PublicManager()
 
     class Meta:
-        db_table = 'demo_articles'
+        db_table = 'simple_articles'
         ordering = ('-publish',)
 
     def __unicode__(self):

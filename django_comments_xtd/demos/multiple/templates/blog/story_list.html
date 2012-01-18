@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n comments %}
+
+{% block header %}{{ block.super }}Blog - Story List{% endblock %}
+
+{% block content %}
+<div style="width:100%; margin: 20px 0;">
+  <div style="padding: 0 15%">
+    {% if object_list %}
+    {% for item in object_list %}
+    {% get_comment_count for item as comment_count %}
+    <H4><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></H4>
+    <div style="padding:10px 15px; background:#eee">
+      {{ item.body|truncatewords:50|linebreaks }} 
+      <p style="text-align:right; font-size:0.8em"><a href="{{ item.get_absolute_url }}">more</a>&nbsp;&sdot;&nbsp;<span style="font-size:0.9em;color:#666">{{ comment_count }} comment{{ comment_count|pluralize }}</span></p>
+    </div>
+  {% endfor %}
+  </div>
+  {% else %}
+  <div style="padding:10px 15px; background:#eee">No story yet.</div>
+  {% endif %}
+  <p style="padding: 5px 15px; background:#ddd">
+    <a href="{% url blog-index %}">{% trans "Blog" %}</a>
+  </p>
+</div>
+{% endblock %}

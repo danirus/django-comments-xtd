@@ -1,0 +1,34 @@
+{% load i18n comments %}
+
+<div id="c{{ comment.id }}" style="width:600px; padding: 5px 0; border-top: 1px solid #ddd">
+
+  {% if comment.user.is_staff %}
+  <div style="display:inline-block; width:180px; padding: 0 5px; background:#eee">
+    <a href="{% get_comment_permalink comment %}">permalink</a><br/>
+    <span>{{ comment.submit_date|date:"SHORT_DATE_FORMAT" }}</span><br/>
+    <em>{{ comment.name }}</em>
+  </div>
+  {% endif %}
+  
+  <div style="display:inline-block; width:400px">
+    <div style="font-size:0.7em">
+      {% trans "Comment for:" %} <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+    </div>
+    {% if comment.is_removed %}
+    <span style="font-style: italic">
+      -- {% trans "Inappropriate comments like this one are removed." %} --
+    </span>
+    {% else %}
+    {{ comment.comment|linebreaks }}
+    {% endif %}
+  </div>
+  
+  {% if not comment.user.is_staff %}
+  <div style="display:inline-block; width:180px; padding: 0 5px; background:#eee">
+    <a href="{% get_comment_permalink comment %}">permalink</a><br/>
+    <span>{{ comment.submit_date|date:"SHORT_DATE_FORMAT" }}</span><br/>
+    <em>{{ comment.name }}</em>
+  </div>
+  {% endif %}
+  
+</div>

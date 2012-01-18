@@ -96,21 +96,6 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
 comment_was_posted.connect(on_comment_was_posted)
     
 
-def confirmation_requested(request, template="django_comments_xtd/confirmation_requested.html"):
-    comment = None
-    if request.GET.get("c", "") != "":
-        try:
-            comment = XtdComment.objects.get(pk=request.GET['c'])
-        except (XtdComment.DoesNotExist, ValueError):
-            pass
-
-    if comment:
-        return HttpResponseRedirect(comment.get_absolute_url())
-    else:
-        return render_to_response(
-            template, context_instance=RequestContext(request))
-
-
 def confirm(request, key, template_discarded="django_comments_xtd/discarded.html"):
     try:
         tmp_comment = signed.loads(key, extra_key=COMMENTS_XTD_SALT)

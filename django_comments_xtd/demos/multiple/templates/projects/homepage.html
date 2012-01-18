@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n comments %}
+
+{% block header %}{{ block.super }}{% trans "Projects" %}{% endblock %}
+
+{% block content %}
+<div style="width:100%; margin: 20px 0;">
+  <div style="padding: 0 2%">
+    <H3 style="padding:0 5px 5px; border-bottom:1px solid #ddd">Project List</H3>
+    {% if items %}
+    <div style="padding:5px">
+      <UL>
+	{% for item in items %}
+	{% get_comment_count for item.release as comment_count %}
+	<li style="list-style-type:circle">
+	  <a href="{{ item.project.get_absolute_url }}">{{ item.project.project_name }}</a> &sdot; {% trans "Last release:" %} <a href="{{ item.release.get_absolute_url }}">{{ item.release.release_name }}</a> &sdot;
+	  <span style="text-align:right; font-size:0.7em; color:#666">
+	    {{ comment_count }} comment{{ comment_count|pluralize }}
+	  </span>
+	</li>
+	{% endfor %}
+      </UL>
+    </div>
+    {% else %}
+    <div style="padding:10px 15px; background:#eee">No projects yet.</div>
+    {% endif %}
+  </div>
+  <p style="padding: 5px 15px; background:#ddd">
+    <a href="{% url homepage %}">{% trans "Home" %}</a>
+  </p>
+</div>
+{% endblock %}

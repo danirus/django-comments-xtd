@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n comments %}
+
+{% block header %}{{ block.super }}{% trans "Blog - Quote Detail" %}{% endblock %}
+
+{% block content %}
+<H3>{{ object.title }}</H3>
+<div style="padding:0 20px; font-size:.8em; font-style:italic">Published {{ object.publish }}</div>
+<div style="margin:10px 0; padding:0 150px 0 20px">
+  <blockquote style="font-style:italic">
+    {{ object.quote|linebreaks }}
+  </blockquote>
+  <p style="padding: 0 10em;text-align:right">
+    {{ object.author }} <span style="font-size:0.8em">[<a href="{{ object.url_source }}">source</a>]</span>
+  </p>
+</div>
+
+<p style="padding: 5px 15px; background:#ddd">
+  <a href="{% url blog-quote-index %}">{% trans "Quote list" %}</a>
+</p>
+
+<div id="comments" style="width:60%;margin:0 auto">
+  {% get_comment_count for object as comment_count %}
+  {% if comment_count %}
+  <H4 class="center">{{ comment_count }} comment{{ comment_count|pluralize }}</H4>
+  {% endif %}
+  <div id="comment-list">
+    {% render_comment_list for object %}
+  </div>
+
+  {% if object.allow_comments %}
+  <H4 style="margin-top:30px; text-align:center">your comment</H4>
+  <div id="comment-form" style="width:400px; margin:0 auto">
+    {% render_comment_form for object %}
+  </div>
+  {% else %}
+  <h4 style="text-align:center">{% trans "comments are disabled for this quote" %}</h4>
+  {% endif %}
+</div>
+{% endblock %}

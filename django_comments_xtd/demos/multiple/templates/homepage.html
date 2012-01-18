@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block header %}{{ block.super }}Homepage{% endblock %}
+
+{% block content %}
+<p>{% trans "The demo site has a Blog App and a Projects App. The Blog App contains two models: Story and Quote, each of which accepts comments. The Projects App contains two models too: Project and Release. Only the Release model has comments." %}</p>
+<p>{% trans "Unlike the simple demo site, in the multiple demo site several models have comments associated. The blog homepage shows the last 5 comments posted either to stories or quotes, and a link to the paginated list of comments posted to stories or quotes. Comments for instances of the Release model are listed only in release detail pages." %}</p>
+<p>{% trans "The underlaying differences between the simple and multiple demo site are:" %}</p>
+<ul>
+  <li>{% trans "The use of the templatetag module <code>comments_xtd.py</code> and its tags <code>get_xtdcomment_count</code> and <code>render_last_xtdcomments</code>" %}</li>
+  <li>{% trans "The use of the <code>XtdCommentManager</code> and its method <code>for_app_models</code>, that allow retrieving comments for a given list of app.model pairs." %}</li>
+</ul>
+
+<ul>
+  <li><a href="{% url blog-index %}">{% trans "Go to the Blog" %}</a></li>
+  <li><a href="{% url projects-index %}">{% trans "Go to Projects" %}</a></li>
+</ul>
+<p style="padding: 5px 15px; background:#ddd; font-weight:bold; text-align:right">django-comments-xtd</p>
+{% endblock %}

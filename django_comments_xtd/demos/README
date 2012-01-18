@@ -1,0 +1,10 @@
+There are two example sites in this directory.
+
+ 1. The 'simple' model demo site
+ 2. The 'multiple' model demo site
+
+1. The 'simple' demo shows a site using comments for a single model called 'Article'. Initial data provides a couple of articles with 3 comments per article. Each article page shows the list of comments sent to the article.
+
+2. The 'multiple' demo shows a site using comments in 3 different models: 'Story', 'Quote', 'Release'. As in the simple demo, initial data provides entries and comments to all models. The blog app, that consist of stories and quotes, uses the templatetag 'render_last_xtdcomments' to show a list of the last 5 comments posted either to stories or quotes. It also gives access to a paginated comment list page that shows all comment posted to stories and quotes. The page uses a generic view with a query that make use of the special method 'for_app_models' of the 'XtdComment' manager, which retrieves comments posted to the models indicated in the query:
+  
+    queryset = XtdComment.objects.for_app_models("blog.story", "blog.quote")

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block header %}{{ block.super }}Homepage{% endblock %}
+
+{% block content %}
+<p>{% trans "The simple demo site has an Articles App, which contains a model <code>Article</code> and accepts comments." %}</p>
+<ul>
+  <li><a href="{% url articles-index %}">{% trans "Article list" %}</a></li>
+</ul>
+<p style="padding: 5px 15px; background:#ddd; font-weight:bold; text-align:right">django-comments-xtd</p>
+{% endblock %}

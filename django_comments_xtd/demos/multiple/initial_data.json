@@ -1,0 +1,523 @@
+[
+    {
+        "pk": 1, 
+        "model": "sites.site", 
+        "fields": {
+            "domain": "localhost:8000", 
+            "name": "localhost:8000"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "admin", 
+            "first_name": "", 
+            "last_name": "", 
+            "is_active": true, 
+            "is_superuser": true, 
+            "is_staff": true, 
+            "last_login": "2012-01-16 13:30:15", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$09cd7$f12e301db603377efd25720531b21d021fa6423a", 
+            "email": "admin@example.com", 
+            "date_joined": "2012-01-16 13:29:21"
+        }
+    }, 
+    {
+        "pk": "lunar-doughnut", 
+        "model": "projects.project", 
+        "fields": {
+            "short_description": "Astronauts forgot a big bag of doughnuts in the moon, and now we aim to land on the moon and bring them back.", 
+            "project_name": "Lunar Doughnut", 
+            "is_active": true
+        }
+    }, 
+    {
+        "pk": "space-pony", 
+        "model": "projects.project", 
+        "fields": {
+            "short_description": "Django app to blah blah blah...", 
+            "project_name": "Space Pony", 
+            "is_active": true
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "projects.release", 
+        "fields": {
+            "body": "Creamy is the result of the first development cycle of the Lunar Doughnut project. It allows us to test the Space Shuttle and the Doughnut Detector.\r\n\r\nFeatures are:\r\n\r\n  * Apache powered engines\r\n  * Java daba doo improved performance\r\n  * Water proof\r\n  * Und so weiter", 
+            "allow_comments": true, 
+            "release_date": "2012-01-13 20:30:04", 
+            "is_active": true, 
+            "project": "lunar-doughnut", 
+            "release_name": "Creamy", 
+            "slug": "creamy"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "projects.release", 
+        "fields": {
+            "body": "Release One of the Space Pony project, a Django App to blah blah blah:\r\n\r\nFeatures:\r\n\r\n  * Social network disintegration\r\n  * Moderated clamor\r\n  * Search Engine Obfuscation\r\n  * Etc\r\n\r\nThis app requires Django-3D-glasses and Django-Popcorn.", 
+            "allow_comments": true, 
+            "release_date": "2012-01-13 20:23:12", 
+            "is_active": true, 
+            "project": "space-pony", 
+            "release_name": "1.0", 
+            "slug": "10"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "projects.release", 
+        "fields": {
+            "body": "The Release Two of the Space Pony project improves This and That. It also boosts your moral and reduces your self decadence.\r\n\r\nHighlighted features:\r\n\r\n  * Complete nonsense all over the code\r\n  * Monkey patched unittests results\r\n  * HTML6 support right from the __future__\r\n  * Soon in your cinema\r\n\r\nImportant: This app doesn't work with peanut oil!", 
+            "allow_comments": true, 
+            "release_date": "2012-01-13 20:26:29", 
+            "is_active": true, 
+            "project": "space-pony", 
+            "release_name": "1.1", 
+            "slug": "11"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "blog.quote", 
+        "fields": {
+            "allow_comments": true, 
+            "author": "Manuel Castells", 
+            "quote": "Power is no longer concentrated in institutions (the state), organizations (capitalist firms), or symbolic controllers (corporate media, churches). It is diffused in global networks of wealth, power, information and images, which circulate and transmute in a system of variable geometry and dematerialized geography. Yet it does not disappear.", 
+            "url_source": "http://books.google.co.uk/books?id=l9asXV40MegC&lpg=PT334&ots=ndh6lq6F2I&dq=Power%20is%20no%20longer%20concentrated%20in%20institutions%20(the%20state)%2C%20organizations%20(capitalist%20firms)%2C%20o", 
+            "publish": "2012-01-13 20:21:20", 
+            "title": "About Power in The Information Age", 
+            "slug": "about-power-information-age"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "blog.quote", 
+        "fields": {
+            "allow_comments": true, 
+            "author": "Vinton Cerf", 
+            "quote": "We don\u2019t believe governments should be allowed to grant themselves a monopoly on Internet governance. The current bottoms-up, open approach works\u2014protecting users from vested interests and enabling rapid innovation. Let\u2019s fight to keep it that way.", 
+            "url_source": "http://googlepublicpolicy.blogspot.com/2010/12/governments-shouldnt-have-monopoly-on.html", 
+            "publish": "2012-01-13 20:18:11", 
+            "title": "Monopoly on Internet Governance", 
+            "slug": "monopoly-internet-governance"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "blog.quote", 
+        "fields": {
+            "allow_comments": true, 
+            "author": "Deckard", 
+            "quote": "I don't know why he saved my life. Maybe in those last moments he loved life more than he ever had before. Not just his life - anybody's life; my life. All he'd wanted were the same answers the rest of us want. Where did I come from? Where am I going? How long have I got? All I could do was sit there and watch him die. ", 
+            "url_source": "http://www.imdb.com/title/tt0083658/quotes?qt=qt0378247", 
+            "publish": "2012-01-13 20:16:21", 
+            "title": "The same answers", 
+            "slug": "same-answers"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "blog.quote", 
+        "fields": {
+            "allow_comments": true, 
+            "author": "Morpheus", 
+            "quote": "This is your last chance. After this, there is no turning back. You take the blue pill - the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill - you stay in Wonderland and I show you how deep the rabbit-hole goes. ", 
+            "url_source": "http://www.imdb.com/title/tt0133093/quotes?qt=qt0324307", 
+            "publish": "2012-01-13 20:13:42", 
+            "title": "Your last chance", 
+            "slug": "your-last-chance"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "blog.quote", 
+        "fields": {
+            "allow_comments": true, 
+            "author": "Stephen Hawking", 
+            "quote": "Our only chance of long-term survival is not to remain lurking on planet Earth, but to spread out into space.", 
+            "url_source": "http://www.winnipegfreepress.com/canada/space-is-our-only-hope-says-hawking-134168658.html", 
+            "publish": "2012-01-13 20:03:46", 
+            "title": "Space, our only hope", 
+            "slug": "space-our-only-hope"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "blog.quote", 
+        "fields": {
+            "allow_comments": true, 
+            "author": "Dave Methvin", 
+            "quote": "Most of the problems in IE 6 and IE 7 are also present in IE 8, so there is no real size or complexity benefit to dropping support for the first two as long as that last one still has appreciable desktop market share and must be supported. Nobody (including Microsoft itself) likes these Jurassic Park browsers, but stripping out support for them right now would break web sites for many users.", 
+            "url_source": "http://blog.jquery.com/2011/11/22/call-for-jquery-1-8-ideas/", 
+            "publish": "2012-01-13 19:57:23", 
+            "title": "On Jquery support for IE", 
+            "slug": "jquery-support-ie"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "blog.quote", 
+        "fields": {
+            "allow_comments": true, 
+            "author": "Linus Torvalds", 
+            "quote": "In other words, the only way to do good, efficient, and system-level and portable C++ ends up to limit yourself to all the things that are basically available in C.", 
+            "url_source": "http://harmful.cat-v.org/software/c++/linus", 
+            "publish": "2012-01-13 19:54:35", 
+            "title": "On C++", 
+            "slug": "c-plus-plus"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "blog.story", 
+        "fields": {
+            "body": "The battle over the future of the Internet is a power grab that pits well-heeled lobbyists, corrupt legislators, phony front groups and the world\u2019s most powerful telecommunications companies against the rest of us \u2014 the millions of Americans who use the Internet every day, in increasingly inventive ways.\r\n\r\nPolicymakers are public officials, and it\u2019s their job to serve the public interest. You can play an important role by helping spread the word about Net Neutrality, meeting face to face with elected officials and urging them to protect the open Internet.\r\n\r\nYou can start by urging the Senate to stand up for Net Neutrality. ", 
+            "allow_comments": true, 
+            "slug": "net-neutrality-jeopardy", 
+            "publish": "2012-01-13 17:09:00", 
+            "title": "Net Neutrality in Jeopardy"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "blog.story", 
+        "fields": {
+            "body": "While free software by any other name would give you the same freedom, it makes a big difference which name we use: different words convey different ideas.\r\n\r\nIn 1998, some of the people in the free software community began using the term \u201copen source software\u201d instead of \u201cfree software\u201d to describe what they do. The term \u201copen source\u201d quickly became associated with a different approach, a different philosophy, different values, and even a different criterion for which licenses are acceptable. The Free Software movement and the Open Source movement are today separate movements with different views and goals, although we can and do work together on some practical projects.\r\n\r\nThe fundamental difference between the two movements is in their values, their ways of looking at the world. For the Open Source movement, the issue of whether software should be open source is a practical question, not an ethical one. As one person put it, \u201cOpen source is a development methodology; free software is a social movement.\u201d For the Open Source movement, non-free software is a suboptimal solution. For the Free Software movement, non-free software is a social problem and free software is the solution.", 
+            "allow_comments": true, 
+            "slug": "free-vs-open-source-software", 
+            "publish": "2012-01-13 17:04:54", 
+            "title": "Free vs Open Source Software"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "May I test the Doughnut Detector please?", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 20:43:45", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "3", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": null, 
+            "content_type": 14, 
+            "is_public": true, 
+            "user_name": "Joe Bloggs", 
+            "user_email": "joe.bloggs@example.com"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "Of course! Go downstairs and test it in the coffee-shop. And bring doughnuts for everybody. And a double expresso for me.", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 20:44:54", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "3", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": 1, 
+            "content_type": 14, 
+            "is_public": true, 
+            "user_name": "admin", 
+            "user_email": "admin@example.com"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "May I ride your pony molony?", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 20:48:08", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "1", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": null, 
+            "content_type": 14, 
+            "is_public": true, 
+            "user_name": "Alice", 
+            "user_email": "alice@wonderland.com"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "I'm still looking forward to riding your pony moloni? May I may I?", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 20:52:50", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "2", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": null, 
+            "content_type": 14, 
+            "is_public": true, 
+            "user_name": "Alice", 
+            "user_email": "alice@wonderland.com"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "Oh! Really?!?", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 21:01:30", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "2", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": null, 
+            "content_type": 11, 
+            "is_public": true, 
+            "user_name": "Alice", 
+            "user_email": "alice@wonderland.com"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "Yeah, let's fight to keep it!\r\n\r\nThe TechCrunch post: Getting \u201cInternet Freedom\u201d Straight, extends this topic:\r\n\r\nhttp://techcrunch.com/2012/01/15/getting-internet-freedom-straight/", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 21:21:44", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "6", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": null, 
+            "content_type": 12, 
+            "is_public": true, 
+            "user_name": "Alice", 
+            "user_email": "alice@wonderland.com"
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "Poor replicant...", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 21:34:55", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "4", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": null, 
+            "content_type": 12, 
+            "is_public": true, 
+            "user_name": "Alice", 
+            "user_email": "alice@wonderland.com"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "And governments cannot accept that fact. So they will come to rule the Internet. And darkness will cover the world again. One Ring to rule them all, one Ring to find them, one Ring to bring them all\r\nand in the darkness bind them.", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 21:35:01", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "7", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": 1, 
+            "content_type": 12, 
+            "is_public": true, 
+            "user_name": "admin", 
+            "user_email": "admin@example.com"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "It's not funny, Alice. Not really.", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 21:36:56", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "2", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": 1, 
+            "content_type": 11, 
+            "is_public": true, 
+            "user_name": "admin", 
+            "user_email": "admin@example.com"
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "I took the red one quite a long time ago and the rabbit-hole keeps going deeper and deeper...", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 21:39:28", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "3", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": null, 
+            "content_type": 12, 
+            "is_public": true, 
+            "user_name": "Alice", 
+            "user_email": "alice@wonderland.com"
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "May we leave here the politicians?", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 21:40:53", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "5", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": null, 
+            "content_type": 12, 
+            "is_public": true, 
+            "user_name": "Simon Blue", 
+            "user_email": "sblue@example.com"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "I am concern only about technical considerations, so I don't care about the differences.", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 21:42:23", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "1", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": null, 
+            "content_type": 11, 
+            "is_public": true, 
+            "user_name": "Joe Bloggs", 
+            "user_email": "joe.bloggs@example.com"
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "comments.comment", 
+        "fields": {
+            "comment": "I do fully agree!", 
+            "user_url": "", 
+            "submit_date": "2012-01-13 21:50:34", 
+            "ip_address": "127.0.0.1", 
+            "object_pk": "1", 
+            "site": 1, 
+            "is_removed": false, 
+            "user": 1, 
+            "content_type": 12, 
+            "is_public": true, 
+            "user_name": "admin", 
+            "user_email": "admin@example.com"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": false
+        }
+    }
+]

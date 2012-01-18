@@ -18,6 +18,6 @@ Read the documentation at:
 .. _`Read The Docs`: http://readthedocs.org/docs/django-comments-xtd/
 .. _`Python Packages Site`: http://packages.python.org/django-comments-xtd/
 
-Includes a **demo site** and a limited **test suite**. If you commit code, please consider adding proper coverage (especially if it has a chance for a regression) in the test suite.
+Includes two **demo sites** and a limited **test suite**. If you commit code, please consider adding proper coverage (especially if it has a chance for a regression) in the test suite.
 
 Run the tests with:  ``python setup.py test``

@@ -27,16 +27,27 @@ Quick start
 ===========
 
 1. Add ``django.contrib.comments`` and ``django_comments_xtd`` to ``INSTALLED_APPS``.
+
 2. In your ``settings.py``:
+
  * Add ``COMMENTS_APP = "django_comments_xtd"``
+
  * Add ``COMMENTS_XTD_CONFIRM_EMAIL = True``
+
  * Customize your email settings (see :doc:`example`)
+
 3. Add ``url(r'^comments/', include('django_comments_xtd.urls'))`` to your root URLconf.
+
 4. Customise the templates of the model you will add comments to: ``<your_app>/<your_model>_detail.html``, load the ``comments`` templatetag module and use its tags in your template:
+
   * ``{% get_comment_count for object as comment_count %}``
+
   * ``{% render_comment_list for object %}`` (uses ``comments/list.html``)
+
   * ``{% render_comment_form for post %}`` (uses both ``comments/form.html`` and ``comments/preview.html``)
+
 5. ``syncdb``, ``runserver``, and
+
 6. Hit your App's URL!
 
 

@@ -53,9 +53,10 @@ def get_xtdcomment_count(parser, token):
 class BaseLastXtdCommentsNode(Node):
     """Base class to deal with the last N XtdComments for a list of app.model"""
 
-    def __init__(self, count, content_types):
+    def __init__(self, count, content_types, template_path=None):
         """Class method to parse get_xtdcomment_list and return a Node."""
         self.qs = XtdComment.objects.for_content_types(content_types)[:count]
+        self.template_path = template_path
 
 
 class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
@@ -63,16 +64,20 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
     def render(self, context):
         strlist = []
         for xtd_comment in self.qs:
-            template_search_list = [
-                "django_comments_xtd/%s/%s/comment.html" % (
-                    xtd_comment.content_type.app_label, 
-                    xtd_comment.content_type.model),
-                "django_comments_xtd/%s/comment.html" % (
-                    xtd_comment.content_type.app_label,),
-                "django_comments_xtd/comment.html"
-            ]
-            strlist.append(loader.render_to_string(
-                    template_search_list, {"comment": xtd_comment}, context))
+            if self.template_path:
+                template_arg = self.template_path
+            else:
+                template_arg = [
+                    "django_comments_xtd/%s/%s/comment.html" % (
+                        xtd_comment.content_type.app_label, 
+                        xtd_comment.content_type.model),
+                    "django_comments_xtd/%s/comment.html" % (
+                        xtd_comment.content_type.app_label,),
+                    "django_comments_xtd/comment.html"
+                ]
+            strlist.append(
+                loader.render_to_string(
+                    template_arg, {"comment": xtd_comment}, context))
         return ''.join(strlist)
 
 
@@ -131,8 +136,19 @@ def render_last_xtdcomments(parser, token):
         raise TemplateSyntaxError(
             "Third argument in %r tag must be 'for'" % tokens[0])
 
-    content_types = _get_content_types(tokens[0], tokens[3:])
-    return RenderLastXtdCommentsNode(count, content_types)
+    try:
+        token_using = tokens.index("using")
+        content_types = _get_content_types(tokens[0], tokens[3:token_using])
+        try:
+            template = tokens[token_using+1].strip('" ')
+        except IndexError:
+            raise TemplateSyntaxError(
+                "Last argument in %r tag must be a relative template path" % tokens[0])       
+    except ValueError:
+        content_types = _get_content_types(tokens[0], tokens[3:])
+        template = None
+
+    return RenderLastXtdCommentsNode(count, content_types, template)
 
 
 def get_last_xtdcomments(parser, token):

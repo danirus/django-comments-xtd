@@ -94,7 +94,18 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
         send_email_confirmation_request(comment, target, key)
 
 comment_was_posted.connect(on_comment_was_posted)
-    
+
+
+def sent(request):
+    comment_pk = request.GET.get("c", None)
+    try:
+        comment_pk = int(comment_pk)
+        comment = XtdComment.objects.get(pk=comment_pk)
+    except (TypeError, ValueError, XtdComment.DoesNotExist):
+        return render_to_response("comments/posted.html", 
+                                  context_instance=RequestContext(request))
+    return redirect(comment)
+
 
 def confirm(request, key, template_discarded="django_comments_xtd/discarded.html"):
     try:

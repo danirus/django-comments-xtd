@@ -1,4 +1,4 @@
-{% load i18n comments %}
+{% load i18n comments comments_xtd %}
 
 <div id="c{{ comment.id }}" style="font-size:0.8em">
   <div style="padding:1px 5px;background:#eee;font-size:0.9em">
@@ -13,7 +13,7 @@
       -- {% trans "Inappropriate comments like this one are removed." %} --
     </span>
     {% else %}
-    {{ comment.comment|linebreaks }}
+    {{ comment.comment|render_markup_comment }}
     {% endif %}
   </div>
 </div>

@@ -12,6 +12,8 @@ Introduction
 2. Comment confirmation via email when users are not authenticated
 3. Comments hit the database only when have been confirmed
 4. Template tags to list/render the last N comments posted to any list of models
+5. Several comments format: plain text, linebreaks, Markdown or reStructuredText
+
 
 .. toctree::
    :maxdepth: 2
@@ -26,9 +28,13 @@ Introduction
 Quick start
 ===========
 
-1. Add ``django.contrib.comments`` and ``django_comments_xtd`` to ``INSTALLED_APPS``.
+1. Get the dependencies:
 
-2. In your ``settings.py``:
+ * `django-markup <https://github.com/bartTC/django-markup>`_
+
+1. In your ``settings.py``:
+
+ * Add ``django.contrib.comments``, ``django_comments_xtd`` and ``django_markup`` to ``INSTALLED_APPS``.
 
  * Add ``COMMENTS_APP = "django_comments_xtd"``
 
@@ -38,13 +44,25 @@ Quick start
 
 3. Add ``url(r'^comments/', include('django_comments_xtd.urls'))`` to your root URLconf.
 
-4. Customise the templates of the model you will add comments to: ``<your_app>/<your_model>_detail.html``, load the ``comments`` templatetag module and use its tags in your template:
+4. Make changes in the templates of your models-with-comments. 
+
+ * Load the ``comments`` templatetag and use their tags:
 
   * ``{% get_comment_count for object as comment_count %}``
 
   * ``{% render_comment_list for object %}`` (uses ``comments/list.html``)
 
   * ``{% render_comment_form for post %}`` (uses both ``comments/form.html`` and ``comments/preview.html``)
+
+ * Load the ``comments_xtd`` templatetag and use their tags and filter:
+
+  * ``{% get_xtdcomment_count as comments_count for blog.story blog.quote %}``
+
+  * ``{% render_last_xtdcomments 5 for blog.story blog.quote using "blog/comment.html" %}``
+
+  * ``{% get_last_xtdcomments 5 as last_comments for blog.story blog.quote %}``
+
+  * Filter render_markup_comment: ``{{ comment.comment|render_markup_comment }}``
 
 5. ``syncdb``, ``runserver``, and
 

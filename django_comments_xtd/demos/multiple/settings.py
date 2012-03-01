@@ -85,6 +85,7 @@ INSTALLED_APPS = (
     'multiple.blog',
     'multiple.projects',
     'django_comments_xtd',
+    'django_markup',
 )
 
 # EMAIL_HOST          = "smtp.gmail.com" 

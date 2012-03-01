@@ -1,6 +1,13 @@
+#-*- coding: utf-8 -*-
+
+import re
+
 from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, Template, TemplateSyntaxError, 
                              Variable, loader, RequestContext)
+from django.utils.safestring import mark_safe
+
+from django_markup.markup import formatter
 
 from django_comments_xtd.models import XtdComment
 
@@ -121,7 +128,7 @@ def render_last_xtdcomments(parser, token):
 
     Example usage::
 
-        {% render_last_xtdcomments 5 for blog.story blog.quote %}
+        {% render_last_xtdcomments 5 for blog.story blog.quote using "comments/blog/comment.html" %}
 
     """
     tokens = token.contents.split()
@@ -186,6 +193,39 @@ def get_last_xtdcomments(parser, token):
     return GetLastXtdCommentsNode(count, as_varname, content_types)
 
 
+def render_markup_comment(value):
+    """
+    Renders a comment using a markup language specified in the first line of the comment.
+
+    Template Syntax::
+
+        {{ comment.comment|render_markup_comment }}
+
+    The first line of the comment field must start with the name of the markup language.
+
+    A comment like::
+
+        comment = r'''#!markdown\n\rAn [example](http://url.com/ "Title")'''
+
+    Would be rendered as a markdown text, producing the output::
+
+        <p><a href="http://url.com/" title="Title">example</a></p>
+    """
+    lines = value.splitlines()
+    rawstr = r"""^#!(?P<markup_filter>\w+)$"""
+    match_obj = re.search(rawstr, lines[0])
+    if match_obj:
+        markup_filter = match_obj.group('markup_filter')
+        try:
+            return mark_safe(formatter("\n".join(lines[1:]), filter_name=markup_filter))
+        except ValueError, e:
+            output = "<p>Warning: %s</p>" % e
+            return output + value
+    else:
+        return value
+
+
 register.tag(get_xtdcomment_count)
 register.tag(render_last_xtdcomments)
 register.tag(get_last_xtdcomments)
+register.filter(render_markup_comment)

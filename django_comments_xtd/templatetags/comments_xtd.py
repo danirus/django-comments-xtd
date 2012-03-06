@@ -1,6 +1,13 @@
+#-*- coding: utf-8 -*-
+
+import re
+
 from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, Template, TemplateSyntaxError, 
                              Variable, loader, RequestContext)
+from django.utils.safestring import mark_safe
+
+from django_markup.markup import formatter
 
 from django_comments_xtd.models import XtdComment
 
@@ -53,9 +60,10 @@ def get_xtdcomment_count(parser, token):
 class BaseLastXtdCommentsNode(Node):
     """Base class to deal with the last N XtdComments for a list of app.model"""
 
-    def __init__(self, count, content_types):
+    def __init__(self, count, content_types, template_path=None):
         """Class method to parse get_xtdcomment_list and return a Node."""
         self.qs = XtdComment.objects.for_content_types(content_types)[:count]
+        self.template_path = template_path
 
 
 class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
@@ -63,16 +71,20 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
     def render(self, context):
         strlist = []
         for xtd_comment in self.qs:
-            template_search_list = [
-                "django_comments_xtd/%s/%s/comment.html" % (
-                    xtd_comment.content_type.app_label, 
-                    xtd_comment.content_type.model),
-                "django_comments_xtd/%s/comment.html" % (
-                    xtd_comment.content_type.app_label,),
-                "django_comments_xtd/comment.html"
-            ]
-            strlist.append(loader.render_to_string(
-                    template_search_list, {"comment": xtd_comment}, context))
+            if self.template_path:
+                template_arg = self.template_path
+            else:
+                template_arg = [
+                    "django_comments_xtd/%s/%s/comment.html" % (
+                        xtd_comment.content_type.app_label, 
+                        xtd_comment.content_type.model),
+                    "django_comments_xtd/%s/comment.html" % (
+                        xtd_comment.content_type.app_label,),
+                    "django_comments_xtd/comment.html"
+                ]
+            strlist.append(
+                loader.render_to_string(
+                    template_arg, {"comment": xtd_comment}, context))
         return ''.join(strlist)
 
 
@@ -116,7 +128,7 @@ def render_last_xtdcomments(parser, token):
 
     Example usage::
 
-        {% render_last_xtdcomments 5 for blog.story blog.quote %}
+        {% render_last_xtdcomments 5 for blog.story blog.quote using "comments/blog/comment.html" %}
 
     """
     tokens = token.contents.split()
@@ -131,8 +143,19 @@ def render_last_xtdcomments(parser, token):
         raise TemplateSyntaxError(
             "Third argument in %r tag must be 'for'" % tokens[0])
 
-    content_types = _get_content_types(tokens[0], tokens[3:])
-    return RenderLastXtdCommentsNode(count, content_types)
+    try:
+        token_using = tokens.index("using")
+        content_types = _get_content_types(tokens[0], tokens[3:token_using])
+        try:
+            template = tokens[token_using+1].strip('" ')
+        except IndexError:
+            raise TemplateSyntaxError(
+                "Last argument in %r tag must be a relative template path" % tokens[0])       
+    except ValueError:
+        content_types = _get_content_types(tokens[0], tokens[3:])
+        template = None
+
+    return RenderLastXtdCommentsNode(count, content_types, template)
 
 
 def get_last_xtdcomments(parser, token):
@@ -170,6 +193,39 @@ def get_last_xtdcomments(parser, token):
     return GetLastXtdCommentsNode(count, as_varname, content_types)
 
 
+def render_markup_comment(value):
+    """
+    Renders a comment using a markup language specified in the first line of the comment.
+
+    Template Syntax::
+
+        {{ comment.comment|render_markup_comment }}
+
+    The first line of the comment field must start with the name of the markup language.
+
+    A comment like::
+
+        comment = r'''#!markdown\n\rAn [example](http://url.com/ "Title")'''
+
+    Would be rendered as a markdown text, producing the output::
+
+        <p><a href="http://url.com/" title="Title">example</a></p>
+    """
+    lines = value.splitlines()
+    rawstr = r"""^#!(?P<markup_filter>\w+)$"""
+    match_obj = re.search(rawstr, lines[0])
+    if match_obj:
+        markup_filter = match_obj.group('markup_filter')
+        try:
+            return mark_safe(formatter("\n".join(lines[1:]), filter_name=markup_filter))
+        except ValueError, e:
+            output = "<p>Warning: %s</p>" % e
+            return output + value
+    else:
+        return value
+
+
 register.tag(get_xtdcomment_count)
 register.tag(render_last_xtdcomments)
 register.tag(get_last_xtdcomments)
+register.filter(render_markup_comment)

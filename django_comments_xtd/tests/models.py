@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import permalink
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.test import TestCase
+from django.test import TestCase as DjangoTestCase
 
 from django_comments_xtd.models import XtdComment
 
@@ -43,7 +43,7 @@ class Article(models.Model):
                  'slug': self.slug})
 
 
-class XtdCommentManagerTestCase(TestCase):
+class XtdCommentManagerTestCase(DjangoTestCase):
 
     def setUp(self):
         self.article_1 = Article.objects.create(

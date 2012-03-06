@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n comments %}
+{% load i18n comments comments_xtd %}
 
 {% block title %}{{ block.super }}Blog - {% trans "Comment List" %}{% endblock %}
 
@@ -39,7 +39,9 @@
 	-- {% trans "Inappropriate comments like this one are removed." %} --
       </span>
       {% else %}
-      {{ comment.comment|linebreaks }}
+      {% autoescape off %}
+      {{ comment.comment|render_markup_comment }}
+      {% endautoescape %}
       {% endif %}
     </div>
 

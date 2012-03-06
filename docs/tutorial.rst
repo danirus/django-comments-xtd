@@ -30,6 +30,8 @@ Use git, pip or easy_install to check out Django-comments-xtd from Github_ or ge
 
     * Do ``easy_install django-comments-xtd``
 
+  4. Optionally, if you want to allow comments written in markup languages like Markdown or reStructuredText, install `django-markup <https://github.com/bartTC/django-markup>`_.
+
 
 .. _Github: http://github.com/danirus/django-comments-xtd
 .. _PyPI: http://pypi.python.org/
@@ -44,6 +46,8 @@ Configuration
 Configuring Django-comments-xtd comprehends the following steps:
 
 1. Add ``'django.contrib.comments'`` and ``'django_comments_xtd'`` to your ``INSTALLED_APPS`` setting.
+
+  * If you allow comments written in markup languages add ``django_markup`` to ``INSTALLED_APPS`` too.
 
 2. Add ``COMMENTS_XTD_CONFIRM_EMAIL = True`` to the settings file in order to require comment confirmation by email.
 

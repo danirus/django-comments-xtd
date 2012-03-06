@@ -4,11 +4,12 @@
 Templatetags
 ============
 
-Django-comments-xtd comes with three tags:
+Django-comments-xtd comes with three tags and one filter:
 
- * ``get_xtdcomment_count``
- * ``get_last_xtdcomments``
- * ``render_last_xtdcomments``
+ * Tag ``get_xtdcomment_count``
+ * Tag ``get_last_xtdcomments``
+ * Tag ``render_last_xtdcomments``
+ * Filter ``render_markup_comment``
 
 To use any of them in your templates you first need to load them::
 
@@ -16,8 +17,8 @@ To use any of them in your templates you first need to load them::
 
 
 
-``get_xtdcomment_count``
-========================
+Tag ``get_xtdcomment_count``
+============================
 
 Syntax::
 
@@ -38,8 +39,8 @@ Get the count of comments two models, ``Story`` and ``Quote``, have received and
     {% get_xtdcomment_count as comment_count for blog.story blog.quote %}
 
 
-``get_last_xtdcomments``
-========================
+Tag ``get_last_xtdcomments``
+============================
 
 Syntax::
 
@@ -62,8 +63,8 @@ Get the list of the last 10 comments two models, ``Story`` and ``Quote``, have r
     {% endif %}
 
 
-``render_last_xtdcomments``
-===========================
+Tag ``render_last_xtdcomments``
+===============================
 
 Syntax::
 
@@ -81,3 +82,31 @@ Example usage
 Render the list of the last 5 comments posted, either to the blog.story model or to the blog.quote model. See it in action in the *Multiple Demo Site*, in the *blog homepage*, template ``blog/homepage.html``::
 
     {% render_last_xtdcomments 5 for blog.story blog.quote %}
+
+
+Filter ``render_markup_comment``
+================================
+
+Syntax::
+
+    {{ comment.comment|render_markup_comment }}
+
+
+Renders a comment using a markup language specified in the first line of the comment.
+
+Example usage
+-------------
+
+A comment like::
+
+    comment = r'''#!markdown\n\rAn [example](http://url.com/ "Title")'''
+
+Would be rendered as a markdown text, producing the output::
+
+    <p><a href="http://url.com/" title="Title">example</a></p>
+
+Markup languages available are:
+
+ * `Markdown <http://daringfireball.net/projects/markdown/syntax>`_ (use ``#!markdown``)
+ * `reStructuredText <http://docutils.sourceforge.net/docs/user/rst/quickref.html>`_ (use ``#!restructuredtext``)
+ * Linebreaks (use ``#!linebreaks``)

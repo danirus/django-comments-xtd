@@ -17,7 +17,7 @@
             "is_active": true, 
             "is_superuser": true, 
             "is_staff": true, 
-            "last_login": "2012-01-16 13:30:15", 
+            "last_login": "2012-03-06 13:23:41", 
             "groups": [], 
             "user_permissions": [], 
             "password": "sha1$09cd7$f12e301db603377efd25720531b21d021fa6423a", 
@@ -271,7 +271,7 @@
         "pk": 5, 
         "model": "comments.comment", 
         "fields": {
-            "comment": "Oh! Really?!?", 
+            "comment": "#!restructuredtext\r\n\r\nA fibonacci generator in Python, taken from `LiteratePrograms <http://en.literateprograms.org/Fibonacci_numbers_%28Python%29>`_::\r\n\r\n    def fib():\r\n        a, b = 0, 1\r\n        while 1:\r\n            yield a\r\n            a, b = b, a + b\r\n\r\nThen you can use it::\r\n\r\n    >>> a = fib()\r\n    >>> a.next()\r\n    0\r\n    >>> for i in range(10):\r\n    ...     print a.next(),\r\n    ...\r\n    1 1 2 3 5 8 13 21 34 55\r\n\r\nThis comment has been formatted in reStructuredText. To get a comment interpreted in markup language start the comment with the line: `#!<markup-lang>` being `<markup-lang>` any of the following:\r\n\r\n* markdown\r\n* restructuredtext\r\n* linebreaks", 
             "user_url": "", 
             "submit_date": "2012-01-13 21:01:30", 
             "ip_address": "127.0.0.1", 
@@ -343,7 +343,7 @@
         "pk": 6, 
         "model": "comments.comment", 
         "fields": {
-            "comment": "It's not funny, Alice. Not really.", 
+            "comment": "#!linebreaks\r\nThis comments starts with the line:\r\n#!linebreaks\r\n\r\nThe user writes such a first line to indicate how she wants to interpret the message.\r\nThis line is a new.\r\nAnd this one too.\r\nThis is the last one.", 
             "user_url": "", 
             "submit_date": "2012-01-13 21:36:56", 
             "ip_address": "127.0.0.1", 

@@ -5,13 +5,13 @@
 
 {% block content %}
 <H3>{{ object.title }}</H3>
-<div style="padding:0 20px; font-size:.8em; font-style:italic">Published {{ object.publish }}</div>
+<div style="padding:0 20px; font-size:.8em; font-style:italic">{{ object.publish }}</div>
 <div style="margin:10px 0; padding:0 150px 0 20px">
   <blockquote style="font-style:italic">
     {{ object.quote|linebreaks }}
   </blockquote>
   <p style="padding: 0 10em;text-align:right">
-    {{ object.author }} <span style="font-size:0.8em">[<a href="{{ object.url_source }}">source</a>]</span>
+    {{ object.author }} <span style="font-size:0.8em">[<a href="{{ object.url_source }}">{% trans "source" %}</a>]</span>
   </p>
 </div>
 
@@ -29,7 +29,7 @@
   </div>
 
   {% if object.allow_comments %}
-  <H4 style="margin-top:30px; text-align:center">your comment</H4>
+  <H4 style="margin-top:30px; text-align:center">{% trans "your comment" %}</H4>
   <div id="comment-form" style="width:400px; margin:0 auto">
     {% render_comment_form for object %}
   </div>

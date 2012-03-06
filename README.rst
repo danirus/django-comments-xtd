@@ -1,14 +1,18 @@
 Django-comments-xtd
 ===================
 
-|stillmaintained|  by Daniel Rus Morales <http://danir.us/>
+By Daniel Rus Morales <http://danir.us/>
 
 * http://pypi.python.org/pypi/django-comments-xtd/
 * http://github.com/danirus/django-comments-xtd/
 
-.. |stillmaintained| image:: http://stillmaintained.com/danirus/django-comments-xtd.png
+A reusable Django app that extends the built-in Django's Comments Framework with:
 
-A reusable Django app that extends the built-in Django's Comments Framework with following up notifications and comments that only hits the database after users confirm them by email.
+1. Optional notification of follow-up comments via email
+2. Comment confirmation via email when users are not authenticated
+3. Comments hit the database only when have been confirmed
+4. Template tags to list/render the last N comments posted to any list of models
+5. Comments formatted in Markdown, reStructuredText, linebreaks or plain text
 
 Read the documentation at:
 

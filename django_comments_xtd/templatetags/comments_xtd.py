@@ -62,13 +62,23 @@ class BaseLastXtdCommentsNode(Node):
 
     def __init__(self, count, content_types, template_path=None):
         """Class method to parse get_xtdcomment_list and return a Node."""
-        self.qs = XtdComment.objects.for_content_types(content_types)[:count]
+        try:
+            self.count = int(count)
+        except:
+            self.count = Variable(count)
+
+        self.content_types = content_types
         self.template_path = template_path
 
 
 class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
 
     def render(self, context):
+        if not isinstance(self.count, int):
+            self.count = int( self.count.resolve(context) )
+
+        self.qs = XtdComment.objects.for_content_types(self.content_types)[:self.count]
+
         strlist = []
         for xtd_comment in self.qs:
             if self.template_path:
@@ -95,6 +105,10 @@ class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
         self.as_varname = as_varname
 
     def render(self, context):
+        if not isinstance(self.count, int):
+            self.count = int( self.count.resolve(context) )
+
+        self.qs = XtdComment.objects.for_content_types(self.content_types)[:self.count]
         context[self.as_varname] = self.qs
         return ''
         
@@ -124,7 +138,7 @@ def render_last_xtdcomments(parser, token):
 
     Syntax::
 
-        {% render_last_xtdcomments [N] for [app].[model] [[app].[model]] %}
+        {% render_last_xtdcomments [N] for [app].[model] [[app].[model]] using [template] %}
 
     Example usage::
 
@@ -134,7 +148,7 @@ def render_last_xtdcomments(parser, token):
     tokens = token.contents.split()
 
     try:
-        count = int(tokens[1])
+        count = tokens[1]
     except ValueError:
         raise TemplateSyntaxError(
             "Second argument in %r tag must be a integer" % tokens[0])

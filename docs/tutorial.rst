@@ -56,13 +56,19 @@ Configuring Django-comments-xtd comprehends the following steps:
 3. Create a ``comments`` directory in your templates directory and copy the default templates from the Django Comments Framework that you want to customise. Maybe the following:
 
   * ``comments/list.html`` used by templatetag ``render_comments_list``
+
   * ``comments/form.html`` used by templatetag ``render_comment_form``
+
   * ``comments/preview.html`` used to preview the comment or when there are form errors
+
   * ``comments/posted.html`` rendered after comment is sent
 
 4. To customise how templatetag ``render_last_xtdcomments`` renders comments, copy the template file ``django_comment_xtd/comment.html`` to any of the following targets in your ``templates`` directory:
+
   * ``django_comment_xtd/<app>/<model>/comment.html`` to customise them for the given ``<app>.<model>``
+
   * ``django_comment_xtd/<app>/comment.html`` to customise them for all ``<app>`` models
+
   * ``django_comment_xtd/comment.html`` to customise all your site comments at once
 
 5. Run ``python manage.py syncdb`` to create the ``django_comments_xtd_xtdcomment`` table.

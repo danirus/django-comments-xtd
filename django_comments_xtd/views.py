@@ -7,10 +7,10 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render_to_response
 from django.template import loader, Context, RequestContext
 from django.utils.translation import ugettext_lazy as _
-from django.core.mail import send_mail, EmailMultiAlternatives
 
 from django_comments_xtd import signals, signed
 from django_comments_xtd.models import XtdComment, TmpXtdComment
+from django_comments_xtd.utils import send_mail
 
 
 COMMENTS_XTD_SALT = getattr(settings, 'COMMENTS_XTD_SALT', "")
@@ -23,32 +23,20 @@ def send_email_confirmation_request(comment, target, key, text_template="django_
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
     confirmation_url = reverse("comments-xtd-confirm", args=[key])
-    
+    message_context = Context({ 'comment': comment, 
+                                'content_object': target, 
+                                'confirmation_url': confirmation_url,
+                                'contact': settings.DEFAULT_FROM_EMAIL,
+                                'site': Site.objects.get_current() })
     # prepare text message
     text_message_template = loader.get_template(text_template)
-    text_message_context = Context({ 'comment': comment, 
-                                'content_object': target, 
-                                'confirmation_url': confirmation_url,
-                                'contact': settings.DEFAULT_FROM_EMAIL,
-                                'site': Site.objects.get_current() })
-    text_message = text_message_template.render(text_message_context)
-
+    text_message = text_message_template.render(message_context)
     # prepare html message
     html_message_template = loader.get_template(html_template)
-    html_message_context = Context({ 'comment': comment, 
-                                'content_object': target, 
-                                'confirmation_url': confirmation_url,
-                                'contact': settings.DEFAULT_FROM_EMAIL,
-                                'site': Site.objects.get_current() })
-    html_message = html_message_template.render(html_message_context)
+    html_message = html_message_template.render(message_context)
 
-    # create message
-    message = EmailMultiAlternatives(subject, text_message, 
-                                     settings.DEFAULT_FROM_EMAIL,
-                                     [ comment.user_email, ])
-    message.attach_alternative(html_message, "text/html")
-    message.send()
-
+    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL,
+              [ comment.user_email, ], html=html_message)
 
 def _comment_exists(comment):
     """
@@ -149,15 +137,15 @@ def notify_comment_followers(comment):
                              comment.content_type.model)
     target = model._default_manager.get(pk=comment.object_pk)
     subject = _("new comment posted")
-    message_template = loader.get_template(
-        "django_comments_xtd/email_followup_comment.txt")
+    text_message_template = loader.get_template("django_comments_xtd/email_followup_comment.txt")
+    html_message_template = loader.get_template("django_comments_xtd/email_followup_comment.html")
 
     for email, name in followers.iteritems():
         message_context = Context({ 'user_name': name,
                                     'comment': comment, 
                                     'content_object': target, 
                                     'site': Site.objects.get_current() })
-        message = message_template.render(message_context)
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, 
-                  [ email, ])
+        text_message = text_message_template.render(message_context)
+        html_message = html_message_template.render(message_context)
+        send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [ email, ], html=html_message)
     

@@ -1,5 +1,7 @@
 import re
+import threading
 
+from django.conf import settings
 from django.contrib import comments
 from django.contrib.comments.signals import comment_was_posted
 from django.contrib.sites.models import Site
@@ -18,6 +20,9 @@ from django_comments_xtd.views import on_comment_was_posted, COMMENTS_XTD_SALT
 def dummy_view(request, *args, **kwargs):
     return HttpResponse("Got it")
 
+def enumerate_email_threads():
+    return [t for t in threading.enumerate() if t.name == settings.COMMENTS_XTD_EMAIL_THREAD_NAME]
+
 class OnCommentWasPostedTestCase(TestCase):
 
     def setUp(self):
@@ -32,6 +37,8 @@ class OnCommentWasPostedTestCase(TestCase):
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data, follow=True)
+        while len(enumerate_email_threads()):
+            pass
 
     def test_post_as_authenticated_user(self):
         auth_user = User.objects.create_user("bob", "bob@example.com", "pwd")
@@ -60,6 +67,8 @@ class ConfirmCommentTestCase(TestCase):
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data)
+        while len(enumerate_email_threads()):
+            pass
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
                              mail.outbox[0].body).group("key")
 
@@ -124,10 +133,14 @@ class ConfirmCommentTestCase(TestCase):
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data)
+        while len(enumerate_email_threads()):
+            pass        
         self.assertEqual(len(mail.outbox), 2)
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
                              mail.outbox[1].body).group("key")
         self.get_confirm_comment_url(self.key)
+        while len(enumerate_email_threads()):
+            pass        
         self.assertEqual(len(mail.outbox), 3)
         self.assert_(mail.outbox[2].to == ["bob@example.com"])
         self.assert_(mail.outbox[2].body.find("There is a new comment following up yours.") > -1)

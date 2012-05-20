@@ -7,7 +7,7 @@ def get_model():
 def get_form():
     return XtdCommentForm
 
-VERSION = (1, 0, 0, 'a', 4) # following PEP 386
+VERSION = (1, 0, 0, 'a', 5) # following PEP 386
 
 def get_version():
     version = '%s.%s' % (VERSION[0], VERSION[1])

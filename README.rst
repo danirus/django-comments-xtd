@@ -13,6 +13,7 @@ A reusable Django app that extends the built-in Django's Comments Framework with
 3. Comments hit the database only when have been confirmed
 4. Template tags to list/render the last N comments posted to any list of models
 5. Comments formatted in Markdown, reStructuredText, linebreaks or plain text
+6. Threaded emails to avoid response blocking
 
 Read the documentation at:
 

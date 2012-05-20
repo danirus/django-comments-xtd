@@ -3,7 +3,7 @@
 import re
 
 from django.contrib.contenttypes.models import ContentType
-from django.template import (Library, Node, Template, TemplateSyntaxError, 
+from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader, RequestContext)
 from django.utils.safestring import mark_safe
 

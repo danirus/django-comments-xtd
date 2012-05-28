@@ -15,13 +15,12 @@ from django_comments_xtd import signals, signed
 from django_comments_xtd.models import XtdComment, TmpXtdComment
 from django_comments_xtd.tests.models import Article
 from django_comments_xtd.views import on_comment_was_posted, COMMENTS_XTD_SALT
+from django_comments_xtd.utils import mail_sent_queue
 
 
 def dummy_view(request, *args, **kwargs):
     return HttpResponse("Got it")
 
-def enumerate_email_threads():
-    return [t for t in threading.enumerate() if t.name == settings.COMMENTS_XTD_EMAIL_THREAD_NAME]
 
 class OnCommentWasPostedTestCase(TestCase):
 
@@ -31,20 +30,20 @@ class OnCommentWasPostedTestCase(TestCase):
                                               body="What I did on September...")
         self.form = comments.get_form()(self.article)
         
-    def post_valid_data(self):
+    def post_valid_data(self, wait_mail=True):
         data = {"name":"Bob", "email":"bob@example.com", "followup": True, 
                 "comment":"Es war einmal iene kleine..."}
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data, follow=True)
-        while len(enumerate_email_threads()):
+        if wait_mail and mail_sent_queue.get(block=True):
             pass
 
     def test_post_as_authenticated_user(self):
         auth_user = User.objects.create_user("bob", "bob@example.com", "pwd")
         self.client.login(username="bob", password="pwd")
         self.assertEqual(len(mail.outbox), 0)
-        self.post_valid_data()
+        self.post_valid_data(wait_mail=False)
         # no confirmation email sent as user is authenticated
         self.assertEqual(len(mail.outbox), 0) 
 
@@ -67,7 +66,7 @@ class ConfirmCommentTestCase(TestCase):
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data)
-        while len(enumerate_email_threads()):
+        if mail_sent_queue.get(block=True):
             pass
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
                              mail.outbox[0].body).group("key")
@@ -133,14 +132,14 @@ class ConfirmCommentTestCase(TestCase):
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data)
-        while len(enumerate_email_threads()):
-            pass        
+        if mail_sent_queue.get(block=True):
+            pass
         self.assertEqual(len(mail.outbox), 2)
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
                              mail.outbox[1].body).group("key")
         self.get_confirm_comment_url(self.key)
-        while len(enumerate_email_threads()):
-            pass        
+        if mail_sent_queue.get(block=True):
+            pass
         self.assertEqual(len(mail.outbox), 3)
         self.assert_(mail.outbox[2].to == ["bob@example.com"])
         self.assert_(mail.outbox[2].body.find("There is a new comment following up yours.") > -1)

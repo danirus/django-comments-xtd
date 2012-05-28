@@ -1,13 +1,15 @@
 # borrowed from Selwin Ong:
 # http://ui.co.id/blog/asynchronous-send_mail-in-django
 
+import Queue
 import threading
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
 
-thread_name = getattr(settings, 'INVITEME_EMAIL_THREAD_NAME', 'email-thread')
+mail_sent_queue = Queue.Queue()
+
 
 class EmailThread(threading.Thread):
     def __init__(self, subject, body, from_email, recipient_list, fail_silently, html):
@@ -17,13 +19,17 @@ class EmailThread(threading.Thread):
         self.from_email = from_email
         self.fail_silently = fail_silently
         self.html = html
-        threading.Thread.__init__(self, name=thread_name)
+        threading.Thread.__init__(self)
 
-    def run (self):
+    def run(self):
         msg = EmailMultiAlternatives(self.subject, self.body, self.from_email, self.recipient_list)
         if self.html:
             msg.attach_alternative(self.html, "text/html")
         msg.send(self.fail_silently)
+        mail_sent_queue.put(True)
+            
 
-def send_mail(subject, body, from_email, recipient_list, fail_silently=False, html=None, *args, **kwargs):
+def send_mail(subject, body, from_email, recipient_list, fail_silently=False, html=None):
     EmailThread(subject, body, from_email, recipient_list, fail_silently, html).start()
+
+

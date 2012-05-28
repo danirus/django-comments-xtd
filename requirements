@@ -1,2 +1,3 @@
+docutils
 Markdown
 -e git+git://github.com/bartTC/django-markup.git#egg=django-markup

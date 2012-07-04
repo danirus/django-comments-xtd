@@ -92,7 +92,20 @@ def sent(request):
     except (TypeError, ValueError, XtdComment.DoesNotExist):
         return render_to_response("comments/posted.html", 
                                   context_instance=RequestContext(request))
-    return redirect(comment)
+    else:
+        if request.is_ajax() and comment.user and comment.user.is_authenticated():
+            template_arg = [
+                "django_comments_xtd/%s/%s/comment.html" % (
+                    comment.content_type.app_label, 
+                    comment.content_type.model),
+                "django_comments_xtd/%s/comment.html" % (
+                    comment.content_type.app_label,),
+                "django_comments_xtd/comment.html"
+            ]
+            return render_to_response(template_arg, {"comment": comment},
+                                      context_instance=RequestContext(request))
+        else:
+            return redirect(comment)
 
 
 def confirm(request, key, template_discarded="django_comments_xtd/discarded.html"):

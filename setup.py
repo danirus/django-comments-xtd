@@ -11,6 +11,7 @@ setup(
     name = "django-comments-xtd",
     version = "1.0a5",
     packages = find_packages(),
+    include_package_data = True,
     license = "MIT",
     description = "Django Comments Framework extension app with follow up notifications and email confirmations",
     long_description = "A reusable Django app that extends the built-in Django's Comments Framework with following up notifications and comments that only hits the database after users confirm them by email.",

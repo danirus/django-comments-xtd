@@ -5,7 +5,7 @@ from django.contrib.comments.feeds import LatestCommentFeed
 
 admin.autodiscover()
 
-urlpatterns = patterns('views',
+urlpatterns = patterns('multiple.views',
     url(r'^admin/',           include(admin.site.urls)),
     url(r'^blog/',            include('multiple.blog.urls')),
     url(r'^projects/',        include('multiple.projects.urls')),

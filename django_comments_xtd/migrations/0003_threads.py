@@ -12,7 +12,7 @@ class Migration(DataMigration):
         for comment in orm.XtdComment.objects.all():
             comment.thread_id = comment.id
             comment.parent_id = comment.id
-            comment.level = 1
+            comment.level = 0
             comment.order = 1
             comment.save()
 

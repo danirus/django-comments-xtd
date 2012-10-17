@@ -1,6 +1,11 @@
 Django-comments-xtd
 ===================
 
+|TravisCI|_
+
+.. |TravisCI| image:: https://travis-ci.org/danirus/django-comments-xtd.png
+.. _TravisCI: https://travis-ci.org/danirus/django-comments-xtd
+
 By Daniel Rus Morales <http://danir.us/>
 
 * http://pypi.python.org/pypi/django-comments-xtd/

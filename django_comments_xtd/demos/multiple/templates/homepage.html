@@ -4,17 +4,36 @@
 {% block header %}{{ block.super }}Homepage{% endblock %}
 
 {% block content %}
-<p>{% trans "The demo site has a Blog App and a Projects App. The Blog App contains two models: Story and Quote, each of which accepts comments. The Projects App contains two models too: Project and Release. Only the Release model has comments." %}</p>
-<p>{% trans "Unlike the simple demo site, in the multiple demo site several models have comments associated. The blog homepage shows the last 5 comments posted either to stories or quotes, and a link to the paginated list of comments posted to stories or quotes. Comments for instances of the Release model are listed only in release detail pages." %}</p>
-<p>{% trans "The underlaying differences between the simple and multiple demo site are:" %}</p>
-<ul>
-  <li>{% trans "The use of the templatetag module <code>comments_xtd.py</code> and its tags <code>get_xtdcomment_count</code> and <code>render_last_xtdcomments</code>" %}</li>
-  <li>{% trans "The use of the <code>XtdCommentManager</code> and its method <code>for_app_models</code>, that allow retrieving comments for a given list of app.model pairs." %}</li>
-</ul>
-
-<ul>
-  <li><a href="{% url blog-index %}">{% trans "Go to the Blog" %}</a></li>
-  <li><a href="{% url projects-index %}">{% trans "Go to Projects" %}</a></li>
-</ul>
+<p>{% trans "This demo site using django-comments-xtd features" %}:
+  <ol>
+    <li>{% blocktrans %}A Blog App with two models: <em>Story</em> and <em>Quote</em>, each of which accepts comments up to a maximum threading level of 3{% endblocktrans %}</li>
+    <li>{% blocktrans %}A Projects App with two models: <em>Project</em> and <em>Release</em>. Only the Release model has comments. And comments can be nested up to a maximum level of 1.{% endblocktrans %}</li>
+    <li>{% blocktrans %}Settings for comment thread levels establish a default maximum thread level for comments posted to every app in the project, and then define a specific maximum for the <em>app.model</em> <code>projects.release</code>{% endblocktrans %}:
+      <pre>
+	COMMENTS_XTD_MAX_THREAD_LEVEL = 3
+	COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {'projects.release': 1}
+      </pre>
+    </li>
+    <li>{% blocktrans %}It uses the template tag <em>render_markup_comment</em> to render comments content. So you can use line breaks, markdown or reStructuredText to format comments{% endblocktrans %}. To use special formatting, start the comment with the line: <code>#!&lt;markup-lang&gt;</code> being <code>&lt;markup-lang&gt;</code> any of the following:
+      <ul>
+	<li>markdown</li>
+	<li>restructuredtext</li>
+	<li>linebreaks</li>
+      </ul>
+    </li>
+    <li>{% trans "Comments allow follow up notifications." %}</li>
+    <li>{% trans "Comments have to be confirmed by email (unless COMMENTS_XTD_CONFIRM_EMAIL is set to False)." %}</li>
+    <li>{% blocktrans %}Unlike the two simple demo sites, several models in this demo receive comments. So it uses two new templatetag, <em>get_xtdcomment_count</em> and<em>render_last_xtdcomments</em>, to count and produce a feed of comments posted to blog models{% endblocktrans %}:
+      <pre>
+	&#123;&#37;&nbsp;get_xtdcomment_count as comment_count for blog.story blog.quote&nbsp;&#37;&#125;
+	&#123;&#37;&nbsp;render_last_xtdcomments 5 for blog.story blog.quote&nbsp;&#37;&#125;
+      </pre>
+    </li>
+  </ol>
+</p>
+<p style="font-size:1.4em">
+  <a href="{% url blog-index %}">{% trans "Visit the Blog" %}</a><br/>
+  <a href="{% url projects-index %}">{% trans "Visit the Projects page" %}</a>
+</p>
 <p style="padding: 5px 15px; background:#ddd; font-weight:bold; text-align:right">django-comments-xtd</p>
 {% endblock %}

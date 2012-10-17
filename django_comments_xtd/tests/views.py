@@ -1,20 +1,23 @@
+from datetime import datetime
 import re
 import threading
 
 from django.conf import settings
 from django.contrib import comments
 from django.contrib.comments.signals import comment_was_posted
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core import mail
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.http import HttpResponse
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from django_comments_xtd import signals, signed
 from django_comments_xtd.models import XtdComment, TmpXtdComment
 from django_comments_xtd.tests.models import Article
-from django_comments_xtd.views import on_comment_was_posted, COMMENTS_XTD_SALT
+from django_comments_xtd.views import on_comment_was_posted, SALT
 from django_comments_xtd.utils import mail_sent_queue
 
 
@@ -23,7 +26,6 @@ def dummy_view(request, *args, **kwargs):
 
 
 class OnCommentWasPostedTestCase(TestCase):
-
     def setUp(self):
         self.article = Article.objects.create(title="September", 
                                               slug="september",
@@ -32,6 +34,7 @@ class OnCommentWasPostedTestCase(TestCase):
         
     def post_valid_data(self, wait_mail=True):
         data = {"name":"Bob", "email":"bob@example.com", "followup": True, 
+                "reply_to": 0, "level": 1, "order": 1,
                 "comment":"Es war einmal iene kleine..."}
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
@@ -55,14 +58,14 @@ class OnCommentWasPostedTestCase(TestCase):
 
 
 class ConfirmCommentTestCase(TestCase):
-
     def setUp(self):
         self.article = Article.objects.create(title="September", 
                                               slug="september",
                                               body="What I did on September...")
         self.form = comments.get_form()(self.article)
-        data = {"name":"Bob", "email":"bob@example.com", "followup": True, 
-                "comment":"Es war einmal iene kleine..." }
+        data = {"name": "Bob", "email": "bob@example.com", "followup": True, 
+                "reply_to": 0, "level": 1, "order": 1,
+                "comment": "Es war einmal iene kleine..." }
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data)
@@ -106,7 +109,7 @@ class ConfirmCommentTestCase(TestCase):
         # and redirects to the article detail page
         Site.objects.get_current().domain = "testserver" # django bug #7743
         self.get_confirm_comment_url(self.key)
-        data = signed.loads(self.key, extra_key=COMMENTS_XTD_SALT)
+        data = signed.loads(self.key, extra_key=SALT)
         try:
             comment = XtdComment.objects.get(
                 content_type=data["content_type"], 
@@ -128,6 +131,7 @@ class ConfirmCommentTestCase(TestCase):
         # send 2nd comment
         self.form = comments.get_form()(self.article)
         data = {"name":"Alice", "email":"alice@example.com", "followup": True, 
+                "reply_to": 0, "level": 1, "order": 1,
                 "comment":"Es war einmal iene kleine..." }
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
@@ -143,3 +147,51 @@ class ConfirmCommentTestCase(TestCase):
         self.assertEqual(len(mail.outbox), 3)
         self.assert_(mail.outbox[2].to == ["bob@example.com"])
         self.assert_(mail.outbox[2].body.find("There is a new comment following up yours.") > -1)
+
+
+class ReplyNoCommentTestCase(TestCase):
+    def test_reply_non_existing_comment_raises_404(self):
+        response = self.client.get(reverse("comments-xtd-reply", 
+                                           kwargs={"cid": 1}))
+        self.assertContains(response, "404", status_code=404)
+        
+    
+class ReplyCommentTestCase(TestCase):
+    def setUp(self):
+        article = Article.objects.create(title="September", 
+                                         slug="september",
+                                         body="What I did on September...")
+        article_ct = ContentType.objects.get(app_label="tests", model="article")
+        site = Site.objects.get(pk=1)
+        
+        # post Comment 1 to article, level 0
+        XtdComment.objects.create(content_type   = article_ct, 
+                                  object_pk      = article.id,
+                                  content_object = article,
+                                  site           = site, 
+                                  comment        ="comment 1 to article",
+                                  submit_date    = datetime.now())
+
+        # post Comment 2 to article, level 1
+        XtdComment.objects.create(content_type   = article_ct, 
+                                  object_pk      = article.id,
+                                  content_object = article,
+                                  site           = site, 
+                                  comment        ="comment 1 to comment 1",
+                                  submit_date    = datetime.now(),
+                                  parent_id      = 1)
+
+        # post Comment 3 to article, level 2 (max according to test settings)
+        XtdComment.objects.create(content_type   = article_ct, 
+                                  object_pk      = article.id,
+                                  content_object = article,
+                                  site           = site, 
+                                  comment        ="comment 1 to comment 1",
+                                  submit_date    = datetime.now(),
+                                  parent_id      = 2)
+
+    def test_reply_renders_max_thread_level_template(self):
+        response = self.client.get(reverse("comments-xtd-reply", 
+                                                kwargs={"cid": 3}))
+        self.assertTemplateUsed(response, 
+                                "django_comments_xtd/max_thread_level.html")

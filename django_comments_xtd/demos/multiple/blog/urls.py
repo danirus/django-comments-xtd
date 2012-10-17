@@ -4,7 +4,7 @@ from django.views.generic import ListView, DateDetailView, DetailView
 from django_comments_xtd.models import XtdComment
 
 from multiple.blog.models import Story, Quote
-from multiple.blog.views import homepage
+from multiple.blog.views import homepage, StoryDetailView, QuoteDetailView
 
 urlpatterns = patterns('',
     url(r'^$', homepage, name='blog-index'),
@@ -18,12 +18,11 @@ urlpatterns = patterns('',
         name='blog-quote-index'),
 
     url(r'^story/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<slug>[-\w]+)/$',
-        DateDetailView.as_view(model=Story, date_field = "publish",
-                               month_format = "%m"),
+        StoryDetailView.as_view(),
         name='blog-story-detail'),
 
     url(r'^quote/(?P<slug>[-\w]+)/$', 
-        DetailView.as_view(model=Quote, slug_field="slug"),
+        QuoteDetailView.as_view(),
         name='blog-quote-detail'),
 
     # list all comments using pagination, newer first

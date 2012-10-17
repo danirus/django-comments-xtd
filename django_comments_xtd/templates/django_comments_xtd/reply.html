@@ -1,0 +1,15 @@
+{% load i18n comments %}
+<div style="padding: 1px 10px; background: #eee">
+  <H2>{% trans "Reply to" %}:</H2>
+  <dl id="parent-comment" style="background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 4px">
+    <dt id="c{{ comment.id }}">
+      {{ comment.submit_date }}&nbsp;-&nbsp;{{ comment.name }}
+    </dt>
+    <dd>
+      <p>{{ comment.comment }}</p>
+    </dd>
+  </dl>
+  <div id="comment-form">
+    {% include "comments/form.html" %}
+  </div>
+</div>

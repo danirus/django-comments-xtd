@@ -4,9 +4,20 @@
 {% block header %}{{ block.super }}Homepage{% endblock %}
 
 {% block content %}
-<p>{% trans "The simple demo site has an Articles App, which contains a model <code>Article</code> and accepts comments." %}</p>
-<ul>
-  <li><a href="{% url articles-index %}">{% trans "Article list" %}</a></li>
-</ul>
+<p>{% trans "The simplest demo site using django-comments-xtd, features" %}:
+  <ol>
+    <li>{% trans "An Articles App, with a model <code>Article</code> whose instances accept comments." %}</li> 
+    <li>{% trans "COMMENTS_XTD_MAX_THREAD_LEVEL is set to 0, so no threaded comments." %}</li>
+    <li>{% trans "Comments have to be confirmed by email (unless COMMENTS_XTD_CONFIRM_EMAIL is set to False)." %}</li>
+    <li>{% blocktrans %}It uses the template tag <em>render_markup_comment</em> to render comments content. So you can use line breaks, markdown or reStructuredText to format comments{% endblocktrans %}. To use special formatting, start the comment with the line: <code>#!&lt;markup-lang&gt;</code> being <code>&lt;markup-lang&gt;</code> any of the following:
+      <ul>
+	<li>markdown</li>
+	<li>restructuredtext</li>
+	<li>linebreaks</li>
+      </ul>
+    </li>
+  </ol>
+</p>
+<p style="font-size:1.4em"><a href="{% url articles-index %}">{% trans "Article list" %}</a></p>
 <p style="padding: 5px 15px; background:#ddd; font-weight:bold; text-align:right">django-comments-xtd</p>
 {% endblock %}

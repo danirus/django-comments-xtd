@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n comments %}
+
+{% block header %}{{ block.super }}{% trans "Article List" %}{% endblock %}
+
+{% block content %}
+{% if object_list %}
+<UL>
+  {% for article in object_list %}
+  {% get_comment_count for article as comment_count %}
+  <li>
+    <a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+    <span style="font-size:0.8em">{{ article.publish|date:"d-F-Y" }}</span>
+    {% if comment_count %}
+    <span style="font-size:0.8em">- {{ comment_count }} comment{{ comment_count|pluralize }}</span>
+    {% endif %}
+  </li>
+{% endfor %}
+</UL>
+{% endif %}
+<p style="padding: 5px 15px; background:#ddd">
+  <a href="{% url homepage %}">{% trans "Home" %}</a>
+</p>
+{% endblock %}

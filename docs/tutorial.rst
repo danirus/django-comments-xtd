@@ -4,15 +4,15 @@
 Tutorial
 ========
 
-Django-comments-xtd is a reusable app that relies on its own code and doesn't require any other third party app, just the built-in `Django Comments Framework <https://docs.djangoproject.com/en/1.3/ref/contrib/comments/>`_.
+Django-comments-xtd is a reusable app that extends the built-in `Django Comments Framework <https://docs.djangoproject.com/en/1.4/ref/contrib/comments/>`_.
 
+.. index::
+   single: Installation
 
 Installation
 ============
 
-Installing Django-comments-xtd is as simple as checking out the source and adding it to your project or ``PYTHONPATH``.
-
-Use git, pip or easy_install to check out Django-comments-xtd from Github_ or get a release from PyPI_:
+Check out the code and add it to your project or ``PYTHONPATH``. Use git, pip or easy_install to check out Django-comments-xtd from Github_ or get a release from PyPI_:
 
   1. Use **git** to clone the repository, and then install the package (read more about git_):
 
@@ -30,7 +30,7 @@ Use git, pip or easy_install to check out Django-comments-xtd from Github_ or ge
 
     * Do ``easy_install django-comments-xtd``
 
-  4. Optionally, if you want to allow comments written in markup languages like Markdown or reStructuredText, install `django-markup <https://github.com/bartTC/django-markup>`_.
+  4. Optionally, if you want to allow comments written in markup languages like :index:`Markdown` or :index:`reStructuredText`, install `django-markup <https://github.com/bartTC/django-markup>`_.
 
 
 .. _Github: http://github.com/danirus/django-comments-xtd
@@ -39,6 +39,9 @@ Use git, pip or easy_install to check out Django-comments-xtd from Github_ or ge
 .. _easy_install: http://packages.python.org/distribute/easy_install.html
 .. _git: http://git-scm.com/
 
+
+.. index::
+   single: Configuration
 
 Configuration
 =============
@@ -75,6 +78,9 @@ Configuring Django-comments-xtd comprehends the following steps:
 
 Optionally you can add an extra setting to control Django-comments-xtd behaviour (see :doc:`settings`), but it has a sane default.
 
+
+.. index::
+   single: Workflow
 
 .. _workflow-label:
 
@@ -126,6 +132,11 @@ Workflow described in 4 actions:
  #. An email notification is sent to previous comments followers telling them about the new comment following up theirs.
 
 
+.. index::
+   single: secure; token
+   pair: Confirmation; URL
+   pair: Secure; Token
+
 .. _the-secure-token-label:
 
 Creating the secure token for the confirmation URL
@@ -156,14 +167,15 @@ There are two components in dump's output ``UydoZWxsbycKcDAKLg.QLtjWHYe7udYuZeQy
 Calling signed.loads(s) checks the signature BEFORE unpickling the object -this protects against malformed pickle attacks. If the signature fails, a ValueError subclass is raised (actually a BadSignature).
 
 
+.. index::
+   single: Signal; Receiver
+
 .. _signal-and-receiver-label:
 
 Signal and receiver
 ===================
 
-Django-comments-xtd sends a signal in addition to the `signals sent by the Django Comments Framework <https://docs.djangoproject.com/en/1.3/ref/contrib/comments/signals/>`_. 
-
-Django-comments-xtd allows the user to receive the signal:
+In addition to the `signals sent by the Django Comments Framework <https://docs.djangoproject.com/en/1.3/ref/contrib/comments/signals/>`_, django-comments-xtd sends the following signal:
 
  * **confirmation_received**: Sent when the user clicks on the confirmation link and before the ``XtdComment`` instance is created in the database.
 
@@ -201,3 +213,43 @@ Extending the demo site with the following code would do the job::
 
 Try the demo site again and see that the `django_comments_xtd/discarded.html` template is rendered after clicking on the confirmation URL.
 
+
+.. index::
+   single: Level
+   pair: Thread; Level
+   pair: Maximum; Thread
+   triple: Maximum; Thread; Level
+
+Maximum Thread Level
+====================
+
+Nested comments are disabled by default, to enable them use the following settings:
+
+ * ``COMMENTS_XTD_MAX_THREAD_LEVEL``: an integer value
+ * ``COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL``: a dictionary
+
+Django-comments-xtd inherits the flexibility of the built-in `Django Comments Framework <https://docs.djangoproject.com/en/1.4/ref/contrib/comments/>`_, so that developers can plug it to support comments on as many models as they want in their projects. It is as suitable for one model based project, like comments posted to stories in a simple blog, as for a project with multiple applications and models.
+
+The configuration of the maximum thread level on a simple project is done by declaring the ``COMMENTS_XTD_MAX_THREAD_LEVEL`` in the ``settings.py`` file::
+
+    COMMENTS_XTD_MAX_THREAD_LEVEL = 2
+
+Comments then could be nested up to level 2::
+
+    <In an instance detail page that allows comments>
+
+    First comment (level 0)
+      |-- Comment to First comment (level 1)
+        |-- Comment to Comment to First comment (level 2)
+
+Comments posted to instances of every model in the project will allow up to level 2 of threading.
+
+On a project that allows users posting comments to instances of different models, the developer may want to declare a maximum thread level per ``app.model`` basis. For example, on an imaginary blog project with stories, quotes, diary entries and book/movie reviews, the developer might want to define a default project wide maximum thread level of 1 for any model and an specific maximum level of 5 for stories and quotes::
+
+    COMMENTS_XTD_MAX_THREAD_LEVEL = 1
+    COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
+        'blog.story': 5,
+	'blog.quote': 5,
+    }
+
+So that ``blog.review`` and ``blog.diaryentry`` instances would support comments nested up to level 1, while ``blog.story`` and ``blog.quote`` instances would allow comments nested up to level 5.

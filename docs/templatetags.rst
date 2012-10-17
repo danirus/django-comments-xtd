@@ -1,8 +1,11 @@
 .. _ref-templatetags:
 
-============
-Templatetags
-============
+.. index::
+   pair: Filters; Templatetags
+
+=========================
+Filters and Template Tags
+=========================
 
 Django-comments-xtd comes with three tags and one filter:
 
@@ -16,11 +19,14 @@ To use any of them in your templates you first need to load them::
     {% load comments_xtd %}
 
 
+.. index::
+   single: get_xtdcomment_count
+   pair: tag; get_xtdcomment_count
 
-Tag ``get_xtdcomment_count``
-============================
+Get Xtdcomment Count
+====================
 
-Syntax::
+Tag syntax::
 
     {% get_xtdcomment_count as [varname] for [app].[model] [[app].[model] ...] %}
 
@@ -39,10 +45,14 @@ Get the count of comments two models, ``Story`` and ``Quote``, have received and
     {% get_xtdcomment_count as comment_count for blog.story blog.quote %}
 
 
-Tag ``get_last_xtdcomments``
-============================
+.. index::
+   single: get_last_xtdcomments
+   pair: tag; get_last_xtdcomments
 
-Syntax::
+Get Last Xtdcomments
+====================
+
+Tag syntax::
 
     {% get_last_xtdcomments [N] as [varname] for [app].[model] [[app].[model] ...] %}
 
@@ -63,10 +73,14 @@ Get the list of the last 10 comments two models, ``Story`` and ``Quote``, have r
     {% endif %}
 
 
-Tag ``render_last_xtdcomments``
-===============================
+.. index::
+   single: render_last_xtdcomments
+   pair: tag; render_last_xtdcomments
 
-Syntax::
+Render Last Xtdcomments
+=======================
+
+Tag syntax::
 
     {% render_last_xtdcomments [N] for [app].[model] [[app].[model] ...] %}
 
@@ -84,10 +98,14 @@ Render the list of the last 5 comments posted, either to the blog.story model or
     {% render_last_xtdcomments 5 for blog.story blog.quote %}
 
 
-Filter ``render_markup_comment``
-================================
+.. index::
+   single: render_markup_comment, Markdown; reStructuredText
+   pair: filter; render_markup_comment
 
-Syntax::
+Render Markup Comment
+=====================
+
+Filter syntax::
 
     {{ comment.comment|render_markup_comment }}
 

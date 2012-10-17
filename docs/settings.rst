@@ -11,8 +11,45 @@ In order to use Django-comments-xtd it is required to declare the setting `COMME
 Additionally, Django-comments-xtd's behaviour may change depending on the following two settings.
 
 
-``COMMENTS_XTD_CONFIRM_EMAIL``
-==============================
+Maximum Thread Level
+====================
+
+:index:`COMMENTS_XTD_MAX_THREAD_LEVEL` - Maximum Thread Level
+
+**Optional**
+
+Indicate the maximum thread level for comments. 
+
+An example::
+
+     COMMENTS_XTD_MAX_THREAD_LEVEL = 8
+
+Defaults to 0. What means threads are not permitted.
+ 
+
+Maximum Thread Level per App.Model
+==================================
+
+:index:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` - Maximum Thread Level per app.model basis
+
+**Optional**
+
+A dictionary with `app_label.model` as keys and the maximum thread level for comments posted to instances of those models as values. It allows definition of max comment thread level on a per `app_label.model` basis.
+
+An example::
+
+    COMMENTS_XTD_MAX_THREAD_LEVEL = 0
+    COMMENTS_XTD_MAX_THREAD_LEVEL_BY_MODEL = {
+        'projects.release': 2,
+	'blog.stories': 8, 'blog.quotes': 8, 
+	'blog.diarydetail': 0 # not required as it defaults to COMMENTS_XTD_MAX_THREAD_LEVEL
+    }
+
+
+Confirm Comment Post by Email
+=============================
+
+:index:`COMMENTS_XTD_CONFIRM_EMAIL` - Confirm Comment Post by Email
 
 **Optional**
 
@@ -27,12 +64,14 @@ An example::
 Defaults to True.
 
 
-``COMMENTS_XTD_SALT``
-=====================
+Salt
+====
+
+:index:`COMMENTS_XTD_SALT` - Extra key to salt the form
 
 **Optional**
 
-This setting establishes the ASCII string extra_key used by ``signed.dumps`` to salt the contact form hash. As ``signed.dumps`` docstring says, just in case you're worried that the NSA might try to brute-force your SHA-1 protected secret.
+This setting establishes the ASCII string extra_key used by ``signed.dumps`` to salt the comment form hash. As ``signed.dumps`` docstring says, just in case you're worried that the NSA might try to brute-force your SHA-1 protected secret.
 
 An example::
 

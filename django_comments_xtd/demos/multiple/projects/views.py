@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.generic import DetailView, ListView
@@ -53,3 +54,9 @@ class ReleaseDetailView(DetailView):
         except ObjectDoesNotExist:
             raise Http404(_(u"No releases found matching the query"))
         return obj
+
+    def get_context_data(self, **kwargs):
+        context = super(ReleaseDetailView, self).get_context_data(**kwargs)
+        context.update({'next': reverse('comments-xtd-sent')})
+        return context
+        

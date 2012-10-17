@@ -1,0 +1,68 @@
+[
+    {
+        "pk": 1, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true,
+	    "thread_id": 1,
+            "level": 0,
+            "order": 1,
+	    "parent_id": 1
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true,
+	    "thread_id": 2,
+            "level": 0,
+            "order": 1,
+	    "parent_id": 2
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true,
+	    "thread_id": 3,
+            "level": 0,
+            "order": 1,
+	    "parent_id": 3
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true,
+	    "thread_id": 4,
+            "level": 0,
+            "order": 1,
+	    "parent_id": 4
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true,
+	    "thread_id": 5,
+            "level": 0,
+            "order": 1,
+	    "parent_id": 5
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "django_comments_xtd.xtdcomment", 
+        "fields": {
+            "followup": true,
+	    "thread_id": 6,
+            "level": 0,
+            "order": 1,
+	    "parent_id": 6
+        }
+    }
+]

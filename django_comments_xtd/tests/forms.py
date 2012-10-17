@@ -30,6 +30,7 @@ class XtdCommentFormTestCase(TestCase):
         data = {"name":"Daniel", 
                 "email":"danirus@eml.cc", 
                 "followup": True, 
+                "reply_to": 0, "level": 1, "order": 1,
                 "comment":"Es war einmal iene kleine..." }
         data.update(self.form.initial)
         form = comments.get_form()(self.article, data)

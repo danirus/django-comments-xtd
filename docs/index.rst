@@ -8,12 +8,17 @@ Introduction
 
 **django-comments-xtd** extends the built-in Django's Comments Framework with:
 
-1. Optional notification of follow-up comments via email
-2. Comment confirmation via email when users are not authenticated
-3. Comments hit the database only when have been confirmed
-4. Template tags to list/render the last N comments posted to any list of models
-5. Comments formatted in Markdown, reStructuredText, linebreaks or plain text
-6. Threaded emails to avoid response blocking
+.. index::
+   single: Features
+
+1. Thread support, so comments may be nested
+2. The maximum thread level can be set up either for all models or on a per app.model basis
+3. Optional notification of follow-up comments via email
+4. Comment confirmation via email when users are not authenticated
+5. Comments hit the database only when have been confirmed
+6. Template tags to list/render the last N comments posted to any list of models
+7. Comments formatted in Markdown, reStructuredText, linebreaks or plain text
+8. All emails are sent in threads apart to avoid response blocking
 
 .. toctree::
    :maxdepth: 2
@@ -25,15 +30,26 @@ Introduction
    templates
 
 
+.. index::
+   pair: Quick; Start
+
 Quick start
 ===========
 
 1. In your ``settings.py``:
 
- * Add ``django.contrib.comments``, ``django_comments_xtd`` 
+ * Add ``django.contrib.comments`` and ``django_comments_xtd`` to ``INSTALLED_APPS``
  * Add ``COMMENTS_APP = "django_comments_xtd"``
- * Add ``COMMENTS_XTD_CONFIRM_EMAIL = True``
- * Customize your email settings (see :doc:`example`)
+ * Add ``COMMENTS_XTD_MAX_THREAD_LEVEL = N``, being ``N`` the maximum level up to which comments can be threaded:
+
+  * When N = 0: comments are plain, no threads
+  * When N = 1: comments at level 0 might be commented
+  * When N = K: comments up until level K-1 might be commented
+
+  It can be set up on a per ``<app>.<model>`` basis too.
+  Read more in the :doc:`tutorial` and see it in action in the **multiple** demo site in :doc:`example`.
+
+ * Customize your project's email settings.
 
 2. If you want to allow comments written in markup languages like Markdown or reStructuredText:
 
@@ -61,11 +77,11 @@ Quick start
 
 6. Hit your App's URL!
 
+7. Have questions? Keep reading, and look at the 3 demo sites.
+
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
-

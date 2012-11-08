@@ -89,15 +89,8 @@ def sent(request):
         comment_pk = int(comment_pk)
         comment = XtdComment.objects.get(pk=comment_pk)
     except (TypeError, ValueError, XtdComment.DoesNotExist):
-        template_arg = [
-            "django_comments_xtd/%s/%s/posted.html" % (
-                comment.content_type.app_label, 
-                comment.content_type.model),
-            "django_comments_xtd/%s/posted.html" % (
-                comment.content_type.app_label,),
-            "django_comments_xtd/posted.html",
-            "comments/posted.html"
-        ]
+        template_arg = ["django_comments_xtd/posted.html",
+                        "comments/posted.html"]
         return render_to_response(template_arg, 
                                   context_instance=RequestContext(request))
     else:

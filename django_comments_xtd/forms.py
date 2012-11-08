@@ -22,10 +22,17 @@ class XtdCommentForm(CommentForm):
             initial.update({"reply_to": comment.pk})
             kwargs["initial"] = initial
         super(CommentForm, self).__init__(*args, **kwargs)
+        self.fields['name'] = forms.CharField(
+            widget=forms.TextInput(attrs={'placeholder':_('name')}))
         self.fields['email'] = forms.EmailField(
-            label=_("Email address"), help_text=_("Required for comment verification"))
+            label=_("Email"), help_text=_("Required for comment verification"),
+            widget=forms.TextInput(attrs={'placeholder':_('email')})
+            )
+        self.fields['url'] = forms.URLField(
+            required=False,
+            widget=forms.TextInput(attrs={'placeholder':_('website')}))
         self.fields['comment'] = forms.CharField(
-            widget=forms.Textarea(attrs={'placeholder':_('your comment')}), 
+            widget=forms.Textarea(attrs={'placeholder':_('comment')}), 
             max_length=COMMENT_MAX_LENGTH)
 
     def get_comment_model(self):

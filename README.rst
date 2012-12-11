@@ -3,7 +3,7 @@ Django-comments-xtd
 
 |TravisCI|_
 
-.. |TravisCI| image:: https://travis-ci.org/danirus/django-comments-xtd.png
+.. |TravisCI| image:: https://secure.travis-ci.org/danirus/django-comments-xtd.png?branch=master
 .. _TravisCI: https://travis-ci.org/danirus/django-comments-xtd
 
 By Daniel Rus Morales <http://danir.us/>

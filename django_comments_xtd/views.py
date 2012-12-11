@@ -80,7 +80,8 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
         key = signed.dumps(comment, compress=True, extra_key=SALT)
         send_email_confirmation_request(comment, target, key)
 
-comment_was_posted.connect(on_comment_was_posted)
+if settings.COMMENTS_APP == "django_comments_xtd":
+    comment_was_posted.connect(on_comment_was_posted)
 
 
 def sent(request):

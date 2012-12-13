@@ -1,0 +1,356 @@
+# Translations from City Live i18n database
+#, fuzzy
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: admin.py:14
+msgid "Content"
+msgstr "Inhoud"
+
+#: admin.py:16
+msgid "Metadata"
+msgstr ""
+
+#: forms.py:15
+msgid "Notify me of follow up comments via email"
+msgstr "Hou me via e-mail op de hoogte van nieuwe reacties"
+
+#: forms.py:26
+msgid "name"
+msgstr "naam"
+
+#: forms.py:28
+msgid "Email"
+msgstr "E-mail"
+
+#: forms.py:28
+msgid "Required for comment verification"
+msgstr ""
+
+#: forms.py:29
+msgid "email"
+msgstr "e-mail"
+
+#: forms.py:33
+msgid "website"
+msgstr ""
+
+#: forms.py:35
+msgid "comment"
+msgstr "reactie"
+
+#: models.py:27
+msgid "Can not post comments over the thread level %{max_thread_level}"
+msgstr ""
+
+#: models.py:50
+msgid "Receive by email further comments in this conversation"
+msgstr ""
+
+#: views.py:24
+msgid "comment confirmation request"
+msgstr ""
+
+#: views.py:154
+msgid "new comment posted"
+msgstr ""
+
+#: demos/multiple/blog/models.py:29
+msgid "story"
+msgstr ""
+
+#: demos/multiple/blog/models.py:30
+msgid "stories"
+msgstr ""
+
+#: demos/multiple/blog/models.py:61
+msgid "quote"
+msgstr ""
+
+#: demos/multiple/blog/models.py:62
+msgid "quotes"
+msgstr ""
+
+#: demos/multiple/projects/models.py:57
+msgid "Release description"
+msgstr ""
+
+#: demos/multiple/projects/views.py:55
+msgid "No releases found matching the query"
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:7
+msgid "This demo site using django-comments-xtd features"
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:9
+msgid "A Blog App with two models: <em>Story</em> and <em>Quote</em>, each of which accepts comments up to a maximum threading level of 3"
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:10
+msgid "A Projects App with two models: <em>Project</em> and <em>Release</em>. Only the Release model has comments. And comments can be nested up to a maximum level of 1."
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:11
+msgid "Settings for comment thread levels establish a default maximum thread level for comments posted to every app in the project, and then define a specific maximum for the <em>app.model</em> <code>projects.release</code>"
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:17
+#: demos/simple/templates/homepage.html:12
+#: demos/simple_threads/templates/homepage.html:18
+msgid "It uses the template tag <em>render_markup_comment</em> to render comments content. So you can use line breaks, markdown or reStructuredText to format comments"
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:24
+msgid "Comments allow follow up notifications."
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:25
+#: demos/simple/templates/homepage.html:11
+#: demos/simple_threads/templates/homepage.html:17
+msgid "Comments have to be confirmed by email (unless COMMENTS_XTD_CONFIRM_EMAIL is set to False)."
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:26
+msgid "Unlike the two simple demo sites, several models in this demo receive comments. So it uses two new templatetag, <em>get_xtdcomment_count</em> and<em>render_last_xtdcomments</em>, to count and produce a feed of comments posted to blog models"
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:35
+msgid "Visit the Blog"
+msgstr ""
+
+#: demos/multiple/templates/homepage.html:36
+msgid "Visit the Projects page"
+msgstr ""
+
+#: demos/multiple/templates/blog/comments.html:7
+msgid "Last 5 comments for <code>blog.story</code> and <code>blog.quotes</code>."
+msgstr ""
+
+#: demos/multiple/templates/blog/comments.html:8
+msgid "The template file make use of the <code>comments_xtd</code> templatetag module and the following tag:"
+msgstr ""
+
+#: demos/multiple/templates/blog/comments.html:12
+msgid "It does not have pagination support."
+msgstr ""
+
+#: demos/multiple/templates/blog/homepage.html:4
+#: demos/multiple/templates/blog/quote_list.html:22
+#: demos/multiple/templates/blog/story_list.html:23
+#: demos/multiple/templates/django_comments_xtd/blog/comment_list.html:71
+msgid "Blog"
+msgstr "Blog"
+
+#: demos/multiple/templates/blog/homepage.html:24
+msgid "all stories"
+msgstr ""
+
+#: demos/multiple/templates/blog/homepage.html:46
+msgid "by"
+msgstr "door"
+
+#: demos/multiple/templates/blog/homepage.html:54
+msgid "all quotes"
+msgstr ""
+
+#: demos/multiple/templates/blog/homepage.html:72
+msgid "all comments"
+msgstr ""
+
+#: demos/multiple/templates/blog/homepage.html:78
+#: demos/multiple/templates/projects/homepage.html:29
+#: demos/simple/templates/articles/article_list.html:22
+#: demos/simple_threads/templates/articles/article_list.html:22
+msgid "Home"
+msgstr "Startpagina"
+
+#: demos/multiple/templates/blog/quote_detail.html:4
+msgid "Blog - Quote Detail"
+msgstr ""
+
+#: demos/multiple/templates/blog/quote_detail.html:14
+msgid "source"
+msgstr ""
+
+#: demos/multiple/templates/blog/quote_detail.html:19
+msgid "Quote list"
+msgstr ""
+
+#: demos/multiple/templates/blog/quote_detail.html:32
+msgid "your comment"
+msgstr ""
+
+#: demos/multiple/templates/blog/quote_detail.html:37
+msgid "comments are disabled for this quote"
+msgstr ""
+
+#: demos/multiple/templates/blog/story_detail.html:4
+msgid "Blog - Story Detail"
+msgstr ""
+
+#: demos/multiple/templates/blog/story_detail.html:14
+msgid "Story list"
+msgstr ""
+
+#: demos/multiple/templates/blog/story_detail.html:32
+msgid "comments are disabled for this story"
+msgstr ""
+
+#: demos/multiple/templates/comments/list.html:7
+#: demos/simple/templates/comments/list.html:7
+#: demos/simple_threads/templates/comments/list.html:7
+msgid "Reply"
+msgstr "Beantwoord"
+
+#: demos/multiple/templates/comments/posted.html:4
+#: demos/multiple/templates/comments/posted.html:7
+#: demos/simple/templates/comments/posted.html:4
+#: demos/simple/templates/comments/posted.html:7
+#: demos/simple_threads/templates/comments/posted.html:4
+#: demos/simple_threads/templates/comments/posted.html:7
+msgid "Comment confirmation requested"
+msgstr ""
+
+#: demos/multiple/templates/comments/posted.html:8
+#: demos/simple/templates/comments/posted.html:8
+#: demos/simple_threads/templates/comments/posted.html:8
+msgid "A confirmation message has been sent to your email address. Please, click on the link in the message to confirm your comment."
+msgstr ""
+
+#: demos/multiple/templates/django_comments_xtd/blog/comment_list.html:4
+msgid "Comment List"
+msgstr ""
+
+#: demos/multiple/templates/django_comments_xtd/blog/comment_list.html:6
+msgid "Blog Comment List"
+msgstr ""
+
+#: demos/multiple/templates/django_comments_xtd/blog/comment_list.html:11
+msgid "List of comments for <code>blog.story</code> and <code>blog.quote</code> with pagination, produced by the following entry in the blog/urls.py file:"
+msgstr ""
+
+#: demos/multiple/templates/django_comments_xtd/blog/comment_list.html:35
+#: templates/django_comments_xtd/comment.html:15
+msgid "Comment for:"
+msgstr ""
+
+#: demos/multiple/templates/django_comments_xtd/blog/comment_list.html:39
+#: demos/multiple/templates/django_comments_xtd/blog/quote/comment.html:13
+#: demos/multiple/templates/django_comments_xtd/blog/story/comment.html:13
+#: templates/django_comments_xtd/comment.html:19
+msgid "Inappropriate comments like this one are removed."
+msgstr "Ongepaste reacties zoals deze zijn verwijderd."
+
+#: demos/multiple/templates/django_comments_xtd/blog/comment_list.html:62
+msgid "newer"
+msgstr "nieuwer"
+
+#: demos/multiple/templates/django_comments_xtd/blog/comment_list.html:65
+msgid "older"
+msgstr "ouder"
+
+#: demos/multiple/templates/django_comments_xtd/blog/quote/comment.html:7
+#: demos/multiple/templates/django_comments_xtd/blog/story/comment.html:7
+msgid "sent by"
+msgstr ""
+
+#: demos/multiple/templates/django_comments_xtd/blog/quote/comment.html:7
+#: demos/multiple/templates/django_comments_xtd/blog/story/comment.html:7
+msgid "to"
+msgstr "tot"
+
+#: demos/multiple/templates/projects/homepage.html:4
+msgid "Projects"
+msgstr ""
+
+#: demos/multiple/templates/projects/homepage.html:16
+msgid "Last release:"
+msgstr ""
+
+#: demos/multiple/templates/projects/project_detail.html:4
+msgid "Projects - Project Detail"
+msgstr ""
+
+#: demos/multiple/templates/projects/project_detail.html:10
+msgid "Releases"
+msgstr ""
+
+#: demos/multiple/templates/projects/project_detail.html:25
+msgid "Project list"
+msgstr ""
+
+#: demos/multiple/templates/projects/release_detail.html:4
+msgid "Projects - Release Detail"
+msgstr ""
+
+#: demos/multiple/templates/projects/release_detail.html:14
+msgid "Project page"
+msgstr ""
+
+#: demos/multiple/templates/projects/release_detail.html:32
+msgid "comments are disabled for this release"
+msgstr ""
+
+#: demos/simple/templates/homepage.html:7
+msgid "The simplest demo site using django-comments-xtd, features"
+msgstr ""
+
+#: demos/simple/templates/homepage.html:9
+#: demos/simple_threads/templates/homepage.html:9
+msgid "An Articles App, with a model <code>Article</code> whose instances accept comments."
+msgstr ""
+
+#: demos/simple/templates/homepage.html:10
+msgid "COMMENTS_XTD_MAX_THREAD_LEVEL is set to 0, so no threaded comments."
+msgstr ""
+
+#: demos/simple/templates/homepage.html:21
+#: demos/simple_threads/templates/homepage.html:27
+msgid "Article list"
+msgstr ""
+
+#: demos/simple/templates/articles/article_list.html:4
+#: demos/simple_threads/templates/articles/article_list.html:4
+msgid "Article List"
+msgstr ""
+
+#: demos/simple_threads/templates/homepage.html:7
+msgid "This demo site using django-comments-xtd, features"
+msgstr ""
+
+#: demos/simple_threads/templates/homepage.html:10
+msgid "COMMENTS_XTD_MAX_THREAD_LEVEL is set to 2, so comments can be nested up to a 2nd level:"
+msgstr ""
+
+#: templates/django_comments_xtd/discarded.html:4
+msgid "Comment discarded"
+msgstr ""
+
+#: templates/django_comments_xtd/discarded.html:7
+msgid "Comment automatically discarded"
+msgstr ""
+
+#: templates/django_comments_xtd/discarded.html:8
+msgid "Sorry, your comment has been automatically discarded"
+msgstr ""
+
+#: templates/django_comments_xtd/email_followup_comment.txt:4
+msgid "There is a new comment following up yours."
+msgstr ""
+
+#: templates/django_comments_xtd/email_followup_comment.txt:14
+msgid "Kind regards"
+msgstr ""
+
+#: templates/django_comments_xtd/max_thread_level.html:2
+msgid "Can not post comments over the thread level %(max_level)s"
+msgstr ""
+
+#: templates/django_comments_xtd/reply.html:3
+msgid "Reply to"
+msgstr ""
+

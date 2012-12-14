@@ -7,10 +7,12 @@ from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader, RequestContext)
 from django.utils.safestring import mark_safe
 
-from django_markup.markup import formatter
-
 from django_comments_xtd.models import XtdComment
 
+from ..utils import import_formatter
+
+
+formatter = import_formatter()
 
 register = Library()
 
@@ -231,7 +233,11 @@ def render_markup_comment(value):
     if match_obj:
         markup_filter = match_obj.group('markup_filter')
         try:
-            return mark_safe(formatter("\n".join(lines[1:]), filter_name=markup_filter))
+            if formatter:
+                return mark_safe(formatter("\n".join(lines[1:]), filter_name=markup_filter))
+            else:
+                raise TemplateSyntaxError(
+                    "In order to use this templatetag you need django-markup, docutils and markdown installed")
         except ValueError, e:
             output = "<p>Warning: %s</p>" % e
             return output + value

@@ -33,3 +33,11 @@ def send_mail(subject, body, from_email, recipient_list, fail_silently=False, ht
     EmailThread(subject, body, from_email, recipient_list, fail_silently, html).start()
 
 
+def import_formatter():
+    try:
+        from django_markup.markup import formatter
+        from markdown import markdown
+        from docutils import core
+        return formatter
+    except ImportError:
+        return False

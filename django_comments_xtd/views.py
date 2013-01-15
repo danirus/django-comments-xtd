@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 from django.contrib.comments import get_form
 from django.contrib.comments.signals import comment_was_posted
 from django.contrib.sites.models import Site
@@ -8,16 +7,12 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render_to_response
 from django.template import loader, Context, RequestContext
 from django.utils.translation import ugettext_lazy as _
-
 from django_comments_xtd import signals, signed
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (XtdComment, TmpXtdComment, 
                                         max_thread_level_for_content_type)
 from django_comments_xtd.utils import send_mail
 
-
-SALT = getattr(settings, 'COMMENTS_XTD_SALT', "")
-CONFIRM_EMAIL = getattr(settings, 'COMMENTS_XTD_CONFIRM_EMAIL', True)
-MAX_THREAD_LEVEL = getattr(settings, 'COMMENTS_XTD_MAX_THREAD_LEVEL', 0)
 
 def send_email_confirmation_request(comment, target, key, text_template="django_comments_xtd/email_confirmation_request.txt", html_template="django_comments_xtd/email_confirmation_request.html"):
     """Send email requesting comment confirmation"""
@@ -67,7 +62,11 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
     In both cases will post the comment. Otherwise will send a confirmation
     email to the person who posted the comment.
     """
-    if not CONFIRM_EMAIL or (comment.user and comment.user.is_authenticated()):
+    if settings.COMMENTS_APP != "django_comments_xtd":
+        return False
+
+    if (not settings.COMMENTS_XTD_CONFIRM_EMAIL or 
+        (comment.user and comment.user.is_authenticated())):
         if not _comment_exists(comment):
             new_comment = _create_comment(comment)
             comment.xtd_comment = new_comment
@@ -77,11 +76,11 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
         object_pk = request.POST["object_pk"]
         model = models.get_model(*ctype.split("."))
         target = model._default_manager.get(pk=object_pk)
-        key = signed.dumps(comment, compress=True, extra_key=SALT)
+        key = signed.dumps(comment, compress=True, 
+                           extra_key=settings.COMMENTS_XTD_SALT)
         send_email_confirmation_request(comment, target, key)
 
-if settings.COMMENTS_APP == "django_comments_xtd":
-    comment_was_posted.connect(on_comment_was_posted)
+comment_was_posted.connect(on_comment_was_posted)
 
 
 def sent(request):
@@ -112,7 +111,7 @@ def sent(request):
 
 def confirm(request, key, template_discarded="django_comments_xtd/discarded.html"):
     try:
-        tmp_comment = signed.loads(key, extra_key=SALT)
+        tmp_comment = signed.loads(key, extra_key=settings.COMMENTS_XTD_SALT)
     except (ValueError, signed.BadSignature):
         raise Http404
 
@@ -172,9 +171,10 @@ def reply(request, cid):
         raise Http404
 
     if comment.level == max_thread_level_for_content_type(comment.content_type):
-        return render_to_response("django_comments_xtd/max_thread_level.html", 
-                                  {'max_level': MAX_THREAD_LEVEL},
-                                  context_instance=RequestContext(request))
+        return render_to_response(
+            "django_comments_xtd/max_thread_level.html", 
+            {'max_level': settings.COMMENTS_XTD_MAX_THREAD_LEVEL},
+            context_instance=RequestContext(request))
 
     form = get_form()(comment.content_object, comment=comment)
     next = request.GET.get("next", reverse("comments-xtd-sent"))

@@ -1,14 +1,9 @@
 from django import forms
-from django.conf import settings
 from django.contrib.comments.forms import CommentForm
 from django.utils.translation import ugettext_lazy as _
-
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import TmpXtdComment
 
-
-COMMENT_MAX_LENGTH = getattr(settings,'COMMENT_MAX_LENGTH', 3000)
-CONFIRM_EMAIL = getattr(settings,'COMMENTS_XTD_CONFIRM_EMAIL', True)
-MAX_THREAD_LEVEL = getattr(settings, 'COMMENTS_XTD_MAX_THREAD_LEVEL', 0)
 
 class XtdCommentForm(CommentForm):
     followup = forms.BooleanField(
@@ -33,7 +28,7 @@ class XtdCommentForm(CommentForm):
             widget=forms.TextInput(attrs={'placeholder':_('website')}))
         self.fields['comment'] = forms.CharField(
             widget=forms.Textarea(attrs={'placeholder':_('comment')}), 
-            max_length=COMMENT_MAX_LENGTH)
+            max_length=settings.COMMENT_MAX_LENGTH)
 
     def get_comment_model(self):
         return TmpXtdComment
@@ -43,7 +38,7 @@ class XtdCommentForm(CommentForm):
         data.update({'thread_id': 0, 'level': 0, 'order': 1,
                      'parent_id': self.cleaned_data['reply_to'],
                      'followup': self.cleaned_data['followup']})
-        if CONFIRM_EMAIL:
+        if settings.COMMENTS_XTD_CONFIRM_EMAIL:
             # comment must be verified before getting approved
             data['is_public'] = False
         return data

@@ -1,22 +1,18 @@
 from django.db import models, transaction
 from django.db.models import F, Max, Min
-from django.conf import settings
 from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
-
-
-MAX_THREAD_LEVEL = getattr(settings, 'COMMENTS_XTD_MAX_THREAD_LEVEL', 0)
-MAX_THREAD_LEVEL_BY_APP_MODEL = getattr(settings, 'COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL', {})
+from django_comments_xtd.conf import settings
 
 
 def max_thread_level_for_content_type(content_type):
     app_model = "%s.%s" % (content_type.app_label, content_type.model)
-    if app_model in MAX_THREAD_LEVEL_BY_APP_MODEL:
-        return MAX_THREAD_LEVEL_BY_APP_MODEL[app_model]
+    if app_model in settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL:
+        return settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL[app_model]
     else:
-        return MAX_THREAD_LEVEL
+        return settings.COMMENTS_XTD_MAX_THREAD_LEVEL
 
 
 class MaxThreadLevelExceededException(Exception):

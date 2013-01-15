@@ -37,10 +37,11 @@ There are 65 url-safe characters: the 64 used by url-safe base64 and the '.'.
 These functions make use of all of them.
 """
 
-import pickle, base64
-from django.conf import settings
-from django.utils.hashcompat import sha_constructor
+import base64
 import hmac
+import pickle
+from django.utils.hashcompat import sha_constructor
+from django_comments_xtd.conf import settings
 
 def dumps(obj, key = None, compress = False, extra_key = ''):
     """

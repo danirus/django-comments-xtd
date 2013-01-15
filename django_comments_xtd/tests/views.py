@@ -2,7 +2,7 @@ from datetime import datetime
 import re
 import threading
 
-from django.conf import settings
+# from django.conf import settings
 from django.contrib import comments
 from django.contrib.comments.signals import comment_was_posted
 from django.contrib.contenttypes.models import ContentType
@@ -12,12 +12,13 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.http import HttpResponse
 from django.test import TestCase
-from django.test.utils import override_settings
+# from django.test.utils import override_settings
 
 from django_comments_xtd import signals, signed
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import XtdComment, TmpXtdComment
 from django_comments_xtd.tests.models import Article
-from django_comments_xtd.views import on_comment_was_posted, SALT
+from django_comments_xtd.views import on_comment_was_posted
 from django_comments_xtd.utils import mail_sent_queue
 
 
@@ -109,7 +110,7 @@ class ConfirmCommentTestCase(TestCase):
         # and redirects to the article detail page
         Site.objects.get_current().domain = "testserver" # django bug #7743
         self.get_confirm_comment_url(self.key)
-        data = signed.loads(self.key, extra_key=SALT)
+        data = signed.loads(self.key, extra_key=settings.COMMENTS_XTD_SALT)
         try:
             comment = XtdComment.objects.get(
                 content_type=data["content_type"], 

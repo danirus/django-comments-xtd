@@ -48,8 +48,7 @@ class Quote(models.Model):
     slug = models.SlugField('slug', max_length=255, unique=True)
     quote = models.TextField('quote')
     author = models.CharField('author', max_length=255)
-    url_source = models.URLField('url source', verify_exists=False,
-                                 blank=True, null=True)
+    url_source = models.URLField('url source', blank=True, null=True)
     allow_comments = models.BooleanField('allow comments', default=True)
     publish = models.DateTimeField('publish', default=datetime.now)
 

@@ -16,7 +16,7 @@ def run_tests():
 
     TestRunner = get_runner(settings)
     test_suite = TestRunner(verbosity=2, interactive=True, failfast=False)
-    test_suite.run_tests(["django_comments_xtd"])
+    return test_suite.run_tests(["django_comments_xtd"])
 
 
 if __name__ == "__main__":

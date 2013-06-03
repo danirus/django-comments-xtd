@@ -1,9 +1,14 @@
+import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test
 
 def run_tests(*args):
     import subprocess
-    subprocess.Popen(["coverage", "run", "tests/runtests.py"]).wait()
+    errors = subprocess.Popen(["coverage", "run", "tests/runtests.py"]).wait()
+    if errors:
+        sys.exit(1)
+    else:
+        sys.exit(0)
 
 test.run_tests = run_tests
 

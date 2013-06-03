@@ -238,8 +238,8 @@ def render_markup_comment(value):
             else:
                 raise TemplateSyntaxError(
                     "In order to use this templatetag you need django-markup, docutils and markdown installed")
-        except ValueError, e:
-            output = "<p>Warning: %s</p>" % e
+        except ValueError as exc:
+            output = "<p>Warning: %s</p>" % exc
             return output + value
     else:
         return value

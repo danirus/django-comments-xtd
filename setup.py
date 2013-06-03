@@ -3,7 +3,7 @@ from setuptools.command.test import test
 
 def run_tests(*args):
     import subprocess
-    subprocess.Popen(["python", "tests/runtests.py"]).wait()
+    subprocess.Popen(["coverage", "run", "tests/runtests.py"]).wait()
 
 test.run_tests = run_tests
 

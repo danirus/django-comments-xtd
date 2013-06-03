@@ -6,7 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.test import TestCase as DjangoTestCase
 
-from django_comments_xtd.models import XtdComment, MaxThreadLevelExceededException
+from django_comments_xtd.models import (XtdComment, 
+                                        MaxThreadLevelExceededException)
 
 
 class PublicManager(models.Manager):
@@ -30,9 +31,6 @@ class Article(models.Model):
     class Meta:
         db_table = 'demo_articles'
         ordering = ('-publish',)
-
-    def __unicode__(self):
-        return u'%s' % self.title
 
     @permalink
     def get_absolute_url(self):
@@ -108,15 +106,15 @@ class XtdCommentManagerTestCase(ArticleBaseTestCase):
 # following threads, in order of arrival:
 #
 # testcase cmt.id   parent level-0  level-1  level-2
-#  step1     1        -      c1                        <-                   cmt 1
-#  step1     2        -      c2                        <-                   cmt 2
-#  step2     3        1      --       c3               <-          cmt 1 to cmt 1
-#  step2     4        1      --       c4               <-          cmt 2 to cmt 1
-#  step3     5        2      --       c5               <-          cmt 1 to cmt 2
-#  step4     6        5      --       --        c6     <- cmt 1 to cmt 1 to cmt 2
-#  step4     7        4      --       --        c7     <- cmt 1 to cmt 2 to cmt 1
-#  step5     8        3      --       --        c8     <- cmt 1 to cmt 1 to cmt 1
-#  step5     9        -      c9                        <-                   cmt 9
+#  step1     1        -      c1                        <-                 cmt1
+#  step1     2        -      c2                        <-                 cmt2
+#  step2     3        1      --       c3               <-         cmt1 to cmt1
+#  step2     4        1      --       c4               <-         cmt2 to cmt1
+#  step3     5        2      --       c5               <-         cmt1 to cmt2
+#  step4     6        5      --       --        c6     <- cmt1 to cmt1 to cmt2
+#  step4     7        4      --       --        c7     <- cmt1 to cmt2 to cmt1
+#  step5     8        3      --       --        c8     <- cmt1 to cmt1 to cmt1
+#  step5     9        -      c9                        <-                 cmt9
 
 def thread_test_step_1(article):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
@@ -406,9 +404,11 @@ class ThreadStep5TestCase(ArticleBaseTestCase):
                                       object_pk      = self.article_1.id,
                                       content_object = self.article_1,
                                       site           = site, 
-                                      comment        ="cmt 1 to cmt 2 to cmt 1",
+                                      comment        = ("cmt 1 to cmt 2 to "
+                                                        "cmt 1"),
                                       submit_date    = datetime.now(),
-                                      parent_id      = 8) # already max thread level
+                                      parent_id      = 8) # already max thread 
+                                                          # level
 
 
 class DiaryBaseTestCase(DjangoTestCase):
@@ -431,7 +431,9 @@ class DiaryBaseTestCase(DjangoTestCase):
                                       object_pk      = self.day_in_diary.id,
                                       content_object = self.day_in_diary,
                                       site           = site, 
-                                      comment        ="cmt to cmt to day in diary",
+                                      comment        = ("cmt to cmt to day "
+                                                        "in diary"),
                                       submit_date    = datetime.now(),
-                                      parent_id      = 1) # already max thread level
+                                      parent_id      = 1) # already max thread 
+                                                          # level
         

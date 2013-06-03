@@ -1,12 +1,16 @@
 # borrowed from Selwin Ong:
 # http://ui.co.id/blog/asynchronous-send_mail-in-django
 
-import Queue
+try:
+    import Queue as queue # python2
+except ImportError:
+    import queue as queue # python3
+
 import threading
 from django.core.mail import EmailMultiAlternatives
 
 
-mail_sent_queue = Queue.Queue()
+mail_sent_queue = queue.Queue()
 
 
 class EmailThread(threading.Thread):

@@ -39,7 +39,7 @@ class XtdCommentFormTestCase(TestCase):
         comment = form.get_comment_object()
 
         # it does have the new field 'followup'
-        self.assert_(comment.has_key("followup"))
+        self.assert_("followup" in comment)
 
         # and as long as settings.COMMENTS_XTD_CONFIRM_EMAIL is True
         # is_public is set to False until receive the user confirmation

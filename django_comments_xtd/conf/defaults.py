@@ -1,7 +1,9 @@
+from __future__ import unicode_literals
+
 COMMENT_MAX_LENGTH = 3000
 
 # Extra key to salt the XtdCommentForm 
-COMMENTS_XTD_SALT = ""
+COMMENTS_XTD_SALT = b""
 
 # Whether comment posts should be confirmed by email
 COMMENTS_XTD_CONFIRM_EMAIL = True

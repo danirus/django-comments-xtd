@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import os
 
@@ -88,6 +89,6 @@ INSTALLED_APPS = [
 COMMENTS_APP = "django_comments_xtd"
 
 COMMENTS_XTD_CONFIRM_EMAIL = True
-COMMENTS_XTD_SALT = "es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
+COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
 COMMENTS_XTD_MAX_THREAD_LEVEL = 2
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {'tests.diary': 0}

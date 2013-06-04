@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from datetime import datetime
 import re
 import threading
@@ -72,8 +74,8 @@ class ConfirmCommentTestCase(TestCase):
                                         data=data)
         if mail_sent_queue.get(block=True):
             pass
-        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
-                             mail.outbox[0].body).group("key")
+        self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
+                                 mail.outbox[0].body).group("key"))
 
     def get_confirm_comment_url(self, key):
         self.response = self.client.get(reverse("comments-xtd-confirm",

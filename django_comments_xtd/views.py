@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+import six
+
 from django.db import models
 from django.contrib.comments import get_form
 from django.contrib.comments.signals import comment_was_posted
@@ -111,20 +114,18 @@ def sent(request):
 
 def confirm(request, key, template_discarded="django_comments_xtd/discarded.html"):
     try:
-        tmp_comment = signed.loads(key, extra_key=settings.COMMENTS_XTD_SALT)
+        tmp_comment = signed.loads(str(key), 
+                                   extra_key=settings.COMMENTS_XTD_SALT)
     except (ValueError, signed.BadSignature):
         raise Http404
-
     # the comment does exist if the URL was already confirmed, then: Http404
     if _comment_exists(tmp_comment):
         raise Http404
-
     # Send signal that the comment confirmation has been received
     responses = signals.confirmation_received.send(sender  = TmpXtdComment,
                                                    comment = tmp_comment,
                                                    request = request
     )
-
     # Check whether a signal receiver decides to discard the contact_msg
     for (receiver, response) in responses:
         if response == False:
@@ -154,7 +155,7 @@ def notify_comment_followers(comment):
     text_message_template = loader.get_template("django_comments_xtd/email_followup_comment.txt")
     html_message_template = loader.get_template("django_comments_xtd/email_followup_comment.html")
 
-    for email, name in followers.iteritems():
+    for email, name in six.iteritems(followers):
         message_context = Context({ 'user_name': name,
                                     'comment': comment, 
                                     'content_object': target, 

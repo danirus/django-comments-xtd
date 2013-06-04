@@ -1,3 +1,5 @@
+import six
+
 from django.db import models, transaction
 from django.db.models import F, Max, Min
 from django.contrib.comments.models import Comment
@@ -106,9 +108,6 @@ class DummyDefaultManager:
     def using(self, *args, **kwargs):
         return self
 
-    # def __repr__(self):
-    #     return ""
-
 
 class TmpXtdComment(dict):
     """
@@ -135,4 +134,4 @@ class TmpXtdComment(dict):
             return ""
 
     def __reduce__(self):
-        return (TmpXtdComment, (), None, None, self.iteritems())
+        return (TmpXtdComment, (), None, None, six.iteritems(self))

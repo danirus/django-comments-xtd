@@ -3,4 +3,5 @@ Django
 docutils
 Markdown
 South
--e git+git://github.com/bartTC/django-markup.git#egg=django-markup
+#-e git+git://github.com/bartTC/django-markup.git#egg=django-markup
+-e git+git://github.com/danirus/django-markup.git#egg=django-markup

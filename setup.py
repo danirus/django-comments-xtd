@@ -14,7 +14,7 @@ test.run_tests = run_tests
 
 setup(
     name = "django-comments-xtd",
-    version = "1.1a2",
+    version = "1.2a1",
     packages = find_packages(),
     include_package_data = True,
     license = "MIT",
@@ -32,6 +32,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
         'Framework :: Django',
     ],
     test_suite = "dummy",

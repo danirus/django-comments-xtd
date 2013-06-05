@@ -6,6 +6,12 @@ Django-comments-xtd
 .. |TravisCI| image:: https://secure.travis-ci.org/danirus/django-comments-xtd.png?branch=master
 .. _TravisCI: https://travis-ci.org/danirus/django-comments-xtd
 
+Builds under:
+
+* Python 3.2 and Django 1.5.1
+* Python 2.7 and Django 1.5.1
+* Python 2.7 and Django 1.4.5
+
 By Daniel Rus Morales <http://danir.us/>
 
 * http://pypi.python.org/pypi/django-comments-xtd/

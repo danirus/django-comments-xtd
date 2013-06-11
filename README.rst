@@ -1,4 +1,4 @@
-Django-comments-xtd
+django-comments-xtd
 ===================
 
 |TravisCI|_
@@ -6,7 +6,7 @@ Django-comments-xtd
 .. |TravisCI| image:: https://secure.travis-ci.org/danirus/django-comments-xtd.png?branch=master
 .. _TravisCI: https://travis-ci.org/danirus/django-comments-xtd
 
-Builds under:
+Tested under:
 
 * Python 3.2 and Django 1.5.1
 * Python 2.7 and Django 1.5.1

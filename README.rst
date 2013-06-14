@@ -8,16 +8,16 @@ django-comments-xtd
 
 Tested under:
 
-* Python 3.2 and Django 1.5.1
-* Python 2.7 and Django 1.5.1
-* Python 2.7 and Django 1.4.5
+* [Python 3.2 and django 1.5.1](http://buildbot.danir.us/builders/django-comments-xtd-py32dj15)
+* [Python 2.7 and django 1.5.1](http://buildbot.danir.us/builders/django-comments-xtd-py27dj15)
+* [Python 2.7 and django 1.4.5](http://buildbot.danir.us/builders/django-comments-xtd-py27dj14)
 
 By Daniel Rus Morales <http://danir.us/>
 
 * http://pypi.python.org/pypi/django-comments-xtd/
 * http://github.com/danirus/django-comments-xtd/
 
-A reusable Django app that extends the built-in Django's Comments Framework with:
+A reusable django app that extends the built-in django's comments framework with:
 
 1. Thread support, so comments may be nested
 2. The maximum thread level can be set up either for all models or on a per app.model basis

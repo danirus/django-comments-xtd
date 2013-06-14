@@ -8,9 +8,9 @@ django-comments-xtd
 
 Tested under:
 
-* [Python 3.2 and django 1.5.1](http://buildbot.danir.us/builders/django-comments-xtd-py32dj15)
-* [Python 2.7 and django 1.5.1](http://buildbot.danir.us/builders/django-comments-xtd-py27dj15)
-* [Python 2.7 and django 1.4.5](http://buildbot.danir.us/builders/django-comments-xtd-py27dj14)
+* Python 3.2 and django 1.5.1: `builds <http://buildbot.danir.us/builders/django-comments-xtd-py32dj15>`_
+* Python 2.7 and django 1.5.1: `builds <http://buildbot.danir.us/builders/django-comments-xtd-py27dj15>`_
+* Python 2.7 and django 1.4.5: `builds <http://buildbot.danir.us/builders/django-comments-xtd-py27dj14>`_
 
 By Daniel Rus Morales <http://danir.us/>
 

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.contrib import admin
 from django.contrib.comments.admin import CommentsAdmin
 from django.utils.translation import ugettext_lazy as _
@@ -22,7 +24,7 @@ class XtdCommentsAdmin(CommentsAdmin):
     def thread_level(self, obj):
         rep = '|'
         if obj.level:
-            rep += u'-' * obj.level
+            rep += '-' * obj.level
             rep += " c%d to c%d" % (obj.id, obj.parent_id)
         else: 
             rep += " c%d" % obj.id

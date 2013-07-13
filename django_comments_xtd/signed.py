@@ -41,8 +41,8 @@ from __future__ import unicode_literals
 import base64
 import hmac
 import pickle
-import sys
 
+from django.utils import six
 from django.utils.hashcompat import sha_constructor
 from django_comments_xtd.conf import settings
 
@@ -75,8 +75,7 @@ def dumps(obj, key = None, compress = False, extra_key = b''):
 
 def loads(s, key = None, extra_key = b''):
     "Reverse of dumps(), raises ValueError if signature fails"
-    if ((sys.version_info.major == 2 and isinstance(s, unicode)) or
-        (sys.version_info.major == 3 and isinstance(s, str))):
+    if isinstance(s, six.text_type):
         s = s.encode('utf8') # base64 works on bytestrings
     try:
         base64d = unsign(s, 
@@ -107,8 +106,7 @@ class BadSignature(ValueError):
     pass
 
 def sign(value, key = None):
-    if ((sys.version_info.major == 2 and isinstance(value, unicode)) or
-        (sys.version_info.major == 3 and isinstance(value, str))):
+    if isinstance(value, six.text_type):
         raise TypeError('sign() needs bytestring: %s' %
                         repr(value))
     if key is None:
@@ -116,8 +114,7 @@ def sign(value, key = None):
     return value + b'.' + base64_hmac(value, key)
 
 def unsign(signed_value, key = None):
-    if ((sys.version_info.major == 2 and isinstance(signed_value, unicode)) or
-        (sys.version_info.major == 3 and isinstance(signed_value, str))):
+    if isinstance(signed_value, six.text_type):
         raise TypeError('unsign() needs bytestring')
     if key is None:
         key = settings.SECRET_KEY.encode('ascii')

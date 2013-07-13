@@ -1,10 +1,14 @@
 django-comments-xtd
 ===================
 
-|TravisCI|_
+      
+|downloads|_ |TravisCI|_
 
 .. |TravisCI| image:: https://secure.travis-ci.org/danirus/django-comments-xtd.png?branch=master
 .. _TravisCI: https://travis-ci.org/danirus/django-comments-xtd
+.. |downloads| image:: https://pypip.in/d/django-comments-xtd/badge.png
+        :target: https://pypi.python.org/pypi/django-comments-xtd
+.. _downloads: https://pypi.python.org/pypi/django-comments-xtd
 
 Tested under:
 

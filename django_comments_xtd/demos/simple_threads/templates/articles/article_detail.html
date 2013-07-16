@@ -10,7 +10,7 @@
   {{ object.body|linebreaks }}
 </div>
 
-<a href="{% url articles-index %}">back to the articles list</a>
+<a href="{% url 'articles-index' %}">back to the articles list</a>
 
 <div id="comments">
   {% get_comment_count for object as comment_count %}

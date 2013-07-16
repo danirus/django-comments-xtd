@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import os
 
@@ -107,7 +108,7 @@ INSTALLED_APPS = (
 
     'simple_threads.articles',
     'django_comments_xtd',
-    'south',
+#    'south',
 )
 
 # EMAIL_HOST          = "smtp.gmail.com" 
@@ -124,6 +125,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 COMMENTS_APP = "django_comments_xtd"
 COMMENTS_XTD_CONFIRM_EMAIL = True
-COMMENTS_XTD_SALT = "es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
+COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
 COMMENTS_XTD_MAX_THREAD_LEVEL = 2
 

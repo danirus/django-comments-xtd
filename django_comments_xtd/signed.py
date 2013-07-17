@@ -41,9 +41,9 @@ from __future__ import unicode_literals
 import base64
 import hmac
 import pickle
+import hashlib
 
 from django.utils import six
-from django.utils.hashcompat import sha_constructor
 from django_comments_xtd.conf import settings
 
 
@@ -107,8 +107,7 @@ class BadSignature(ValueError):
 
 def sign(value, key = None):
     if isinstance(value, six.text_type):
-        raise TypeError('sign() needs bytestring: %s' %
-                        repr(value))
+        raise TypeError('sign() needs bytestring: %s' % repr(value))
     if key is None:
         key = settings.SECRET_KEY.encode('ascii')
     return value + b'.' + base64_hmac(value, key)
@@ -127,4 +126,4 @@ def unsign(signed_value, key = None):
         raise BadSignature('Signature failed: %s' % sig)
 
 def base64_hmac(value, key):
-    return encode(hmac.new(key, value, sha_constructor).digest())
+    return encode(hmac.new(key, value, hashlib.sha1).digest())

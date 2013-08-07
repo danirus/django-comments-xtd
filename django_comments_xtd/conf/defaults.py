@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 COMMENT_MAX_LENGTH = 3000
 
-# Extra key to salt the XtdCommentForm 
+# Extra key to salt the XtdCommentForm
 COMMENTS_XTD_SALT = b""
 
 # Whether comment posts should be confirmed by email
@@ -13,3 +13,6 @@ COMMENTS_XTD_MAX_THREAD_LEVEL = 0
 
 # Maximum Thread Level per app.model basis
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {}
+
+# Whether first level comments should be listed as most recent first
+COMMENTS_XTD_REVERSE_FIRST_LEVEL = False

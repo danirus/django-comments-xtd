@@ -49,10 +49,7 @@ class XtdComment(Comment):
     objects = XtdCommentManager()
 
     class Meta:
-        if settings.COMMENTS_XTD_REVERSE_FIRST_LEVEL:
-            ordering = ('-thread_id', 'order')
-        else:
-            ordering = ('thread_id', 'order')
+        ordering = settings.COMMENTS_XTD_LIST_ORDER
 
     def save(self, *args, **kwargs):
         is_new = self.pk == None

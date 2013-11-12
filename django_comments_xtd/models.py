@@ -31,7 +31,7 @@ class XtdCommentManager(models.Manager):
         content_types = []
         for app_model in args:
             app, model = app_model.split(".")
-            content_types.append(ContentType.objects.get(app_label=app, 
+            content_types.append(ContentType.objects.get(app_label=app,
                                                          model=model))
         return self.for_content_types(content_types)
 
@@ -49,7 +49,7 @@ class XtdComment(Comment):
     objects = XtdCommentManager()
 
     class Meta:
-        ordering = ('thread_id', 'order')
+        ordering = settings.COMMENTS_XTD_LIST_ORDER
 
     def save(self, *args, **kwargs):
         is_new = self.pk == None
@@ -69,7 +69,7 @@ class XtdComment(Comment):
 
     def _calculate_thread_data(self):
         # Implements the following approach:
-        #  http://www.sqlteam.com/article/sql-for-threaded-discussion-forums        
+        #  http://www.sqlteam.com/article/sql-for-threaded-discussion-forums
         parent = XtdComment.objects.get(pk=self.parent_id)
         if parent.level == max_thread_level_for_content_type(self.content_type):
             raise MaxThreadLevelExceededException(self.content_type)
@@ -80,7 +80,7 @@ class XtdComment(Comment):
         qc_ge_level = qc_eq_thread.filter(level__lte = parent.level,
                                           order__gt = parent.order)
         if qc_ge_level.count():
-            min_order = qc_ge_level.aggregate(Min('order'))['order__min'] 
+            min_order = qc_ge_level.aggregate(Min('order'))['order__min']
             XtdComment.objects.filter(thread_id = parent.thread_id,
                                       order__gte = min_order).update(order=F('order')+1)
             self.order = min_order
@@ -104,7 +104,7 @@ class DummyDefaultManager:
     """
     def __getattr__(self, name):
         return lambda *args, **kwargs: []
-    
+
     def using(self, *args, **kwargs):
         return self
 
@@ -123,7 +123,7 @@ class TmpXtdComment(dict):
 
     def __setattr__(self, key, value):
         self[key] = value
-            
+
     def save(self, *args, **kwargs):
         pass
 

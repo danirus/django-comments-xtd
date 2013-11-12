@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n comments comments_xtd %}
+{% load url from future %}
 
 {% block title %}{{ block.super }}Blog - {% trans "Comment List" %}{% endblock %}
 
@@ -68,7 +69,7 @@
   {% endif %}
 
   <p style="padding: 5px 15px; background:#ddd">
-    <a href="{% url blog-index %}">{% trans "Blog" %}</a>
+    <a href="{% url 'blog-index' %}">{% trans "Blog" %}</a>
   </p>
 </div>
 {% endblock %}

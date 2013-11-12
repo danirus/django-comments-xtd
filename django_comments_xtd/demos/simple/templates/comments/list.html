@@ -1,10 +1,9 @@
 {% load i18n comments_xtd %}
-{% load url from future %}
 <dl id="comments">
   {% for comment in comment_list %}
   <div style="margin-left:{{ comment.level }}00px; border-left:5px solid #ddd">
     <dt id="c{{ comment.id }}" style="background-color: #ddd">
-      {{ comment.submit_date }}&nbsp;-&nbsp;{{ comment.name }}{% if comment.allow_thread %}&nbsp;-&nbsp;<a href="{{ comment.get_reply_url }}">{% trans "Reply" %}</a>{% endif %}
+      {{ comment.submit_date }}&nbsp;-&nbsp;{% if comment.url %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}{% if comment.allow_thread %}&nbsp;-&nbsp;<a href="{{ comment.get_reply_url }}">{% trans "Reply" %}</a>{% endif %}
     </dt>
     <dd>
       <p>{{ comment.comment|render_markup_comment }}</p>

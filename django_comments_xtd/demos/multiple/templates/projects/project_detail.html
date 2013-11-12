@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n comments %}
+{% load url from future %}
 
 {% block header %}{{ block.super }}{% trans "Projects - Project Detail" %}{% endblock %}
 
@@ -22,6 +23,6 @@
 </div>
 
 <p style="padding: 5px 15px; background:#ddd">
-  <a href="{% url projects-index %}">{% trans "Project list" %}</a>
+  <a href="{% url 'projects-index' %}">{% trans "Project list" %}</a>
 </p>
 {% endblock %}

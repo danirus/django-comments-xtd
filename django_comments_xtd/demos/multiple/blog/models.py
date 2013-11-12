@@ -1,7 +1,11 @@
+#-*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from datetime import datetime
 
 from django.db import models
 from django.db.models import permalink
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -12,6 +16,7 @@ class PublicManager(models.Manager):
         return self.get_query_set().filter(publish__lte=datetime.now())
 
 
+@python_2_unicode_compatible
 class Story(models.Model):
     """Story that accepts comments."""
 
@@ -29,8 +34,8 @@ class Story(models.Model):
         verbose_name = _('story')
         verbose_name_plural = _('stories')
 
-    def __unicode__(self):
-        return u'%s' % self.title
+    def __str__(self):
+        return '%s' % self.title
 
     @permalink
     def get_absolute_url(self):
@@ -41,6 +46,7 @@ class Story(models.Model):
                  'slug': self.slug})
 
 
+@python_2_unicode_compatible
 class Quote(models.Model):
     """Quote that accepts comments."""
 
@@ -60,8 +66,8 @@ class Quote(models.Model):
         verbose_name = _('quote')
         verbose_name_plural = _('quotes')
 
-    def __unicode__(self):
-        return u'%s' % self.title
+    def __str__(self):
+        return '%s' % self.title
 
     @models.permalink
     def get_absolute_url(self):

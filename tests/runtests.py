@@ -14,8 +14,8 @@ def run_tests():
     from django.conf import settings
     from django.test.utils import get_runner
 
-    TestRunner = get_runner(settings)
-    test_suite = TestRunner(verbosity=2, interactive=True, failfast=False)
+    runner = get_runner(settings,"django.test.simple.DjangoTestSuiteRunner")
+    test_suite = runner(verbosity=2, interactive=True, failfast=False)
     return test_suite.run_tests(["django_comments_xtd"])
 
 

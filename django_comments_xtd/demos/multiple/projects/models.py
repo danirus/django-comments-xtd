@@ -1,7 +1,11 @@
+#-*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from datetime import datetime
 
 from django.db import models
 from django.db.models import permalink
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -12,6 +16,7 @@ class ProjectManager(models.Manager):
         return self.get_query_set().filter(is_active=True)
 
 
+@python_2_unicode_compatible
 class Project(models.Model):
     """Project that accepts comments."""
 
@@ -26,7 +31,7 @@ class Project(models.Model):
 
     objects = ProjectManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s" % (self.project_name)
 
     @models.permalink
@@ -42,6 +47,7 @@ class ReleaseManager(models.Manager):
                                            is_active=True)
 
 
+@python_2_unicode_compatible
 class Release(models.Model):
     """Project evolution is divided in releases."""
 
@@ -58,7 +64,7 @@ class Release(models.Model):
     is_active = models.BooleanField()
     allow_comments = models.BooleanField(default=True)
     
-    def __unicode__(self):
+    def __str__(self):
         return "%s/%s" % (self.project.project_name, self.release_name)
 
     @models.permalink

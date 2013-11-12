@@ -45,7 +45,7 @@ class XtdComment(Comment):
     parent_id = models.IntegerField(default=0)
     level = models.SmallIntegerField(default=0)
     order = models.IntegerField(default=1, db_index=True)
-    followup = models.BooleanField(help_text=_("Receive by email further comments in this conversation"), blank=True)
+    followup = models.BooleanField(help_text=_("Receive by email further comments in this conversation"), blank=True, default=False)
     objects = XtdCommentManager()
 
     class Meta:

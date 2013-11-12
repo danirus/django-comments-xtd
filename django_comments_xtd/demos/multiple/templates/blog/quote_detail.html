@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n comments %}
+{% load url from future %}
 
 {% block header %}{{ block.super }}{% trans "Blog - Quote Detail" %}{% endblock %}
 
@@ -16,7 +17,7 @@
 </div>
 
 <p style="padding: 5px 15px; background:#ddd">
-  <a href="{% url blog-quote-index %}">{% trans "Quote list" %}</a>
+  <a href="{% url 'blog-quote-index' %}">{% trans "Quote list" %}</a>
 </p>
 
 <div id="comments" style="width:60%;margin:0 auto">

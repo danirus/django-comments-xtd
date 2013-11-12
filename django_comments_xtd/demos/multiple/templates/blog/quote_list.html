@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n comments %}
+{% load url from future %}
 
 {% block header %}{{ block.super }}Blog - Quote List{% endblock %}
 
@@ -19,7 +20,7 @@
   <div style="padding:10px 15px; background:#eee">No quote yet.</div>
   {% endif %}
   <p style="padding: 5px 15px; background:#ddd">
-    <a href="{% url blog-index %}">{% trans "Blog" %}</a>
+    <a href="{% url 'blog-index' %}">{% trans "Blog" %}</a>
   </p>
 </div>
 {% endblock %}

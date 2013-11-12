@@ -52,7 +52,7 @@ class ReleaseDetailView(DetailView):
         try:
             obj = Release.objects.get(project=project_pk, slug=release_slug)
         except ObjectDoesNotExist:
-            raise Http404(_(u"No releases found matching the query"))
+            raise Http404(_("No releases found matching the query"))
         return obj
 
     def get_context_data(self, **kwargs):

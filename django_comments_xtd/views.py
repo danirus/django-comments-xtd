@@ -30,8 +30,11 @@ def send_email_confirmation_request(comment, target, key, text_template="django_
     text_message_template = loader.get_template(text_template)
     text_message = text_message_template.render(message_context)
     # prepare html message
-    html_message_template = loader.get_template(html_template)
-    html_message = html_message_template.render(message_context)
+    if settings.COMMENTS_XTD_HTML_EMAIL is True:
+        html_message_template = loader.get_template(html_template)
+        html_message = html_message_template.render(message_context)
+    else:
+        html_message = None
 
     send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL,
               [ comment.user_email, ], html=html_message)
@@ -161,7 +164,10 @@ def notify_comment_followers(comment):
                                     'content_object': target, 
                                     'site': Site.objects.get_current() })
         text_message = text_message_template.render(message_context)
-        html_message = html_message_template.render(message_context)
+        if settings.COMMENTS_XTD_HTML_EMAIL is True:
+            html_message = html_message_template.render(message_context)
+        else:
+            html_message = None
         send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL, [ email, ], html=html_message)
 
 

@@ -8,6 +8,7 @@ except ImportError:
 
 import threading
 from django.core.mail import EmailMultiAlternatives
+from django_comments_xtd.conf import settings
 
 
 mail_sent_queue = queue.Queue()
@@ -15,7 +16,8 @@ mail_sent_queue = queue.Queue()
 
 class EmailThread(threading.Thread):
     def __init__(self, subject, body, from_email, recipient_list, fail_silently, html):
-        self.subject = subject
+        self.subject = u'%s%s' % \
+            (settings.COMMENTS_XTD_EMAIL_SUBJECT_PREFIX, subject)
         self.body = body
         self.recipient_list = recipient_list
         self.from_email = from_email

@@ -16,3 +16,9 @@ COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {}
 
 # Default order to list comments in
 COMMENTS_XTD_LIST_ORDER = ('thread_id', 'order')
+
+# Whether HTML mails are allowed or not
+COMMENTS_XTD_HTML_EMAIL = True
+
+# Default email subject
+COMMENTS_XTD_EMAIL_SUBJECT_PREFIX = ''

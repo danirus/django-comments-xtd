@@ -78,3 +78,35 @@ An example::
      COMMENTS_XTD_SALT = 'G0h5gt073h6gH4p25GS2g5AQ25hTm256yGt134tMP5TgCX$&HKOYRV'
 
 Defaults to an empty string.
+
+
+Subject-line prefix
+===================
+
+:index:`COMMENTS_XTD_EMAIL_SUBJECT_PREFIX` - Subject-line prefix
+
+**Optional**
+
+Subject-line prefix for email messages sent with Django-comments-xtd. You’ll probably want to include the trailing space.
+
+An example::
+
+     COMMENTS_XTD_EMAIL_SUBJECT_PREFIX = '[Django] '
+
+Defaults to an empty string.
+
+
+Include HTML messages
+=====================
+
+:index:`COMMENTS_XTD_HTML_EMAIL` - Include HTML messages
+
+**Optional**
+
+This setting establishes whether a HTML message should be included in any email messages.
+
+An example::
+
+     COMMENTS_XTD_HTML_EMAIL = True
+
+Defaults to True.

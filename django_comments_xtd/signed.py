@@ -39,7 +39,7 @@ These functions make use of all of them.
 
 import pickle, base64
 from django.conf import settings
-from django.utils.hashcompat import sha_constructor
+from hashlib import sha1 as sha_constructor
 import hmac
 
 def dumps(obj, key = None, compress = False, extra_key = ''):

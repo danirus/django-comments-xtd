@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% load url from future %}
+
 {% load i18n %}
 
 {% block header %}{{ block.super }}Homepage{% endblock %}
@@ -18,6 +21,6 @@
     </li>
   </ol>
 </p>
-<p style="font-size:1.4em"><a href="{% url articles-index %}">{% trans "Article list" %}</a></p>
+<p style="font-size:1.4em"><a href="{% url 'articles-index' %}">{% trans "Article list" %}</a></p>
 <p style="padding: 5px 15px; background:#ddd; font-weight:bold; text-align:right">django-comments-xtd</p>
 {% endblock %}

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% load url from future %}
+
 {% load i18n %}
 
 {% block header %}{{ block.super }}Homepage{% endblock %}
@@ -32,8 +35,8 @@
   </ol>
 </p>
 <p style="font-size:1.4em">
-  <a href="{% url blog-index %}">{% trans "Visit the Blog" %}</a><br/>
-  <a href="{% url projects-index %}">{% trans "Visit the Projects page" %}</a>
+  <a href="{% url 'blog-index' %}">{% trans "Visit the Blog" %}</a><br/>
+  <a href="{% url 'projects-index' %}">{% trans "Visit the Projects page" %}</a>
 </p>
 <p style="padding: 5px 15px; background:#ddd; font-weight:bold; text-align:right">django-comments-xtd</p>
 {% endblock %}

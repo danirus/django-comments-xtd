@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% load url from future %}
+
 {% load i18n comments %}
 
 {% block header %}{{ block.super }}{% trans "Projects" %}{% endblock %}
@@ -26,7 +29,7 @@
     {% endif %}
   </div>
   <p style="padding: 5px 15px; background:#ddd">
-    <a href="{% url homepage %}">{% trans "Home" %}</a>
+    <a href="{% url 'homepage' %}">{% trans "Home" %}</a>
   </p>
 </div>
 {% endblock %}

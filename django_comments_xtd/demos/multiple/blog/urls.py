@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.views.generic import ListView, DateDetailView, DetailView
 
 from django_comments_xtd.models import XtdComment

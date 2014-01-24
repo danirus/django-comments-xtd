@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% load url from future %}
+
 {% load i18n comments comments_xtd %}
 
 {% block header %}{{ block.super }}{% trans "Blog" %}{% endblock %}
@@ -20,7 +23,7 @@
     </div>
     {% endfor %}
     <p>
-      <a href="{% url blog-story-index %}">
+      <a href="{% url 'blog-story-index' %}">
 	{% trans "all stories" %}
       </a>
     </p>
@@ -50,7 +53,7 @@
       </UL>
     </div>
     <p>
-      <a href="{% url blog-quote-index %}">
+      <a href="{% url 'blog-quote-index' %}">
 	{% trans "all quotes" %}
       </a>
     </p>
@@ -68,14 +71,14 @@
     <div style="padding:10px 15px; background:#eee">No comments yet.</div>
     {% endif %}
     <p>
-      <a href="{% url blog-comments %}">
+      <a href="{% url 'blog-comments' %}">
 	{% trans "all comments" %}
       </a>
     </p>
   </div>
 
   <p style="padding: 5px 15px; background:#ddd">
-    <a href="{% url homepage %}">{% trans "Home" %}</a>
+    <a href="{% url 'homepage' %}">{% trans "Home" %}</a>
   </p>
 </div>
 {% endblock %}

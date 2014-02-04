@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 
-from datetime import datetime
 import re
-import threading
+from mock import patch
+from datetime import datetime
 
 # from django.conf import settings
 from django.contrib import comments
@@ -62,6 +62,8 @@ class OnCommentWasPostedTestCase(TestCase):
 
 class ConfirmCommentTestCase(TestCase):
     def setUp(self):
+        patcher = patch('django_comments_xtd.views.send_mail')
+        self.mock_mailer = patcher.start()
         self.article = Article.objects.create(title="September", 
                                               slug="september",
                                               body="What I did on September...")
@@ -72,10 +74,10 @@ class ConfirmCommentTestCase(TestCase):
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data)
-        if mail_sent_queue.get(block=True):
-            pass
+        self.assert_(self.mock_mailer.call_count == 1)
         self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
-                                 mail.outbox[0].body).group("key"))
+                                 self.mock_mailer.call_args[0][1]).group("key"))
+        self.addCleanup(patcher.stop)
 
     def get_confirm_comment_url(self, key):
         self.response = self.client.get(reverse("comments-xtd-confirm",
@@ -100,10 +102,11 @@ class ConfirmCommentTestCase(TestCase):
         def on_signal(sender, comment, request, **kwargs):
             return False
 
-        self.assertEqual(len(mail.outbox), 1) # sent during setUp
+        self.assertEqual(self.mock_mailer.call_count, 1) # sent during setUp
         signals.confirmation_received.connect(on_signal)
         self.get_confirm_comment_url(self.key)
-        self.assertEqual(len(mail.outbox), 1) # mailing avoided by on_signal
+        # mailing avoided by on_signal:
+        self.assertEqual(self.mock_mailer.call_count, 1)
         self.assertTemplateUsed(self.response, 
                                 "django_comments_xtd/discarded.html")
 
@@ -128,30 +131,31 @@ class ConfirmCommentTestCase(TestCase):
         # send a couple of comments to the article with followup=True and check
         # that when the second comment is confirmed a followup notification 
         # email is sent to the user who sent the first comment
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(self.mock_mailer.call_count, 1)
         self.get_confirm_comment_url(self.key)
-        self.assertEqual(len(mail.outbox), 1) # no comment followers yet
+        # no comment followers yet:
+        self.assertEqual(self.mock_mailer.call_count, 1)
         # send 2nd comment
         self.form = comments.get_form()(self.article)
         data = {"name":"Alice", "email":"alice@example.com", "followup": True, 
                 "reply_to": 0, "level": 1, "order": 1,
-                "comment":"Es war einmal iene kleine..." }
+                "comment":"Es war einmal eine kleine..." }
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data)
-        if mail_sent_queue.get(block=True):
-            pass
-        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(self.mock_mailer.call_count, 2)
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
-                             mail.outbox[1].body).group("key")
+                             self.mock_mailer.call_args[0][1]).group("key")
         self.get_confirm_comment_url(self.key)
-        if mail_sent_queue.get(block=True):
-            pass
-        self.assertEqual(len(mail.outbox), 3)
-        self.assert_(mail.outbox[2].to == ["bob@example.com"])
-        self.assert_(mail.outbox[2].body.find("There is a new comment following up yours.") > -1)
+        self.assertEqual(self.mock_mailer.call_count, 3)
+        self.assert_(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
+        self.assert_(self.mock_mailer.call_args[0][1].find("There is a new comment following up yours.") > -1)
 
     def test_notify_followers_dupes(self):
+        # first of all confirm Bob's comment otherwise it doesn't reach DB
+        self.get_confirm_comment_url(self.key)
+        # then put in play pull-request-15's assert...
+        # https://github.com/danirus/django-comments-xtd/pull/15
         diary = Diary.objects.create(
             body='Lorem ipsum',
             allow_comments=True
@@ -159,22 +163,20 @@ class ConfirmCommentTestCase(TestCase):
         self.assertEqual(diary.pk, self.article.pk)
 
         self.form = comments.get_form()(diary)
-        data = {"name": "Charlie", "email": "charlie@example.com", "followup": True, 
-                "reply_to": 0, "level": 1, "order": 1,
-                "comment": "Es war einmal iene kleine..." }
+        data = {"name": "Charlie", "email": "charlie@example.com", 
+                "followup": True, "reply_to": 0, "level": 1, "order": 1,
+                "comment": "Es war einmal eine kleine..." }
         data.update(self.form.initial)
+
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data)
-        if mail_sent_queue.get(block=True):
-            pass
         self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
-                                 mail.outbox[1].body).group("key"))
-
+                                 self.mock_mailer.call_args[0][1]).group("key"))
         # 1) confirmation for Bob (sent in `setUp()`)
         # 2) confirmation for Charlie
-        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(self.mock_mailer.call_count, 2)
         self.get_confirm_comment_url(self.key)
-        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(self.mock_mailer.call_count, 2)
 
         self.form = comments.get_form()(self.article)
         data = {"name":"Alice", "email":"alice@example.com", "followup": True, 
@@ -183,17 +185,13 @@ class ConfirmCommentTestCase(TestCase):
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data)
-        if mail_sent_queue.get(block=True):
-            pass
-        self.assertEqual(len(mail.outbox), 3)
+        self.assertEqual(self.mock_mailer.call_count, 3)
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
-                             mail.outbox[2].body).group("key")
+                             self.mock_mailer.call_args[0][1]).group("key")
         self.get_confirm_comment_url(self.key)
-        if mail_sent_queue.get(block=True):
-            pass
-        self.assertEqual(len(mail.outbox), 4)
-        self.assert_(mail.outbox[3].to == ["bob@example.com"])
-        self.assert_(mail.outbox[3].body.find("There is a new comment following up yours.") > -1)
+        self.assertEqual(self.mock_mailer.call_count, 4)
+        self.assert_(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
+        self.assert_(self.mock_mailer.call_args[0][1].find("There is a new comment following up yours.") > -1)
 
 class ReplyNoCommentTestCase(TestCase):
     def test_reply_non_existing_comment_raises_404(self):

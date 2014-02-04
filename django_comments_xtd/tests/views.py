@@ -19,7 +19,7 @@ from django.test import TestCase
 from django_comments_xtd import signals, signed
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import XtdComment, TmpXtdComment
-from django_comments_xtd.tests.models import Article
+from django_comments_xtd.tests.models import Article, Diary
 from django_comments_xtd.views import on_comment_was_posted
 from django_comments_xtd.utils import mail_sent_queue
 
@@ -151,6 +151,49 @@ class ConfirmCommentTestCase(TestCase):
         self.assert_(mail.outbox[2].to == ["bob@example.com"])
         self.assert_(mail.outbox[2].body.find("There is a new comment following up yours.") > -1)
 
+    def test_notify_followers_dupes(self):
+        diary = Diary.objects.create(
+            body='Lorem ipsum',
+            allow_comments=True
+        )
+        self.assertEqual(diary.pk, self.article.pk)
+
+        self.form = comments.get_form()(diary)
+        data = {"name": "Charlie", "email": "charlie@example.com", "followup": True, 
+                "reply_to": 0, "level": 1, "order": 1,
+                "comment": "Es war einmal iene kleine..." }
+        data.update(self.form.initial)
+        self.response = self.client.post(reverse("comments-post-comment"), 
+                                        data=data)
+        if mail_sent_queue.get(block=True):
+            pass
+        self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
+                                 mail.outbox[1].body).group("key"))
+
+        # 1) confirmation for Bob (sent in `setUp()`)
+        # 2) confirmation for Charlie
+        self.assertEqual(len(mail.outbox), 2)
+        self.get_confirm_comment_url(self.key)
+        self.assertEqual(len(mail.outbox), 2)
+
+        self.form = comments.get_form()(self.article)
+        data = {"name":"Alice", "email":"alice@example.com", "followup": True, 
+                "reply_to": 0, "level": 1, "order": 1,
+                "comment":"Es war einmal iene kleine..." }
+        data.update(self.form.initial)
+        self.response = self.client.post(reverse("comments-post-comment"), 
+                                        data=data)
+        if mail_sent_queue.get(block=True):
+            pass
+        self.assertEqual(len(mail.outbox), 3)
+        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
+                             mail.outbox[2].body).group("key")
+        self.get_confirm_comment_url(self.key)
+        if mail_sent_queue.get(block=True):
+            pass
+        self.assertEqual(len(mail.outbox), 4)
+        self.assert_(mail.outbox[3].to == ["bob@example.com"])
+        self.assert_(mail.outbox[3].body.find("There is a new comment following up yours.") > -1)
 
 class ReplyNoCommentTestCase(TestCase):
     def test_reply_non_existing_comment_raises_404(self):

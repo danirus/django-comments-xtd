@@ -142,7 +142,8 @@ def notify_comment_followers(comment):
     followers = {}
 
     previous_comments = XtdComment.objects.filter(
-        object_pk=comment.object_pk, is_public=True, 
+        content_type=comment.content_type,
+        object_pk=comment.object_pk, is_public=True,
         followup=True).exclude(id__exact=comment.id)
 
     for instance in previous_comments:

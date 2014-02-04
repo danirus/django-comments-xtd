@@ -16,3 +16,9 @@ COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {}
 
 # Default order to list comments in
 COMMENTS_XTD_LIST_ORDER = ('thread_id', 'order')
+
+# Form class to use
+COMMENTS_XTD_FORM_CLASS = "django_comments_xtd.forms.XtdCommentForm"
+
+# Model to use
+COMMENTS_XTD_MODEL = "django_comments_xtd.models.XtdComment"

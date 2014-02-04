@@ -1,11 +1,15 @@
-from django_comments_xtd.models import XtdComment
-from django_comments_xtd.forms import XtdCommentForm
+from django_comments_xtd.conf import settings
+try:
+    from django.utils.module_loading import import_by_path # Django >= 1.6
+except ImportError:
+    from django_comments_xtd.compat import import_by_path # Django <= 1.5
+
 
 def get_model():
-    return XtdComment
+    return import_by_path(settings.COMMENTS_XTD_MODEL)
 
 def get_form():
-    return XtdCommentForm
+    return import_by_path(settings.COMMENTS_XTD_FORM_CLASS)
 
 VERSION = (1, 2, 0, 'f', 0) # following PEP 386
 

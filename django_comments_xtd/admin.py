@@ -4,8 +4,10 @@ from django.contrib import admin
 from django.contrib.comments.admin import CommentsAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from django_comments_xtd.models import XtdComment
+from django_comments_xtd import get_model as get_comment_model
 
+
+XtdComment = get_comment_model()
 
 class XtdCommentsAdmin(CommentsAdmin):
     list_display = ('thread_level', 'cid', 'name', 'content_type', 'object_pk', 'ip_address', 'submit_date', 'followup', 'is_public', 'is_removed')

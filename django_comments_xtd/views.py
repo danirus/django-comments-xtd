@@ -11,10 +11,14 @@ from django.shortcuts import redirect, render_to_response
 from django.template import loader, Context, RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django_comments_xtd import signals, signed
+from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import (XtdComment, TmpXtdComment, 
+from django_comments_xtd.models import (TmpXtdComment, 
                                         max_thread_level_for_content_type)
 from django_comments_xtd.utils import send_mail
+
+
+XtdComment = get_comment_model()
 
 
 def send_email_confirmation_request(comment, target, key, text_template="django_comments_xtd/email_confirmation_request.txt", html_template="django_comments_xtd/email_confirmation_request.html"):

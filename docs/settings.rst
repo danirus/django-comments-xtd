@@ -64,6 +64,40 @@ An example::
 Defaults to True.
 
 
+Comment Form Class
+=============
+
+:index:`COMMENTS_XTD_FORM_CLASS` - Form class to use when rendering comment forms.
+
+**Optional**
+
+A classpath to the form class that will be used for comments.
+
+An example::
+
+     COMMENTS_XTD_FORM_CLASS = "mycomments.forms.MyCommentForm"
+
+
+Defaults to `"django_comments_xtd.forms.XtdCommentForm"`.
+
+
+Comment Model
+=============
+
+:index:`COMMENTS_XTD_MODEL` - Model to use
+
+**Optional**
+
+A classpath to the model that will be used for comments.
+
+An example::
+
+     COMMENTS_XTD_MODEL = "mycomments.models.MyCommentModel"
+
+
+Defaults to `"django_comments_xtd.models.XtdComment"`.
+
+
 Salt
 ====
 

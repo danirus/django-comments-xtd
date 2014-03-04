@@ -27,11 +27,12 @@ A reusable django app that extends the built-in django's comments framework with
 1. Thread support, so comments may be nested
 2. The maximum thread level can be set up either for all models or on a per app.model basis
 3. Optional notification of follow-up comments via email
-4. Comment confirmation via email when users are not authenticated
-5. Comments hit the database only when have been confirmed
-6. Template tags to list/render the last N comments posted to any list of models
-7. Comments formatted in Markdown, reStructuredText, linebreaks or plain text
-8. All emails are sent in threads apart to avoid response blocking
+4. Mute links on follow-up emails to allow follow-up notification cancellation
+5. Comment confirmation via email when users are not authenticated
+6. Comments hit the database only when have been confirmed
+7. Template tags to list/render the last N comments posted to any given list of app.model pairs
+8. Comments can be formatted in Markdown, reStructuredText, linebreaks or plain text
+9. Emails sent through threads (can be disable to allow other solutions, like a Celery app)
 
 Read the documentation at:
 

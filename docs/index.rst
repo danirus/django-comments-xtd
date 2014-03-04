@@ -14,11 +14,12 @@ Introduction
 1. Thread support, so comments may be nested
 2. The maximum thread level can be set up either for all models or on a per app.model basis
 3. Optional notification of follow-up comments via email
-4. Comment confirmation via email when users are not authenticated
-5. Comments hit the database only when have been confirmed
-6. Template tags to list/render the last N comments posted to any list of models
-7. Comments formatted in Markdown, reStructuredText, linebreaks or plain text
-8. All emails are sent in threads apart to avoid response blocking
+4. Mute links on follow-up emails to allow follow-up notification cancellation
+5. Comment confirmation via email when users are not authenticated
+6. Comments hit the database only when have been confirmed
+7. Template tags to list/render the last N comments posted to any given list of app.model pairs
+8. Comments can be formatted in Markdown, reStructuredText, linebreaks or plain text
+9. Emails sent through threads (can be disable to allow other solutions, like a Celery app)
 
 .. toctree::
    :maxdepth: 2
@@ -42,14 +43,21 @@ Quick start
  * Add ``COMMENTS_APP = "django_comments_xtd"``
  * Add ``COMMENTS_XTD_MAX_THREAD_LEVEL = N``, being ``N`` the maximum level up to which comments can be threaded:
 
-  * When N = 0: comments are plain, no threads
-  * When N = 1: comments at level 0 might be commented
-  * When N = K: comments up until level K-1 might be commented
+  * When N = 0: comments are not nested
+  * When N = 1: comments can be bested at level 0
+  * When N = K: comments can be nested up until level K-1
 
-  It can be set up on a per ``<app>.<model>`` basis too.
-  Read more in the :doc:`tutorial` and see it in action in the **multiple** demo site in :doc:`example`.
+  This setting can also be set up on a per ``<app>.<model>`` basis so that you can enable different thread levels for different models. ie: no nested comment for blog posts, up to one thread level for book reviews...
 
- * Customize your project's email settings.
+  Read more about ``COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL`` in the :doc:`tutorial` and see it in action in the **multiple** demo site in :doc:`example`.
+
+ * Customize your project's email settings:
+
+  * ``EMAIL_HOST = "smtp.mail.com"``
+  * ``EMAIL_PORT = "587"``
+  * ``EMAIL_HOST_USER = "alias@mail.com"``
+  * ``EMAIL_HOST_PASSWORD = "yourpassword"``
+  * ``DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"``
 
 2. If you want to allow comments written in markup languages like Markdown or reStructuredText:
 
@@ -60,7 +68,7 @@ Quick start
 
 4. Change templates to introduce comments:
 
- * Load the ``comments`` templatetag and use their tags:
+ * Load the ``comments`` templatetag and use their tags (ie: in your ``templates/app/model_detail.html`` template):
 
   * ``{% get_comment_count for object as comment_count %}``
   * ``{% render_comment_list for object %}`` (uses ``comments/list.html``)

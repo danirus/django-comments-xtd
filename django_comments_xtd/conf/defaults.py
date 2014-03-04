@@ -22,3 +22,11 @@ COMMENTS_XTD_FORM_CLASS = "django_comments_xtd.forms.XtdCommentForm"
 
 # Model to use
 COMMENTS_XTD_MODEL = "django_comments_xtd.models.XtdComment"
+
+# Send HTML emails
+COMMENTS_XTD_SEND_HTML_EMAIL = True
+
+# Whether to send emails in separate threads or use the regular method.
+# Set it to False to use a third-party app like django-celery-email or 
+# your own celery app.
+COMMENTS_XTD_THREADED_EMAILS = True

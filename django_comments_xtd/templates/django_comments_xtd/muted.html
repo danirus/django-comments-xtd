@@ -1,0 +1,9 @@
+{% extends "comments/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Comment thread muted" %}.{% endblock %}
+
+{% block content %}
+  <h1>{% trans "Comment thread has been muted" %}</h1>
+  <p>You will no longer receive email notifications for comments sent to <a href="{{ content_object.get_absolute_url }}">{{ content_object }}</a></p>
+{% endblock %}

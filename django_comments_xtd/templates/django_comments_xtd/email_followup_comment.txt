@@ -10,6 +10,12 @@ Sent by: {{ comment.name }}, {{ comment.submit_date|date:"SHORT_DATE_FORMAT" }}
 --- Comment: ---
 {{ comment.comment }}
 
+
+-----
+Click on the following link to mute the comments thread. You will no longer receive follow-up notifications:
+
+http://{{ site.domain }}{{ mute_url }}
+
 --
 {% trans "Kind regards" %},
 {{ site }}

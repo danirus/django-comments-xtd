@@ -21,7 +21,6 @@ from django_comments_xtd.conf import settings
 from django_comments_xtd.models import XtdComment, TmpXtdComment
 from django_comments_xtd.tests.models import Article, Diary
 from django_comments_xtd.views import on_comment_was_posted
-from django_comments_xtd.utils import mail_sent_queue
 
 
 def dummy_view(request, *args, **kwargs):
@@ -30,9 +29,10 @@ def dummy_view(request, *args, **kwargs):
 
 class OnCommentWasPostedTestCase(TestCase):
     def setUp(self):
-        self.article = Article.objects.create(title="September", 
-                                              slug="september",
-                                              body="What I did on September...")
+        patcher = patch('django_comments_xtd.views.send_mail')
+        self.mock_mailer = patcher.start()
+        self.article = Article.objects.create(
+            title="October", slug="october", body="What I did on October...")
         self.form = comments.get_form()(self.article)
         
     def post_valid_data(self, wait_mail=True):
@@ -42,21 +42,19 @@ class OnCommentWasPostedTestCase(TestCase):
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"), 
                                         data=data, follow=True)
-        if wait_mail and mail_sent_queue.get(block=True):
-            pass
 
     def test_post_as_authenticated_user(self):
         auth_user = User.objects.create_user("bob", "bob@example.com", "pwd")
         self.client.login(username="bob", password="pwd")
-        self.assertEqual(len(mail.outbox), 0)
+        self.assert_(self.mock_mailer.call_count == 0)
         self.post_valid_data(wait_mail=False)
         # no confirmation email sent as user is authenticated
-        self.assertEqual(len(mail.outbox), 0) 
+        self.assert_(self.mock_mailer.call_count == 0)
 
     def test_confirmation_email_is_sent(self):
-        self.assertEqual(len(mail.outbox), 0)
+        self.assert_(self.mock_mailer.call_count == 0)
         self.post_valid_data()
-        self.assertEqual(len(mail.outbox), 1)
+        self.assert_(self.mock_mailer.call_count == 1)
         self.assertTemplateUsed(self.response, "comments/posted.html")
 
 
@@ -193,6 +191,28 @@ class ConfirmCommentTestCase(TestCase):
         self.assert_(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
         self.assert_(self.mock_mailer.call_args[0][1].find("There is a new comment following up yours.") > -1)
 
+    def test_no_notification_for_same_user_email(self):
+        # test that a follow-up user_email don't get a notification when 
+        # sending another email to the thread
+        self.assertEqual(self.mock_mailer.call_count, 1)
+        self.get_confirm_comment_url(self.key) #  confirm Bob's comment 
+        # no comment followers yet:
+        self.assertEqual(self.mock_mailer.call_count, 1)
+        # send Bob's 2nd comment
+        self.form = comments.get_form()(self.article)
+        data = {"name":"Alice", "email":"bob@example.com", "followup": True, 
+                "reply_to": 0, "level": 1, "order": 1,
+                "comment":"Bob's comment he shouldn't get notified about" }
+        data.update(self.form.initial)
+        self.response = self.client.post(reverse("comments-post-comment"), 
+                                        data=data)
+        self.assertEqual(self.mock_mailer.call_count, 2)
+        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
+                             self.mock_mailer.call_args[0][1]).group("key")
+        self.get_confirm_comment_url(self.key)
+        self.assertEqual(self.mock_mailer.call_count, 2)
+
+
 class ReplyNoCommentTestCase(TestCase):
     def test_reply_non_existing_comment_raises_404(self):
         response = self.client.get(reverse("comments-xtd-reply", 
@@ -239,3 +259,107 @@ class ReplyCommentTestCase(TestCase):
                                                 kwargs={"cid": 3}))
         self.assertTemplateUsed(response, 
                                 "django_comments_xtd/max_thread_level.html")
+
+class MuteFollowUpsTestCase(TestCase):
+    def setUp(self):
+        # Creates an article and send two comments to the article with follow-up
+        # notifications. First comment doesn't have to send any notification.
+        # Second comment has to send one notification (to Bob).
+        patcher = patch('django_comments_xtd.views.send_mail')
+        self.mock_mailer = patcher.start()
+        self.article = Article.objects.create(
+            title="September", slug="september", body="John's September")
+        self.form = comments.get_form()(self.article)
+
+        # Bob sends 1st comment to the article with follow-up
+        data = {"name": "Bob", "email": "bob@example.com", "followup": True, 
+                "reply_to": 0, "level": 1, "order": 1,
+                "comment": "Nice September you had..." }
+        data.update(self.form.initial)
+        response = self.client.post(reverse("comments-post-comment"), 
+                                    data=data)
+        self.assert_(self.mock_mailer.call_count == 1)
+        bobkey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
+                                 self.mock_mailer.call_args[0][1]).group("key"))
+        self.get_confirm_comment_url(bobkey) #  confirm Bob's comment 
+
+        # Alice sends 2nd comment to the article with follow-up
+        data = {"name": "Alice", "email": "alice@example.com", "followup": True, 
+                "reply_to": 1, "level": 1, "order": 1,
+                "comment": "Yeah, great photos" }
+        data.update(self.form.initial)
+        response = self.client.post(reverse("comments-post-comment"), 
+                                    data=data)
+        self.assert_(self.mock_mailer.call_count == 2)
+        alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
+                                 self.mock_mailer.call_args[0][1]).group("key"))
+        self.get_confirm_comment_url(alicekey) #  confirm Alice's comment 
+
+        # Bob receives a follow-up notification
+        self.assert_(self.mock_mailer.call_count == 3)
+        self.bobs_mutekey = str(re.search(
+            r'http://.+/mute/(?P<key>[\S]+)', 
+            self.mock_mailer.call_args[0][1]).group("key"))
+        self.addCleanup(patcher.stop)
+
+    def get_confirm_comment_url(self, key):
+        self.response = self.client.get(reverse("comments-xtd-confirm",
+                                                kwargs={'key': key}), 
+                                        follow=True)
+
+    def get_mute_followup_url(self, key):
+        self.response = self.client.get(reverse("comments-xtd-mute",
+                                                kwargs={'key': key}),
+                                        follow=True)
+
+    def test_mute_followup_notifications(self):
+        # Bob's receive a notification and clicka on the mute link to
+        # avoid additional comment messages on the same article.
+        self.get_mute_followup_url(self.bobs_mutekey)
+        # Alice sends 3rd comment to the article with follow-up
+        data = {"name": "Alice", "email": "alice@example.com", "followup": True, 
+                "reply_to": 2, "level": 1, "order": 1,
+                "comment": "And look at this and that..." }
+        data.update(self.form.initial)
+        response = self.client.post(reverse("comments-post-comment"), 
+                                    data=data)
+        # Alice confirms her comment...
+        self.assert_(self.mock_mailer.call_count == 4)
+        alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)', 
+                                 self.mock_mailer.call_args[0][1]).group("key"))
+        self.get_confirm_comment_url(alicekey) #  confirm Alice's comment 
+        # Alice confirmed her comment, but this time Bob won't receive any
+        # notification, neither do Alice being the sender
+        self.assert_(self.mock_mailer.call_count == 4)
+
+
+class HTMLDisabledMailTestCase(TestCase):
+    def setUp(self):
+        # Create an article and send a comment. Test method will chech headers
+        # to see wheter messages has multiparts or not.
+        patcher = patch('django_comments_xtd.views.send_mail')
+        self.mock_mailer = patcher.start()
+        self.article = Article.objects.create(
+            title="September", slug="september", body="John's September")
+        self.form = comments.get_form()(self.article)
+
+        # Bob sends 1st comment to the article with follow-up
+        self.data = {"name": "Bob", "email": "bob@example.com", 
+                     "followup": True, "reply_to": 0, "level": 1, "order": 1,
+                     "comment": "Nice September you had..." }
+        self.data.update(self.form.initial)
+    
+    @patch.multiple('django_comments_xtd.conf.settings', 
+                    COMMENTS_XTD_SEND_HTML_EMAIL=False)
+    def test_mail_does_not_contain_html_part(self):
+        with patch.multiple('django_comments_xtd.conf.settings', 
+                            COMMENTS_XTD_SEND_HTML_EMAIL=False):
+            self.client.post(reverse("comments-post-comment"), data=self.data)
+            self.assert_(self.mock_mailer.call_count == 1)
+            self.assert_(self.mock_mailer.call_args[1]['html'] == None)
+
+    def test_mail_does_contain_html_part(self):
+        self.client.post(reverse("comments-post-comment"), data=self.data)
+        self.assert_(self.mock_mailer.call_count == 1)
+        self.assert_(self.mock_mailer.call_args[1]['html'] != None)
+    

@@ -54,11 +54,11 @@ Configuring Django-comments-xtd comprehends the following steps:
 
   * If you allow comments written in markup languages add ``django_markup`` to ``INSTALLED_APPS`` too.
 
-3. Add ``COMMENTS_XTD_CONFIRM_EMAIL = True`` to the settings file in order to require comment confirmation by email.
+3. Add ``COMMENTS_XTD_CONFIRM_EMAIL = True`` to the settings file in order to require comment confirmation by email for not logged-in users.
 
 4. Add ``url(r'^comments/', include('django_comments_xtd.urls'))`` to your ``urls.py``.
 
-5. Create a ``comments`` directory in your templates directory and copy the default templates from the Django Comments Framework that you want to customise. Maybe the following:
+5. Create a ``comments`` directory in your templates directory and copy those templates from the Django Comments Framework that you want to customise. Following are the most important:
 
   * ``comments/list.html`` used by templatetag ``render_comments_list``
 
@@ -78,7 +78,7 @@ Configuring Django-comments-xtd comprehends the following steps:
 
 7. Run ``python manage.py syncdb`` to create the ``django_comments_xtd_xtdcomment`` table.
 
-Optionally you can add an extra setting to control Django-comments-xtd behaviour (see :doc:`settings`), but it has a sane default.
+Optionally you can add extra settings to control Django-comments-xtd behaviour (see :doc:`settings`). They all have sane values by default.
 
 
 .. index::
@@ -89,49 +89,49 @@ Optionally you can add an extra setting to control Django-comments-xtd behaviour
 Workflow
 ========
 
-Workflow described in 4 actions:
+Here is the application workflow described in 4 actions:
 
 1. The user visits a page that accepts comments. Your app or a 3rd. party app handles the request:
  
- #. Your template shows content that accepts comments. It loads the ``comments`` templatetag and using tags as ``render_comment_list`` and ``render_comment_form`` the template shows the current list of comments and the *post your comment* form.
+ a. Your template shows content that accepts comments. It loads the ``comments`` templatetag and using tags as ``render_comment_list`` and ``render_comment_form`` the template shows the current list of comments and the *post your comment* form.
 
-2. The user **clicks on preview**. The Django Comments Framework ``post_comment`` view handles the request:
+2. The user **clicks on preview**. Django Comments Framework ``post_comment`` view handles the request:
 
- #. Renders ``comments/preview.html`` either with the comment preview or with form errors if any.
+ a. Renders ``comments/preview.html`` either with the comment preview or with form errors if any.
 
-3. The user **clicks on post**. The Django Comments Framework ``post_comment`` view handles the request:
+3. The user **clicks on post**. Django Comments Framework ``post_comment`` view handles the request:
 
- 1. If there were form errors it does the same as in point 2. 
+ a. If there were form errors it does the same as in point 2. 
 
- 2. Otherwise creates an instance of ``TmpXtdComment`` model: an in-memory representation of the comment.
+ b. Otherwise creates an instance of ``TmpXtdComment`` model: an in-memory representation of the comment.
 
- 3. Send signal ``comment_will_be_posted`` and ``comment_was_posted``. The *django-comments-xtd* receiver ``on_comment_was_posted`` receives the second signal with the ``TmpXtdComment`` instance and does as follows:
+ c. Send signal ``comment_will_be_posted`` and ``comment_was_posted``. The *django-comments-xtd* receiver ``on_comment_was_posted`` receives the second signal with the ``TmpXtdComment`` instance and does as follows:
 
-   1. If the user is authenticated or confirmation by email is not required (see :doc:`settings`):
+   * If the user is authenticated or confirmation by email is not required (see :doc:`settings`):
 
-     #. An instance of ``XtdComment`` hits the database.
+     * An instance of ``XtdComment`` hits the database.
 
-     #. An email notification is sent to previous comments followers telling them about the new comment following up theirs. Comment followers are those who ticked the box *Notify me of follow up comments via email*.
+     * An email notification is sent to previous comments followers telling them about the new comment following up theirs. Comment followers are those who ticked the box *Notify me of follow up comments via email*.
 
-   2. Otherwise a confirmation email is sent to the user with a link to confirm the comment. The link contains a secured token with the ``TmpXtdComment``. See below :ref:`the-secure-token-label`.
+   * Otherwise a confirmation email is sent to the user with a link to confirm the comment. The link contains a secured token with the ``TmpXtdComment``. See below :ref:`the-secure-token-label`.
 
- 4. Pass control to the ``next`` parameter handler if any, or render the ``comments/posted.html`` template:
+ d. Pass control to the ``next`` parameter handler if any, or render the ``comments/posted.html`` template:
 
-   #. If the instance of ``XtdComment`` has already been created, redirect to the the comments's absolute URL.
+   * If the instance of ``XtdComment`` has already been created, redirect to the the comments's absolute URL.
 
-   #. Otherwise the template content should inform the user about the confirmation request sent by email (see the *multiple models demo site* templates directory for an example).
+   * Otherwise the template content should inform the user about the confirmation request sent by email.
 
 4. The user **clicks on the confirmation link**, in the email message. *Django-comments-xtd* ``confirm`` view handles the request:
 
- #. Checks the secured token in the URL. If it's wrong returns a 404 code.
+ a. Checks the secured token in the URL. If it's wrong returns a 404 code.
  
- #. Otherwise checks whether the comment was already confirmed, in such a case returns a 404 code.
+ b. Otherwise checks whether the comment was already confirmed, in such a case returns a 404 code.
 
- #. Otherwise sends a ``confirmation_received`` signal. You can register a receiver to this signal to do some extra process before approving the comment. See :ref:`signal-and-receiver-label`. If any receiver returns False the comment will be rejected and the template ``django_comments_xtd/discarded.html`` will be rendered.
+ c. Otherwise sends a ``confirmation_received`` signal. You can register a receiver to this signal to do some extra process before approving the comment. See :ref:`signal-and-receiver-label`. If any receiver returns False the comment will be rejected and the template ``django_comments_xtd/discarded.html`` will be rendered.
 
- #. Otherwise an instance of ``XtdComment`` finally hits the database, and
+ d. Otherwise an instance of ``XtdComment`` finally hits the database, and
 
- #. An email notification is sent to previous comments followers telling them about the new comment following up theirs.
+ e. An email notification is sent to previous comments followers telling them about the new comment following up theirs.
 
 
 .. index::
@@ -181,9 +181,15 @@ In addition to the `signals sent by the Django Comments Framework <https://docs.
 
  * **confirmation_received**: Sent when the user clicks on the confirmation link and before the ``XtdComment`` instance is created in the database.
 
-You might want to register a receiver for this signal. An example function receiver might check the datetime a user submitted a comment and the datetime the confirmation URL has been clicked. Say that if the difference between them is over 7 days the message should be discarded with a graceful `"sorry, too old comment"` template.
+ * **comment_thread_muted**: Sent when the user clicks on the mute link, in a follow-up notification.
 
-Extending the demo site with the following code would do the job::
+
+Sample use of the ``confirmation_received`` signal
+--------------------------------------------------
+
+You might want to register a receiver for ``confirmation_received``. An example function receiver could check the time stamp in which a user submitted a comment and the time stamp in which the confirmation URL has been clicked. If the difference between them is over 7 days we will discard the message with a graceful `"sorry, it's a too old comment"` template.
+
+Extending the demo site with the following code will do the job::
 
     #----------------------------------------
     # append the code below to demo/views.py:

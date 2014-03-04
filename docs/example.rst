@@ -8,10 +8,10 @@ Django-comments-xtd comes with three demo projects:
 
 1. **simple**: Single model with **non-threaded** comments
 2. **simple_threads**: Single model with **threaded** comments up to level 2
-3. **multiple**: Several models with comments, and a maximum thread level defined on per app.model basis.
+3. **multiple**: Several models with comments, and a maximum thread level defined for each app.model pair.
 
 
-You may want to have a look at the `example sites dir <http://github.com/danirus/django-comments-xtd/tree/master/django_comments_xtd/demos>`_ in the repository.
+`Click here <http://github.com/danirus/django-comments-xtd/tree/master/django_comments_xtd/demos>`_ for a quick look at the examples directory in the repository.
 
 
 .. index::
@@ -29,7 +29,7 @@ The recommended way to run the demo sites is in its own `virtualenv <http://www.
 
 By default:
  * There's an ``admin`` user, with password ``admin``
- * Emails are sent to the ``console.EmailBackend``
+ * Emails are sent to the ``console.EmailBackend``. Comment out ``EMAIL_BACKEND`` in the settings module to send actual emails.
 
 
 .. index::
@@ -40,19 +40,22 @@ Simple demo site
 ================
 
 The **simple** demo site is a project with just one application called **articles** with an **Article** model whose instances accept comments. The example features: 
- * Comments have to be confirmed by email before they hit the database. 
- * Commenters may request follow up notifications.
 
+ * Comments have to be confirmed by email before they hit the database. 
+ * Users may request follow-up notifications.
+ * Users may cancel follow-up notifications by clicking on the mute link.
+
+Follow the next steps to give them a try:
+ 
 1. Visit http://localhost:8000/ and look at your articles' detail page. 
 
-2. Try to post comments:
-
- * Logged out, to receive confirmation requests by email
-
- * Logged in, to get your comments accepted without requiring confirmation
+2. Log out of the admin site to post comments, otherwise they will be automatically confirmed and no email will be sent.
 
 3. When adding new articles in the admin interface be sure to tick the box *allow comments*, otherwise comments won't be allowed.
 
+4. Send new comments with the Follow-up box ticked and a different email address. You won't receive follow-up notifications for comments posted from the same email address the new comment is being confirmed from.
+
+5. Click on the Mute link on the Follow-up notification email and send another comment. 
 
 .. index::
    single: Simple_threads
@@ -62,6 +65,7 @@ Simple with threads
 ===================
 
 The **simple_threads** demo site extends the **simple** demo functionality featuring:
+
  * Thread support up to level 2
 
 1. Visit http://localhost:8000/ and look at the first article page with 9 comments.
@@ -69,7 +73,7 @@ The **simple_threads** demo site extends the **simple** demo functionality featu
 2. See the comments in the admin interface too:
 
  * The first field represents the thread level.
- * When in a thread it mentions the parent comment.
+ * When in a nested comment the first field refers to the parent comment.
 
 
 .. index::
@@ -79,9 +83,10 @@ The **simple_threads** demo site extends the **simple** demo functionality featu
 Multiple demo site
 ==================
 
-The **multiple** demo allows users post comments to three different type of instances: stories, quotes, and project releases. Stories and quotes belong to the **blog app** while project releases belong to the **projects app**. The demo shows the blog homepage with the last 5 comments posted to either stories or quotes and a link to the complete paginated list of comments posted to the blog. It features:
+The **multiple** demo allows users post comments to three different type of instances: stories, quotes, and releases. Stories and quotes belong to the **blog app** while releases belong to the **projects app**. The demo shows the blog homepage with the last 5 comments posted to either stories or quotes and a link to the complete paginated list of comments posted to the blog. It features:
+
  * Definition of maximum thread level on a per app.model basis.
- * Use of comments_xtd template tags (get_xtdcomment_count, render_last_xtdcomments, get_last_xtdcomments) and filter (render_markup_comment).
+ * Use of comments_xtd template tags, ``get_xtdcomment_count``, ``render_last_xtdcomments``, ``get_last_xtdcomments``, and the filter ``render_markup_comment``.
 
 1. Visit http://localhost:8000/ and take a look at the **Blog** and **Projects** pages. 
 

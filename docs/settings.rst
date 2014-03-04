@@ -8,7 +8,7 @@ In order to use Django-comments-xtd it is required to declare the setting `COMME
 
     COMMENTS_APP = "django_comments_xtd"
 
-Additionally, Django-comments-xtd's behaviour may change depending on the following two settings.
+A number of additional settings are available to customize django-comments-xtd behaviour. 
 
 
 Maximum Thread Level
@@ -65,7 +65,7 @@ Defaults to True.
 
 
 Comment Form Class
-=============
+==================
 
 :index:`COMMENTS_XTD_FORM_CLASS` - Form class to use when rendering comment forms.
 
@@ -112,3 +112,37 @@ An example::
      COMMENTS_XTD_SALT = 'G0h5gt073h6gH4p25GS2g5AQ25hTm256yGt134tMP5TgCX$&HKOYRV'
 
 Defaults to an empty string.
+
+
+Send HTML Email
+===============
+
+:index:`COMMENTS_XTD_SEND_HTML_EMAIL` - Enable/Disable HTML email messages
+
+**Optional**
+
+This boolean setting establishes whether email messages have to be sent in HTML
+format. By the default messages are sent in both Text and HTML format. By
+disabling the setting email messages will be sent only in Text format.
+
+An example::
+
+    COMMENTS_XTD_SEND_HTML_EMAIL = True
+
+Defaults to True.
+
+
+Threaded Emails
+===============
+
+:index:`COMMENTS_XTD_THREADED_EMAILS` - Enable/Disable sending emails in separeate threads
+
+**Optional**
+
+For low traffic websites sending emails in separate threads is a fine solution. However, for medium to high traffic websites such overhead could be reduce by using other solutions, like a Celery application.
+
+An example::
+
+    COMMENTS_XTD_THREADED_EMAILS = True
+
+Defaults to True.

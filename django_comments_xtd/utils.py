@@ -1,4 +1,4 @@
-# borrowed from Selwin Ong:
+# Idea borrowed from Selwin Ong post:
 # http://ui.co.id/blog/asynchronous-send_mail-in-django
 
 try:
@@ -8,13 +8,14 @@ except ImportError:
 
 import threading
 from django.core.mail import EmailMultiAlternatives
+from django_comments_xtd.conf import settings
 
 
 mail_sent_queue = queue.Queue()
 
-
 class EmailThread(threading.Thread):
-    def __init__(self, subject, body, from_email, recipient_list, fail_silently, html):
+    def __init__(self, subject, body, from_email, recipient_list, 
+                 fail_silently, html):
         self.subject = subject
         self.body = body
         self.recipient_list = recipient_list
@@ -24,16 +25,27 @@ class EmailThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        msg = EmailMultiAlternatives(self.subject, self.body, self.from_email, self.recipient_list)
-        if self.html:
-            msg.attach_alternative(self.html, "text/html")
-        msg.send(self.fail_silently)
-        mail_sent_queue.put(True)
-            
+        _send_mail(self.subject, self.body, self.from_email, 
+                   self.recipient_list, self.html, self.fail_silently)
+        mail_sent_queue.put(True)        
 
-def send_mail(subject, body, from_email, recipient_list, fail_silently=False, html=None):
-    EmailThread(subject, body, from_email, recipient_list, fail_silently, html).start()
 
+def _send_mail(subject, body, from_email, recipient_list, 
+               fail_silently=False, html=None):
+    msg = EmailMultiAlternatives(subject, body, from_email, recipient_list)
+    if html:
+        msg.attach_alternative(html, "text/html")
+    msg.send(fail_silently)
+
+
+def send_mail(subject, body, from_email, recipient_list, 
+              fail_silently=False, html=None):
+    if settings.COMMENTS_XTD_THREADED_EMAILS:
+        EmailThread(subject, body, from_email, recipient_list, 
+                    fail_silently, html).start()
+    else:
+        _send_mail(subject, body, from_email, recipient_list,
+                   fail_silently, html)
 
 def import_formatter():
     try:

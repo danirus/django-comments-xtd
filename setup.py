@@ -14,7 +14,7 @@ test.run_tests = run_tests
 
 setup(
     name = "django-comments-xtd",
-    version = "1.2",
+    version = "1.3a1",
     packages = find_packages(),
     include_package_data = True,
     license = "MIT",
@@ -26,7 +26,8 @@ setup(
     maintainer_email = "inbox@danir.us",
     url = "http://pypi.python.org/pypi/django-comments-xtd",
     classifiers = [
-        'Development Status :: 5 - Production/Stable',
+        # 'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',

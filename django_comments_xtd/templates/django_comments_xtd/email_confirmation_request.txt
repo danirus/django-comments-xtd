@@ -8,7 +8,7 @@ URL:  http://{{ site.domain }}{{ content_object.get_absolute_url }}
 {{ comment.comment }}
 ----------------
 
-If you do not wish to post the comment, please ignore this message or report an incident to {{ contact }}. Otherwise click on the link below to confirm the comment.
+If you do not wish to post the comment, please ignore this message or report an incident to {{ contact|safe }}. Otherwise click on the link below to confirm the comment.
 
 http://{{ site.domain }}{{ confirmation_url }}
 

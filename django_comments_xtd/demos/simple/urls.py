@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.contrib.comments.feeds import LatestCommentFeed
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 admin.autodiscover()
@@ -12,3 +14,6 @@ urlpatterns = patterns('simple.views',
     url(r'^$',                'homepage_v',        name='homepage'),
     url(r'^feeds/comments/$', LatestCommentFeed(), name='comments-feed'),    
 )
+
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()

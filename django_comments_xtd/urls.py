@@ -13,7 +13,7 @@ from django_comments_xtd.conf import settings
 
 
 urlpatterns = patterns('',
-    url(r'', include("django.contrib.comments.urls")),
+    url(r'', include("django_comments.urls")),
     url(r'^sent/$', views.sent, name='comments-xtd-sent'),
     url(r'^confirm/(?P<key>[^/]+)$', views.confirm, name='comments-xtd-confirm'),
     url(r'^mute/(?P<key>[^/]+)$', views.mute, name='comments-xtd-mute'),

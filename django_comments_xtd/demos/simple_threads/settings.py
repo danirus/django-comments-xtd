@@ -104,7 +104,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    'django.contrib.comments',
+    'django_comments',
 
     'simple_threads.articles',
     'django_comments_xtd',

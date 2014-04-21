@@ -2,14 +2,16 @@ from __future__ import unicode_literals
 import six
 
 from django.db import models
-from django.contrib.comments import get_form
-from django.contrib.comments.signals import comment_was_posted
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render_to_response
 from django.template import loader, Context, RequestContext
 from django.utils.translation import ugettext_lazy as _
+
+from django_comments import get_form
+from django_comments.signals import comment_was_posted
+
 from django_comments_xtd import signals, signed
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
@@ -70,7 +72,7 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
     """
     Post the comment if a user is authenticated or send a confirmation email.
     
-    On signal django.contrib.comments.signals.comment_was_posted check if the 
+    On signal django_comments.signals.comment_was_posted check if the
     user is authenticated or if settings.COMMENTS_XTD_CONFIRM_EMAIL is False. 
     In both cases will post the comment. Otherwise will send a confirmation
     email to the person who posted the comment.

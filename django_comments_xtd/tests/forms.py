@@ -1,5 +1,6 @@
 from django.test import TestCase
-from django.contrib import comments
+
+import django_comments as comments
 
 from django_comments_xtd.models import TmpXtdComment
 from django_comments_xtd.forms import XtdCommentForm
@@ -26,7 +27,7 @@ class XtdCommentFormTestCase(TestCase):
         self.assert_(self.form.get_comment_model() == TmpXtdComment)
 
     def test_get_comment_create_data(self):
-        # as it's used in django.contrib.comments.views.comments
+        # as it's used in django_comments.views.comments
         data = {"name":"Daniel", 
                 "email":"danirus@eml.cc", 
                 "followup": True, 

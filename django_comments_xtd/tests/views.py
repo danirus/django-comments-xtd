@@ -5,8 +5,6 @@ from mock import patch
 from datetime import datetime
 
 # from django.conf import settings
-from django.contrib import comments
-from django.contrib.comments.signals import comment_was_posted
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core import mail
@@ -15,6 +13,9 @@ from django.core.urlresolvers import reverse, NoReverseMatch
 from django.http import HttpResponse
 from django.test import TestCase
 # from django.test.utils import override_settings
+
+from django_comments.signals import comment_was_posted
+import django_comments as comments
 
 from django_comments_xtd import signals, signed
 from django_comments_xtd.conf import settings

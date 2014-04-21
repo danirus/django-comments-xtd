@@ -2,10 +2,12 @@ import six
 
 from django.db import models, transaction
 from django.db.models import F, Max, Min
-from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
+
+from django_comments.models import Comment
+
 from django_comments_xtd.conf import settings
 
 

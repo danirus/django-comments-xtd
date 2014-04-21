@@ -75,6 +75,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(os.path.dirname(__file__), "..", "templates"),
+    os.path.join(os.path.dirname(__file__), "contrib_comments_templates"),
 )
 
 INSTALLED_APPS = [
@@ -82,7 +83,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.comments',
+    'django_comments',
     'django_comments_xtd',
     'django_comments_xtd.tests',
 ]

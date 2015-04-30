@@ -1,55 +1,7 @@
 [
     {
-        "pk": 2, 
-        "model": "articles.article", 
-        "fields": {
-            "body": "While free software by any other name would give you the same freedom, it makes a big difference which name we use: different words convey different ideas.\r\n\r\nIn 1998, some of the people in the free software community began using the term \u201copen source software\u201d instead of \u201cfree software\u201d to describe what they do. The term \u201copen source\u201d quickly became associated with a different approach, a different philosophy, different values, and even a different criterion for which licenses are acceptable. The Free Software movement and the Open Source movement are today separate movements with different views and goals, although we can and do work together on some practical projects.\r\n\r\nThe fundamental difference between the two movements is in their values, their ways of looking at the world. For the Open Source movement, the issue of whether software should be open source is a practical question, not an ethical one. As one person put it, \u201cOpen source is a development methodology; free software is a social movement.\u201d For the Open Source movement, non-free software is a suboptimal solution. For the Free Software movement, non-free software is a social problem and free software is the solution.", 
-            "allow_comments": true, 
-            "slug": "free-vs-open-source-software", 
-            "publish": "2012-01-11T11:20:59", 
-            "title": "Free vs Open Source Software"
-        }
-    }, 
-    {
         "pk": 1, 
-        "model": "articles.article", 
-        "fields": {
-            "body": "The battle over the future of the Internet is a power grab that pits well-heeled lobbyists, corrupt legislators, phony front groups and the world\u2019s most powerful telecommunications companies against the rest of us \u2014 the millions of Americans who use the Internet every day, in increasingly inventive ways.\r\n\r\nPolicymakers are public officials, and it\u2019s their job to serve the public interest. You can play an important role by helping spread the word about Net Neutrality, meeting face to face with elected officials and urging them to protect the open Internet.\r\n\r\nYou can start by urging the Senate to stand up for Net Neutrality. ", 
-            "allow_comments": true, 
-            "slug": "net-neutrality-jeopardy", 
-            "publish": "2012-01-10T15:53:23", 
-            "title": "Net Neutrality in Jeopardy"
-        }
-    }, 
-    {
-        "pk": 1, 
-        "model": "sites.site", 
-        "fields": {
-            "domain": "localhost:8000", 
-            "name": "localhost:8000"
-        }
-    }, 
-    {
-        "pk": 1, 
-        "model": "auth.user", 
-        "fields": {
-            "username": "admin", 
-            "first_name": "Administrator", 
-            "last_name": "", 
-            "is_active": true, 
-            "is_superuser": true, 
-            "is_staff": true, 
-            "last_login": "2012-10-02T15:16:12.362", 
-            "groups": [], 
-            "user_permissions": [], 
-            "password": "pbkdf2_sha256$10000$pm3XyzIh0qKs$RfHX2F66DJ3pIy8FY1CAmsrjQ3lHNbsHN8Z8DOxbdEw=", 
-            "email": "admin@example.com", 
-            "date_joined": "2012-01-12T10:49:55"
-        }
-    }, 
-    {
-        "pk": 1, 
-        "model": "comments.comment", 
+        "model": "django_comments.comment", 
         "fields": {
             "comment": "Nulla a viverra orci. Quisque dignissim, magna vel vestibulum tempor, tellus est eleifend tellus, a pretium nisi turpis vel diam. Nam eu tortor mauris. Suspendisse eros massa, dictum ut fringilla tincidunt, tincidunt eu odio.", 
             "user_url": "", 
@@ -67,7 +19,7 @@
     }, 
     {
         "pk": 2, 
-        "model": "comments.comment", 
+        "model": "django_comments.comment", 
         "fields": {
             "comment": "Very precisely.\r\nThank you Alice.", 
             "user_url": "", 
@@ -85,7 +37,7 @@
     }, 
     {
         "pk": 3, 
-        "model": "comments.comment", 
+        "model": "django_comments.comment", 
         "fields": {
             "comment": "Phasellus id dictum sapien. Donec pellentesque justo eget erat lobortis et fermentum nunc facilisis. Sed mattis sapien nec felis vestibulum vehicula. Nunc lobortis sem sagittis eros ultrices at rhoncus felis egestas. ", 
             "user_url": "", 
@@ -103,7 +55,7 @@
     }, 
     {
         "pk": 4, 
-        "model": "comments.comment", 
+        "model": "django_comments.comment", 
         "fields": {
             "comment": "I do fully agree.\r\nThank you Joe.", 
             "user_url": "", 
@@ -121,7 +73,7 @@
     }, 
     {
         "pk": 5, 
-        "model": "comments.comment", 
+        "model": "django_comments.comment", 
         "fields": {
             "comment": "We wants it, we needs it. Must have the precious. They stole it from us. Sneaky little hobbitses. Wicked, tricksy, false! ", 
             "user_url": "", 
@@ -139,7 +91,7 @@
     }, 
     {
         "pk": 6, 
-        "model": "comments.comment", 
+        "model": "django_comments.comment", 
         "fields": {
             "comment": "I don't know half of you half as well as I should like, and I like less than half of you half as well as you deserve.", 
             "user_url": "", 
@@ -154,5 +106,5 @@
             "user_name": "Bilbo Baggings", 
             "user_email": "bilbo@example.com"
         }
-    }
+    }    
 ]

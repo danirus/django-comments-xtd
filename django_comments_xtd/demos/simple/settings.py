@@ -97,6 +97,13 @@ TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "templates"),
 )
 
+try:
+    import imp
+    imp.find_module('django_comments')
+    django_comments = 'django_comments'
+except ImportError:
+    django_comments = 'django.contrib.comments'
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -104,13 +111,18 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
-    'django.contrib.comments',
+    django_comments,
 
     'simple.articles',
     'django_comments_xtd',
-    'south',
 )
 
+from django import VERSION
+if VERSION[1] < 7:
+    INSTALLED_APPS = INSTALLED_APPS + ('south',)
+else:
+    TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+    
 # EMAIL_HOST          = "smtp.gmail.com" 
 # EMAIL_PORT          = "587"
 # EMAIL_HOST_USER     = "username@gmail.com"

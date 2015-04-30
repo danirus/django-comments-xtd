@@ -1,11 +1,18 @@
 import six
 
-from django.db import models, transaction
+import django
+from django.db import models
 from django.db.models import F, Max, Min
-from django.contrib.comments.models import Comment
 from django.contrib.contenttypes.models import ContentType
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
+
+try:
+    from django.db.transaction import atomic
+except ImportError:
+    from django.db.transaction import commit_on_success as atomic
+
+from django_comments_xtd import Comment
 from django_comments_xtd.conf import settings
 
 
@@ -26,6 +33,10 @@ class MaxThreadLevelExceededException(Exception):
 
 
 class XtdCommentManager(models.Manager):
+
+    if django.VERSION < (1, 6):
+        get_queryset = models.Manager.get_query_set
+    
     def for_app_models(self, *args):
         """Return XtdComments for pairs "app.model" given in args"""
         content_types = []
@@ -36,7 +47,7 @@ class XtdCommentManager(models.Manager):
         return self.for_content_types(content_types)
 
     def for_content_types(self, content_types):
-        qs = self.get_query_set().filter(content_type__in=content_types).reverse()
+        qs = self.get_queryset().filter(content_type__in=content_types).reverse()
         return qs
 
 
@@ -60,7 +71,7 @@ class XtdComment(Comment):
                 self.thread_id = self.id
             else:
                 if max_thread_level_for_content_type(self.content_type):
-                    with transaction.commit_on_success():
+                    with atomic():
                         self._calculate_thread_data()
                 else:
                     raise MaxThreadLevelExceededException(self.content_type)

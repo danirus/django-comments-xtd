@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 
+import django
 from django.db import models
 from django.db.models import permalink
 from django.utils.encoding import python_2_unicode_compatible
@@ -12,8 +13,11 @@ from django.utils.translation import ugettext_lazy as _
 class PublicManager(models.Manager):
     """Returns published articles that are not in the future."""
     
+    if django.VERSION < (1, 6):
+        get_queryset = models.Manager.get_query_set
+
     def published(self):
-        return self.get_query_set().filter(publish__lte=datetime.now())
+        return self.get_queryset().filter(publish__lte=datetime.now())
 
 
 @python_2_unicode_compatible

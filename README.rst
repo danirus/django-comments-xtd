@@ -2,20 +2,17 @@ django-comments-xtd
 ===================
 
       
-|downloads|_ |TravisCI|_
+|TravisCI|_
 
 .. |TravisCI| image:: https://secure.travis-ci.org/danirus/django-comments-xtd.png?branch=master
 .. _TravisCI: https://travis-ci.org/danirus/django-comments-xtd
-.. |downloads| image:: https://pypip.in/d/django-comments-xtd/badge.png
-        :target: https://pypi.python.org/pypi/django-comments-xtd
-.. _downloads: https://pypi.python.org/pypi/django-comments-xtd
 
 Tested under:
 
-* Python 3.2 and django 1.6 `builds <http://buildbot.danir.us/builders/django-comments-xtd-py32dj16>`_
-* Python 3.2 and django 1.5.5: `builds <http://buildbot.danir.us/builders/django-comments-xtd-py32dj15>`_
-* Python 2.7 and django 1.5.5: `builds <http://buildbot.danir.us/builders/django-comments-xtd-py27dj15>`_
-* Python 2.7 and django 1.4.10: `builds <http://buildbot.danir.us/builders/django-comments-xtd-py27dj14>`_
+* Python 3.4 and django 1.8
+* Python 3.4 and django 1.7.7
+* Python 2.7 and django 1.7.7
+* Python 2.7 and django 1.4.20
 
 By Daniel Rus Morales <http://danir.us/>
 

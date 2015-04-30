@@ -15,7 +15,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.sqlite3', 
-        'NAME':     'django_comments_xtd_test',
+        'NAME':     'django_comments_xtd',
         'USER':     '', 
         'PASSWORD': '', 
         'HOST':     '', 
@@ -77,12 +77,27 @@ TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "..", "templates"),
 )
 
+try:
+    import importlib # Python 3
+    has_django_comments = (importlib.util.find_spec('django_comments') != None)
+except AttributeError:
+    try:
+        import imp # Python 2.7
+        has_django_comments = (imp.find_module('django_comments') != None) 
+    except ImportError:
+        has_django_comments = False
+    
+if has_django_comments:
+    django_comments = 'django_comments'
+else:
+    django_comments = 'django.contrib.comments'
+
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'django.contrib.comments',
+    django_comments,
     'django_comments_xtd',
     'django_comments_xtd.tests',
 ]
@@ -92,3 +107,9 @@ COMMENTS_XTD_CONFIRM_EMAIL = True
 COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
 COMMENTS_XTD_MAX_THREAD_LEVEL = 2
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {'tests.diary': 0}
+
+import django
+if django.VERSION[1] >= 7:
+    TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+else:
+    TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'

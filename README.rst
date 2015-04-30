@@ -19,7 +19,7 @@ By Daniel Rus Morales <http://danir.us/>
 * http://pypi.python.org/pypi/django-comments-xtd/
 * http://github.com/danirus/django-comments-xtd/
 
-A reusable django app that extends the built-in django's comments framework with:
+A reusable django app that extends the `django-contrib-comments <https://pypi.python.org/pypi/django-contrib-comments>`_ framework with:
 
 1. Thread support, so comments may be nested
 2. The maximum thread level can be set up either for all models or on a per app.model basis

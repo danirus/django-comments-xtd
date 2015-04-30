@@ -4,7 +4,7 @@
 Tutorial
 ========
 
-Django-comments-xtd is a reusable app that extends the built-in `Django Comments Framework <https://docs.djangoproject.com/en/1.4/ref/contrib/comments/>`_.
+Django-comments-xtd is a reusable app that extends the `django-contrib-comments framework <https://docs.djangoproject.com/en/1.4/ref/contrib/comments/>`_.
 
 .. index::
    single: Installation
@@ -236,7 +236,7 @@ Nested comments are disabled by default, to enable them use the following settin
  * ``COMMENTS_XTD_MAX_THREAD_LEVEL``: an integer value
  * ``COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL``: a dictionary
 
-Django-comments-xtd inherits the flexibility of the built-in `Django Comments Framework <https://docs.djangoproject.com/en/1.4/ref/contrib/comments/>`_, so that developers can plug it to support comments on as many models as they want in their projects. It is as suitable for one model based project, like comments posted to stories in a simple blog, as for a project with multiple applications and models.
+Django-comments-xtd inherits the flexibility of `django-contrib-comments framework <https://docs.djangoproject.com/en/1.4/ref/contrib/comments/>`_, so that developers can plug it to support comments on as many models as they want in their projects. It is as suitable for one model based project, like comments posted to stories in a simple blog, as for a project with multiple applications and models.
 
 The configuration of the maximum thread level on a simple project is done by declaring the ``COMMENTS_XTD_MAX_THREAD_LEVEL`` in the ``settings.py`` file::
 

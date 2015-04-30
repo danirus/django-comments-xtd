@@ -19,11 +19,11 @@ setup(
     include_package_data = True,
     license = "MIT",
     description = "Django Comments Framework extension app with thread support, follow up notifications and email confirmations.",
-    long_description = "A reusable Django app that extends the built-in Django's Comments Framework with thread support, following up notifications and comments that only hits the database after users confirm them by email.",
+    long_description = "A reusable Django app that extends django-contrib-comments Framework with thread support, following up notifications and comments that only hits the database after users confirm them by email.",
     author = "Daniel Rus Morales",
     author_email = "inbox@danir.us",
     maintainer = "Daniel Rus Morales",
-    maintainer_email = "inbox@danir.us",
+    maintainer_email = "mbox@danir.us",
     url = "http://pypi.python.org/pypi/django-comments-xtd",
     classifiers = [
         # 'Development Status :: 5 - Production/Stable',

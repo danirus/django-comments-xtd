@@ -6,7 +6,7 @@
 Introduction
 ============
 
-**django-comments-xtd** extends the built-in Django's Comments Framework with:
+**django-comments-xtd** extends `django-contrib-comments <https://pypi.python.org/pypi/django-contrib-comments>`_ framework with:
 
 .. index::
    single: Features

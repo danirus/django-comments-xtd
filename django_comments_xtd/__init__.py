@@ -33,7 +33,7 @@ def get_model():
 def get_form():
     return import_string(settings.COMMENTS_XTD_FORM_CLASS)
 
-VERSION = (1, 4, 0, 'b', 2) # following PEP 440
+VERSION = (1, 4, 0, 'b', 3) # following PEP 440
 
 def get_version():
     version = '%s.%s' % (VERSION[0], VERSION[1])

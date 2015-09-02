@@ -1,9 +1,9 @@
-from django import VERSION as DJANGO_VERSION
+import django
 from django_comments_xtd.conf import settings
 
-if DJANGO_VERSION[1] <= 5: # Django <= 1.5
+if django.VERSION[:2] <= (1, 5): # Django <= 1.5
     from django_comments_xtd.compat import import_by_path as import_string
-elif 6 <= DJANGO_VERSION[1] < 8: # Django v1.6.x and 1.7.x
+elif (1, 6) <= django.VERSION[:2] < (1, 8): # Django v1.6.x and 1.7.x
     from django.utils.module_loading import import_by_path as import_string
 else: # Django >= 1.8
     from django.utils.module_loading import import_string

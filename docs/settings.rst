@@ -98,6 +98,22 @@ An example::
 Defaults to `"django_comments_xtd.models.XtdComment"`.
 
 
+Comment Markup Fallback Filter
+==============================
+
+:index:`COMMENTS_XTD_MARKUP_FALLBACK_FILTER` - Default filter to use when rendering comments
+
+**Optional**
+
+Indicate the default markup filter for comments. This value must be a key in the MARKUP_FILTER setting. If not specified or None, comments that do not indicate an intended markup filter are simply returned as plain text.
+
+An example::
+
+    COMMENTS_XTD_MARKUP_FALLBACK_FILTER = 'markdown'
+
+Defaults to None.
+
+
 Salt
 ====
 

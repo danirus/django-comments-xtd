@@ -8,6 +8,7 @@ from django.template import (Library, Node, TemplateSyntaxError,
 from django.utils.safestring import mark_safe
 
 from django_comments_xtd import get_model as get_comment_model
+from django_comments_xtd.conf import settings
 
 from ..utils import import_formatter
 
@@ -211,6 +212,18 @@ def get_last_xtdcomments(parser, token):
     return GetLastXtdCommentsNode(count, as_varname, content_types)
 
 
+def render_with_filter(markup_filter, lines):
+    try:
+        if formatter:
+            return mark_safe(formatter("\n".join(lines), filter_name=markup_filter))
+        else:
+            raise TemplateSyntaxError(
+                "In order to use this templatetag you need django-markup, docutils and markdown installed")
+    except ValueError as exc:
+        output = "<p>Warning: %s</p>" % exc
+        return output + value
+
+
 def render_markup_comment(value):
     """
     Renders a comment using a markup language specified in the first line of the comment.
@@ -219,7 +232,7 @@ def render_markup_comment(value):
 
         {{ comment.comment|render_markup_comment }}
 
-    The first line of the comment field must start with the name of the markup language.
+    The first line of the comment field must start with the name of the markup language unless the COMMENTS_XTD_MARKUP_FALLBACK_FILTER setting is not None.
 
     A comment like::
 
@@ -228,21 +241,18 @@ def render_markup_comment(value):
     Would be rendered as a markdown text, producing the output::
 
         <p><a href="http://url.com/" title="Title">example</a></p>
+
+    A default markup language can be specified with the COMMENTS_XTD_MARKUP_FALLBACK_FILTER setting to force a default filter.
     """
     lines = value.splitlines()
     rawstr = r"""^#!(?P<markup_filter>\w+)$"""
     match_obj = re.search(rawstr, lines[0])
     if match_obj:
         markup_filter = match_obj.group('markup_filter')
-        try:
-            if formatter:
-                return mark_safe(formatter("\n".join(lines[1:]), filter_name=markup_filter))
-            else:
-                raise TemplateSyntaxError(
-                    "In order to use this templatetag you need django-markup, docutils and markdown installed")
-        except ValueError as exc:
-            output = "<p>Warning: %s</p>" % exc
-            return output + value
+        return render_with_filter(markup_filter, lines[1:])
+    elif settings.COMMENTS_XTD_MARKUP_FALLBACK_FILTER:
+        markup_filter = settings.COMMENTS_XTD_MARKUP_FALLBACK_FILTER
+        return render_with_filter(markup_filter, lines)
     else:
         return value
 

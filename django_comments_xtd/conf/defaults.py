@@ -23,6 +23,9 @@ COMMENTS_XTD_FORM_CLASS = "django_comments_xtd.forms.XtdCommentForm"
 # Model to use
 COMMENTS_XTD_MODEL = "django_comments_xtd.models.XtdComment"
 
+# Default markup filter to use
+COMMENTS_XTD_MARKUP_FALLBACK_FILTER = None
+
 # Send HTML emails
 COMMENTS_XTD_SEND_HTML_EMAIL = True
 

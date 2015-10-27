@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 
+from mock import patch
 import unittest
 
 from django.template import TemplateSyntaxError
@@ -38,6 +39,30 @@ def fib():
         a, b = b, a + b
 </pre>
 ''')
+
+
+@unittest.skipIf(not formatter, "This test case needs django-markup, docutils and markdown installed to be run")
+class RenderFallbackMarkupValueFilterTestCase(DjangoTestCase):
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_MARKUP_FALLBACK_FILTER='markdown')
+    def test_render_fallback_markup_comment(self):
+        with patch.multiple('django_comments_xtd.conf.settings',
+                            COMMENTS_XTD_MARKUP_FALLBACK_FILTER='markdown'):
+            comment = r'''An [example](http://url.com/ "Title")'''
+            result = render_markup_comment(comment)
+            self.assertEqual(result,
+                             '<p>An <a href="http://url.com/" title="Title">example</a></p>')
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_MARKUP_FALLBACK_FILTER=None)
+    def test_render_fallback_markup_comment(self):
+        with patch.multiple('django_comments_xtd.conf.settings',
+                            COMMENTS_XTD_MARKUP_FALLBACK_FILTER=None):
+            comment = r'''An [example](http://url.com/ "Title")'''
+            result = render_markup_comment(comment)
+            self.assertEqual(result,
+                             r'''An [example](http://url.com/ "Title")''')
 
 
 @unittest.skipIf(formatter, "This test case needs django-markup or docutils or markdown not installed to be run")

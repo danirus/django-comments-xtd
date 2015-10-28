@@ -1,7 +1,10 @@
 from __future__ import unicode_literals
 
 import re
-from mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 from datetime import datetime
 
 # from django.conf import settings

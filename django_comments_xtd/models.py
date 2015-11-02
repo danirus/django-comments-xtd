@@ -63,7 +63,7 @@ class XtdComment(Comment):
         ordering = settings.COMMENTS_XTD_LIST_ORDER
 
     def save(self, *args, **kwargs):
-        is_new = self.pk == None
+        is_new = self.pk is None
         super(Comment, self).save(*args, **kwargs)
         if is_new:
             if not self.parent_id:

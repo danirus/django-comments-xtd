@@ -1,6 +1,7 @@
 django-comments-xtd
 ===================
 
+Major version v1 is the latest to cover support from Django 1.4 to Django 1.9. Next major version v2.0 will only support officially maintained versions of Django.
       
 |TravisCI|_
 
@@ -9,9 +10,10 @@ django-comments-xtd
 
 Tested under:
 
-* Python 3.4 and django 1.8
-* Python 3.4 and django 1.7.7
-* Python 2.7 and django 1.7.7
+* Python 3.5 and django 1.9
+* Python 3.4 and django 1.8.7
+* Python 3.4 and django 1.7.11
+* Python 2.7 and django 1.7.11
 * Python 2.7 and django 1.4.20
 
 By Daniel Rus Morales <http://danir.us/>
@@ -43,10 +45,8 @@ Includes three **demo sites** and a limited **test suite**. If you commit code, 
 
 Run the tests with:  ``python setup.py test``
 
-And see the live demos:
+Check out the demo projects coming with the package:
 
-1. `simple <http://demos.danir.us/django-comments-xtd/simple/>`_: Single model with **non-threaded** comments
-2. `simple_threads <http://demos.danir.us/django-comments-xtd/simple-threads/>`_: Single model with **threaded** comments up to level 2
-3. `multiple <http://demos.danir.us/django-comments-xtd/multiple/>`_: Several models with comments, and a maximum thread level defined on per app.model basis.
-
-Admin access with user **admin**, password **admin**. DBs cleared every 30 minutes.
+1. **simple**: Single model with **non-threaded** comments
+2. **simple_threads**: Single model with **threaded** comments up to level 2
+3. **multiple**: Several models with comments, and a maximum thread level defined on per app.model basis.

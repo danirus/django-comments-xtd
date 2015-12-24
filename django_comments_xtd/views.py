@@ -1,7 +1,16 @@
 from __future__ import unicode_literals
 import six
 
-from django.db import models
+import django
+
+get_model = None
+if django.VERSION[:2] <= (1, 8): # Django <= 1.8
+    from django.db import models
+    get_model = models.get_model
+else:
+    from django.apps import apps
+    get_model = apps.get_model
+    
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
@@ -86,7 +95,7 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
     else:
         ctype = request.POST["content_type"]
         object_pk = request.POST["object_pk"]
-        model = models.get_model(*ctype.split("."))
+        model = get_model(*ctype.split("."))
         target = model._default_manager.get(pk=object_pk)
         key = signed.dumps(comment, compress=True, 
                            extra_key=settings.COMMENTS_XTD_SALT)
@@ -163,8 +172,8 @@ def notify_comment_followers(comment):
             signed.dumps(instance, compress=True,
                          extra_key=settings.COMMENTS_XTD_SALT))
 
-    model = models.get_model(comment.content_type.app_label,
-                             comment.content_type.model)
+    model = get_model(comment.content_type.app_label,
+                      comment.content_type.model)
     target = model._default_manager.get(pk=comment.object_pk)
     subject = _("new comment posted")
     text_message_template = loader.get_template(
@@ -236,8 +245,8 @@ def mute(request, key):
         is_public=True, followup=True, user_email=comment.user_email
     ).update(followup=False)
 
-    model = models.get_model(comment.content_type.app_label,
-                             comment.content_type.model)
+    model = get_model(comment.content_type.app_label,
+                      comment.content_type.model)
     target = model._default_manager.get(pk=comment.object_pk)
     
     template_arg = [

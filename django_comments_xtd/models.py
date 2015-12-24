@@ -12,7 +12,11 @@ try:
 except ImportError:
     from django.db.transaction import commit_on_success as atomic
 
-from django_comments_xtd import Comment
+try:
+    from django_comments.models import Comment
+except ImportError:
+    from django.contrib.comments.models import Comment
+    
 from django_comments_xtd.conf import settings
 
 

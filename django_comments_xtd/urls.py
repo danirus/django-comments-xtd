@@ -8,7 +8,12 @@ else:
 
 from django.views import generic
 
-from django_comments_xtd import views, models, django_comments_urls
+try:
+    import django_comments.urls as django_comments_urls
+except ImportError:
+    import django.contrib.comments.urls as django_comments_urls
+    
+from django_comments_xtd import views, models
 from django_comments_xtd.conf import settings
 
 

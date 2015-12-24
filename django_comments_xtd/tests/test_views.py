@@ -120,7 +120,8 @@ class ConfirmCommentTestCase(TestCase):
         except:
             comment = None
         self.assert_(comment != None)
-        self.assertRedirects(self.response, self.article.get_absolute_url())
+        redirected_to = 'http://testserver%s' % self.article.get_absolute_url()
+        self.assertRedirects(self.response, redirected_to)
 
     def test_notify_comment_followers(self):
         # send a couple of comments to the article with followup=True and check

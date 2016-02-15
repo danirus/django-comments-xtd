@@ -3,7 +3,6 @@ six
 Django
 docutils
 Markdown
+django-markup
 # Only for Django < 1.7
-South>=1.0.2
-#-e git+git://github.com/bartTC/django-markup.git#egg=django-markup
--e git+git://github.com/danirus/django-markup.git#egg=django-markup
+#South>=1.0.2

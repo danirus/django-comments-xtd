@@ -25,8 +25,8 @@ class EmailThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        _send_mail(self.subject, self.body, self.from_email, 
-                   self.recipient_list, self.html, self.fail_silently)
+        _send_mail(self.subject, self.body, self.from_email,
+                   self.recipient_list, self.fail_silently, self.html)
         mail_sent_queue.put(True)        
 
 

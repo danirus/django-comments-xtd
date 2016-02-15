@@ -5,16 +5,22 @@ PRJPATH=`pwd`
 popd > /dev/null
 FIXTURESPATH=${PRJPATH}/fixtures
 
+check_ret() {
+    [[ $? -ne 0 ]] && echo "Failed." && exit 1
+}
+
+cd ${PRJPATH}
+
 #------------------------------
 printf "Checking Django version... "
 django_version=`python -c 'import django; print(django.get_version())'`
 printf "${django_version}\n"
 
 if [[ ${django_version} < 1.7 ]]; then
-    python manage.py syncdb --noinput
-    python manage.py migrate django_comments_xtd
+    python manage.py syncdb --noinput || check_ret
+    python manage.py migrate django_comments_xtd || check_ret
 else
-    python manage.py migrate --noinput
+    python manage.py migrate --noinput || check_ret
 fi
 
 #------------------------------
@@ -30,5 +36,5 @@ printf "${django_comments}\n"
 
 fixtures=(auth sites articles ${django_comments} django_comments_xtd)
 for file in ${fixtures[@]}; do
-    python manage.py loaddata ${FIXTURESPATH}/${file}.json
+    python manage.py loaddata ${FIXTURESPATH}/${file}.json || check_ret
 done

@@ -2,7 +2,9 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.views.generic import DateDetailView, DetailView
+from django.views.generic import DateDetailView, DetailView, ListView
+
+from django_comments_xtd.models import XtdComment
 
 from multiple.blog.models import Story, Quote
 
@@ -34,3 +36,11 @@ class QuoteDetailView(DetailView):
         context = super(QuoteDetailView, self).get_context_data(**kwargs)
         context.update({'next': reverse('comments-xtd-sent')})
         return context
+
+
+class CommentsView(ListView):
+    template_name = "django_comments_xtd/blog/comment_list.html"
+    paginate_by = 5
+
+    def get_queryset(self):
+        return XtdComment.objects.for_app_models("blog.story", "blog.quote")

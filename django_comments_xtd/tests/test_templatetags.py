@@ -32,7 +32,8 @@ A fibonacci generator in Python, taken from `LiteratePrograms <http://en.literat
             a, b = b, a + b'''
         result = render_markup_comment(comment)
         self.assertEqual(result,
-                         r'''<p>A fibonacci generator in Python, taken from <a class="reference external" href="http://en.literateprograms.org/Fibonacci_numbers_%28Python%29">LiteratePrograms</a>:</p>
+                         r'''<div class="document">
+<p>A fibonacci generator in Python, taken from <a class="reference external" href="http://en.literateprograms.org/Fibonacci_numbers_%28Python%29">LiteratePrograms</a>:</p>
 <pre class="literal-block">
 def fib():
     a, b = 0, 1
@@ -40,6 +41,7 @@ def fib():
         yield a
         a, b = b, a + b
 </pre>
+</div>
 ''')
 
 

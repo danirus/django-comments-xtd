@@ -38,7 +38,7 @@ class MaxThreadLevelExceededException(Exception):
 
 class XtdCommentManager(models.Manager):
 
-    if django.VERSION < (1, 6):
+    if django.VERSION[:2] < (1, 6):
         get_queryset = models.Manager.get_query_set
     
     def for_app_models(self, *args):

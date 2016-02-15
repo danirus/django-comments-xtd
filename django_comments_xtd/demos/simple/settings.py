@@ -6,7 +6,6 @@ import os
 PRJ_PATH = os.path.abspath(os.path.curdir)
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     ('Alice Bloggs', 'alice@example.com'),
@@ -56,7 +55,6 @@ MEDIA_URL = '/media/'
 # Examples: "http://foo.com/media/", "/media/".
 # ADMIN_MEDIA_PREFIX = '/media/'
 
-STATIC_ROOT = os.path.join(PRJ_PATH, "static")
 STATIC_URL = '/static/'
 
 # Additional locations of static files
@@ -64,7 +62,6 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    #os.path.join(PRJ_PATH, "static"),
 )
 
 # List of finder classes that know how to find static files in
@@ -77,11 +74,23 @@ STATICFILES_FINDERS = (
 
 SECRET_KEY = 'v2824l&2-n+4zznbsk9c-ap5i)b3e8b+%*a=dxqlahm^%)68jn'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+	'DIRS': [
+	    os.path.join(os.path.dirname(__file__), "templates"),
+	],
+        'APP_DIRS': True,
+	'OPTIONS': {
+	    'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+		'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+	    ],
+	},
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -92,10 +101,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'simple.urls'
-
-TEMPLATE_DIRS = (
-    os.path.join(os.path.dirname(__file__), "templates"),
-)
 
 try:
     import imp

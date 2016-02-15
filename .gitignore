@@ -9,3 +9,4 @@ build/
 dist/
 .coverage
 .emacs.desktop*
+.tox

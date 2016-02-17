@@ -1,0 +1,20 @@
+[
+{
+    "model": "django_comments.comment",
+    "pk": 1,
+    "fields": {
+        "content_type": 11,
+        "object_pk": "2",
+        "site": 1,
+        "user": null,
+        "user_name": "Joe Bloggs",
+        "user_email": "danirus@eml.cc",
+        "user_url": "",
+        "comment": "Phasellus id dictum sapien. Donec pellentesque justo eget erat lobortis et fermentum nunc facilisis. Sed mattis sapien nec felis vestibulum vehicula. Nunc lobortis sem sagittis eros ultrices at rhoncus felis egestas.",
+        "submit_date": "2016-02-17T09:00:33.428",
+        "ip_address": "127.0.0.1",
+        "is_public": true,
+        "is_removed": false
+    }
+}
+]

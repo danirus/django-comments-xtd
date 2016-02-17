@@ -27,6 +27,7 @@ Introduction
    example
    tutorial
    templatetags
+   extending
    settings
    templates
 

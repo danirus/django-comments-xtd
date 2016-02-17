@@ -9,7 +9,7 @@ Django-comments-xtd comes with three demo projects:
 1. **simple**: Single model with **non-threaded** comments
 2. **simple_threads**: Single model with **threaded** comments up to level 2
 3. **multiple**: Several models with comments, and a maximum thread level defined for each app.model pair.
-
+4. **custom_comments**: Single model with comments provided by a new app that extends django-comments-xtd. Comments have a new ``title`` field. Find more details in :ref:`ref-extending`.
 
 `Click here <http://github.com/danirus/django-comments-xtd/tree/master/django_comments_xtd/demos>`_ for a quick look at the examples directory in the repository.
 

@@ -9,10 +9,8 @@ try:
 except ImportError:
     from django.contrib.comments.admin import CommentsAdmin
 
-from django_comments_xtd import get_model as get_comment_model
+from django_comments_xtd.models import XtdComment
 
-
-XtdComment = get_comment_model()
 
 class XtdCommentsAdmin(CommentsAdmin):
     list_display = ('thread_level', 'cid', 'name', 'content_type', 'object_pk', 'ip_address', 'submit_date', 'followup', 'is_public', 'is_removed')

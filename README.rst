@@ -16,11 +16,6 @@ Tested under:
 * Python 2.7 and django 1.7.11
 * Python 2.7 and django 1.4.20
 
-By Daniel Rus Morales <http://danir.us/>
-
-* http://pypi.python.org/pypi/django-comments-xtd/
-* http://github.com/danirus/django-comments-xtd/
-
 A reusable django app that extends the `django-contrib-comments <https://pypi.python.org/pypi/django-contrib-comments>`_ framework with:
 
 1. Thread support, so comments may be nested
@@ -41,7 +36,9 @@ Read the documentation at:
 .. _`Read The Docs`: http://readthedocs.org/docs/django-comments-xtd/
 .. _`Python Packages Site`: http://packages.python.org/django-comments-xtd/
 
-Includes three **demo sites** and a limited **test suite**. If you commit code, please consider adding proper coverage (especially if it has a chance for a regression) in the test suite.
+Includes four **demo sites** and a limited **test suite**.
+
+If you commit code, please consider adding proper coverage (especially if it has a chance for a regression) in the test suite.
 
 Run the tests with:  ``python setup.py test``
 
@@ -50,3 +47,4 @@ Check out the demo projects coming with the package:
 1. **simple**: Single model with **non-threaded** comments
 2. **simple_threads**: Single model with **threaded** comments up to level 2
 3. **multiple**: Several models with comments, and a maximum thread level defined on per app.model basis.
+4. **custom_comments**: How to extend django-comments-xtd with your own comment model and form.

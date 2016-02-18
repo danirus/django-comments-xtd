@@ -10,3 +10,4 @@ dist/
 .coverage
 .emacs.desktop*
 .tox
+.cache

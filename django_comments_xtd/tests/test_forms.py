@@ -16,7 +16,7 @@ class GetFormTestCase(TestCase):
 class XtdCommentFormTestCase(TestCase):
 
     def setUp(self):
-        self.article = Article.objects.create(title="September", 
+        self.article = Article.objects.create(title="September",
                                               slug="september",
                                               body="What I did on September...")
         self.form = django_comments.get_form()(self.article)
@@ -27,11 +27,11 @@ class XtdCommentFormTestCase(TestCase):
 
     def test_get_comment_create_data(self):
         # as it's used in django_comments.views.comments
-        data = {"name":"Daniel", 
-                "email":"danirus@eml.cc", 
-                "followup": True, 
+        data = {"name": "Daniel",
+                "email": "danirus@eml.cc",
+                "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,
-                "comment":"Es war einmal iene kleine..." }
+                "comment": "Es war einmal iene kleine..."}
         data.update(self.form.initial)
         form = django_comments.get_form()(self.article, data)
         self.assert_(self.form.security_errors() == {})
@@ -43,4 +43,4 @@ class XtdCommentFormTestCase(TestCase):
 
         # and as long as settings.COMMENTS_XTD_CONFIRM_EMAIL is True
         # is_public is set to False until receive the user confirmation
-        self.assert_(comment.is_public == False) 
+        self.assert_(comment.is_public is False)

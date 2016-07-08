@@ -1,7 +1,9 @@
-#-*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 import os
+import imp
+import django
+
 
 PRJ_PATH = os.path.abspath(os.path.curdir)
 
@@ -15,11 +17,11 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE':   'django.db.backends.sqlite3', 
+        'ENGINE':   'django.db.backends.sqlite3',
         'NAME':     'django_comments_xtd',
-        'USER':     '', 
-        'PASSWORD': '', 
-        'HOST':     '', 
+        'USER':     '',
+        'PASSWORD': '',
+        'HOST':     '',
         'PORT':     '',
     }
 }
@@ -76,34 +78,26 @@ ROOT_URLCONF = 'django_comments_xtd.tests.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-	'DIRS': [
-	    os.path.join(os.path.dirname(__file__), "templates"),
-	    os.path.join(os.path.dirname(__file__), "..", "templates"),
-	],
+        'DIRS': [
+            os.path.join(os.path.dirname(__file__), "templates"),
+            os.path.join(os.path.dirname(__file__), "..", "templates"),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
-	    'context_processors': [
+            'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-	    ],
-        },
-    },  
+            ]
+        }
+    }
 ]
 
-# TEMPLATE_DIRS = (
-#     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-#     # Always use forward slashes, even on Windows.
-#     # Don't forget to use absolute paths, not relative paths.
-#     os.path.join(os.path.dirname(__file__), "..", "templates"),
-# )
-
 try:
-    import imp
     imp.find_module('django_comments')
     django_comments = 'django_comments'
 except ImportError:
     django_comments = 'django.contrib.comments'
-    
+
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -120,7 +114,6 @@ COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
 COMMENTS_XTD_MAX_THREAD_LEVEL = 2
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {'tests.diary': 0}
 
-import django
 if django.VERSION[1] >= 7:
     TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 else:

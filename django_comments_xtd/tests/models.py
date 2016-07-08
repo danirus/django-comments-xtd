@@ -6,7 +6,7 @@ from django.db.models import permalink
 
 class PublicManager(models.Manager):
     """Returns published articles that are not in the future."""
-    
+
     def published(self):
         return self.get_query_set().filter(publish__lte=datetime.now())
 
@@ -28,11 +28,12 @@ class Article(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('articles-article-detail', None, 
+        return ('articles-article-detail', None,
                 {'year': self.publish.year,
                  'month': int(self.publish.strftime('%m').lower()),
                  'day': self.publish.day,
                  'slug': self.slug})
+
 
 class Diary(models.Model):
     """Diary, that accepts comments."""
@@ -45,4 +46,3 @@ class Diary(models.Model):
     class Meta:
         db_table = 'demo_diary'
         ordering = ('-publish',)
-

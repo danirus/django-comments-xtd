@@ -3,8 +3,9 @@ from __future__ import unicode_literals
 
 import os
 
+PRJ_PATH = os.path.abspath(os.path.curdir)
+
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -40,6 +41,8 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
+STATIC_URL = "/static/"
+
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = ''
@@ -70,28 +73,37 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'django_comments_xtd.tests.urls'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(__file__), "..", "templates"),
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+	'DIRS': [
+	    os.path.join(os.path.dirname(__file__), "templates"),
+	    os.path.join(os.path.dirname(__file__), "..", "templates"),
+	],
+        'APP_DIRS': True,
+        'OPTIONS': {
+	    'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+	    ],
+        },
+    },  
+]
+
+# TEMPLATE_DIRS = (
+#     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+#     # Always use forward slashes, even on Windows.
+#     # Don't forget to use absolute paths, not relative paths.
+#     os.path.join(os.path.dirname(__file__), "..", "templates"),
+# )
 
 try:
-    import importlib # Python 3
-    has_django_comments = (importlib.util.find_spec('django_comments') != None)
-except AttributeError:
-    try:
-        import imp # Python 2.7
-        has_django_comments = (imp.find_module('django_comments') != None) 
-    except ImportError:
-        has_django_comments = False
-    
-if has_django_comments:
+    import imp
+    imp.find_module('django_comments')
     django_comments = 'django_comments'
-else:
+except ImportError:
     django_comments = 'django.contrib.comments'
-
+    
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',

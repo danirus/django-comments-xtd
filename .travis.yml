@@ -1,8 +1,40 @@
 language: python
+
 python:
   - 2.7
   - 3.4
-# command to install dependencies
-install: pip install -r requirements_tests.pip
-# command to run tests
-script: python setup.py test
+
+cache:
+  pip:
+  apt:
+  directories:
+    - .tox
+
+env:
+ - TOX_ENV=py27-django14
+ - TOX_ENV=py27-django15
+ - TOX_ENV=py27-django16
+ - TOX_ENV=py27-django17
+ - TOX_ENV=py27-django18
+ - TOX_ENV=py27-django19
+ - TOX_ENV=py35-django18
+ - TOX_ENV=py35-django19
+
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq $APT
+
+after_failure:
+ - cat /home/travis/.pip/pip.log
+
+after_success:
+ - coveralls
+
+install:
+ - pip install pip wheel
+ - pip install -q coveralls flake8 tox
+
+script:
+ - env | sort
+ - tox -e $TOX_ENV
+ - flake8 --show-source --max-line-length=80 --exclude=.tox,docs,tests/settings,django_comments_xtd/__init__.py,django_comments_xtd/migrations django_comments_xtd/

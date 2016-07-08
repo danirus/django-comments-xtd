@@ -1,9 +1,13 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-urlpatterns = patterns('',
-    url(r'^articles/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<slug>[-\w]+)/$',
-        'django_comments_xtd.tests.views.dummy_view',
+from django_comments_xtd.tests import views
+
+urlpatterns = [
+    url(r'^articles/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/'
+        r'(?P<slug>[-\w]+)/$',
+        views.dummy_view,
         name='articles-article-detail'),
-
-    (r'^comments/', include('django_comments_xtd.urls')),
-)
+    url(r'^comments/', include('django_comments_xtd.urls')),
+]
+urlpatterns += staticfiles_urlpatterns()

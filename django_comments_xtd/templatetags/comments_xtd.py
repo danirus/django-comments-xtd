@@ -1,10 +1,8 @@
-#-*- coding: utf-8 -*-
-
 import re
 
 from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, TemplateSyntaxError,
-                             Variable, loader, RequestContext)
+                             Variable, loader)
 from django.utils.safestring import mark_safe
 
 from django_comments_xtd import get_model as get_comment_model
@@ -41,7 +39,7 @@ def get_xtdcomment_count(parser, token):
 
     Syntax::
 
-        {% get_xtdcomment_count as [varname] for [app].[model] [[app].[model]] %}
+        {% get_xtdcomment_count as var for app.model [app.model] %}
 
     Example usage::
 
@@ -51,12 +49,14 @@ def get_xtdcomment_count(parser, token):
     tokens = token.contents.split()
 
     if tokens[1] != 'as':
-        raise TemplateSyntaxError("2nd. argument in %r tag must be 'for'" % tokens[0])
+        raise TemplateSyntaxError("2nd. argument in %r tag must be 'for'" %
+                                  tokens[0])
 
     as_varname = tokens[2]
 
     if tokens[3] != 'for':
-        raise TemplateSyntaxError("4th. argument in %r tag must be 'for'" % tokens[0])
+        raise TemplateSyntaxError("4th. argument in %r tag must be 'for'" %
+                                  tokens[0])
 
     content_types = _get_content_types(tokens[0], tokens[4:])
     return XtdCommentCountNode(as_varname, content_types)
@@ -80,9 +80,10 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
 
     def render(self, context):
         if not isinstance(self.count, int):
-            self.count = int( self.count.resolve(context) )
+            self.count = int(self.count.resolve(context))
 
-        self.qs = XtdComment.objects.for_content_types(self.content_types)[:self.count]
+        self.qs = XtdComment.objects.for_content_types(
+            self.content_types)[:self.count]
 
         strlist = []
         for xtd_comment in self.qs:
@@ -91,7 +92,7 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
             else:
                 template_arg = [
                     "django_comments_xtd/%s/%s/comment.html" % (
-                        xtd_comment.content_type.app_label, 
+                        xtd_comment.content_type.app_label,
                         xtd_comment.content_type.model),
                     "django_comments_xtd/%s/comment.html" % (
                         xtd_comment.content_type.app_label,),
@@ -111,12 +112,12 @@ class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
 
     def render(self, context):
         if not isinstance(self.count, int):
-            self.count = int( self.count.resolve(context) )
-
-        self.qs = XtdComment.objects.for_content_types(self.content_types)[:self.count]
+            self.count = int(self.count.resolve(context))
+        self.qs = XtdComment.objects.for_content_types(
+            self.content_types)[:self.count]
         context[self.as_varname] = self.qs
         return ''
-        
+
 
 def _get_content_types(tagname, tokens):
     content_types = []
@@ -138,17 +139,16 @@ def _get_content_types(tagname, tokens):
 
 def render_last_xtdcomments(parser, token):
     """
-    Render the last N XtdComments through the 
+    Render the last N XtdComments through the
       ``comments_xtd/comment.html`` template
 
     Syntax::
 
-        {% render_last_xtdcomments [N] for [app].[model] [[app].[model]] using [template] %}
+        {% render_last_xtdcomments N for app.model [app.model] using template %}
 
     Example usage::
 
-        {% render_last_xtdcomments 5 for blog.story blog.quote using "comments/blog/comment.html" %}
-
+        {% render_last_xtdcomments 5 for blog.story blog.quote using "t.html" %}
     """
     tokens = token.contents.split()
 
@@ -168,8 +168,8 @@ def render_last_xtdcomments(parser, token):
         try:
             template = tokens[token_using+1].strip('" ')
         except IndexError:
-            raise TemplateSyntaxError(
-                "Last argument in %r tag must be a relative template path" % tokens[0])       
+            raise TemplateSyntaxError("Last argument in %r tag must be a "
+                                      "relative template path" % tokens[0])
     except ValueError:
         content_types = _get_content_types(tokens[0], tokens[3:])
         template = None
@@ -179,11 +179,11 @@ def render_last_xtdcomments(parser, token):
 
 def get_last_xtdcomments(parser, token):
     """
-    Get the last N XtdComments
+    Get the last N XtdComments.
 
     Syntax::
 
-        {% get_last_xtdcomments [N] as [varname] for [app].[model] [[app].[model]] %}
+        {% get_last_xtdcomments N as var for app.model [app.model] %}
 
     Example usage::
 
@@ -215,24 +215,28 @@ def get_last_xtdcomments(parser, token):
 def render_with_filter(markup_filter, lines):
     try:
         if formatter:
-            return mark_safe(formatter("\n".join(lines), filter_name=markup_filter))
+            return mark_safe(formatter("\n".join(lines),
+                                       filter_name=markup_filter))
         else:
-            raise TemplateSyntaxError(
-                "In order to use this templatetag you need django-markup, docutils and markdown installed")
+            raise TemplateSyntaxError("In order to use this templatetag you "
+                                      "need django-markup, docutils and "
+                                      "markdown installed")
     except ValueError as exc:
         output = "<p>Warning: %s</p>" % exc
-        return output + value
+        return output
 
 
 def render_markup_comment(value):
     """
-    Renders a comment using a markup language specified in the first line of the comment.
+    Renders a comment using a markup language specified in the first line of
+    the comment.
 
     Template Syntax::
 
         {{ comment.comment|render_markup_comment }}
 
-    The first line of the comment field must start with the name of the markup language unless the COMMENTS_XTD_MARKUP_FALLBACK_FILTER setting is not None.
+    The first line of the comment field must start with the name of the markup
+    language unless the COMMENTS_XTD_MARKUP_FALLBACK_FILTER setting is not None.
 
     A comment like::
 
@@ -242,7 +246,8 @@ def render_markup_comment(value):
 
         <p><a href="http://url.com/" title="Title">example</a></p>
 
-    A default markup language can be specified with the COMMENTS_XTD_MARKUP_FALLBACK_FILTER setting to force a default filter.
+    A default markup language can be specified with the
+    COMMENTS_XTD_MARKUP_FALLBACK_FILTER setting to force a default filter.
     """
     lines = value.splitlines()
     rawstr = r"""^#!(?P<markup_filter>\w+)$"""

@@ -30,6 +30,6 @@ COMMENTS_XTD_MARKUP_FALLBACK_FILTER = None
 COMMENTS_XTD_SEND_HTML_EMAIL = True
 
 # Whether to send emails in separate threads or use the regular method.
-# Set it to False to use a third-party app like django-celery-email or 
+# Set it to False to use a third-party app like django-celery-email or
 # your own celery app.
 COMMENTS_XTD_THREADED_EMAILS = True

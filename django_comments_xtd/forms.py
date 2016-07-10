@@ -5,15 +5,17 @@ try:
     from django_comments.forms import CommentForm
 except ImportError:
     from django.contrib.comments.forms import CommentForm
-    
+
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import TmpXtdComment
 
 
 class XtdCommentForm(CommentForm):
-    followup = forms.BooleanField(
-        required=False, label=_("Notify me of follow up comments via email"))
-    reply_to = forms.IntegerField(required=True, initial=0, widget=forms.HiddenInput())
+    followup = forms.BooleanField(required=False,
+                                  label=_("Notify me of follow up comments "
+                                          "via email"))
+    reply_to = forms.IntegerField(required=True, initial=0,
+                                  widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         comment = kwargs.pop("comment", None)
@@ -23,16 +25,16 @@ class XtdCommentForm(CommentForm):
             kwargs["initial"] = initial
         super(CommentForm, self).__init__(*args, **kwargs)
         self.fields['name'] = forms.CharField(
-            widget=forms.TextInput(attrs={'placeholder':_('name')}))
+            widget=forms.TextInput(attrs={'placeholder': _('name')}))
         self.fields['email'] = forms.EmailField(
             label=_("Email"), help_text=_("Required for comment verification"),
-            widget=forms.TextInput(attrs={'placeholder':_('email')})
+            widget=forms.TextInput(attrs={'placeholder': _('email')})
             )
         self.fields['url'] = forms.URLField(
             required=False,
-            widget=forms.TextInput(attrs={'placeholder':_('website')}))
+            widget=forms.TextInput(attrs={'placeholder': _('website')}))
         self.fields['comment'] = forms.CharField(
-            widget=forms.Textarea(attrs={'placeholder':_('comment')}), 
+            widget=forms.Textarea(attrs={'placeholder': _('comment')}),
             max_length=settings.COMMENT_MAX_LENGTH)
 
     def get_comment_model(self):

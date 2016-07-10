@@ -4,7 +4,6 @@ import django
 from django.db import models
 from django.db.models import F, Max, Min
 from django.contrib.contenttypes.models import ContentType
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 try:
@@ -16,7 +15,7 @@ try:
     from django_comments.models import Comment
 except ImportError:
     from django.contrib.comments.models import Comment
-    
+
 from django_comments_xtd.conf import settings
 
 
@@ -33,14 +32,16 @@ class MaxThreadLevelExceededException(Exception):
         self.max_by_app = max_thread_level_for_content_type(content_type)
 
     def __str__(self):
-        return ugettext("Can not post comments over the thread level %{max_thread_level}") % {"max_thread_level": self.max_by_app}
+        return (ugettext("Can not post comments over the thread level "
+                         "%{max_thread_level}") %
+                {"max_thread_level": self.max_by_app})
 
 
 class XtdCommentManager(models.Manager):
 
     if django.VERSION[:2] < (1, 6):
         get_queryset = models.Manager.get_query_set
-    
+
     def for_app_models(self, *args):
         """Return XtdComments for pairs "app.model" given in args"""
         content_types = []
@@ -51,7 +52,8 @@ class XtdCommentManager(models.Manager):
         return self.for_content_types(content_types)
 
     def for_content_types(self, content_types):
-        qs = self.get_queryset().filter(content_type__in=content_types).reverse()
+        qs = self.get_queryset().filter(content_type__in=content_types)\
+                                .reverse()
         return qs
 
 
@@ -60,7 +62,9 @@ class XtdComment(Comment):
     parent_id = models.IntegerField(default=0)
     level = models.SmallIntegerField(default=0)
     order = models.IntegerField(default=1, db_index=True)
-    followup = models.BooleanField(help_text=_("Receive by email further comments in this conversation"), blank=True, default=False)
+    followup = models.BooleanField(blank=True, default=False,
+                                   help_text=_("Receive by email further "
+                                               "comments in this conversation"))
     objects = XtdCommentManager()
 
     class Meta:
@@ -91,13 +95,14 @@ class XtdComment(Comment):
 
         self.thread_id = parent.thread_id
         self.level = parent.level + 1
-        qc_eq_thread = XtdComment.objects.filter(thread_id = parent.thread_id)
-        qc_ge_level = qc_eq_thread.filter(level__lte = parent.level,
-                                          order__gt = parent.order)
+        qc_eq_thread = XtdComment.objects.filter(thread_id=parent.thread_id)
+        qc_ge_level = qc_eq_thread.filter(level__lte=parent.level,
+                                          order__gt=parent.order)
         if qc_ge_level.count():
             min_order = qc_ge_level.aggregate(Min('order'))['order__min']
-            XtdComment.objects.filter(thread_id = parent.thread_id,
-                                      order__gte = min_order).update(order=F('order')+1)
+            XtdComment.objects.filter(thread_id=parent.thread_id,
+                                      order__gte=min_order)\
+                              .update(order=F('order')+1)
             self.order = min_order
         else:
             max_order = qc_eq_thread.aggregate(Max('order'))['order__max']
@@ -112,6 +117,7 @@ class XtdComment(Comment):
             return True
         else:
             return False
+
 
 class DummyDefaultManager:
     """

@@ -13,12 +13,14 @@ from django_comments_xtd.models import XtdComment
 
 
 class XtdCommentsAdmin(CommentsAdmin):
-    list_display = ('thread_level', 'cid', 'name', 'content_type', 'object_pk', 'ip_address', 'submit_date', 'followup', 'is_public', 'is_removed')
+    list_display = ('thread_level', 'cid', 'name', 'content_type', 'object_pk',
+                    'ip_address', 'submit_date', 'followup', 'is_public',
+                    'is_removed')
     list_display_links = ('cid',)
     list_filter = ('content_type', 'is_public', 'is_removed', 'followup')
     fieldsets = (
         (None,          {'fields': ('content_type', 'object_pk', 'site')}),
-        (_('Content'),  {'fields': ('user', 'user_name', 'user_email', 
+        (_('Content'),  {'fields': ('user', 'user_name', 'user_email',
                                     'user_url', 'comment', 'followup')}),
         (_('Metadata'), {'fields': ('submit_date', 'ip_address',
                                     'is_public', 'is_removed')}),
@@ -31,7 +33,7 @@ class XtdCommentsAdmin(CommentsAdmin):
         if obj.level:
             rep += '-' * obj.level
             rep += " c%d to c%d" % (obj.id, obj.parent_id)
-        else: 
+        else:
             rep += " c%d" % obj.id
         return rep
 

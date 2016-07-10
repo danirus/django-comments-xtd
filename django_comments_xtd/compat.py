@@ -26,7 +26,7 @@ def import_by_path(dotted_path, error_prefix=''):
     try:
         attr = getattr(module, class_name)
     except AttributeError:
-        raise ImproperlyConfigured('%sModule "%s" does not define a "%s" attribute/class' % (
-            error_prefix, module_path, class_name))
+        raise ImproperlyConfigured('%sModule "%s" does not define a '
+                                   '"%s" attribute/class' %
+                                   (error_prefix, module_path, class_name))
     return attr
-

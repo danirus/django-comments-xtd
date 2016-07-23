@@ -198,13 +198,14 @@ We should create first a ``comments`` directory inside the templates directory o
 
    .. code-block:: html+django
 
-       {% load staticfiles %}
+       {% load comments %}
+       {% load comments_xtd %}
 
        <ul class="media-list" id="comments">
          {% for comment in comment_list %}
          <li class="media" id="c{{ comment.id }}">
            <div class="media-left">
-             <a href="{{ comment.url }}"><img src="{% static 'img/64x64.svg' %}"></a>
+             <a href="{{ comment.url }}">{{ comment.user_email|xtd_comment_gravatar }}</a>
            </div>
            <div class="media-body">
              <h6 class="media-heading">
@@ -225,7 +226,7 @@ Form class
        
 In order to customize the fields of the comment form we will create a new form class inside the blog application and change the setting :setting:`COMMENTS_XTD_FORM_CLASS` to point to that new form class.
 
-First, create a new file ``forms.py`` inside the `democx/blog` directory with the following content:
+First, create a new file ``forms.py`` inside the ``democx/blog`` directory with the following content:
 
    .. code-block:: python
 
@@ -265,7 +266,7 @@ In ``democx/democs/settings.py`` add the following:
 Form template
 -------------
        
-Now we must create a file ``form.html`` with the template code that renders the comment form. It includes each and every visible form field: ``comment``, ``name``, ``email``, ``url`` and ``follow up``:
+Now we must create a file ``form.html`` within the ``democx/template/comments`` directory containing the code that renders the comment form. It must include each and every visible form field: ``comment``, ``name``, ``email``, ``url`` and ``follow up``:
 
    .. code-block:: html+django
 
@@ -361,7 +362,7 @@ We will provide the last of them by adding the file ``preview.html`` to the ``de
 
        {% extends "base.html" %}
        {% load i18n %}
-       {% load static %}
+       {% load comments_xtd %}
 
        {% block content %}
        <h4>{% trans "Preview your comment:" %}</h4>
@@ -372,8 +373,8 @@ We will provide the last of them by adding the file ``preview.html`` to the ``de
              <em>{% trans "Empty comment." %}</em>
              {% else %}
              <div class="media-left">
-               <a href="{{ comment.url }}">
-                 <img src="{% static 'img/64x64.svg' %}">
+               <a href="{{ form.cleaned_data.url }}">
+                 {{ form.cleaned_data.email|xtd_comment_gravatar }}
                </a>
              </div>
              <div class="media-body">
@@ -412,11 +413,13 @@ Finally, when we hit the send button and the comment gets succesfully processed 
 
        {% block content %}
        <h3 class="text-center">{% trans "Comment confirmation requested." %}</h3>
-       <p>{% transblock %}A confirmation message has been sent to your
+       <p>{% blocktrans %}A confirmation message has been sent to your
        email address. Please, click on the link in the message to confirm
-       your comment.{% endtransblock %}</p>
+       your comment.{% endblocktrans %}</p>
        {% endblock %}
 
+Now we have the form and the templates integrated with the Bootstrap_ framework and ready to receive comments. You can visit a blog post and give it a try. Remember that to get the comment confirmation request by email you must sign out of the admin interface.
+       
 .. _Bootstrap: http://getbootstrap.com
 
 
@@ -430,7 +433,7 @@ One of the differences between django-comments-xtd and other commenting applicat
 
 Comment moderation is often established to fight spam, but may be used for other purposes, like triggering actions based on comment content, rejecting comments based on how old is the subject being commented and whatnot.
 
-In this section we want to set up comment moderation for our blog application, so that comments sent to a blog post older than a year will be flagged for moderation. Also we want Django to send an email to registered :setting:`MANAGERS` of the project when the comment is flagged.
+In this section we want to set up comment moderation for our blog application, so that comments sent to a blog post older than a year will be automatically flagged for moderation. Also we want Django to send an email to registered :setting:`MANAGERS` of the project when the comment is flagged.
 
 Let's start adding our email address to the :setting:`MANAGERS` in the ``democx/democx/settings.py`` module:
 
@@ -473,7 +476,7 @@ We may want to customize the look of the ``moderated.html`` template. Let's crea
 
    .. code-block:: html+django
 
-       {% extends "comments/base.html" %}
+       {% extends "base.html" %}
        {% load i18n %}
 
        {% block title %}{% trans "Comment requires approval." %}{% endblock %}
@@ -720,7 +723,7 @@ This template uses the tag :ttag:`xtd_comment_gravatar` included within the ``co
 
 Another important remark on this template is that it calls itself recursively to render nested comments for each comment. The tag :ttag:`get_xtdcomment_tree` retrieves a list of dictionaries. Each dictionary contains two attributes: ``comment`` and ``children``. ``comment`` is the XtdComment object  and ``children`` is another list of dictionaries with the nested comments.
 
-We don't necessarily have to use :ttag:`get_xtdcomment_tree` to render nested comments. It is possible to render them by iterating over the list of comments and accessing the level attribute. Following is the ``list.html`` template used in the ``simple_threaded` demo project. Such project doesn't make use of any client side framework like Bootstrap_ and therefore the indentation of nested comments is rather simple:
+We don't necessarily have to use :ttag:`get_xtdcomment_tree` to render nested comments. It is possible to render them by iterating over the list of comments and accessing the level attribute. Following is the ``list.html`` template used in the ``simple_threaded`` demo project. Such project doesn't make use of any client side framework like Bootstrap_ and therefore the indentation of nested comments is rather simple:
 
    .. code-block:: html+django
 

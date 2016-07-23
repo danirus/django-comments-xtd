@@ -12,7 +12,7 @@ Django-comments-xtd comes with 4 tags and two filters:
  * Tag ``get_xtdcomment_tree``
  * Tag ``get_xtdcomment_count``
  * Tag ``get_last_xtdcomments``
- * Filter ``xtd_comments_gravatar``
+ * Filter ``xtd_comment_gravatar``
  * Tag ``render_last_xtdcomments``
  * Filter ``render_markup_comment``
 

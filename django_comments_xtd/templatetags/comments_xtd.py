@@ -324,20 +324,20 @@ register.filter(render_markup_comment)
 
 
 # ----------------------------------------------------------------------
-def gravatar_url(email, size=48):
+def xtd_comment_gravatar_url(email, size=48):
     return ("http://www.gravatar.com/avatar/%s?%s&d=mm" %
             (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
              urllib.parse.urlencode({'s': str(size)})))
 
 
-register.filter(gravatar_url)
+register.filter(xtd_comment_gravatar_url)
 
 
 # ----------------------------------------------------------------------
-def gravatar(email, size=48):
-    url = gravatar_url(email, size)
+def xtd_comment_gravatar(email, size=48):
+    url = xtd_comment_gravatar_url(email, size)
     return mark_safe('<img src="%s" height="%d" width="%d">' %
                      (url, size, size))
 
 
-register.filter(gravatar)
+register.filter(xtd_comment_gravatar)

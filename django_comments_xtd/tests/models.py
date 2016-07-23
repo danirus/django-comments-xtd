@@ -60,5 +60,5 @@ class DiaryCommentModerator(CommentModerator):
     enable_field = 'allow_comments'
     auto_moderate_field = 'publish'
     moderate_after = 2
-    
+
 moderator.register(Diary, DiaryCommentModerator)

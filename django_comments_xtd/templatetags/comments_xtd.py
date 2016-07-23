@@ -20,7 +20,7 @@ formatter = import_formatter()
 register = Library()
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 class XtdCommentCountNode(Node):
     """Store the number of XtdComments for the given list of app.models"""
 
@@ -68,7 +68,7 @@ def get_xtdcomment_count(parser, token):
 register.tag(get_xtdcomment_count)
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 class BaseLastXtdCommentsNode(Node):
     """Base class to deal with the last N XtdComments for a list of app.model"""
 
@@ -223,7 +223,7 @@ register.tag(render_last_xtdcomments)
 register.tag(get_last_xtdcomments)
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 class GetXtdCommentTreeNode(Node):
     def __init__(self, obj, var_name):
         self.obj = Variable(obj)
@@ -270,7 +270,7 @@ def get_xtdcomment_tree(parser, token):
 register.tag(get_xtdcomment_tree)
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 def render_with_filter(markup_filter, lines):
     try:
         if formatter:
@@ -323,17 +323,17 @@ def render_markup_comment(value):
 register.filter(render_markup_comment)
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 def gravatar_url(email, size=48):
     return ("http://www.gravatar.com/avatar/%s?%s&d=mm" %
             (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
-             urllib.parse.urlencode({'s':str(size)})))
+             urllib.parse.urlencode({'s': str(size)})))
 
 
 register.filter(gravatar_url)
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 def gravatar(email, size=48):
     url = gravatar_url(email, size)
     return mark_safe('<img src="%s" height="%d" width="%d">' %

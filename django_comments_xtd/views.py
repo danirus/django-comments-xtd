@@ -46,7 +46,7 @@ def send_email_confirmation_request(
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
     confirmation_url = reverse("comments-xtd-confirm", args=[key])
-    message_context =  Context({'comment': comment,
+    message_context = Context({'comment': comment,
                                'content_object': target,
                                'confirmation_url': confirmation_url,
                                'contact': settings.DEFAULT_FROM_EMAIL,

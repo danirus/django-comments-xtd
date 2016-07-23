@@ -12,15 +12,17 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-send_mail = ''  # string to send_mail function to patch 
+from django_comments_xtd import django_comments
+from django_comments_xtd.tests.models import Diary
+
+
+send_mail = ''  # string to send_mail function to patch
 try:
-    import django_comments
+    import imp
+    imp.find_module('django_comments')
     send_mail = 'django_comments.moderation.send_mail'
 except ImportError:
     send_mail = 'django.contrib.comments.moderation.send_mail'
-
-from django_comments_xtd import django_comments
-from django_comments_xtd.tests.models import Article, Diary
 
 
 class ModeratorApprovesComment(TestCase):
@@ -34,7 +36,7 @@ class ModeratorApprovesComment(TestCase):
             allow_comments=True,
             publish=datetime.now())
         self.form = django_comments.get_form()(diary_entry)
-        
+
     def post_valid_data(self):
         data = {"name": "Bob", "email": "bob@example.com", "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,
@@ -59,23 +61,23 @@ class ModeratorApprovesComment(TestCase):
         self.assert_(self.mailer_app1.call_count == 1)
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
-        self.assert_(comment.is_public == True)
+        self.assert_(comment.is_public is True)
 
     def test_moderation_with_unregistered_user(self):
         self.post_valid_data()
         self.assert_(self.mailer_app1.call_count == 0)
         self.assert_(self.mailer_app2.call_count == 1)
         mail_msg = self.mailer_app2.call_args[0][1]
-        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)', mail_msg)\
-                  .group("key"))
+        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+                            mail_msg).group("key"))
         self.get_confirm_comment_url(key)
         self.assert_(self.mailer_app1.call_count == 1)
         self.assert_(self.mailer_app2.call_count == 1)
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
-        self.assert_(comment.is_public == True)
+        self.assert_(comment.is_public is True)
 
-        
+
 class ModeratorHoldsComment(TestCase):
     def setUp(self):
         patcher_app1 = patch(send_mail)
@@ -95,7 +97,7 @@ class ModeratorHoldsComment(TestCase):
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"),
                                          data=data, follow=True)
-        
+
     def get_confirm_comment_url(self, key):
         self.response = self.client.get(reverse("comments-xtd-confirm",
                                                 kwargs={'key': key}),
@@ -111,19 +113,18 @@ class ModeratorHoldsComment(TestCase):
         self.assert_(self.mailer_app1.call_count == 1)
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
-        self.assert_(comment.is_public == False)
+        self.assert_(comment.is_public is False)
 
     def test_moderation_with_unregistered_user(self):
         self.post_valid_data()
         self.assert_(self.mailer_app1.call_count == 0)
         self.assert_(self.mailer_app2.call_count == 1)
         mail_msg = self.mailer_app2.call_args[0][1]
-        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)', mail_msg)\
-                  .group("key"))
+        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+                            mail_msg).group("key"))
         self.get_confirm_comment_url(key)
         self.assert_(self.mailer_app1.call_count == 1)
         self.assert_(self.mailer_app2.call_count == 1)
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
-        self.assert_(comment.is_public == False)
-        
+        self.assert_(comment.is_public is False)

@@ -189,7 +189,7 @@ class TmpXtdComment(dict):
         return (TmpXtdComment, (), None, None, six.iteritems(self))
 
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 class BlackListedDomain(models.Model):
     """
     A blacklisted domain from which comments should be discarded.

@@ -22,6 +22,7 @@ if not on_rtd:
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
+sys.path.insert(0, os.path.abspath('.'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -30,7 +31,7 @@ if not on_rtd:
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = []
+extensions = ['sphinx.ext.intersphinx', 'extensions']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -222,3 +223,11 @@ man_pages = [
 ]
 
 
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {
+    'python': ('http://docs.python.org/', None),
+    'django': ('http://docs.djangoproject.com/en/stable',
+               'http://docs.djangoproject.com/en/stable/_objects'),
+    'comments': ('https://django-contrib-comments.readthedocs.io/en/latest/',
+                 None)
+}

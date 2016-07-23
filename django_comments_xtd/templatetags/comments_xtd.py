@@ -1,3 +1,5 @@
+import hashlib
+import urllib
 import re
 
 from django.contrib.contenttypes.models import ContentType
@@ -18,6 +20,7 @@ formatter = import_formatter()
 register = Library()
 
 
+#----------------------------------------------------------------------
 class XtdCommentCountNode(Node):
     """Store the number of XtdComments for the given list of app.models"""
 
@@ -62,6 +65,10 @@ def get_xtdcomment_count(parser, token):
     return XtdCommentCountNode(as_varname, content_types)
 
 
+register.tag(get_xtdcomment_count)
+
+
+#----------------------------------------------------------------------
 class BaseLastXtdCommentsNode(Node):
     """Base class to deal with the last N XtdComments for a list of app.model"""
 
@@ -212,6 +219,58 @@ def get_last_xtdcomments(parser, token):
     return GetLastXtdCommentsNode(count, as_varname, content_types)
 
 
+register.tag(render_last_xtdcomments)
+register.tag(get_last_xtdcomments)
+
+
+#----------------------------------------------------------------------
+class GetXtdCommentTreeNode(Node):
+    def __init__(self, obj, var_name):
+        self.obj = Variable(obj)
+        self.var_name = var_name
+
+    def render(self, context):
+        obj = self.obj.resolve(context)
+        ctype = ContentType.objects.get_for_model(obj)
+        qs = XtdComment.objects.filter(content_type=ctype,
+                                       object_pk=obj.pk,
+                                       site__pk=settings.SITE_ID,
+                                       is_public=True)
+        diclist = XtdComment.tree_from_queryset(qs)
+        context[self.var_name] = diclist
+        return ''
+
+
+def get_xtdcomment_tree(parser, token):
+    """
+    Adds to the template context a list of XtdComment dictionaries for the
+    given object.
+    Each XtdComment dictionary has the following attributes::
+        {
+            'xtdcomment': xtdcomment object,
+            'children': [ list of child xtdcomment dicts ]
+        }
+    Syntax::
+        {% get_xtdcomment_tree for [object] as [varname] %}
+    Example usage::
+        {% get_xtdcomment_tree for post as comment_list %}
+    """
+    try:
+        tag_name, args = token.contents.split(None, 1)
+    except ValueError:
+        raise TemplateSyntaxError("%s tag requires arguments" %
+                                  token.contents.split()[0])
+    match = re.search(r'for (\w+) as (\w+)', args)
+    if not match:
+        raise TemplateSyntaxError("%s tag had invalid arguments" % tag_name)
+    obj, var_name = match.groups()
+    return GetXtdCommentTreeNode(obj, var_name)
+
+
+register.tag(get_xtdcomment_tree)
+
+
+#----------------------------------------------------------------------
 def render_with_filter(markup_filter, lines):
     try:
         if formatter:
@@ -261,8 +320,24 @@ def render_markup_comment(value):
     else:
         return value
 
-
-register.tag(get_xtdcomment_count)
-register.tag(render_last_xtdcomments)
-register.tag(get_last_xtdcomments)
 register.filter(render_markup_comment)
+
+
+#----------------------------------------------------------------------
+def gravatar_url(email, size=48):
+    return ("http://www.gravatar.com/avatar/%s?%s&d=mm" %
+            (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
+             urllib.parse.urlencode({'s':str(size)})))
+
+
+register.filter(gravatar_url)
+
+
+#----------------------------------------------------------------------
+def gravatar(email, size=48):
+    url = gravatar_url(email, size)
+    return mark_safe('<img src="%s" height="%d" width="%d">' %
+                     (url, size, size))
+
+
+register.filter(gravatar)

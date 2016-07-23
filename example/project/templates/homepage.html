@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block header %}{{ block.super }}Homepage{% endblock %}
+
+{% block content %}
+<p>{% trans "The demo features" %}:
+  <ol>
+    <li>{% blocktrans %}jQuery plugin <code>jquery.django_comments_xtd.js</code> for Ajax interactions.{% endblocktrans %}</li> 
+    <li>{% trans "An Articles App, with a model <code>Article</code>. Article instances accept comments." %}</li>
+    <li>{% blocktrans %}<code>COMMENTS_XTD_MAX_THREAD_LEVEL</code> set to 2. Meaning that comments can be nested up to a 2nd level:{% endblocktrans %}
+      <div class="row">
+        <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+          <pre class="small">First comment (level 0)
+    |-- Reply to First comment (level 1)
+        |-- Reply to Reply to First comment (level 2)</pre>
+        </div>
+      </div>
+    </li>
+    <li>{% blocktrans %}Comments have to be confirmed by email, or otherwise set <code>COMMENTS_XTD_CONFIRM_EMAIL</code> to <code>False</code>.{% endblocktrans %}</li>
+    <li>{% blocktrans %}It uses the template tag <code>render_markup_comment</code> to render comments content. So you can use line breaks, markdown or reStructuredText to format comments{% endblocktrans %}. To use special formatting, start the comment with the line: <code>#!&lt;markup-lang&gt;</code> being <code>&lt;markup-lang&gt;</code> any of the following:
+      <ul>
+	    <li>markdown</li>
+	    <li>restructuredtext</li>
+	    <li>linebreaks</li>
+      </ul>
+    </li>
+    <li>It uses django-crispy-forms to quickly provide Twitter-bootstrap3 integration.</li>
+  </ol>
+</p>
+<p><a href="{% url 'articles-index' %}">{% trans "Article list" %}</a></p>
+{% endblock %}

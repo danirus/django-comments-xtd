@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load comments_xtd %}
+{% load comments %}
+{% load static %}
+
+{% block content %}
+<H4>{{ object.title }} <span class="small">Published {{ object.publish }}</span></H4>
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+    {{ object.body|linebreaks }}
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+    <a href="{% url 'articles-index' %}">back to the articles list</a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+    <div class="visible-lg-block visible-md-block">
+      <hr/>
+    </div>
+      
+    <div id="comments">
+      {% if object.allow_comments %}
+      <div class="well well-lg">
+        {% render_comment_form for object %}
+      </div>
+      {% else %}
+      <h4 class="center">comments are disabled for this article</h4>
+      {% endif %}
+    
+      {% get_comment_count for object as comment_count %}
+      {% if comment_count %}
+      <H5 class="center">{{ comment_count }} comment{{ comment_count|pluralize }}</H5>
+      {% endif %}
+      <ul id="comment-list" class="media-list">
+        {% get_xtdcomment_tree for object as comments_tree %}
+        {% include "articles/comments_tree.html" with comments=comments_tree %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

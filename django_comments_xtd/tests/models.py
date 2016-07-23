@@ -3,6 +3,13 @@ from datetime import datetime
 from django.db import models
 from django.db.models import permalink
 
+try:
+    from django_comments.moderation import CommentModerator
+except ImportError:
+    from django.contrib.comments.moderation import CommentModerator
+
+from django_comments_xtd.moderation import moderator
+
 
 class PublicManager(models.Manager):
     """Returns published articles that are not in the future."""
@@ -46,3 +53,12 @@ class Diary(models.Model):
     class Meta:
         db_table = 'demo_diary'
         ordering = ('-publish',)
+
+
+class DiaryCommentModerator(CommentModerator):
+    email_notification = True
+    enable_field = 'allow_comments'
+    auto_moderate_field = 'publish'
+    moderate_after = 2
+    
+moderator.register(Diary, DiaryCommentModerator)

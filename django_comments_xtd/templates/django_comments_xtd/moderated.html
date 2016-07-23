@@ -1,0 +1,9 @@
+{% extends "comments/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Comment requires approval" %}.{% endblock %}
+
+{% block content %}
+<h1>{% trans "Comment in moderation" %}</h1>
+<p>{% trans "Your comment has to be reviewed before approval.<br/>It has been put automatically in moderation.<br/>Thank you for your patience and understanding." %}</p>
+{% endblock %}

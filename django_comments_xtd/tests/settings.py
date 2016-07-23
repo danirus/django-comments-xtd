@@ -10,7 +10,7 @@ PRJ_PATH = os.path.abspath(os.path.curdir)
 DEBUG = True
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('Joe, the Administrator', 'joe.bloggs@example.com'),
 )
 
 MANAGERS = ADMINS

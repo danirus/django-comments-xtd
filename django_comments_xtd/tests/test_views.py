@@ -32,7 +32,7 @@ class OnCommentWasPostedTestCase(TestCase):
     def post_valid_data(self, wait_mail=True):
         data = {"name": "Bob", "email": "bob@example.com", "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,
-                "comment": "Es war einmal iene kleine..."}
+                "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
         self.response = self.client.post(reverse("comments-post-comment"),
                                          data=data, follow=True)

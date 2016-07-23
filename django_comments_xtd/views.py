@@ -30,6 +30,15 @@ else:
 XtdComment = get_comment_model()
 
 
+def get_moderated_tmpl(cmt):
+    return [
+        "django_comments_xtd/%s/%s/moderated.html" % (
+            cmt.content_type.app_label, cmt.content_type.model),
+        "django_comments_xtd/%s/moderated.html" % cmt.content_type.app_label,
+        "django_comments_xtd/moderated.html"
+    ]
+
+
 def send_email_confirmation_request(
         comment, target, key,
         text_template="django_comments_xtd/email_confirmation_request.txt",
@@ -37,7 +46,7 @@ def send_email_confirmation_request(
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
     confirmation_url = reverse("comments-xtd-confirm", args=[key])
-    message_context = Context({'comment': comment,
+    message_context =  Context({'comment': comment,
                                'content_object': target,
                                'confirmation_url': confirmation_url,
                                'contact': settings.DEFAULT_FROM_EMAIL,
@@ -73,7 +82,7 @@ def _create_comment(tmp_comment):
     Creates a XtdComment from a TmpXtdComment.
     """
     comment = XtdComment(**tmp_comment)
-    comment.is_public = True
+    # comment.is_public = True
     comment.save()
     return comment
 
@@ -89,7 +98,6 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
     """
     if settings.COMMENTS_APP != "django_comments_xtd":
         return False
-
     if (
             not settings.COMMENTS_XTD_CONFIRM_EMAIL or
             (comment.user and comment.user.is_authenticated())
@@ -97,7 +105,11 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
         if not _comment_exists(comment):
             new_comment = _create_comment(comment)
             comment.xtd_comment = new_comment
-            notify_comment_followers(new_comment)
+            signals.confirmation_received.send(sender=TmpXtdComment,
+                                               comment=comment,
+                                               request=request)
+            if comment.is_public:
+                notify_comment_followers(new_comment)
     else:
         ctype = request.POST["content_type"]
         object_pk = request.POST["object_pk"]
@@ -107,36 +119,44 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
                            extra_key=settings.COMMENTS_XTD_SALT)
         send_email_confirmation_request(comment, target, key)
 
-comment_was_posted.connect(on_comment_was_posted)
+comment_was_posted.connect(on_comment_was_posted, sender=TmpXtdComment)
 
 
 def sent(request):
     comment_pk = request.GET.get("c", None)
+    req_ctx = RequestContext(request)
     try:
         comment_pk = int(comment_pk)
         comment = XtdComment.objects.get(pk=comment_pk)
     except (TypeError, ValueError, XtdComment.DoesNotExist):
         template_arg = ["django_comments_xtd/posted.html",
                         "comments/posted.html"]
-        return render_to_response(template_arg,
-                                  context_instance=RequestContext(request))
+        return render_to_response(template_arg, context_instance=req_ctx)
     else:
         if (
                 request.is_ajax() and comment.user and
                 comment.user.is_authenticated()
         ):
-            template_arg = [
-                "django_comments_xtd/%s/%s/comment.html" % (
-                    comment.content_type.app_label,
-                    comment.content_type.model),
-                "django_comments_xtd/%s/comment.html" % (
-                    comment.content_type.app_label,),
-                "django_comments_xtd/comment.html"
-            ]
-            return render_to_response(template_arg, {"comment": comment},
-                                      context_instance=RequestContext(request))
+            if comment.is_public:
+                template_arg = [
+                    "django_comments_xtd/%s/%s/comment.html" % (
+                        comment.content_type.app_label,
+                        comment.content_type.model),
+                    "django_comments_xtd/%s/comment.html" % (
+                        comment.content_type.app_label,),
+                    "django_comments_xtd/comment.html"
+                ]
+            else:
+                template_arg = get_moderated_tmpl(comment)
+            return render_to_response(template_arg, {'comment': comment},
+                                      context_instance=req_ctx)
         else:
-            return redirect(comment)
+            if comment.is_public:
+                return redirect(comment)
+            else:
+                moderated_tmp = get_moderated_tmpl(comment)
+                return render_to_response(moderated_tmp, {'comment': comment},
+                                          context_instance=req_ctx)
 
 
 def confirm(request, key,
@@ -161,17 +181,25 @@ def confirm(request, key,
                                       context_instance=RequestContext(request))
 
     comment = _create_comment(tmp_comment)
-    notify_comment_followers(comment)
-    return redirect(comment)
+    if comment.is_public is False:
+        return render_to_response(get_moderated_tmpl(comment),
+                                  {'comment': comment},
+                                  context_instance=RequestContext(request))
+    else:
+        notify_comment_followers(comment)
+        return redirect(comment)
 
 
 def notify_comment_followers(comment):
     followers = {}
 
-    previous_comments = XtdComment.objects.filter(
-        content_type=comment.content_type,
-        object_pk=comment.object_pk, is_public=True,
-        followup=True).exclude(user_email=comment.user_email)
+    kwargs = {'content_type': comment.content_type,
+              'object_pk': comment.object_pk,
+              'is_public': True,
+              'followup': True}
+    previous_comments = XtdComment.objects\
+                                  .filter(**kwargs)\
+                                  .exclude(user_email=comment.user_email)
 
     for instance in previous_comments:
         followers[instance.user_email] = (
@@ -229,7 +257,10 @@ def reply(request, cid):
         "django_comments_xtd/reply.html"
     ]
     return render_to_response(template_arg,
-                              {"comment": comment, "form": form, "next": next},
+                              {"comment": comment,
+                               "form": form,
+                               "cid": cid,
+                               "next": next},
                               context_instance=RequestContext(request))
 
 

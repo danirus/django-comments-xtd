@@ -1,4 +1,8 @@
 from django import forms
+try:
+    from django.apps import apps
+except ImportError:
+    from django.db.models.loading import cache as apps
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -12,8 +16,7 @@ from django_comments_xtd.models import TmpXtdComment
 
 class XtdCommentForm(CommentForm):
     followup = forms.BooleanField(required=False,
-                                  label=_("Notify me of follow up comments "
-                                          "via email"))
+                                  label=_("Notify me about follow-up comments"))
     reply_to = forms.IntegerField(required=True, initial=0,
                                   widget=forms.HiddenInput())
 
@@ -42,10 +45,12 @@ class XtdCommentForm(CommentForm):
 
     def get_comment_create_data(self):
         data = super(CommentForm, self).get_comment_create_data()
+        ctype = data.get('content_type')
+        object_pk = data.get('object_pk')
+        model = apps.get_model(ctype.app_label, ctype.model)
+        target = model._default_manager.get(pk=object_pk)
         data.update({'thread_id': 0, 'level': 0, 'order': 1,
                      'parent_id': self.cleaned_data['reply_to'],
-                     'followup': self.cleaned_data['followup']})
-        if settings.COMMENTS_XTD_CONFIRM_EMAIL:
-            # comment must be verified before getting approved
-            data['is_public'] = False
+                     'followup': self.cleaned_data['followup'],
+                     'content_object': target})
         return data

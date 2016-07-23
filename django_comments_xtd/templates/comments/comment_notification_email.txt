@@ -1,0 +1,9 @@
+A new comment has been sent to the following URL:
+
+{{ content_object.get_absolute_url }}
+
+Submitted by: {{ comment.user_name }}
+Email address: {{ comment.user_email }}
+
+--- Comment: ---
+{{ comment.comment }}

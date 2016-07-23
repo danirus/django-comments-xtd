@@ -1,0 +1,27 @@
+{% load i18n comments_xtd %}
+
+<ul class="media-list" id="comments">
+  {% for comment in comment_list %}
+  {% ifequal comment.level 0 %}
+  <li class="media" id="c{{ comment.id }}">
+  {% else %}
+  <div class="media" id="c{{ comment.id }}">
+  {% endifequal %}
+    <div class="media-left">
+      <a href="{{ comment.url }}"><img src="{% static 'img/64x64.svg"></a>
+    </div>
+    <div class="media-body">
+      <h4 class="media-heading">{{ comment.submit_date }}&nbsp;-&nbsp;{% if comment.url %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}</h4>
+      <p>{{ comment.comment|render_markup_comment }}</p>
+      {% if comment.allow_thread %}
+      <hr/><p>&nbsp;-&nbsp;<a href="{{ comment.get_reply_url }}">{% trans "Reply" %}</a></p>{% endif %}
+      {% if comment.children %}
+      {% render_child_comment_list %}
+      {% endif %}
+    </div>
+    {% endif %}
+  {% ifequal comment.level 0 %}
+  </li>
+  {% endifequal %}
+  {% endfor %}
+</ul>

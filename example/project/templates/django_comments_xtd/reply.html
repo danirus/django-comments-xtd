@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block content %}
+<h4>{% trans "Reply to" %}:</h4>
+<div class="row">
+  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+    <div class="media">
+      <div class="media-left">
+        <a href="{{ item.comment.url }}"><img src="{% static 'img/64x64.svg' %}"></a>
+      </div>
+      <div class="media-body">
+        <h6 class="media-heading">{{ comment.submit_date }}&nbsp;-&nbsp;{% if comment.url %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}</h6>
+        <p>{{ comment.comment|render_markup_comment }}</p>
+      </div>
+    </div>
+    <div class="visible-lg-block visible-md-block">
+      <hr/>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+    <div class="well wll-lg">
+      {% include "comments/form.html" %}
+    </div>
+  </div>
+</div>
+{% endblock %}

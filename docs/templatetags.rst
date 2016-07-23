@@ -7,10 +7,12 @@
 Filters and Template Tags
 =========================
 
-Django-comments-xtd comes with three tags and one filter:
+Django-comments-xtd comes with 4 tags and two filters:
 
+ * Tag ``get_xtdcomment_tree``
  * Tag ``get_xtdcomment_count``
  * Tag ``get_last_xtdcomments``
+ * Filter ``xtd_comments_gravatar``
  * Tag ``render_last_xtdcomments``
  * Filter ``render_markup_comment``
 
@@ -20,8 +22,47 @@ To use any of them in your templates you first need to load them::
 
 
 .. index::
+   single: get_xtdcomment_tree
+   pair: tag; get_xtdcomment_tree
+
+.. templatetag:: get_xtdcomment_tree
+
+Get Xtdcomment Tree
+===================
+
+Tag syntax:
+
+   .. code-block:: html+django
+
+       {% get_xtdcomment_tree for [object] as [varname] %}
+
+
+Returns a dictionary to the template context under the name given in ``[varname]`` with the comments posted to the given ``[object]``. The dictionary has the form:
+
+   .. code-block:: python
+
+       {
+           'xtdcomment': xtdcomment_object,
+           'children': [ list_of_child_xtdcomment_dicts ]
+       }
+
+The comments will be ordered by the ``thread_id`` and ``order`` within the thread, as stated by the setting :setting:`COMMENTS_XTD_LIST_ORDER`. 
+       
+Example usage
+-------------
+
+Get an ordered dictionary with the comments posted to a given blog story and store the dictionary in a template context variabled called ``comment_tree``:
+
+   .. code-block:: html+django
+
+       {% get_xtdcomment_tree for story as comments_tree %}
+
+    
+.. index::
    single: get_xtdcomment_count
    pair: tag; get_xtdcomment_count
+
+.. templatetag:: get_xtdcomment_count
 
 Get Xtdcomment Count
 ====================
@@ -74,6 +115,23 @@ Get the list of the last 10 comments two models, ``Story`` and ``Quote``, have r
 
 
 .. index::
+   single: xtd_comment_gravatar
+
+.. templatetag:: xtd_comment_gravatar
+
+Xtd Comment Gravatar
+====================
+
+Filter syntax::
+
+  {{ comment.email|xtd_comment_gravatar }}
+
+A simple gravatar filter that inserts the `gravatar <http://www.gravatar.com/>`_ image associated to an email address.
+
+This filter has been named ``xtd_comment_gravatar`` as oposed to simply ``gravatar`` to avoid potential name collisions with other gravatar filters the user might have opted to include in the template.
+
+
+.. index::
    single: render_last_xtdcomments
    pair: tag; render_last_xtdcomments
 
@@ -102,29 +160,38 @@ Render the list of the last 5 comments posted, either to the blog.story model or
    single: render_markup_comment, Markdown; reStructuredText
    pair: filter; render_markup_comment
 
+.. templatetag:: render_markup_comment
+   
 Render Markup Comment
 =====================
 
-Filter syntax::
+Filter syntax:
 
-    {{ comment.comment|render_markup_comment }}
+   .. code-block:: html+django
+
+       {{ comment.comment|render_markup_comment }}
 
 
-Renders a comment using a markup language specified in the first line of the comment.
+Renders a comment using a markup language specified in the first line of the comment. It uses `django-markup <https://github.com/bartTC/django-markup>`_ to parse the comments with a markup language parser and produce the corresponding output.
 
 Example usage
 -------------
 
-A comment like::
+A comment posted with a content like:
 
-    comment = r'''#!markdown\n\rAn [example](http://url.com/ "Title")'''
+   .. code-block:: text
 
-Would be rendered as a markdown text, producing the output::
+       #!markdown
+       An [example](http://url.com/ "Title")
 
-    <p><a href="http://url.com/" title="Title">example</a></p>
+Would be rendered as a markdown text, producing the output:
 
-Markup languages available are:
+   .. code-block:: html
+       
+       <p><a href="http://url.com/" title="Title">example</a></p>
 
- * `Markdown <http://daringfireball.net/projects/markdown/syntax>`_ (use ``#!markdown``)
- * `reStructuredText <http://docutils.sourceforge.net/docs/user/rst/quickref.html>`_ (use ``#!restructuredtext``)
- * Linebreaks (use ``#!linebreaks``)
+Available markup languages are:
+
+ * `Markdown <http://daringfireball.net/projects/markdown/syntax>`_, when starting the comment with ``#!markdown``.
+ * `reStructuredText <http://docutils.sourceforge.net/docs/user/rst/quickref.html>`_, when starting the comment with ``#!restructuredtext``.
+ * Linebreaks, when starting the comment with ``#!linebreaks``.

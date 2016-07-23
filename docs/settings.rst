@@ -1,16 +1,17 @@
-.. _ref-settings:
+.. _settings-comments-xtd:
 
 ========
 Settings
 ========
 
-In order to use Django-comments-xtd it is required to declare the setting `COMMENTS_APP <https://docs.djangoproject.com/en/1.3/ref/contrib/comments/settings/#std:setting-COMMENTS_APP>`_::
+To use django-comments-xtd it's necessary to declare the :setting:`COMMENTS_APP` setting::
 
     COMMENTS_APP = "django_comments_xtd"
 
 A number of additional settings are available to customize django-comments-xtd behaviour. 
 
-
+.. setting:: COMMENTS_XTD_MAX_THREAD_LEVEL
+   
 Maximum Thread Level
 ====================
 
@@ -25,7 +26,8 @@ An example::
      COMMENTS_XTD_MAX_THREAD_LEVEL = 8
 
 Defaults to 0. What means threads are not permitted.
- 
+
+.. setting:: COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
 
 Maximum Thread Level per App.Model
 ==================================
@@ -46,6 +48,8 @@ An example::
     }
 
 
+.. setting:: COMMENTS_XTD_CONFIRM_EMAIL
+
 Confirm Comment Post by Email
 =============================
 
@@ -63,6 +67,7 @@ An example::
 
 Defaults to True.
 
+.. setting:: COMMENTS_XTD_FORM_CLASS
 
 Comment Form Class
 ==================
@@ -81,6 +86,8 @@ An example::
 Defaults to `"django_comments_xtd.forms.XtdCommentForm"`.
 
 
+.. setting:: COMMENTS_XTD_MODEL
+
 Comment Model
 =============
 
@@ -98,6 +105,22 @@ An example::
 Defaults to `"django_comments_xtd.models.XtdComment"`.
 
 
+.. setting:: COMMENTS_XTD_LIST_ORDER
+
+Comments Model Ordering
+=======================
+
+:index:`COMMENTS_XTD_LIST_ORDER` - Field ordering in which comments are retrieve.
+
+**Optional**
+
+A tuple with field names, used as the ``ordering`` for the ``XtdComment`` mode.
+
+Defaults to ``('thread_id', 'order')``
+             
+
+.. setting:: COMMENTS_XTD_MARKUP_FALLBACK_FILTER
+
 Comment Markup Fallback Filter
 ==============================
 
@@ -114,6 +137,8 @@ An example::
 Defaults to None.
 
 
+.. setting:: COMMENTS_XTD_SALT
+
 Salt
 ====
 
@@ -129,6 +154,7 @@ An example::
 
 Defaults to an empty string.
 
+.. setting:: COMMENTS_XTD_SEND_HTML_EMAIL
 
 Send HTML Email
 ===============
@@ -147,6 +173,8 @@ An example::
 
 Defaults to True.
 
+
+.. setting:: COMMENTS_XTD_THREADED_EMAILS
 
 Threaded Emails
 ===============

@@ -1,0 +1,164 @@
+[
+    {
+        "pk": 1,
+        "model": "django_comments.comment",
+        "fields": {
+            "comment": "C1, is an article's comment.",
+            "user_url": "",
+            "submit_date": "2012-10-05T22:00:00",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": null,
+            "content_type": 12,
+            "is_public": true,
+            "user_name": "person 1",
+            "user_email": "person01@example.com"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "django_comments.comment",
+        "fields": {
+            "comment": "C2 is an article's comment.",
+            "user_url": "",
+            "submit_date": "2012-10-05T22:05:00",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": 1,
+            "content_type": 12,
+            "is_public": true,
+            "user_name": "Administrator",
+            "user_email": "admin@example.com"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "django_comments.comment",
+        "fields": {
+            "comment": "C3 is a comment to C1.",
+            "user_url": "",
+            "submit_date": "2012-10-05T22:10:10",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": 1,
+            "content_type": 12,
+            "is_public": true,
+            "user_name": "Administrator",
+            "user_email": "admin@example.com"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "django_comments.comment",
+        "fields": {
+            "comment": "C4, is the 2nd comment to C1.",
+            "user_url": "",
+            "submit_date": "2012-10-05T22:15:00",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": 1,
+            "content_type": 12,
+            "is_public": true,
+            "user_name": "Administrator",
+            "user_email": "admin@example.com"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "django_comments.comment",
+        "fields": {
+            "comment": "C5 is a comment to C2.",
+            "user_url": "",
+            "submit_date": "2012-10-05T22:20:00",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": 1,
+            "content_type": 12,
+            "is_public": true,
+            "user_name": "Administrator",
+            "user_email": "admin@example.com"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "django_comments.comment",
+        "fields": {
+            "comment": "C6 is a comment to C5.",
+            "user_url": "",
+            "submit_date": "2012-10-05T22:25:00",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": 1,
+            "content_type": 12,
+            "is_public": true,
+            "user_name": "Administrator",
+            "user_email": "admin@example.com"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "django_comments.comment",
+        "fields": {
+            "comment": "C7 is a comment to C4.",
+            "user_url": "",
+            "submit_date": "2012-10-05T22:30:00",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": 1,
+            "content_type": 12,
+            "is_public": true,
+            "user_name": "Administrator",
+            "user_email": "admin@example.com"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "django_comments.comment",
+        "fields": {
+            "comment": "C8 is a comment  to C3.",
+            "user_url": "",
+            "submit_date": "2012-10-05T22:35:00",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": 1,
+            "content_type": 12,
+            "is_public": true,
+            "user_name": "Administrator",
+            "user_email": "admin@example.com"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "django_comments.comment",
+        "fields": {
+            "comment": "C9 is an article's comment.",
+            "user_url": "",
+            "submit_date": "2012-10-05T22:40:00",
+            "ip_address": "127.0.0.1",
+            "object_pk": "2",
+            "site": 1,
+            "is_removed": false,
+            "user": 1,
+            "content_type": 12,
+            "is_public": true,
+            "user_name": "Administrator",
+            "user_email": "admin@example.com"
+        }
+    }    
+]

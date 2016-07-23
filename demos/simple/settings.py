@@ -100,7 +100,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'simple.urls'
 
 try:
     import imp
@@ -115,18 +115,19 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.messages',
     django_comments,
 
-    'multiple.blog',
-    'multiple.projects',
+    'simple.articles',
     'django_comments_xtd',
-    'django_markup',
 )
 
 from django import VERSION
 if VERSION[1] < 7:
     INSTALLED_APPS = INSTALLED_APPS + ('south',)
-
+else:
+    TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+    
 # EMAIL_HOST          = "smtp.gmail.com" 
 # EMAIL_PORT          = "587"
 # EMAIL_HOST_USER     = "username@gmail.com"
@@ -140,7 +141,9 @@ if VERSION[1] < 7:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 COMMENTS_APP = "django_comments_xtd"
-COMMENTS_XTD_CONFIRM_EMAIL = False
+# COMMENTS_XTD_CONFIRM_EMAIL = False # Set to False to disable confirmation
 COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
-COMMENTS_XTD_MAX_THREAD_LEVEL = 3
-COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {'projects.release': 1}
+#COMMENTS_XTD_MAX_THREAD_LEVEL = 0 # Default value
+COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
+                                     # other backend (say Celery based) send
+                                     # your emails.

@@ -34,7 +34,7 @@ class SpamModerator(CommentModerator):
     def allow(self, comment, content_object, request):
         try:
             domain = comment.user_email.split('@', 1)[1]
-        except IndexError as exc:
+        except IndexError:
             return False
         else:
             if(BlackListedDomain.objects.filter(domain=domain).count()):

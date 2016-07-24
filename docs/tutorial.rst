@@ -403,7 +403,6 @@ We will provide the last of them by adding the file ``preview.html`` to the ``de
 Posted template
 ---------------
 
-
 Finally, when we hit the send button and the comment gets succesfully processed Django renders the template ``comments/posted.html``. We can modify the look of this template by adding a new ``posted.html`` file to our ``democx/templates/comments`` directory with the following code:
 
    .. code-block:: html+django
@@ -418,8 +417,10 @@ Finally, when we hit the send button and the comment gets succesfully processed 
        your comment.{% endblocktrans %}</p>
        {% endblock %}
 
-Now we have the form and the templates integrated with the Bootstrap_ framework and ready to receive comments. You can visit a blog post and give it a try. Remember that to get the comment confirmation request by email you must sign out of the admin interface.
-       
+Now we have the form and the core templates integrated with the Bootstrap_ framework. You can visit a blog post and give it a try. Remember that to get the comment confirmation request by email you must sign out of the admin interface.
+
+You might want to adapt the design of the rest of ref:`ref-templates` provided by django-comments-xtd.
+
 .. _Bootstrap: http://getbootstrap.com
 
 
@@ -723,29 +724,58 @@ This template uses the tag :ttag:`xtd_comment_gravatar` included within the ``co
 
 Another important remark on this template is that it calls itself recursively to render nested comments for each comment. The tag :ttag:`get_xtdcomment_tree` retrieves a list of dictionaries. Each dictionary contains two attributes: ``comment`` and ``children``. ``comment`` is the XtdComment object  and ``children`` is another list of dictionaries with the nested comments.
 
-We don't necessarily have to use :ttag:`get_xtdcomment_tree` to render nested comments. It is possible to render them by iterating over the list of comments and accessing the level attribute. Following is the ``list.html`` template used in the ``simple_threaded`` demo project. Such project doesn't make use of any client side framework like Bootstrap_ and therefore the indentation of nested comments is rather simple:
+We don't necessarily have to use :ttag:`get_xtdcomment_tree` to render nested comments. It is possible to render them by iterating over the list of comments and accessing the level attribute. Take a look at the ``simple_threaded`` demo project, the ``list.html`` template iterates over the list of comments adding an increasing left padding depending on the thread level the comment belongs to.
+
+Finally we might want to adapt the ``django_comments_xtd/reply.html`` template, that will be rendered when the user clicks on the reply link:
 
    .. code-block:: html+django
 
+       {% extends "base.html" %}
        {% load i18n %}
+       {% load comments %}
        {% load comments_xtd %}
 
-       <dl id="comments">
-       {% for comment in comment_list %}
-         <div style="margin-left:{{ comment.level }}00px; border-left:5px solid #ddd">
-           <dt id="c{{ comment.id }}" style="background-color: #ddd">
-             {{ comment.submit_date }}&nbsp;-&nbsp;
-             {% if comment.url %}<a href="{{ comment.url }}" target="_new">{% endif %}
-               {{ comment.name }}{% if comment.url %}</a>{% endif %}
-             {% if comment.allow_thread %}&nbsp;-&nbsp;
-             <a href="{{ comment.get_reply_url }}">{% trans "Reply" %}</a>{% endif %}
-           </dt>
-           <dd>
-             <p>{{ comment.comment|render_markup_comment }}</p>
-           </dd>
-         </div>
-       {% endfor %}
-       </dl>
+       {% block title %}Comment reply{% endblock %}
+
+       {% block header %}
+       <a href="{% url 'homepage' %}">{{ block.super }}</a> -
+       <a href="{% url 'blog:post_list' %}">Blog</a> -
+       <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+       {% endblock %}
+
+       {% block content %}
+       <h4 class="page-header text-center">{% trans "Reply to comment" %}</h4>
+       <div class="row">
+         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+           <div class="media">
+            <div class="media-left">
+              {% if comment.user_url %}
+              <a href="{{ comment.user_url }}">
+                {{ comment.user_email|xtd_comment_gravatar }}
+              </a>
+              {% else %}
+              {{ comment.user_email|xtd_comment_gravatar }}
+              {% endif %}
+            </div>
+            <div class="media-body">
+              <h6 class="media-heading">
+                {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+                {% if comment.user_url %}
+                <a href="{{ comment.user_url }}" target="_new">{% endif %}
+                {{ comment.user_name }}{% if comment.user_url %}</a>{% endif %}
+              </h6>
+              <p>{{ comment.comment }}</p>
+            </div>
+          </div>
+        <div class="visible-lg-block visible-md-block">
+          <hr/>
+        </div>
+      </div>
+    </div>
+    <div class="well well-lg">
+      {% include "comments/form.html" %}
+    </div>
+    {% endblock %}
 
 
 Different max thread levels

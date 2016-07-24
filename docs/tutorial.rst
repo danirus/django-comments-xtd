@@ -419,7 +419,7 @@ Finally, when we hit the send button and the comment gets succesfully processed 
 
 Now we have the form and the core templates integrated with the Bootstrap_ framework. You can visit a blog post and give it a try. Remember that to get the comment confirmation request by email you must sign out of the admin interface.
 
-You might want to adapt the design of the rest of ref:`ref-templates` provided by django-comments-xtd.
+You might want to adapt the design of the rest of :ref:`ref-templates` provided by django-comments-xtd.
 
 .. _Bootstrap: http://getbootstrap.com
 

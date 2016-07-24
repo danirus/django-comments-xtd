@@ -574,7 +574,7 @@ Then let's edit the ``democx/blog/models.py`` module and add the following code 
                    return ret
                
                msg = dict([(clean(w), i)
-                           for i, w in enumerate(comment.comment.split())])
+                           for i, w in enumerate(comment.comment.lower().split())])
                for badword in badwords:
                    if isinstance(badword, str):
                        if badword in msg:
@@ -616,7 +616,7 @@ If you enable comment confirmation by email, the comment will be put on hold aft
 Nesting comments
 ================
 
-Up until this point in the tutorial django-comments-xtd has been configured to disallow nesting comments. Every comment is at thread level 0. It is so because by default the setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is set to 0.
+Up until this point in the tutorial django-comments-xtd has been configured to disallow nested comments. Every comment is at thread level 0. It is so because by default the setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is set to 0.
 
 When the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is greater than 0, comments below the maximum thread level may receive replies that will be nested up to the maximum thread level. A comment in a the thread level below the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` will show a **Reply** link that allows users to send nested comments.
 

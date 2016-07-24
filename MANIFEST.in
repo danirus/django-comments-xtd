@@ -1,4 +1,5 @@
 include AUTHORS
 include LICENSE
+include CHANGELOG
 recursive-include docs *
 recursive-include django_comments_xtd/templates *

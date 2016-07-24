@@ -1,0 +1,6 @@
+2016-07-24  Daniel Rus Morales <mbox@danir.us>
+
+	* views.py, forms.py, tests/test_moderation.py: Fixes bug #34,
+	regarding moderation. Django-comments-xtd did set is_public to True
+	no matter whether moderation required the attribute to be False.
+	Tests has been added to ensure moderation works as expected.

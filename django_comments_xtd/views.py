@@ -8,17 +8,15 @@ from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template import loader, Context, RequestContext
+from django.template import loader, Context
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
 try:
     from django_comments.models import CommentFlag
-    from django_comments.signals import comment_was_flagged
     from django_comments.views.utils import next_redirect, confirmation_view
 except ImportError:
     from django.contrib.comments.models import CommentFlag
-    from django.contrib.comments.signals import comment_was_flagged
     from django.contrib.comments.views.utils import (next_redirect,
                                                      confirmation_view)
 
@@ -161,7 +159,7 @@ def sent(request):
                 ]
             else:
                 template_arg = get_moderated_tmpl(comment)
-            return render(request, template_art, {'comment': comment})
+            return render(request, template_arg, {'comment': comment})
         else:
             if comment.is_public:
                 return redirect(comment)
@@ -355,7 +353,7 @@ def dislike(request, comment_id, next=None):
                       {'comment': comment,
                        'already_disliked_it': already_disliked_it,
                        'next': next})
-    
+
 
 def perform_like(request, comment):
     """Actually set the 'Likedit' flag on a comment from a request."""
@@ -368,7 +366,7 @@ def perform_like(request, comment):
                                    flag=DISLIKEDIT_FLAG).delete()
     else:
         flag.delete()
-    
+
 
 def perform_dislike(request, comment):
     """Actually set the 'Dislikedit' flag on a comment from a request."""
@@ -381,8 +379,8 @@ def perform_dislike(request, comment):
                                    flag=LIKEDIT_FLAG).delete()
     else:
         flag.delete()
-    
-    
+
+
 like_done = confirmation_view(
     template="django_comments_xtd/liked.html",
     doc='Displays a "I liked this comment" success page.'

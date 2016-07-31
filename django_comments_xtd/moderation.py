@@ -32,7 +32,7 @@ class XtdCommentModerator(CommentModerator):
 
     ``removal_suggestion_notification``
         If ``True``, any new removal suggestion flag on an object
-        of this model will generate an email to site staff. Default 
+        of this model will generate an email to site staff. Default
         value is ``False``.
 
     Check parent class to see inherited options.
@@ -101,7 +101,7 @@ class SpamModerator(XtdCommentModerator):
                 return False
             return super(SpamModerator, self).allow(comment, content_object,
                                                     request)
-        
+
 
 class XtdModerator(Moderator):
     def connect(self):

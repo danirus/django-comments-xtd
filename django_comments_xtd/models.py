@@ -12,9 +12,9 @@ except ImportError:
     from django.db.transaction import commit_on_success as atomic
 
 try:
-    from django_comments.models import Comment, CommentFlag
+    from django_comments.models import Comment
 except ImportError:
-    from django.contrib.comments.models import Comment, CommentFlag
+    from django.contrib.comments.models import Comment
 
 from django_comments_xtd.conf import settings
 
@@ -165,11 +165,11 @@ class XtdComment(Comment):
         return dic_list
 
     def users_who_liked_it(self):
-        return [flag.user for flag in self.flags.filter(flag=LIKEDIT_FLAG)]  
+        return [flag.user for flag in self.flags.filter(flag=LIKEDIT_FLAG)]
 
     def users_who_disliked_it(self):
-        return [flag.user for flag in self.flags.filter(flag=DISLIKEDIT_FLAG)]  
-    
+        return [flag.user for flag in self.flags.filter(flag=DISLIKEDIT_FLAG)]
+
 
 class DummyDefaultManager:
     """
@@ -209,34 +209,6 @@ class TmpXtdComment(dict):
     def __reduce__(self):
         return (TmpXtdComment, (), None, None, six.iteritems(self))
 
-
-# ----------------------------------------------------------------------
-# FLAG_CHOICES = (
-#     ('remove', _('Removal suggestion')),
-#     ('like', _('I like it')),
-#     ('dislike', _('I dislike it')),
-#     ('agree', _('I do agree')),
-#     ('disagree', _('I do disagree')),
-# )
-
-# class XtdCommentFlag(models.Model):
-#     """
-#     Records a flag on a XtdComment.
-#     """
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('user'),
-#                              related_name='comment_flags')
-#     comment = models.ForeignKey(XtdComment, verbose_name=_('comment'),
-#                                 related_name='flags')
-#     flag = models.CharField(_('flag'), max_length=8, db_index=True)
-#     flag_data = mdoels.DateTimeField(_('date'), default=None)
-
-#     class Meta:
-#         unique_together = [('user', 'comment', 'flag')]
-#         verbose_name = _('comment flag')
-#         verbose_name_plural = _('comment flags')
-        
-# class XtdCommentFlag(CommentFlag):
-#     pass
 
 # ----------------------------------------------------------------------
 class BlackListedDomain(models.Model):

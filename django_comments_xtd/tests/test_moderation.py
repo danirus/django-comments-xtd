@@ -138,7 +138,7 @@ class ModeratorHoldsComment(TestCase):
 
 class FlaggingRemovalSuggestion(TestCase):
     """Scenario to test the flag removal_suggestion_notification"""
-    
+
     def setUp(self):
         patcher = patch('django_comments_xtd.moderation.send_mail')
         self.mailer = patcher.start()
@@ -180,17 +180,17 @@ class FlaggingRemovalSuggestion(TestCase):
                                            user=user,
                                            flag=CommentFlag.SUGGEST_REMOVAL)
         self.assert_(flags.count() == 1)
-        
+
     def test_email_is_triggered(self):
         flag_url = reverse("comments-flag", args=[1])
         self.assert_(self.mailer.call_count == 0)
-        response = self.client.post(flag_url)
+        self.client.post(flag_url)
         self.assert_(self.mailer.call_count == 1)
-        
+
 
 class FlaggingLikedItAndDislikedit(TestCase):
     """Scenario to test the flag removal_suggestion_notification"""
-    
+
     def setUp(self):
         diary_entry = Diary.objects.create(
             body="What I did on October...",
@@ -250,19 +250,19 @@ class FlaggingLikedItAndDislikedit(TestCase):
                                            user=user,
                                            flag=DISLIKEDIT_FLAG)
         self.assert_(flags.count() == 1)
-        
+
     def test_likedit_can_be_cancelled(self):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
-        response = self.client.post(like_url)
+        self.client.post(like_url)
         user = User.objects.get(username='bob')
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
                                            flag=LIKEDIT_FLAG)
         self.assert_(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
-        response = self.client.post(like_url)
+        self.client.post(like_url)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
                                            flag=LIKEDIT_FLAG)
@@ -272,24 +272,24 @@ class FlaggingLikedItAndDislikedit(TestCase):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
-        response = self.client.post(dislike_url)
+        self.client.post(dislike_url)
         user = User.objects.get(username='bob')
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
                                            flag=DISLIKEDIT_FLAG)
         self.assert_(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
-        response = self.client.post(dislike_url)
+        self.client.post(dislike_url)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
                                            flag=DISLIKEDIT_FLAG)
         self.assert_(flags.count() == 0)
-        
+
     def test_likedit_cancels_dislikedit(self):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
-        response = self.client.post(dislike_url)
+        self.client.post(dislike_url)
         user = User.objects.get(username='bob')
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
@@ -297,7 +297,7 @@ class FlaggingLikedItAndDislikedit(TestCase):
         self.assert_(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
         like_url = reverse("comments-xtd-like", args=[comment.id])
-        response = self.client.post(like_url)
+        self.client.post(like_url)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
                                            flag=DISLIKEDIT_FLAG)
@@ -311,7 +311,7 @@ class FlaggingLikedItAndDislikedit(TestCase):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
-        response = self.client.post(like_url)
+        self.client.post(like_url)
         user = User.objects.get(username='bob')
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
@@ -319,7 +319,7 @@ class FlaggingLikedItAndDislikedit(TestCase):
         self.assert_(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
-        response = self.client.post(dislike_url)
+        self.client.post(dislike_url)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
                                            flag=LIKEDIT_FLAG)
@@ -328,4 +328,3 @@ class FlaggingLikedItAndDislikedit(TestCase):
                                            user=user,
                                            flag=DISLIKEDIT_FLAG)
         self.assert_(flags.count() == 1)
-        

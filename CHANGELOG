@@ -1,3 +1,18 @@
+2016-07-31  Daniel Rus Morales <mbox@danir.us>
+
+	* Release 1.6.0:
+
+	New flags have been added to allow users like/dislike comments.
+	A new XtdCommentModerator classthat extends the
+	django-contrib-comments CommentModerator with an option
+	removal_suggestion_notification that when set to True will notify
+	MANAGERS with an email indicating that a comment has received a
+	removal suggestion. The class XtdModerator that registers moderation
+	classes on models now is connected to the signal comment_was_flagged
+	sent by the django-contrib-comments app when a comment is flagged.
+	The tutorial has been updated with a new section on flagging.
+
+
 2016-07-24  Daniel Rus Morales <mbox@danir.us>
 
 	* views.py, forms.py, tests/test_moderation.py: Fixes bug #34,

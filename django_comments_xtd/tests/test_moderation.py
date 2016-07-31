@@ -8,6 +8,7 @@ except ImportError:
     from mock import patch
 from datetime import datetime, timedelta
 
+import django
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -161,10 +162,9 @@ class FlaggingRemovalSuggestion(TestCase):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         flag_url = reverse("comments-flag", args=[comment.id])
-        response = self.client.get(flag_url)
-        self.assertRedirects(response,
-                             '/accounts/login/?next=/comments/flag/1/',
-                             fetch_redirect_response=False)
+        response = self.client.get(flag_url, follow=True)
+        dest_url = '/accounts/login/?next=/comments/flag/1/'
+        self.assertRedirects(response, dest_url)
 
     def test_loggedin_user_can_flag_comment(self):
         comment = django_comments.get_model()\
@@ -173,8 +173,7 @@ class FlaggingRemovalSuggestion(TestCase):
         response = self.client.get(flag_url)
         self.assertTemplateUsed(response, 'comments/flag.html')
         response = self.client.post(flag_url)
-        self.assertRedirects(response,
-                             reverse("comments-flag-done") + "?c=1")
+        self.assertRedirects(response, reverse("comments-flag-done") + "?c=1")
         user = User.objects.get(username='bob')
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
@@ -211,17 +210,17 @@ class FlaggingLikedItAndDislikedit(TestCase):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
-        response = self.client.get(like_url)
-        self.assertRedirects(response,
-                             '/accounts/login/?next=/comments/like/1/',
-                             fetch_redirect_response=False)
+        response = self.client.get(like_url, follow=True)
+        dest_url = '/accounts/login/?next=/comments/like/1/'
+        self.assertRedirects(response, dest_url)
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
-        response = self.client.get(dislike_url)
-        self.assertRedirects(response,
-                             '/accounts/login/?next=/comments/dislike/1/',
-                             fetch_redirect_response=False)
+        response = self.client.get(dislike_url, follow=True)
+        dest_url = '/accounts/login/?next=/comments/dislike/1/'
+        self.assertRedirects(response, dest_url)
 
     def test_loggedin_user_can_like(self):
+        if django.VERSION < (1, 5):
+            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
@@ -237,6 +236,8 @@ class FlaggingLikedItAndDislikedit(TestCase):
         self.assert_(flags.count() == 1)
 
     def test_loggedin_user_can_dislike(self):
+        if django.VERSION < (1, 5):
+            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
@@ -252,6 +253,8 @@ class FlaggingLikedItAndDislikedit(TestCase):
         self.assert_(flags.count() == 1)
 
     def test_likedit_can_be_cancelled(self):
+        if django.VERSION < (1, 5):
+            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
@@ -269,10 +272,12 @@ class FlaggingLikedItAndDislikedit(TestCase):
         self.assert_(flags.count() == 0)
 
     def test_dislikedit_can_be_cancelled(self):
+        if django.VERSION < (1, 5):
+            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
-        self.client.post(dislike_url)
+        self.client.post(dislike_url, follow=True)
         user = User.objects.get(username='bob')
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=user,
@@ -286,6 +291,8 @@ class FlaggingLikedItAndDislikedit(TestCase):
         self.assert_(flags.count() == 0)
 
     def test_likedit_cancels_dislikedit(self):
+        if django.VERSION < (1, 5):
+            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
@@ -308,6 +315,8 @@ class FlaggingLikedItAndDislikedit(TestCase):
         self.assert_(flags.count() == 1)
 
     def test_dislikedit_cancels_likedit(self):
+        if django.VERSION < (1, 5):
+            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])

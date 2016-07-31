@@ -1,6 +1,10 @@
 from django import VERSION
 from django.conf import settings
-from django.contrib.sites.shortcuts import get_current_site
+try:
+    from django.contrib.sites.shortcuts import get_current_site
+except ImportError:
+    from django.contrib.sites.models import get_current_site
+
 from django.template import Context, loader
 
 try:

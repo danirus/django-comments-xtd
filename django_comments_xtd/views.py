@@ -344,7 +344,7 @@ def dislike(request, comment_id, next=None):
     if request.method == 'POST':
         perform_dislike(request, comment)
         return next_redirect(request,
-                             fallback=next or 'comments-xtd-dislike-done',
+                             fallback=(next or 'comments-xtd-dislike-done'),
                              c=comment.pk)
     # Render a form on GET
     else:

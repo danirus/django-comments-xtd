@@ -75,7 +75,7 @@ To get started using django-comments-xtd follow these steps:
 #. Add extra settings to control comments in your project. Check the available settings in the :ref:`Django Comments Framework <settings-comments>` and in the :ref:`django-comments-xtd app <settings-comments-xtd>`.
 
 
-These are in a glance the steps to quickly start using django-comments-xtd. Follow to the next page, the :ref:`ref-tutorial`, to read a detailed guide that takes everything into account. In addition to the tutorial, the :ref:`ref-demo` implements a full featured commenting project.
+These are in a glance the steps to quickly start using django-comments-xtd. Follow to the next page, the :ref:`ref-tutorial`, to read a detailed guide that takes everything into account. In addition to the tutorial, the :ref:`ref-example` implement several commenting applications.
 
 
 .. _Markdown: https://daringfireball.net/projects/markdown/

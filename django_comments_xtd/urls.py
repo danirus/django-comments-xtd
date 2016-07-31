@@ -22,6 +22,12 @@ pattern_list = [
     url(r'^confirm/(?P<key>[^/]+)$', views.confirm,
         name='comments-xtd-confirm'),
     url(r'^mute/(?P<key>[^/]+)$', views.mute, name='comments-xtd-mute'),
+
+    # New flags in addition to those provided by django-contrib-comments.
+    url(r'^like/(\d+)/$', views.like, name='comments-xtd-like'),
+    url(r'^liked/$', views.like_done, name='comments-xtd-like-done'),
+    url(r'^dislike/(\d+)/$', views.dislike, name='comments-xtd-dislike'),
+    url(r'^disliked/$', views.dislike_done, name='comments-xtd-dislike-done'),
 ]
 
 urlpatterns = None

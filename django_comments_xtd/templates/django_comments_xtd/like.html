@@ -1,0 +1,24 @@
+{% extends "comments/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm your opinion" %}{% endblock %}
+
+{% block content %}
+<h1>{% if already_liked_it %}{% trans "You already said you like this comment!" %}{% else %}{% trans "Do you like this comment?" %}{% endif %}</h1>
+
+<blockquote>{{ comment|linebreaks }}</blockquote>
+
+{% if already_liked_it %}
+<p style="color:red">
+  {% trans 'Click on the "withdraw" button if you want to withdraw your positive opinion on this comment.' %}
+</p>
+{% endif %}  
+
+<form action="." method="post">{% csrf_token %}
+  {% if next %}
+  <div><input type="hidden" name="next" value="{{ next }}" id="next"/></div>{% endif %}
+  <p class="submit">
+    <input type="submit" name="submit" value="{% if already_liked_it %}{% trans 'Withdraw my opinion' %}{% else %}{% trans 'I like it' %}{% endif %}"/> or <a href="{{ comment.get_absolute_url }}">{% trans "Cancel" %}</a>
+  </p>
+</form>
+{% endblock %}

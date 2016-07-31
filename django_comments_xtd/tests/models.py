@@ -3,12 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.db.models import permalink
 
-try:
-    from django_comments.moderation import CommentModerator
-except ImportError:
-    from django.contrib.comments.moderation import CommentModerator
-
-from django_comments_xtd.moderation import moderator
+from django_comments_xtd.moderation import moderator, XtdCommentModerator
 
 
 class PublicManager(models.Manager):
@@ -55,10 +50,11 @@ class Diary(models.Model):
         ordering = ('-publish',)
 
 
-class DiaryCommentModerator(CommentModerator):
+class DiaryCommentModerator(XtdCommentModerator):
     email_notification = True
     enable_field = 'allow_comments'
     auto_moderate_field = 'publish'
     moderate_after = 2
+    removal_suggestion_notification = True
 
 moderator.register(Diary, DiaryCommentModerator)

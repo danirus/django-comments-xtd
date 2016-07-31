@@ -12,11 +12,15 @@ except ImportError:
     from django.db.transaction import commit_on_success as atomic
 
 try:
-    from django_comments.models import Comment
+    from django_comments.models import Comment, CommentFlag
 except ImportError:
-    from django.contrib.comments.models import Comment
+    from django.contrib.comments.models import Comment, CommentFlag
 
 from django_comments_xtd.conf import settings
+
+
+LIKEDIT_FLAG = "I liked it"
+DISLIKEDIT_FLAG = "I disliked it"
 
 
 def max_thread_level_for_content_type(content_type):
@@ -119,7 +123,7 @@ class XtdComment(Comment):
             return False
 
     @classmethod
-    def tree_from_queryset(cls, queryset):
+    def tree_from_queryset(cls, queryset, with_participants=False):
         """Converts a XtdComment queryset into a list of nested dictionaries.
         The queryset has to be ordered by thread_id, order.
         Each dictionary contains two attributes::
@@ -128,6 +132,10 @@ class XtdComment(Comment):
                 'children': [list of child comment dictionaries]
             }
         """
+        def get_participants(comment):
+            return {'likedit': comment.users_who_liked_it(),
+                    'dislikedit': comment.users_who_disliked_it()}
+
         dic_list = []
         cur_dict = None
         for obj in queryset:
@@ -137,18 +145,31 @@ class XtdComment(Comment):
                 cur_dict = None
             if not cur_dict:
                 cur_dict = {'comment': obj, 'children': []}
+                if with_participants:
+                    cur_dict.update(get_participants(obj))
                 continue
             if obj.parent_id == cur_dict['comment'].pk:
-                cur_dict['children'].append({'comment': obj, 'children': []})
+                child_dict = {'comment': obj, 'children': []}
+                if with_participants:
+                    child_dict.update(get_participants(obj))
+                cur_dict['children'].append(child_dict)
             else:
                 for item in cur_dict['children']:
                     if item['comment'].pk == obj.parent_id:
-                        item['children'].append({'comment': obj,
-                                                 'children': []})
+                        child_dict = {'comment': obj, 'children': []}
+                        if with_participants:
+                            child_dict.update(get_participants(obj))
+                        item['children'].append(child_dict)
         if cur_dict:
             dic_list.append(cur_dict)
         return dic_list
 
+    def users_who_liked_it(self):
+        return [flag.user for flag in self.flags.filter(flag=LIKEDIT_FLAG)]  
+
+    def users_who_disliked_it(self):
+        return [flag.user for flag in self.flags.filter(flag=DISLIKEDIT_FLAG)]  
+    
 
 class DummyDefaultManager:
     """
@@ -188,6 +209,34 @@ class TmpXtdComment(dict):
     def __reduce__(self):
         return (TmpXtdComment, (), None, None, six.iteritems(self))
 
+
+# ----------------------------------------------------------------------
+# FLAG_CHOICES = (
+#     ('remove', _('Removal suggestion')),
+#     ('like', _('I like it')),
+#     ('dislike', _('I dislike it')),
+#     ('agree', _('I do agree')),
+#     ('disagree', _('I do disagree')),
+# )
+
+# class XtdCommentFlag(models.Model):
+#     """
+#     Records a flag on a XtdComment.
+#     """
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('user'),
+#                              related_name='comment_flags')
+#     comment = models.ForeignKey(XtdComment, verbose_name=_('comment'),
+#                                 related_name='flags')
+#     flag = models.CharField(_('flag'), max_length=8, db_index=True)
+#     flag_data = mdoels.DateTimeField(_('date'), default=None)
+
+#     class Meta:
+#         unique_together = [('user', 'comment', 'flag')]
+#         verbose_name = _('comment flag')
+#         verbose_name_plural = _('comment flags')
+        
+# class XtdCommentFlag(CommentFlag):
+#     pass
 
 # ----------------------------------------------------------------------
 class BlackListedDomain(models.Model):

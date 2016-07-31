@@ -3,18 +3,31 @@ import six
 
 import django
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.shortcuts import redirect, render_to_response
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader, Context, RequestContext
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.csrf import csrf_protect
+
+try:
+    from django_comments.models import CommentFlag
+    from django_comments.signals import comment_was_flagged
+    from django_comments.views.utils import next_redirect, confirmation_view
+except ImportError:
+    from django.contrib.comments.models import CommentFlag
+    from django.contrib.comments.signals import comment_was_flagged
+    from django.contrib.comments.views.utils import (next_redirect,
+                                                     confirmation_view)
 
 from django_comments_xtd import (get_form, comment_was_posted, signals, signed,
                                  get_model as get_comment_model)
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment,
-                                        max_thread_level_for_content_type)
+                                        max_thread_level_for_content_type,
+                                        LIKEDIT_FLAG, DISLIKEDIT_FLAG)
 from django_comments_xtd.utils import send_mail
 
 
@@ -124,14 +137,14 @@ comment_was_posted.connect(on_comment_was_posted, sender=TmpXtdComment)
 
 def sent(request):
     comment_pk = request.GET.get("c", None)
-    req_ctx = RequestContext(request)
+    # req_ctx = RequestContext(request)
     try:
         comment_pk = int(comment_pk)
         comment = XtdComment.objects.get(pk=comment_pk)
     except (TypeError, ValueError, XtdComment.DoesNotExist):
         template_arg = ["django_comments_xtd/posted.html",
                         "comments/posted.html"]
-        return render_to_response(template_arg, context_instance=req_ctx)
+        return render(request, template_arg)
     else:
         if (
                 request.is_ajax() and comment.user and
@@ -148,15 +161,13 @@ def sent(request):
                 ]
             else:
                 template_arg = get_moderated_tmpl(comment)
-            return render_to_response(template_arg, {'comment': comment},
-                                      context_instance=req_ctx)
+            return render(request, template_art, {'comment': comment})
         else:
             if comment.is_public:
                 return redirect(comment)
             else:
-                moderated_tmp = get_moderated_tmpl(comment)
-                return render_to_response(moderated_tmp, {'comment': comment},
-                                          context_instance=req_ctx)
+                moderated_tmpl = get_moderated_tmpl(comment)
+                return render(request, moderated_tmpl, {'comment': comment})
 
 
 def confirm(request, key,
@@ -176,15 +187,12 @@ def confirm(request, key,
     # Check whether a signal receiver decides to discard the comment
     for (receiver, response) in responses:
         if response is False:
-            return render_to_response(template_discarded,
-                                      {'comment': tmp_comment},
-                                      context_instance=RequestContext(request))
+            return render(request, template_discarded, {'comment': tmp_comment})
 
     comment = _create_comment(tmp_comment)
     if comment.is_public is False:
-        return render_to_response(get_moderated_tmpl(comment),
-                                  {'comment': comment},
-                                  context_instance=RequestContext(request))
+        return render(request, get_moderated_tmpl(comment),
+                      {'comment': comment})
     else:
         notify_comment_followers(comment)
         return redirect(comment)
@@ -240,10 +248,8 @@ def reply(request, cid):
         raise Http404
 
     if comment.level == max_thread_level_for_content_type(comment.content_type):
-        return render_to_response(
-            "django_comments_xtd/max_thread_level.html",
-            {'max_level': settings.COMMENTS_XTD_MAX_THREAD_LEVEL},
-            context_instance=RequestContext(request))
+        return render(request, "django_comments_xtd/max_thread_level.html",
+                      {'max_level': settings.COMMENTS_XTD_MAX_THREAD_LEVEL})
 
     form = get_form()(comment.content_object, comment=comment)
     next = request.GET.get("next", reverse("comments-xtd-sent"))
@@ -256,12 +262,8 @@ def reply(request, cid):
             comment.content_type.app_label,),
         "django_comments_xtd/reply.html"
     ]
-    return render_to_response(template_arg,
-                              {"comment": comment,
-                               "form": form,
-                               "cid": cid,
-                               "next": next},
-                              context_instance=RequestContext(request))
+    return render(request, template_arg,
+                  {"comment": comment, "form": form, "cid": cid, "next": next})
 
 
 def mute(request, key):
@@ -296,6 +298,97 @@ def mute(request, key):
             comment.content_type.app_label,),
         "django_comments_xtd/muted.html"
     ]
-    return render_to_response(template_arg,
-                              {"content_object": target},
-                              context_instance=RequestContext(request))
+    return render(request, template_arg, {"content_object": target})
+
+
+@csrf_protect
+@login_required
+def like(request, comment_id, next=None):
+    """
+    Like a comment. Confirmation on GET, action on POST.
+
+    Templates: :template:`django_comments_xtd/like.html`,
+    Context:
+        comment
+            the flagged `comments.comment` object
+    """
+    comment = get_object_or_404(get_comment_model(), pk=comment_id,
+                                site__pk=settings.SITE_ID)
+    # Flag on POST
+    if request.method == 'POST':
+        perform_like(request, comment)
+        return next_redirect(request,
+                             fallback=next or 'comments-xtd-like-done',
+                             c=comment.pk)
+    # Render a form on GET
+    else:
+        already_liked_it = request.user in comment.users_who_liked_it()
+        return render(request, 'django_comments_xtd/like.html',
+                      {'comment': comment,
+                       'already_liked_it': already_liked_it,
+                       'next': next})
+
+
+@csrf_protect
+@login_required
+def dislike(request, comment_id, next=None):
+    """
+    Dislike a comment. Confirmation on GET, action on POST.
+
+    Templates: :template:`django_comments_xtd/dislike.html`,
+    Context:
+        comment
+            the flagged `comments.comment` object
+    """
+    comment = get_object_or_404(get_comment_model(), pk=comment_id,
+                                site__pk=settings.SITE_ID)
+    # Flag on POST
+    if request.method == 'POST':
+        perform_dislike(request, comment)
+        return next_redirect(request,
+                             fallback=next or 'comments-xtd-dislike-done',
+                             c=comment.pk)
+    # Render a form on GET
+    else:
+        already_disliked_it = request.user in comment.users_who_disliked_it()
+        return render(request, 'django_comments_xtd/dislike.html',
+                      {'comment': comment,
+                       'already_disliked_it': already_disliked_it,
+                       'next': next})
+    
+
+def perform_like(request, comment):
+    """Actually set the 'Likedit' flag on a comment from a request."""
+    flag, created = CommentFlag.objects.get_or_create(comment=comment,
+                                                      user=request.user,
+                                                      flag=LIKEDIT_FLAG)
+    if created:
+        CommentFlag.objects.filter(comment=comment,
+                                   user=request.user,
+                                   flag=DISLIKEDIT_FLAG).delete()
+    else:
+        flag.delete()
+    
+
+def perform_dislike(request, comment):
+    """Actually set the 'Dislikedit' flag on a comment from a request."""
+    flag, created = CommentFlag.objects.get_or_create(comment=comment,
+                                                      user=request.user,
+                                                      flag=DISLIKEDIT_FLAG)
+    if created:
+        CommentFlag.objects.filter(comment=comment,
+                                   user=request.user,
+                                   flag=LIKEDIT_FLAG).delete()
+    else:
+        flag.delete()
+    
+    
+like_done = confirmation_view(
+    template="django_comments_xtd/liked.html",
+    doc='Displays a "I liked this comment" success page.'
+)
+
+dislike_done = confirmation_view(
+    template="django_comments_xtd/disliked.html",
+    doc='Displays a "I disliked this comment" success page.'
+)

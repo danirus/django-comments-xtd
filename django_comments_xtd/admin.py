@@ -44,6 +44,7 @@ class XtdCommentsAdmin(CommentsAdmin):
     def cid(self, obj):
         return 'c%d' % obj.id
 
+
 if get_model() is XtdComment:
     admin.site.register(XtdComment, XtdCommentsAdmin)
     admin.site.register(CommentFlag)

@@ -614,8 +614,8 @@ If you enable comment confirmation by email, the comment will be put on hold aft
    pair: Nesting; Threading
    triple: Maximum; Thread; Level
 
-Nesting comments
-================
+Threads
+=======
 
 Up until this point in the tutorial django-comments-xtd has been configured to disallow nested comments. Every comment is at thread level 0. It is so because by default the setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is set to 0.
 
@@ -735,7 +735,7 @@ Finally we might want to adapt the ``django_comments_xtd/reply.html`` template, 
        {% load comments %}
        {% load comments_xtd %}
 
-       {% block title %}Comment reply{% endblock %}
+       {% block title %}{% trans "Comment reply" %}{% endblock %}
 
        {% block header %}
        <a href="{% url 'homepage' %}">{{ block.super }}</a> -
@@ -795,3 +795,380 @@ If we wanted to disable nested comments site wide, and enable nested comments up
            # up to thread level 1.
    	       'blog.post': 1,
        }
+
+
+Flags
+=====
+
+The Django Comments Framework comes with support for `flagging <https://django-contrib-comments.readthedocs.io/en/latest/example.html#flagging>`_ comments, so that a comment can receive the following flags:
+
+ * **Removal suggestion**, when a registered user suggests the removal of a comment.
+ * **Moderator deletion**, when a comment moderator marks the comment as deleted.
+ * **Moderator approval**, when a comment moderator sets the comment as approved.
+
+Django-comments-xtd extends the functionality provided by django-contrib-comments with two more flags:
+
+ * **Liked it**, when a registered user likes the comment.
+ * **Disliked it**, when a registered user dislikes the comment.
+
+
+In this section we will see how to enable a user with the capacity to flag a comment for removal with the **Removal suggestion** flag, how to express likeability, conformity, acceptance or acknowledgement with the **Liked it** flag, and how to express the opposite with the **Disliked it** flag.  
+
+One important requirement to flag a comment is that the user setting the flag must be authenticated. In other words, comments can not be flagged by anonymous users.
+
+
+Removal suggestion
+------------------
+
+Let us start by enabling the link that allows a user to suggest a comment removal. This functionality is already provided by django-contrib-comments. We will simply put it in the template.
+
+To place the flag link we need to edit the ``blog/comments_tree.html`` template. We will show the flag link at the right side of the comment's header:
+
+   .. code-block:: html+django
+
+       ...
+       {% for item in comments %}
+         ...
+               <h6 class="media-heading">
+                 {{ item.comment.submit_date }}&nbsp;-&nbsp;
+                 {% if item.comment.url and not item.comment.is_removed %}
+                 <a href="{{ item.comment.url }}" target="_new">{% endif %}
+                   {{ item.comment.name }}{% if item.comment.url %}
+                 </a>{% endif %}&nbsp;&nbsp;
+                 <a class="permalink" href="{% get_comment_permalink item.comment %}">¶</a>
+
+                 <!-- Add this to enable flagging a comment -->
+                 {% if request.user.is_authenticated %}
+                 <div class="pull-right">
+                   <a class="mutedlink" href="{% url 'comments-flag' item.comment.pk %}">
+                     <span class="glyphicon glyphicon-flag" title="flag comment"></span>
+                   </a>
+                 </div>       
+                 {% endif %}                 
+               </h6>
+         ...
+
+Additionally we might want to adapt the style of two related templates: ``comments/flag.html`` and ``comments/flagged.html``. The first presents a form to the user to confirm the removal suggestion, while the second renders a confirmation message once the user has flagged the comment.
+
+Let's create the template ``flag.html`` in the directory ``democx/templates/comments`` with this content:
+
+   .. code-block:: html+django
+
+       {% extends "base.html" %}
+       {% load i18n %}
+       {% load comments_xtd %}
+
+       {% block title %}{% trans "Flag this comment" %}{% endblock %}
+
+       {% block header %}
+       <a href="{% url 'homepage' %}">{{ block.super }}</a> -
+       <a href="{% url 'blog:post_list' %}">Blog</a> -
+       <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+       {% endblock %}
+
+       {% block content %}
+       <h4 class="page-header text-center">{% trans "Really flag this comment?" %}</h4>
+       <p class="text-center">{% trans "Click on the flag button if you want to suggest the removal of the following comment:" %}</p>
+       <div class="row">
+         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+           <div class="media">
+             <div class="media-left">
+               {% if comment.user_url %}
+               <a href="{{ comment.user_url }}">
+                 {{ comment.user_email|xtd_comment_gravatar }}
+               </a>
+               {% else %}
+               {{ comment.user_email|xtd_comment_gravatar }}
+               {% endif %}
+             </div>
+             <div class="media-body">
+               <h6 class="media-heading">
+                 {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+                 {% if comment.user_url %}
+                 <a href="{{ comment.user_url }}" target="_new">{% endif %}
+                   {{ comment.user_name }}
+                   {% if comment.user_url %}
+                 </a>{% endif %}
+               </h6>
+               <p>{{ comment.comment }}</p>
+             </div>
+           </div>
+           <div class="visible-lg-block visible-md-block">
+             <hr/>
+           </div>
+         </div>
+       </div>
+       <div class="row">
+         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+           <div class="well well-lg">
+             <form action="." method="post" class="form-horizontal">{% csrf_token %}
+               <div class="form-group">
+                 <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
+                   <input type="submit" name="submit" class="btn btn-danger" value="{% trans "Flag" %}"/>
+                   <a class="btn btn-default" href="{{ comment.get_absolute_url }}">cancel</a>
+                 </div>
+               </div>
+             </form>
+           </div>
+         </div>
+       </div>
+       {% endblock %}
+
+And the template ``flagged.html`` in the same directory ``democx/templates/comments`` with the code:
+
+   .. code-block:: html+django
+
+       {% extends "base.html" %}
+       {% load i18n %}
+       {% load comments_xtd %}
+
+       {% block title %}{% trans "Thanks for flagging" %}.{% endblock %}
+
+       {% block header %}
+       <a href="{% url 'homepage' %}">{{ block.super }}</a> -
+       <a href="{% url 'blog:post_list' %}">Blog</a> -
+       <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+       {% endblock %}
+
+       {% block content %}
+       <h4 class="page-header text-center">Thanks for flagging</h4>
+       <p class="text-center">{% trans "Thank you for taking the time to improve the quality of discussion in our site." %}<p>
+       {% endblock %}
+
+
+Now we can try it, let's suggest a removal. First we need to login in the admin_ interface so that we are not an anonymous user. Then we can visit any of the blog posts to which we have sent comments. When hovering the comments we must see a flag at the right side of the comment's header. If we click on it we will land in the page where we are requested to confirm our suggestion to remove the comment. If we click on the red **Flag** button we will create the **Removal suggestion** flag for the comment.
+
+Once we have flagged a comment we can find the flag entry in the admin_ interface, under the **Comment flags** model, under the Django Comments application. 
+
+
+Getting notifications
+*********************
+
+A user might want to flag a comment on the basis of a violation of our site's terms of use, maybe on hate speech content, racism or the like. To prevent a comment from staying published long after it has been flagged we might want to receive notifications on flagging events.
+
+For such purpose django-comments-xtd provides the class :pclass:`XtdCommentModerator`, which extends django-contrib-comments' :pclass:`CommentModerator`.
+
+In addition to all the `options <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html#moderation-options>`_ offered by the parent class :pclass:`XtdCommentModerator` exposes the attribute ``removal_suggestion_notification``. When this attribute is set to ``True`` Django will send an email to the :setting:`MANAGERS` on every **Removal suggestion** flag created.
+
+Let's use :pclass:`XtdCommentModerator` in our demo, simply by editing the ``democx/blog/models.py`` module and adding the following code:
+
+   .. code-block:: python
+
+      from django_comments_xtd.moderation import moderator, XtdCommentModerator
+
+      ...
+      class PostCommentModerator(XtdCommentModerator):
+          removal_suggestion_notification = True
+
+      moderator.register(Post, PostCommentModerator)
+
+Be sure that ``PostCommentModerator`` is the only moderation class registered for the ``Post`` model, and be sure as well that the :setting:`MANAGERS` setting contains a valid email address. The email is based on the template ``django_comments_xtd/removal_notification_email.txt`` already provided within the django-comments-xtd app. After these changes flagging a comment with a **Removal suggestion** must trigger an email.
+
+
+Liked it, Disliked it
+---------------------
+
+Django-comments-xtd adds two new flags: the **Liked it** and the **Disliked it** flags.
+
+Unlike the **Removal suggestion** flag, the **Liked it** and **Disliked it** flags are mutually exclusive. So that a user can't like and dislike a comment at the same time, only the last action counts. Users can click on the links at any time and only the last action will prevail.
+
+In this section we will make changes in the ``democx`` project to give our users the capacity to like or dislike comments. We can start by adding the links to the ``comments_tree.html`` template. The links could go immediately after rendering the comment content, at the left side of the Reply link:
+
+   .. code-block:: html+django
+
+       ...
+               <p>
+                 {{ item.comment.comment|render_markup_comment }}
+                 <br/>
+                 <!-- Add here the links to let users express whether they like the comment. -->
+                 <a href="{% url 'comments-xtd-like' item.comment.pk %}" class="mutedlink">
+                   <span class="small">{{ item.likedit|length }}</span>&nbsp;
+                   <span class="small glyphicon glyphicon-thumbs-up"></span>
+                 </a>
+                 <span class="text-muted">&sdot;</span>
+                 <a href="{% url 'comments-xtd-dislike' item.comment.pk %}" class="mutedlink">
+                   <span class="small">{{ item.dislikedit|length }}</span>&nbsp;
+                   <span class="small glyphicon glyphicon-thumbs-down"></span>
+                 </a>
+                 <span class="text-muted">&sdot;</span>
+                 <!-- And the reply link -->
+                 {% if item.comment.allow_thread and not item.comment.is_removed %}
+                 <a class="small mutedlink" href="{{ item.comment.get_reply_url }}">
+                   {% trans "Reply" %}
+                 </a>
+                 {% endif %}
+               </p>
+       ...
+
+
+Having the links in place, if we click on any of them we will end up in either the ``like.html`` or the ``dislike.html`` templates. These two templates are new, and meant to request the user to confirm the operation.
+
+We can create new versions of these templates in the ``democx/templates/django_comments_xtd`` directory to adapt them to the look of the project. Let's create first ``like.html`` with the following content:
+
+   .. code-block:: html+django
+
+       {% extends "base.html" %}
+       {% load i18n %}
+       {% load comments_xtd %}
+
+       {% block title %}{% trans "Confirm your opinion" %}{% endblock %}
+
+       {% block header %}
+       <a href="{% url 'homepage' %}">{{ block.super }}</a> -
+       <a href="{% url 'blog:post_list' %}">Blog</a> -
+       <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+       {% endblock %}
+
+       {% block content %}
+       <h4 class="page-header text-center">
+         {% if already_liked_it %}
+         {% trans "You liked this comment, do you want to change it?" %}
+         {% else %}
+         {% trans "Do you like this comment?" %}
+         {% endif %}
+       </h4>
+       <p class="text-center">{% trans "Please, confirm your opinion on this comment:" %}</p>
+       <div class="row">
+         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+           <div class="media">
+             <div class="media-left">
+               {% if comment.user_url %}
+               <a href="{{ comment.user_url }}">
+                 {{ comment.user_email|xtd_comment_gravatar }}
+               </a>
+               {% else %}
+               {{ comment.user_email|xtd_comment_gravatar }}
+               {% endif %}
+             </div>
+             <div class="media-body">
+               <h6 class="media-heading">
+                 {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+                 {% if comment.user_url %}
+                 <a href="{{ comment.user_url }}" target="_new">{% endif %}
+                   {{ comment.user_name }}
+                   {% if comment.user_url %}
+                 </a>{% endif %}
+               </h6>
+               <p>{{ comment.comment }}</p>
+             </div>
+           </div>
+           <div class="visible-lg-block visible-md-block">
+             <hr/>
+           </div>
+         </div>
+       </div>
+       <div class="row">
+         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+           {% if already_liked_it %}
+           <div class="alert alert-warning">
+             {% trans 'Click on the "withdraw" button if you want to withdraw your positive opinion on this comment.' %} 
+           </div>
+           {% endif %}
+           <div class="well well-lg">
+             <form action="." method="post" class="form-horizontal">{% csrf_token %}
+               <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
+               <div class="form-group">
+                 <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
+                   <input type="submit" name="submit" class="btn btn-primary" value="{% if already_liked_it %}{% trans 'Withdraw' %}{% else %}{% trans 'I like it' %}{% endif %}"/>
+                   <a class="btn btn-default" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
+                 </div>
+               </div>
+             </form>
+           </div>
+         </div>
+       </div>
+       {% endblock %}
+              
+
+And this could be the content for the ``dislike.html`` template:
+
+   .. code-block:: html+django
+
+       {% extends "base.html" %}
+       {% load i18n %}
+       {% load comments_xtd %}
+
+       {% block title %}{% trans "Confirm your opinion" %}{% endblock %}
+
+       {% block header %}
+       <a href="{% url 'homepage' %}">{{ block.super }}</a> -
+       <a href="{% url 'blog:post_list' %}">Blog</a> -
+       <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+       {% endblock %}
+
+       {% block content %}
+       <h4 class="page-header text-center">
+         {% if already_disliked_it %}
+         {% trans "You didn't like this comment, do you want to change it?" %}
+         {% else %}
+         {% trans "Do you dislike this comment?" %}
+         {% endif %}
+       </h4>
+       <p class="text-center">{% trans "Please, confirm your opinion on this comment:" %}</p>
+       <div class="row">
+         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+           <div class="media">
+             <div class="media-left">
+               {% if comment.user_url %}
+               <a href="{{ comment.user_url }}">
+                 {{ comment.user_email|xtd_comment_gravatar }}
+               </a>
+               {% else %}
+               {{ comment.user_email|xtd_comment_gravatar }}
+               {% endif %}
+             </div>
+             <div class="media-body">
+               <h6 class="media-heading">
+                 {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+                 {% if comment.user_url %}
+                 <a href="{{ comment.user_url }}" target="_new">{% endif %}
+                   {{ comment.user_name }}
+                   {% if comment.user_url %}
+                 </a>{% endif %}
+               </h6>
+               <p>{{ comment.comment }}</p>
+             </div>
+           </div>
+           <div class="visible-lg-block visible-md-block">
+             <hr/>
+           </div>
+         </div>
+       </div>
+       <div class="row">
+         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+           {% if already_liked_it %}
+           <div class="alert alert-warning">
+             {% trans 'Click on the "withdraw" button if you want to withdraw your negative opinion on this comment.' %} 
+           </div>
+           {% endif %}
+           <div class="well well-lg">
+             <form action="." method="post" class="form-horizontal">{% csrf_token %}
+               <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
+               <div class="form-group">
+                 <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
+                   <input type="submit" name="submit" class="btn btn-primary" value="{% if already_liked_it %}{% trans 'Withdraw' %}{% else %}{% trans 'I dislike it' %}{% endif %}"/>
+                   <a class="btn btn-default" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
+                 </div>
+               </div>
+             </form>
+           </div>
+         </div>
+       </div>
+       {% endblock %}
+
+
+One last change we need to do consist in adding the argument ``with_participants`` to the tag :ttag:`get_xtdcomment_tree` in the blog detail template. The immediate effect of this argument is that in addition to the comment and the children of the comment, in each dictionary of the list retrieved by the template tag we will have the list of users who liked the comment and the list of users who disliked it:
+
+   .. code-block:: python
+
+       [
+           {
+               'comment': comment_object,
+               'children': [ list, of, child, comment, dicts ],
+               'likedit': [user_who_liked_it_1, user_who_liked_it_2, ...],
+               'dislikedit': [user_who_disliked_it_1, user_who_disliked_it_2, ...],
+           },
+           ...
+       ]
+
+Now we have all the changes ready, we can like/dislike comments to see the feature in action.

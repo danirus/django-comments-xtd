@@ -225,9 +225,10 @@ register.tag(get_last_xtdcomments)
 
 # ----------------------------------------------------------------------
 class GetXtdCommentTreeNode(Node):
-    def __init__(self, obj, var_name):
+    def __init__(self, obj, var_name, with_participants):
         self.obj = Variable(obj)
         self.var_name = var_name
+        self.with_participants = with_participants
 
     def render(self, context):
         obj = self.obj.resolve(context)
@@ -236,7 +237,7 @@ class GetXtdCommentTreeNode(Node):
                                        object_pk=obj.pk,
                                        site__pk=settings.SITE_ID,
                                        is_public=True)
-        diclist = XtdComment.tree_from_queryset(qs)
+        diclist = XtdComment.tree_from_queryset(qs, self.with_participants)
         context[self.var_name] = diclist
         return ''
 
@@ -244,14 +245,26 @@ class GetXtdCommentTreeNode(Node):
 def get_xtdcomment_tree(parser, token):
     """
     Adds to the template context a list of XtdComment dictionaries for the
-    given object.
+    given object. The optional argument *with_participants* adds a list
+    'likedit' with the users who liked the comment and a list 'dislikedit'
+    with the users who disliked the comment.
+
     Each XtdComment dictionary has the following attributes::
         {
-            'xtdcomment': xtdcomment object,
+            'comment': xtdcomment object,
             'children': [ list of child xtdcomment dicts ]
         }
+
+    When called with-counters each XtdComment dictionary will look like::
+        {
+            'comment': xtdcomment object,
+            'children': [ list of child xtdcomment dicts ],
+            'likedit': [user_object_a, user_object_b, ...],
+            'dislikedit': [user_object_x, user_object_y, ...],
+        }
+
     Syntax::
-        {% get_xtdcomment_tree for [object] as [varname] %}
+        {% get_xtdcomment_tree for [object] as [varname] [with_participants] %}
     Example usage::
         {% get_xtdcomment_tree for post as comment_list %}
     """
@@ -264,7 +277,11 @@ def get_xtdcomment_tree(parser, token):
     if not match:
         raise TemplateSyntaxError("%s tag had invalid arguments" % tag_name)
     obj, var_name = match.groups()
-    return GetXtdCommentTreeNode(obj, var_name)
+    if args.strip().endswith('with_participants'):
+        with_participants = True
+    else:
+        with_participants = False
+    return GetXtdCommentTreeNode(obj, var_name, with_participants)
 
 
 register.tag(get_xtdcomment_tree)

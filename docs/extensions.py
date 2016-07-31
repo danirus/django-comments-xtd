@@ -13,4 +13,9 @@ def setup(app):
         directivename = "templatefilter",
         rolename      = "tfilter",
         indextemplate = "pair: %s; template filter"
-)
+    )
+    app.add_crossref_type(
+        directivename = "class",
+        rolename      = "pclass",
+        indextemplate = "pair: %s; class"
+    )

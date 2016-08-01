@@ -23,9 +23,10 @@ A Django pluggable application that can be used to add comments to your models. 
 4. Mute links to allow cancellation of follow-up notifications.
 5. Comment confirmation via email when users are not authenticated.
 6. Comments hit the database only after they have been confirmed.
-7. Template tags to list/render the last N comments posted to any given list of app.model pairs.
-8. Comments can be formatted in Markdown, reStructuredText, linebreaks or plain text.
-9. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
+7. Registered users can like/dislike comments and can suggest comments removal.
+8. Template tags to list/render the last N comments posted to any given list of app.model pairs.
+9. Comments can be formatted in Markdown, reStructuredText, linebreaks or plain text.
+10. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
 
 Contents
 ========

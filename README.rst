@@ -17,10 +17,10 @@ A reusable django app that extends the `django-contrib-comments <https://pypi.py
 4. Mute links on follow-up emails to allow follow-up notification cancellation.
 5. Comment confirmation via email when users are not authenticated.
 6. Comments hit the database only when have been confirmed.
-7. Comments can be liked or disliked by registered users.
-7. Template tags to list/render the last N comments posted to any given list of app.model pairs.
-8. Comments can be formatted in Markdown, reStructuredText, linebreaks or plain text.
-9. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
+7. Registered users can like/dislike comments and can suggest comments removal.
+8. Template tags to list/render the last N comments posted to any given list of app.model pairs.
+9. Comments can be formatted in Markdown, reStructuredText, linebreaks or plain text.
+10. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
 
 Read the documentation at:
 

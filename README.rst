@@ -11,34 +11,46 @@ Tests passing with:
 
 A reusable django app that extends the `django-contrib-comments <https://pypi.python.org/pypi/django-contrib-comments>`_ framework with:
 
-1. Thread support, so comments may be nested.
-2. The maximum thread level can be set up either for all models or on a per app.model basis.
-3. Optional notification of follow-up comments via email.
-4. Mute links on follow-up emails to allow follow-up notification cancellation.
-5. Comment confirmation via email when users are not authenticated.
-6. Comments hit the database only when have been confirmed.
-7. Registered users can like/dislike comments and can suggest comments removal.
-8. Template tags to list/render the last N comments posted to any given list of app.model pairs.
-9. Comments can be formatted in Markdown, reStructuredText, linebreaks or plain text.
-10. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
+ #. Thread support, so comments may be nested.
+ #. The maximum thread level can be set up either for all models or on a per app.model basis.
+ #. Optional notification of follow-up comments via email.
+ #. Mute links on follow-up emails to allow follow-up notification cancellation.
+ #. Comment confirmation via email when users are not authenticated.
+ #. Comments hit the database only when have been confirmed.
+ #. Registered users can like/dislike comments and can suggest comments removal.
+ #. Template tags to list/render the last N comments posted to any given list of app.model pairs.
+ #. Comments can be formatted in Markdown, reStructuredText, linebreaks or plain text.
+ #. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
 
-Read the documentation at:
 
-* `Read The Docs`_
-* `Python Packages Site`_
+Tutorial
+--------
+
+Read the tutorial covering every feature in the documentation at:
+
+ * `Read The Docs`_
+ * `Python Packages Site`_
 
 .. _`Read The Docs`: http://readthedocs.org/docs/django-comments-xtd/
 .. _`Python Packages Site`: http://packages.python.org/django-comments-xtd/
 
-Includes four **demo sites** and a limited **test suite**.
 
-If you commit code, please consider adding proper coverage (especially if it has a chance for a regression) in the test suite.
+Demo projects
+-------------
 
-Run the tests with:  ``python setup.py test``
+Includes several demo sites and an extensive test suite.
 
 Check out the demo projects coming with the package:
 
-1. **simple**: Single model with **non-threaded** comments
-2. **simple_threads**: Single model with **threaded** comments up to level 2
+1. **simple**: Single model with **non-threaded** comments.
+2. **simple_threads**: Single model with **threaded** comments up to level 2.
 3. **multiple**: Several models with comments, and a maximum thread level defined on per app.model basis.
 4. **custom_comments**: How to extend django-comments-xtd with your own comment model and form.
+
+
+Contributions
+-------------
+   
+If you commit code, please consider adding proper coverage (especially if it has a chance for a regression) in the test suite.
+
+Run the tests with the ``python setup.py test`` command.

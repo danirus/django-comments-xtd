@@ -962,7 +962,7 @@ For such purpose django-comments-xtd provides the class :pclass:`XtdCommentModer
 
 In addition to all the `options <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html#moderation-options>`_ offered by the parent class :pclass:`XtdCommentModerator` exposes the attribute ``removal_suggestion_notification``. When this attribute is set to ``True`` Django will send an email to the :setting:`MANAGERS` on every **Removal suggestion** flag created.
 
-Let's use :pclass:`XtdCommentModerator` in our demo, simply by editing the ``democx/blog/models.py`` module and adding the following code:
+Let's use :pclass:`XtdCommentModerator` in our demo. If you are using the class ``SpamModerator`` already in the ``democx/blog/models.py`` module, then simply add ``removal_suggestion_notification = True`` to your Moderation class, as ``SpamModerator`` already inherits from ``XtdCommentModerator``. Otherwise add the following code:
 
    .. code-block:: python
 

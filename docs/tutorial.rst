@@ -702,39 +702,39 @@ At the end of the file we use another template to render the list of comments. T
        {% if item.comment.level == 0 %}
        <li class="media">{% else %}<div class="media">{% endif %}
          <a name="c{{ item.comment.id }}"></a>
-           <div class="media-left">{{ item.comment.user_email|xtd_comment_gravatar }}</div>
-           <div class="media-body">
-             <div class="comment">
-               <h6 class="media-heading">
-                 {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
-               </h6>
-               {% if item.comment.is_removed %}
-               <p>{% trans "This comment has been removed." %}</p>
-               {% else %}
-               <p>
-                 {{ item.comment.comment|render_markup_comment }}
-                 <br/>
-                 {% if item.comment.allow_thread and not item.comment.is_removed %}
-                 <a class="small mutedlink" href="{{ item.comment.get_reply_url }}">
-                   {% trans "Reply" %}
-                 </a>
-                 {% endif %}
-               </p>
+         <div class="media-left">{{ item.comment.user_email|xtd_comment_gravatar }}</div>
+         <div class="media-body">
+           <div class="comment">
+             <h6 class="media-heading">
+               {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
+             </h6>
+             {% if item.comment.is_removed %}
+             <p>{% trans "This comment has been removed." %}</p>
+             {% else %}
+             <p>
+               {{ item.comment.comment|render_markup_comment }}
+               <br/>
+               {% if item.comment.allow_thread and not item.comment.is_removed %}
+               <a class="small mutedlink" href="{{ item.comment.get_reply_url }}">
+                 {% trans "Reply" %}
+               </a>
                {% endif %}
-             </div>
-             {% if not item.comment.is_removed and item.children %}
-             <div class="media">
-               {% include "blog/comments_tree.html" with comments=item.children %}
-             </div>
+             </p>
              {% endif %}
            </div>
-         {% if item.comment.level == 0 %}
-         </li>{% else %}</div>{% endif %}
-         {% endfor %}
+           {% if not item.comment.is_removed and item.children %}
+           <div class="media">
+             {% include "blog/comments_tree.html" with comments=item.children %}
+           </div>
+           {% endif %}
+         </div>
+       {% if item.comment.level == 0 %}
+       </li>{% else %}</div>{% endif %}
+       {% endfor %}
 
 This template uses the tag :ttag:`xtd_comment_gravatar` included within the ``comments_xtd.py`` templatetag module, that loads the gravatar image associated with an email address. It also uses :ttag:`render_markup_comment`, that will render the comment using either markdown, restructuredtext, or linebreaks. 
 
-Another important remark on this template is that it calls itself recursively to render nested comments for each comment. The tag :ttag:`get_xtdcomment_tree` retrieves a list of dictionaries. Each dictionary contains two attributes: ``comment`` and ``children``. ``comment`` is the XtdComment object  and ``children`` is another list of dictionaries with the nested comments.
+Another important remark on this template is that it calls itself recursively to render nested comments for each comment. The tag :ttag:`get_xtdcomment_tree` retrieves a list of dictionaries. Each dictionary contains two attributes: ``comment`` and ``children``. The attribute ``comment`` is the ``XtdComment`` object and the attribute ``children`` is another list of dictionaries with the nested comments.
 
 We don't necessarily have to use :ttag:`get_xtdcomment_tree` to render nested comments. It is possible to render them by iterating over the list of comments and accessing the level attribute. Take a look at the ``simple_threaded`` demo project, the ``list.html`` template iterates over the list of comments adding an increasing left padding depending on the thread level the comment belongs to.
 
@@ -760,34 +760,34 @@ Finally we might want to adapt the ``django_comments_xtd/reply.html`` template, 
        <div class="row">
          <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
            <div class="media">
-            <div class="media-left">
-              {% if comment.user_url %}
-              <a href="{{ comment.user_url }}">
-                {{ comment.user_email|xtd_comment_gravatar }}
-              </a>
-              {% else %}
-              {{ comment.user_email|xtd_comment_gravatar }}
-              {% endif %}
-            </div>
-            <div class="media-body">
-              <h6 class="media-heading">
-                {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-                {% if comment.user_url %}
-                <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                {{ comment.user_name }}{% if comment.user_url %}</a>{% endif %}
-              </h6>
-              <p>{{ comment.comment }}</p>
-            </div>
-          </div>
-        <div class="visible-lg-block visible-md-block">
-          <hr/>
-        </div>
-      </div>
-    </div>
-    <div class="well well-lg">
-      {% include "comments/form.html" %}
-    </div>
-    {% endblock %}
+             <div class="media-left">
+               {% if comment.user_url %}
+               <a href="{{ comment.user_url }}">
+                 {{ comment.user_email|xtd_comment_gravatar }}
+               </a>
+               {% else %}
+               {{ comment.user_email|xtd_comment_gravatar }}
+               {% endif %}
+             </div>
+             <div class="media-body">
+               <h6 class="media-heading">
+                 {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+                 {% if comment.user_url %}
+                 <a href="{{ comment.user_url }}" target="_new">{% endif %}
+                 {{ comment.user_name }}{% if comment.user_url %}</a>{% endif %}
+               </h6>
+               <p>{{ comment.comment }}</p>
+             </div>
+           </div>
+           <div class="visible-lg-block visible-md-block">
+             <hr/>
+           </div>
+         </div>
+       </div>
+       <div class="well well-lg">
+         {% include "comments/form.html" %}
+       </div>
+       {% endblock %}
 
 
 Different max thread levels

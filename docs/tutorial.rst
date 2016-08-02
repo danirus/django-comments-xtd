@@ -147,7 +147,7 @@ Let's use :ttag:`render_comment_list` in our ``blog/blog_detail.html`` template 
        </div>
                    
 
-Below the list of comments we want to display the comment form, so that users can send their own comments. There are two tags available for such purpose, the :ttag:`render_comment_form` and the :ttag:`get_comment_form`. The former renders a template with the comment form while the latter puts the form in the context of the template giving more control over the fields.
+Below the list of comments we want to display the comment form (later we will put the form first), so that users can send their own comments. There are two tags available for such purpose, the :ttag:`render_comment_form` and the :ttag:`get_comment_form`. The former renders a template with the comment form while the latter puts the form in the context of the template giving more control over the fields.
 
 At the moment we will use the first tag, :ttag:`render_comment_form`:
 
@@ -410,6 +410,11 @@ Finally, when we hit the send button and the comment gets succesfully processed 
        {% extends "base.html" %}
        {% load i18n %}
 
+       {% block header %}
+       <a href="{% url 'homepage' %}">{{ block.super }}</a> - 
+       <a href="{% url 'blog:post_list' %}">Blog</a>
+       {% endblock %}
+       
        {% block content %}
        <h3 class="text-center">{% trans "Comment confirmation requested." %}</h3>
        <p>{% blocktrans %}A confirmation message has been sent to your
@@ -482,11 +487,18 @@ We may want to customize the look of the ``moderated.html`` template. Let's crea
 
        {% block title %}{% trans "Comment requires approval." %}{% endblock %}
 
+       {% block header %}
+       <a href="{% url 'homepage' %}">{{ block.super }}</a> - 
+       <a href="{% url 'blog:post_list' %}">Blog</a>
+       {% endblock %}
+       
        {% block content %}
        <h4 class="text-center">{% trans "Comment in moderation" %}</h4>
-       <p>{% blocktrans %}Your comment has to be reviewed before approbal.<br/>
+       <p class="text-center">
+       {% blocktrans %}Your comment has to be reviewed before approbal.<br/>
          It has been put automatically in moderation.<br/>
-         Thank you for your patience and understanding.{% endblocktrans %}</p>
+         Thank you for your patience and understanding.{% endblocktrans %}
+       </p>
        {% endblock %}
 
 
@@ -498,9 +510,9 @@ On the other hand if you send a comment to a blog post created within the last y
 
 When sending a comment to a blog post with a user logged in the comment doesn't have to be confirmed. However, when you send it logged out the comment has to be confirmed by clicking on the confirmation link. Right after the user clicks on the link in the confirmation email the comment is put on hold pending for approval.
 
-In both cases, if you have provided an active email address in the :setting:`MANAGERS` setting, you must receive a notification about the reception of a new comment, an email with a subject contaning the site domain within angle brackets. If you did not received such message, you might need to use real email settings, go above to the :ref:`configuration` section and see in the code what are the settings you must enable in the ``settings.py`` module. Add a ``#`` in front of the :setting:`EMAIL_BACKEND` setting so that Django will not use the console to output emails, but rather the default email backend along with the other email settings provided. 
+In both cases, if you have provided an active email address in the :setting:`MANAGERS` setting, you will receive a notification about the reception of a new comment, an email with a subject contaning the site domain within angle brackets. If you did not received such message, you might need to review your email settings. Read above the :ref:`configuration` section and see what are the settings you must enable. Add a hash in front of the :setting:`EMAIL_BACKEND` setting to comment it, this way Django won't use the console to output emails but rather the default email backend along with the rest of email settings provided.
 
-A reminder to finish this section: we need to review those comments put on hold. For such purpose we should visit the comments-xtd app in the admin_ interface. After reviewing the non-public comments, we must choose those from the `list <http://localhost:8000/admin/django_comments_xtd/xtdcomment/>`_ that we want to approve, select the action **Approve selected comments** and click on the **Go** button.
+A reminder to finish this section: we need to review those comments put on hold. For such purpose we should visit the comments-xtd app in the admin_ interface. After reviewing the non-public comments, we must tick the box of those we want to approve, select the action **Approve selected comments** and click on the **Go** button.
 
 
 Disallow black listed domains

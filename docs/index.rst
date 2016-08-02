@@ -42,4 +42,3 @@ Contents
    extending
    settings
    templates
-

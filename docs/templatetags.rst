@@ -9,12 +9,12 @@ Filters and Template Tags
 
 Django-comments-xtd comes with 4 tags and two filters:
 
- * Tag ``get_xtdcomment_tree``
- * Tag ``get_xtdcomment_count``
- * Tag ``get_last_xtdcomments``
- * Filter ``xtd_comment_gravatar``
- * Tag ``render_last_xtdcomments``
- * Filter ``render_markup_comment``
+ * Tag :ttag:`get_xtdcomment_tree`
+ * Tag :ttag:`get_xtdcomment_count`
+ * Tag :ttag:`get_last_xtdcomments`
+ * Filter :ttag:`xtd_comment_gravatar`
+ * Tag :ttag:`render_last_xtdcomments`
+ * Filter :ttag:`render_markup_comment`
 
 To use any of them in your templates you first need to load them::
 

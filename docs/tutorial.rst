@@ -527,7 +527,7 @@ Let us first disable comment confirmation, we need to edit the ``settings.py`` m
        COMMENTS_XTD_CONFIRM_EMAIL = False
        
 
-Django-comments-xtd comes with a Moderator class that inherits from ``CommentModerator`` and implements a method ``allow`` that will do the filtering for us. We just have to change our ``democx/blog/models.py`` module and replace ``CommentModerator`` with ``SpamModerator``:
+Django-comments-xtd comes with a Moderator class that inherits from ``CommentModerator`` and implements a method ``allow`` that will do the filtering for us. We just have to change our ``democx/blog/models.py`` module and replace ``CommentModerator`` with ``SpamModerator``, as follows:
 
    .. code-block:: python
 
@@ -633,7 +633,7 @@ Up until this point in the tutorial django-comments-xtd has been configured to d
 
 When the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is greater than 0, comments below the maximum thread level may receive replies that will be nested up to the maximum thread level. A comment in a the thread level below the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` will show a **Reply** link that allows users to send nested comments.
 
-In this section we will enable nested comments by modifying :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` and applying some changes to our ``blog_detail.html`` template. We will use the tag :ttag:`get_xtdcomment_tree` that retrieves the comments in a nested data structure, and we will create a new template to render the nested comments.
+In this section we will enable nested comments by modifying :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` and apply some changes to our ``blog_detail.html`` template. We will use the tag :ttag:`get_xtdcomment_tree` that retrieves the comments in a nested data structure, and we will create a new template to render the nested comments.
 
 We will also introduce the setting :setting:`COMMENTS_XTD_LIST_ORDER`, that allows altering the default order in which we get the list of comments. By default comments are ordered by thread and their position inside the thread, which turns out to be in ascending datetime of arrival. In this example we would like to list newer comments first.
 
@@ -686,7 +686,7 @@ Let's edit ``democx/blog/templates/blog/blog_detail.html`` to make it look like 
        <ul class="media-list">
          {% get_xtdcomment_tree for post as comments_tree %}
          {% include "blog/comments_tree.html" with comments=comments_tree %}
-       </div>
+       </ul>
        {% endif %}
        {% endblock %}
 

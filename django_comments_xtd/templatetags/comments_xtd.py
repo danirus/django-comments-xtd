@@ -1,5 +1,8 @@
 import hashlib
-import urllib
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 import re
 
 from django.contrib.contenttypes.models import ContentType
@@ -344,7 +347,7 @@ register.filter(render_markup_comment)
 def xtd_comment_gravatar_url(email, size=48):
     return ("http://www.gravatar.com/avatar/%s?%s&d=mm" %
             (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
-             urllib.parse.urlencode({'s': str(size)})))
+             urlencode({'s': str(size)})))
 
 
 register.filter(xtd_comment_gravatar_url)

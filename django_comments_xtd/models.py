@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import F, Max, Min
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.encoding import force_text
 
 try:
     from django.db.transaction import atomic
@@ -59,6 +60,17 @@ class XtdCommentManager(models.Manager):
         qs = self.get_queryset().filter(content_type__in=content_types)\
                                 .reverse()
         return qs
+
+    def for_model(self, model):
+        """
+        QuerySet for all comments for a particular model (either an instance or
+        a class).
+        """
+        ct = ContentType.objects.get_for_model(model)
+        qs = self.get_queryset().filter(content_type=ct)
+        if isinstance(model, models.Model):
+            qs = qs.filter(object_pk=force_text(model._get_pk_val()))
+            return qs
 
 
 class XtdComment(Comment):

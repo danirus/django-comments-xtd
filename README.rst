@@ -6,8 +6,8 @@ django-comments-xtd |TravisCI|_
 
 Tests passing with:
 
-* Django 1.8 to 1.9 under Python 3.5
-* Django 1.4 to 1.9 under Python 2.7
+* Django 1.8 to 1.10 under Python 3.5
+* Django 1.7 to 1.10 under Python 2.7
 
 A reusable django app that extends the `django-contrib-comments <https://pypi.python.org/pypi/django-contrib-comments>`_ framework with:
 

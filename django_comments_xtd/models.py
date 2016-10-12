@@ -13,8 +13,10 @@ except ImportError:
     from django.db.transaction import commit_on_success as atomic
 
 try:
+    from django_comments.managers import CommentManager
     from django_comments.models import Comment
 except ImportError:
+    from django.contrib.comments.managers import CommentManager
     from django.contrib.comments.models import Comment
 
 from django_comments_xtd.conf import settings
@@ -42,7 +44,8 @@ class MaxThreadLevelExceededException(Exception):
                 {"max_thread_level": self.max_by_app})
 
 
-class XtdCommentManager(models.Manager):
+# class XtdCommentManager(models.Manager):
+class XtdCommentManager(CommentManager):
 
     if django.VERSION[:2] < (1, 6):
         get_queryset = models.Manager.get_query_set
@@ -61,16 +64,16 @@ class XtdCommentManager(models.Manager):
                                 .reverse()
         return qs
 
-    def for_model(self, model):
-        """
-        QuerySet for all comments for a particular model (either an instance or
-        a class).
-        """
-        ct = ContentType.objects.get_for_model(model)
-        qs = self.get_queryset().filter(content_type=ct)
-        if isinstance(model, models.Model):
-            qs = qs.filter(object_pk=force_text(model._get_pk_val()))
-            return qs
+    # def for_model(self, model):
+    #     """
+    #     QuerySet for all comments for a particular model (either an instance or
+    #     a class).
+    #     """
+    #     ct = ContentType.objects.get_for_model(model)
+    #     qs = self.get_queryset().filter(content_type=ct)
+    #     if isinstance(model, models.Model):
+    #         qs = qs.filter(object_pk=force_text(model._get_pk_val()))
+    #         return qs
 
 
 class XtdComment(Comment):

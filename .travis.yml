@@ -11,14 +11,13 @@ cache:
     - .tox
 
 env:
- - TOX_ENV=py27-django14
- - TOX_ENV=py27-django15
- - TOX_ENV=py27-django16
  - TOX_ENV=py27-django17
  - TOX_ENV=py27-django18
  - TOX_ENV=py27-django19
+ - TOX_ENV=py27-django110
  - TOX_ENV=py35-django18
  - TOX_ENV=py35-django19
+ - TOX_ENV=py35-django110
 
 before_install:
  - sudo apt-get update -qq

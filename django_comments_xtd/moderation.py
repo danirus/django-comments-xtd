@@ -69,7 +69,7 @@ class XtdCommentModerator(CommentModerator):
         subject = ('[%s] Comment removal suggestion on "%s"' %
                    (c['current_site'].name, content_object))
         message = t.render(Context(c) if VERSION < (1, 8) else c)
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+        send_mail(subject, message, settings.COMMENTS_XTD_FROM_EMAIL,
                   recipient_list, fail_silently=True)
 
 

@@ -67,6 +67,25 @@ An example::
 
 Defaults to True.
 
+
+.. setting:: COMMENTS_XTD_FROM_EMAIL
+
+From Email Address
+==================
+
+:index:`COMMENTS_XTD_FROM_EMAIL` - From Email Address
+
+**Optional**
+
+This setting establishes the email address used in the *from* field when sending emails.
+
+An example::
+
+     COMMENTS_XTD_FROM_EMAIL = "helpdesk@yoursite.com"
+
+Defaults to ``settings.DEFAULT_FROM_EMAIL``.
+
+
 .. setting:: COMMENTS_XTD_FORM_CLASS
 
 Comment Form Class

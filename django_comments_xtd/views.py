@@ -60,7 +60,7 @@ def send_email_confirmation_request(
     message_context = Context({'comment': comment,
                                'content_object': target,
                                'confirmation_url': confirmation_url,
-                               'contact': settings.DEFAULT_FROM_EMAIL,
+                               'contact': settings.COMMENTS_XTD_FROM_EMAIL,
                                'site': Site.objects.get_current()})
     # prepare text message
     text_message_template = loader.get_template(text_template)
@@ -72,7 +72,7 @@ def send_email_confirmation_request(
     else:
         html_message = None
 
-    send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL,
+    send_mail(subject, text_message, settings.COMMENTS_XTD_FROM_EMAIL,
               [comment.user_email, ], html=html_message)
 
 
@@ -235,7 +235,7 @@ def notify_comment_followers(comment):
             html_message = html_message_template.render(message_context)
         else:
             html_message = None
-        send_mail(subject, text_message, settings.DEFAULT_FROM_EMAIL,
+        send_mail(subject, text_message, settings.COMMENTS_XTD_FROM_EMAIL,
                   [email, ], html=html_message)
 
 

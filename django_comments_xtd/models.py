@@ -137,6 +137,19 @@ class XtdComment(Comment):
             return {'likedit': comment.users_who_liked_it(),
                     'dislikedit': comment.users_who_disliked_it()}
 
+        def add_children(children, obj):
+            for item in children:
+                if item['comment'].pk == obj.parent_id:
+                    child_dict = {'comment': obj, 'children': []}
+                    if with_participants:
+                        child_dict.update(get_participants(obj))
+                    item['children'].append(child_dict)
+                    return True
+                elif item['children']:
+                    if add_children(item['children'], obj):
+                        return True
+            return False
+
         dic_list = []
         cur_dict = None
         for obj in queryset:
@@ -155,12 +168,7 @@ class XtdComment(Comment):
                     child_dict.update(get_participants(obj))
                 cur_dict['children'].append(child_dict)
             else:
-                for item in cur_dict['children']:
-                    if item['comment'].pk == obj.parent_id:
-                        child_dict = {'comment': obj, 'children': []}
-                        if with_participants:
-                            child_dict.update(get_participants(obj))
-                        item['children'].append(child_dict)
+                add_children(cur_dict['children'], obj)
         if cur_dict:
             dic_list.append(cur_dict)
         return dic_list

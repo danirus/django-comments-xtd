@@ -24,6 +24,7 @@ The recommended way to run the demo sites is in its own `virtualenv <http://www.
 
     $ git clone git://github.com/danirus/django-comments-xtd.git
     $ cd django-comments-xtd/django_comments_xtd/demos/[simple|simple_thread|multiple]
+    $ pip install ../../requirements.pip
     $ sh ./install.sh (to syncdb, migrate and loaddata)
     $ python manage.py runserver
 

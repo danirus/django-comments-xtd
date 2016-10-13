@@ -136,7 +136,7 @@ class XtdComment(Comment):
         def get_participants(comment):
             return {'likedit': comment.users_who_liked_it(),
                     'dislikedit': comment.users_who_disliked_it()}
-        
+
         def add_children(children, obj):
             for item in children:
                 if item['comment'].pk == obj.parent_id:

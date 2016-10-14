@@ -1,5 +1,4 @@
 from django import VERSION
-from django.conf import settings
 try:
     from django.contrib.sites.shortcuts import get_current_site
 except ImportError:
@@ -20,6 +19,8 @@ except ImportError:
     from django.contrib.comments.models import CommentFlag
     from django.contrib.comments.moderation import Moderator, CommentModerator
 
+
+from django_comments_xtd.conf  import settings
 from django_comments_xtd.models import BlackListedDomain, TmpXtdComment
 from django_comments_xtd.signals import confirmation_received
 from django_comments_xtd.utils import send_mail

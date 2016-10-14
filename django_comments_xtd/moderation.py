@@ -20,7 +20,7 @@ except ImportError:
     from django.contrib.comments.moderation import Moderator, CommentModerator
 
 
-from django_comments_xtd.conf  import settings
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import BlackListedDomain, TmpXtdComment
 from django_comments_xtd.signals import confirmation_received
 from django_comments_xtd.utils import send_mail

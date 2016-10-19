@@ -4,7 +4,7 @@ from setuptools.command.test import test
 
 def run_tests(*args):
     import subprocess
-    errors = subprocess.Popen(["coverage", "run", "tests/runtests.py"]).wait()
+    errors = subprocess.Popen(["coverage", "run", "runtests.py"]).wait()
     if errors:
         sys.exit(1)
     else:
@@ -14,12 +14,17 @@ test.run_tests = run_tests
 
 setup(
     name = "django-comments-xtd",
-    version = "1.6.3",
+    version = "1.6.4",
     packages = find_packages(),
     include_package_data = True,
     license = "MIT",
-    description = "Django Comments Framework extension app with thread support, follow up notifications and email confirmations.",
-    long_description = "A reusable Django app that extends django-contrib-comments Framework with thread support, following up notifications and comments that only hits the database after users confirm them by email.",
+    description = ("Django Comments Framework extension app with thread "
+                   "support, follow up notifications and email "
+                   "confirmations."),
+    long_description = ("A reusable Django app that extends django-contrib-"
+                        "comments Framework with thread support, following up "
+                        "notifications and comments that only hits the "
+                        "database after users confirm them by email."),
     author = "Daniel Rus Morales",
     author_email = "mbox@danir.us",
     maintainer = "Daniel Rus Morales",

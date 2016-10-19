@@ -122,7 +122,7 @@ class XtdModerator(Moderator):
         model = comment.content_type.model_class()
         if model not in self._registry:
             return
-        if flag.flag is not CommentFlag.SUGGEST_REMOVAL:
+        if flag.flag != CommentFlag.SUGGEST_REMOVAL:
             return
         self._registry[model].notify_removal_suggestion(comment,
                                                         comment.content_object,

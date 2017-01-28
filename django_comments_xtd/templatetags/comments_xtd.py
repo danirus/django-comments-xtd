@@ -258,7 +258,7 @@ def get_xtdcomment_tree(parser, token):
             'children': [ list of child xtdcomment dicts ]
         }
 
-    When called with-counters each XtdComment dictionary will look like::
+    When called with_participants each XtdComment dictionary will look like::
         {
             'comment': xtdcomment object,
             'children': [ list of child xtdcomment dicts ],

@@ -61,6 +61,12 @@ class XtdCommentManager(CommentManager):
                                 .reverse()
         return qs
 
+    def get_queryset(self):
+        qs = super(XtdCommentManager, self).get_queryset()
+        return qs.\
+            select_related('user', 'content_type').\
+            order_by(*settings.COMMENTS_XTD_LIST_ORDER)
+
 
 class XtdComment(Comment):
     thread_id = models.IntegerField(default=0, db_index=True)
@@ -71,9 +77,6 @@ class XtdComment(Comment):
                                    help_text=_("Receive by email further "
                                                "comments in this conversation"))
     objects = XtdCommentManager()
-
-    class Meta:
-        ordering = settings.COMMENTS_XTD_LIST_ORDER
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None

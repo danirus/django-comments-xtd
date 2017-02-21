@@ -128,4 +128,5 @@ class XtdModerator(Moderator):
                                                         comment.content_object,
                                                         request)
 
+
 moderator = XtdModerator()

@@ -27,10 +27,6 @@ The most comfortable approach to set it up consist of creating a virtualenv and 
        $ wget https://github.com/danirus/django-comments-xtd/demo/democx.tar.gz
        $ tar -xvzf democx.tar.gz
        $ cd democx
-       $ pip install Django
-       $ pip install pytz       
-       $ sh install.sh
-       $ python manage.py runserver
 
 
 Take a look at the project. The starting point of this tutorial is a simple Django project with a blog application and a few posts. During the following sections we will configure the project to enable comments to the ``Post`` model and try every possible commenting scenario.
@@ -41,11 +37,11 @@ Take a look at the project. The starting point of this tutorial is a simple Djan
 Configuration
 =============
 
-Let us first configure the project to support django-comments and django-comments-xtd. We should start installing the packages and changing the minimum number of settings to enable comments.
+Configure the project to support django-comments and django-comments-xtd, start installing the packages and then let's change the minimum number of settings to enable comments.
 
    .. code-block:: bash
 
-       $ pip install django-contrib-comments django-comments-xtd \
+       $ pip install Django pytz django-contrib-comments django-comments-xtd \
                      docutils Markdown django-markup
 
 Edit the settings module of the project, ``democx/democx/settings.py``, and make the following changes:
@@ -69,6 +65,7 @@ Edit the settings module of the project, ``democx/democx/settings.py``, and make
        EMAIL_PORT = "587"
        EMAIL_HOST_USER = "alias@mail.com"
        EMAIL_HOST_PASSWORD = "yourpassword"
+       EMAIL_USE_TLS = True
        DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
        
 
@@ -85,14 +82,15 @@ Edit the urls module of the project, ``democx/democx/urls.py``, to mount the URL
        ]
 
 
-Let Django create the tables for the two new applications:
+Now let Django create the tables for the two new applications and launch the development server:
 
    .. code-block:: bash
 
        $ python manage.py migrate
+       $ python manage.py runserver
 
 
-Be sure that the domain field of the ``Site`` instance points to the correct domain, which is expected to be  ``localhost:8000`` when running the default development server, as it will be used by django_comments_xtd to create comment verification URLs, follow-up cancellation URLs, etc. You can edit the site instance in the admin interface to set it to the right value.
+Be sure that the domain field of the ``Site`` instance points to the correct domain, which for the development server is expected to be  ``localhost:8000``. The value is being used by django_comments_xtd to create comment verification URLs, follow-up cancellation URLs, etc. You can edit the site instance in the admin interface to set it to the right value.
 
 
 After these simple changes the project is ready to use comments, we just need to modify the templates to include the ``comments`` templatetag module.
@@ -103,7 +101,7 @@ Changes in templates
 
 The tutorial project comes ready with a blog application that contains a Post model. Our goal is to provide blog stories with comments, so that people can post comments to the stories and read the comments other people have posted.
 
-The blog application, located in ``democx/blog`` contains a ``blog_detail.html`` template in the ``templates/blog`` directory. We should edit the template and load the ``comments`` templatetag module, which is provided by the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_:
+The blog application, located in ``democx/blog`` contains a ``blog_detail.html`` template in the ``templates/blog`` directory. We have to edit the template and load the ``comments`` templatetag module, which is provided by the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_:
 
    .. code-block:: html+django
 
@@ -178,7 +176,7 @@ Finally, before completing this first set of changes, we could show the number o
        </p>
 
 
-Now we are ready to send comments. If you are logged in the admin site comments do not need to be confirmed by email, and will make it to the application without further intervention. To make django_comments_xtd send a confirmation email do logout of the admin interface before sending the comment.   
+Now we are ready to send comments. If you are logged in the admin site, your comments won't need to be confirmed by mail. To test the reception of the mail confirmation request do logout of the admin interface.
 
 By default the setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0``, which means comments can not be nested. In the following sections we will enable threaded comments, we will allow users to flag comments and we will set up comment moderation.
 
@@ -186,7 +184,7 @@ By default the setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0``, which 
 Template Style Customization
 ============================
 
-In the ``democx`` project we make use of the popular client side web framework, Bootstrap_, which offers the same quick development capacities of Django but in the client side. There are other client side frameworks out there, this example uses Bootstrap_ because it's probably the most popular.
+The ``democx`` project uses the fronted web framework, Bootstrap_, which allows fast interface development. There are other client side frameworks, this example uses Bootstrap_ because it's probably the most popular.
 
 We will adapt our templates to integrate the list of comments and the comment form with the look provided by Bootstrap CSS classes.
 
@@ -194,7 +192,7 @@ We will adapt our templates to integrate the list of comments and the comment fo
 Comment list
 ------------
 
-We should create first a ``comments`` directory inside the templates directory of the ``democx`` project, and then create our own ``list.html`` file inside it with the following code:
+We must create a template ``list.html`` inside the ``democx/templates/comments`` directory with the following content:
 
    .. code-block:: html+django
 
@@ -231,6 +229,7 @@ First, create a new file ``forms.py`` inside the ``democx/blog`` directory with 
    .. code-block:: python
 
        from django.utils.translation import ugettext_lazy as _
+
        from django_comments_xtd.forms import XtdCommentForm
 
 
@@ -435,7 +434,7 @@ You might want to adapt the design of the rest of :ref:`ref-templates` provided 
 Moderation
 ==========
 
-One of the differences between django-comments-xtd and other commenting applications is the fact that by default it requires comment confirmation by email when users are not logged in, a very effective feature to discard unwanted comments. However there might be cases in which we would prefer to apply a different approach to filter incoming comments. The Django Comments Framework has the `moderation capabilities <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_ upon which we can build our own comment filtering.
+One of the differences between django-comments-xtd and other commenting applications is the fact that by default it requires comment confirmation by email when users are not logged in, a very effective feature to discard unwanted comments. However there might be cases in which we would prefer to follow a different approach. The Django Comments Framework has the `moderation capabilities <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_ upon which we can build our own comment filtering.
 
 Comment moderation is often established to fight spam, but may be used for other purposes, like triggering actions based on comment content, rejecting comments based on how old is the subject being commented and whatnot.
 

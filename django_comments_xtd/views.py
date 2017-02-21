@@ -4,7 +4,7 @@ import six
 import django
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.sites.models import Site
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -51,7 +51,7 @@ def get_moderated_tmpl(cmt):
 
 
 def send_email_confirmation_request(
-        comment, target, key,
+        comment, target, key, site,
         text_template="django_comments_xtd/email_confirmation_request.txt",
         html_template="django_comments_xtd/email_confirmation_request.html"):
     """Send email requesting comment confirmation"""
@@ -61,7 +61,7 @@ def send_email_confirmation_request(
                                'content_object': target,
                                'confirmation_url': confirmation_url,
                                'contact': settings.COMMENTS_XTD_FROM_EMAIL,
-                               'site': Site.objects.get_current()})
+                               'site': site})
     # prepare text message
     text_message_template = loader.get_template(text_template)
     text_message = text_message_template.render(message_context)
@@ -128,7 +128,9 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
         target = model._default_manager.get(pk=object_pk)
         key = signed.dumps(comment, compress=True,
                            extra_key=settings.COMMENTS_XTD_SALT)
-        send_email_confirmation_request(comment, target, key)
+        site = get_current_site(request)
+        send_email_confirmation_request(comment, target, key, site)
+
 
 comment_was_posted.connect(on_comment_was_posted, sender=TmpXtdComment)
 
@@ -229,7 +231,7 @@ def notify_comment_followers(comment):
                                    'comment': comment,
                                    'content_object': target,
                                    'mute_url': mute_url,
-                                   'site': Site.objects.get_current()})
+                                   'site': comment.site})
         text_message = text_message_template.render(message_context)
         if settings.COMMENTS_XTD_SEND_HTML_EMAIL:
             html_message = html_message_template.render(message_context)

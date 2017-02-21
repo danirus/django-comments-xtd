@@ -4,10 +4,10 @@ django-comments-xtd |TravisCI|_
 .. |TravisCI| image:: https://secure.travis-ci.org/danirus/django-comments-xtd.png?branch=master
 .. _TravisCI: https://travis-ci.org/danirus/django-comments-xtd
 
-Tests passing with:
+Demo site and tests working under officially Django `supported versions <https://www.djangoproject.com/download/#supported-versions>`_:
 
-* Django 1.8 to 1.10 under Python 3.5
-* Django 1.7 to 1.10 under Python 2.7
+* Django 1.8, Django 1.9 and Django 1.10
+* Python 2.7 and Python 3 (3.2, 3.4, 3.5, 3.6)
 
 A reusable django app that extends the `django-contrib-comments <https://pypi.python.org/pypi/django-contrib-comments>`_ framework with:
 

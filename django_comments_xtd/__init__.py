@@ -1,5 +1,5 @@
 import django
-from django_comments_xtd.conf import settings
+
 
 if django.VERSION[:2] <= (1, 5): # Django <= 1.5
     from django_comments_xtd.compat import import_by_path as import_string
@@ -21,14 +21,20 @@ except ImportError:
 
 
 default_app_config = 'django_comments_xtd.apps.CommentsXtdConfig'
-    
+
+
 def get_model():
+    from django_comments_xtd.conf import settings
     return import_string(settings.COMMENTS_XTD_MODEL)
 
+
 def get_form():
+    from django_comments_xtd.conf import settings
     return import_string(settings.COMMENTS_XTD_FORM_CLASS)
 
-VERSION = (1, 6, 4, 'f', 0) # following PEP 440
+
+VERSION = (1, 6, 5, 'f', 0) # following PEP 440
+
 
 def get_version():
     version = '%s.%s' % (VERSION[0], VERSION[1])

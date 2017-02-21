@@ -53,5 +53,6 @@ if get_model() is XtdComment:
 class BlackListedDomainAdmin(admin.ModelAdmin):
     search_fields = ['domain']
 
+
 if get_model() is XtdComment:
     admin.site.register(BlackListedDomain, BlackListedDomainAdmin)

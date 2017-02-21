@@ -340,6 +340,7 @@ def render_markup_comment(value):
     else:
         return value
 
+
 register.filter(render_markup_comment)
 
 

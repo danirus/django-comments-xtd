@@ -57,4 +57,5 @@ class DiaryCommentModerator(XtdCommentModerator):
     moderate_after = 2
     removal_suggestion_notification = True
 
+
 moderator.register(Diary, DiaryCommentModerator)

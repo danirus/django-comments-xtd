@@ -10,7 +10,6 @@ cache:
     - .tox
 
 env:
- - TOX_ENV=py27-django17
  - TOX_ENV=py27-django18
  - TOX_ENV=py27-django19
  - TOX_ENV=py27-django110

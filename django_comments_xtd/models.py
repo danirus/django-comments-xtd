@@ -218,8 +218,22 @@ class TmpXtdComment(dict):
         else:
             return ""
 
+    def __setstate__(self, state):
+        ct_key = state.pop('content_type_key')
+        ctype = ContentType.objects.get_by_natural_key(*ct_key)
+        self.update(
+            state,
+            content_type=ctype,
+            content_object=ctype.get_object_for_this_type(
+                pk=state['object_pk']
+            )
+        )
+
     def __reduce__(self):
-        return (TmpXtdComment, (), None, None, six.iteritems(self))
+        state = { k:v for k, v in self.items() if k != 'content_object' }
+        ct = state.pop('content_type')
+        state['content_type_key'] = ct.natural_key()
+        return (TmpXtdComment, (), state)
 
 
 # ----------------------------------------------------------------------

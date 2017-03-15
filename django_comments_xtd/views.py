@@ -124,6 +124,8 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
     else:
         ctype = request.POST["content_type"]
         object_pk = request.POST["object_pk"]
+        # TODO: I'm not sure the next two lines are needed since the target
+        #       should already exist on the comment
         model = get_model(*ctype.split("."))
         target = model._default_manager.get(pk=object_pk)
         key = signed.dumps(comment, compress=True,

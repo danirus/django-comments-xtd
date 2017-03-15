@@ -59,10 +59,10 @@ class ConfirmCommentTestCase(TestCase):
         patcher = patch('django_comments_xtd.views.send_mail')
         self.mock_mailer = patcher.start()
         # Create random string so that it's harder for zlib to compress
-        content = ''.join([random.choice(string.printable) for _ in range(6096)])
+        content = ''.join(random.choice(string.printable) for _ in range(6096))
         self.article = Article.objects.create(title="September",
                                               slug="september",
-                                              body="What I did on September..." + content)
+                                              body="In September..." + content)
         self.form = django_comments.get_form()(self.article)
         data = {"name": "Bob", "email": "bob@example.com", "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,
@@ -81,7 +81,8 @@ class ConfirmCommentTestCase(TestCase):
                                         follow=True)
 
     def test_confirm_url_is_short_enough(self):
-        # Tests that the confirm url's length isn't dependent on the article length
+        # Tests that the length of the confirm url's length isn't
+        # dependent on the article length.
         l = len(reverse("comments-xtd-confirm",
                         kwargs={'key': self.key}))
         print("\nXXXXXXXXXXX:", l)

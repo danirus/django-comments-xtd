@@ -1,5 +1,3 @@
-import six
-
 import django
 from django.db import models
 from django.db.models import F, Max, Min
@@ -230,7 +228,7 @@ class TmpXtdComment(dict):
         )
 
     def __reduce__(self):
-        state = { k:v for k, v in self.items() if k != 'content_object' }
+        state = {k: v for k, v in self.items() if k != 'content_object'}
         ct = state.pop('content_type')
         state['content_type_key'] = ct.natural_key()
         return (TmpXtdComment, (), state)

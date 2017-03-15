@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 import re
+import random
+import string
 try:
     from unittest.mock import patch
 except ImportError:
@@ -56,9 +58,11 @@ class ConfirmCommentTestCase(TestCase):
     def setUp(self):
         patcher = patch('django_comments_xtd.views.send_mail')
         self.mock_mailer = patcher.start()
+        # Create random string so that it's harder for zlib to compress
+        content = ''.join([random.choice(string.printable) for _ in range(6096)])
         self.article = Article.objects.create(title="September",
                                               slug="september",
-                                              body="What I did on September...")
+                                              body="What I did on September..." + content)
         self.form = django_comments.get_form()(self.article)
         data = {"name": "Bob", "email": "bob@example.com", "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,
@@ -75,6 +79,13 @@ class ConfirmCommentTestCase(TestCase):
         self.response = self.client.get(reverse("comments-xtd-confirm",
                                                 kwargs={'key': key}),
                                         follow=True)
+
+    def test_confirm_url_is_short_enough(self):
+        # Tests that the confirm url's length isn't dependent on the article length
+        l = len(reverse("comments-xtd-confirm",
+                        kwargs={'key': self.key}))
+        print("\nXXXXXXXXXXX:", l)
+        self.assertLessEqual(l, 4096, "Urls can only be a max of 4096")
 
     def test_404_on_bad_signature(self):
         self.get_confirm_comment_url(self.key[:-1])

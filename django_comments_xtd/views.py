@@ -51,14 +51,13 @@ def get_moderated_tmpl(cmt):
 
 
 def send_email_confirmation_request(
-        comment, target, key, site,
+        comment, key, site,
         text_template="django_comments_xtd/email_confirmation_request.txt",
         html_template="django_comments_xtd/email_confirmation_request.html"):
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
     confirmation_url = reverse("comments-xtd-confirm", args=[key])
     message_context = Context({'comment': comment,
-                               'content_object': target,
                                'confirmation_url': confirmation_url,
                                'contact': settings.COMMENTS_XTD_FROM_EMAIL,
                                'site': site})
@@ -126,12 +125,12 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
         object_pk = request.POST["object_pk"]
         # TODO: I'm not sure the next two lines are needed since the target
         #       should already exist on the comment
-        model = get_model(*ctype.split("."))
-        target = model._default_manager.get(pk=object_pk)
+        # model = get_model(*ctype.split("."))
+        # target = model._default_manager.get(pk=object_pk)
         key = signed.dumps(comment, compress=True,
                            extra_key=settings.COMMENTS_XTD_SALT)
         site = get_current_site(request)
-        send_email_confirmation_request(comment, target, key, site)
+        send_email_confirmation_request(comment, key, site)
 
 
 comment_was_posted.connect(on_comment_was_posted, sender=TmpXtdComment)

@@ -2,7 +2,7 @@
 
 You or someone in behalf of you have requested to post a comment to the following URL.
 
-URL:  http://{{ site.domain }}{{ content_object.get_absolute_url }}
+URL:  http://{{ site.domain }}{{ comment.content_object.get_absolute_url }}
 
 --- Comment: ---
 {{ comment.comment }}

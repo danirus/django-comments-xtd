@@ -1,7 +1,7 @@
 <p>{{ comment.user_name }},</p>
 
 <p>You or someone in behalf of you have requested to post a comment into this page:<br/>
-<a href="http://{{ site.domain }}{{ content_object.get_absolute_url }}">http://{{ site.domain }}{{ content_object.get_absolute_url }}</a>
+<a href="http://{{ site.domain }}{{ comment.content_object.get_absolute_url }}">http://{{ site.domain }}{{ comment.content_object.get_absolute_url }}</a>
 </p>
 
 <p>The comment:<br/>

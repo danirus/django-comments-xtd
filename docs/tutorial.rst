@@ -6,7 +6,7 @@ Tutorial
 
 This tutorial guides you through the steps to use every feature of django-comments-xtd together with the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_.
 
-The Django project used throughout the tutorial is available to `download <https://github.com/danirus/django-comments-xtd/demo/bare-project.tar.gz>`_. Use it at your will to apply the changes while reading each section.
+The Django project used throughout the tutorial is available to `download <https://github.com/danirus/django-comments-xtd/demo/democx.tgz>`_. Use it at your will to apply the changes while reading each section.
 
 
 .. index::
@@ -15,15 +15,16 @@ The Django project used throughout the tutorial is available to `download <https
 Preparation
 ===========
 
-If you opt for coding the examples, download the bare Django project tarball from this `GitHub page <https://github.com/danirus/django-comments-xtd/demo/bare-project.tar.gz>`_ and decompress it in a directory of your choice.
+If you opt for coding the examples, download the bare Django project tarball from this `GitHub page <https://github.com/danirus/django-comments-xtd/demo/democx.tgz>`_ and decompress it in a directory of your choice.
 
 The most comfortable approach to set it up consist of creating a virtualenv and installing all the dependencies within it. The dependencies are just a bunch of lightweight packages.
 
    .. code-block:: bash
 
-       $ virtualenv -p python3.5 ~/venv/comments-xtd-tutorial
-       $ source ~/venv/comments-xtd-tutorial/bin/activate
-       $ cd ~/src
+       $ mkdir ~/comments-xtd-tutorial
+       $ cd ~/comments-xtd-tutorial
+       $ virtualenv venv
+       $ source venv/bin/activate
        $ wget https://github.com/danirus/django-comments-xtd/demo/democx.tar.gz
        $ tar -xvzf democx.tar.gz
        $ cd democx

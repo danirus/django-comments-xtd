@@ -1,7 +1,0 @@
-{% if field.errors %}
-<span class="help-block" data-comment-element="field-errors">
-  {% for error in field.errors %}
-  {{ error }}{% if not forloop.last %}<br/>{% endif %}
-  {% endfor %}
-</span>
-{% endif %}

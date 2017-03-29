@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^feeds/comments/$', LatestCommentFeed(), name='comments-feed'),    
 ]
 
-# if settings.DEBUG:
-#     urlpatterns += staticfiles_urlpatterns()
+
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()

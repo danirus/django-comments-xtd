@@ -12,11 +12,10 @@ check_ret() {
 cd ${PRJPATH}
 
 #------------------------------
-printf "Checking Django version... "
-django_version=`python -c 'import django; print(django.get_version())'`
-printf "${django_version}\n"
-
-if [[ ${django_version} < 1.7 ]]; then
+echo "Checking Django version... "
+# Retrieve 1.7 as 1.07, so that they can be compared as decimal numbers.
+version=`python -c 'import django; print("%d.%02d" % django.VERSION[:2])'`
+if [[ ${version} < "1.07" ]]; then
     python manage.py syncdb --noinput || check_ret
     python manage.py migrate django_comments_xtd || check_ret
 else
@@ -24,17 +23,8 @@ else
 fi
 
 #------------------------------
-printf "Checking django_comments_xtd parent app... "
-django_comments=`python -c 'import imp
-try:
-    imp.find_module("django_comments")
-    print("django_comments")
-except ImportError:
-    print("django.contrib.comments")
-'`
-printf "${django_comments}\n"
-
-fixtures=(auth sites articles ${django_comments} django_comments_xtd)
+echo "Loading fixture files... "
+fixtures=(auth sites articles)
 for file in ${fixtures[@]}; do
     python manage.py loaddata ${FIXTURESPATH}/${file}.json || check_ret
 done

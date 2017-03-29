@@ -15,12 +15,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE':   'django.db.backends.sqlite3', 
-        'NAME':     'django_comments_xtd_demo.db',
-        'USER':     '', 
-        'PASSWORD': '', 
-        'HOST':     '', 
-        'PORT':     '',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PRJ_PATH, 'db.sqlite3'),
     }
 }
 

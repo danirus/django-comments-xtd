@@ -5,13 +5,13 @@ There are three example sites in this directory:
  3. multiple
  4. custom_comments
 
-1. The 'simple' demo site is a project with just one application called 'articles' with an 'Article' model whose instances accept comments. The example features: 
+1. The 'simple' demo site is a project with an 'articles' application. Its 'Article' model may accept comments. The example features: 
 
  * Comments have to be confirmed by email before they hit the database. 
  * Commenters may request follow up notifications.
 
 
-2. The 'simple_threads' demo site extends the 'simple' demo functionality featuring:
+2. The 'simple_threads' demo site extends the 'simple' demo featuring:
  * Thread support for comments up to level 2
 
 

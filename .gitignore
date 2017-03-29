@@ -4,6 +4,7 @@
 *.zip
 *.egg-info
 *.db
+db.sqlite3
 docs/_build
 build/
 dist/

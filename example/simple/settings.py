@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 
 import os
 
-PRJ_PATH = os.path.abspath(os.path.curdir)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+PROJECT_DIR = os.path.abspath(os.path.curdir)
 
 DEBUG = True
 
@@ -16,7 +18,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PRJ_PATH, 'db.sqlite3'),
+        'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
     }
 }
 
@@ -39,12 +41,12 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(PRJ_PATH, "media")
+# MEDIA_ROOT = os.path.join(PROJECT_DIR, "media")
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -58,6 +60,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(BASE_DIR, "static"),
 )
 
 # List of finder classes that know how to find static files in
@@ -112,17 +115,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     django_comments,
 
     'simple.articles',
     'django_comments_xtd',
 )
 
-from django import VERSION
-if VERSION[1] < 7:
-    INSTALLED_APPS = INSTALLED_APPS + ('south',)
-else:
-    TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
     
 # EMAIL_HOST          = "smtp.gmail.com" 
 # EMAIL_PORT          = "587"
@@ -143,3 +143,5 @@ COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
 COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
+
+COMMENTS_XTD_FORM_CLASS = "articles.forms.ArticleCommentForm"

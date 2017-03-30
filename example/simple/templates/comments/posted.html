@@ -1,9 +1,14 @@
-{% extends "comments/base.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Comment confirmation requested" %}.{% endblock %}
+{% block header %}
+<a href="{% url 'homepage' %}">{{ block.super }}</a> -
+<a href="{% url 'blog:post_list' %}">Blog</a>
+{% endblock %}
 
 {% block content %}
-  <h1>{% trans "Comment confirmation requested" %}</h1>
-  <p>{% trans "A confirmation message has been sent to your email address. Please, click on the link in the message to confirm your comment." %}</p>
+<h3 class="text-center">{% trans "Comment confirmation requested." %}</h3>
+<p>{% blocktrans %}A confirmation message has been sent to your
+email address. Please, click on the link in the message to confirm
+your comment.{% endblocktrans %}</p>
 {% endblock %}

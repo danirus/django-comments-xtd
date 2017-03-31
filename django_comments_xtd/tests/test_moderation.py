@@ -187,7 +187,7 @@ class FlaggingRemovalSuggestion(TestCase):
         self.assert_(self.mailer.call_count == 1)
 
 
-class FlaggingLikedItAndDislikedit(TestCase):
+class FlaggingLikedItAndDislikedIt(TestCase):
     """Scenario to test the flag removal_suggestion_notification"""
 
     def setUp(self):

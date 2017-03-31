@@ -1,10 +1,5 @@
-{% extends "base.html" %}
+{% extends "django_comments_xtd/base.html" %}
 {% load i18n %}
-
-{% block header %}
-<a href="{% url 'homepage' %}">{% trans "Home" %}</a> -
-<a href="{% url 'articles-index' %}">Articles</a>
-{% endblock %}
 
 {% block content %}
 <h4 class="text-center">{% trans "Comment confirmation requested." %}</h4>

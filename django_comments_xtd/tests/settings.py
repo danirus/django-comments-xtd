@@ -45,6 +45,11 @@ USE_I18N = True
 
 STATIC_URL = "/static/"
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = ''
@@ -103,9 +108,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    django_comments,
+    'django.contrib.staticfiles',
     'django_comments_xtd',
     'django_comments_xtd.tests',
+    django_comments,
 ]
 COMMENTS_APP = "django_comments_xtd"
 

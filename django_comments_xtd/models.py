@@ -154,7 +154,6 @@ class XtdComment(Comment):
         dic_list = []
         cur_dict = None
         for obj in queryset:
-            # A new comment at the same level as thread_dict.
             if cur_dict and obj.level == cur_dict['comment'].level:
                 dic_list.append(cur_dict)
                 cur_dict = None

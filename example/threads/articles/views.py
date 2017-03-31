@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.views.generic import DateDetailView
 
-from simple_threads.articles.models import Article
+from threads.articles.models import Article
 
 
 class ArticleDetailView(DateDetailView):

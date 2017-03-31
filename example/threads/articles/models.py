@@ -31,7 +31,7 @@ class Article(models.Model):
     objects = PublicManager()
 
     class Meta:
-        db_table = 'simple_threads_articles'
+        db_table = 'threads_articles'
         ordering = ('-publish',)
 
     def __str__(self):

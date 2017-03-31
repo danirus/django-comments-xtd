@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('publish', models.DateTimeField(default=datetime.datetime.now, verbose_name='publish')),
             ],
             options={
-                'db_table': 'simple_threads_articles',
+                'db_table': 'threads_articles',
                 'ordering': ('-publish',),
             },
         ),

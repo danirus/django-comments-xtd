@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block header %}Homepage{% endblock %}
+
+{% block content %}
+<p>{% trans "This is the django-comments-xtd's threads demo site, that extends the functionality of the simple demo site with:" %}
+  <ol>
+    <li>{% trans "Nesting comments support.<br/>The setting <code>COMMENTS_XTD_MAX_THREAD_LEVEL</code> is set to 2, so comments can be nested up to a 2nd level:" %}
+      <pre>
+ First comment (level 0)
+     |-- Comment to "First comment" (level 1)
+         |-- Comment to "Comment to First comment" (level 2)
+      </pre>
+    </li>
+    <li>{% trans "The use of the template ..." %}</li>
+  </ol>
+</p>
+<p class="text-center">
+  <a href="{% url 'articles-index' %}">{% trans "Article list" %}</a>
+</p>
+{% endblock %}

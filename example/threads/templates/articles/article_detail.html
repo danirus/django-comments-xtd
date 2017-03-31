@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="text-center">
-  <h3>{{ object.title }}</h3>
+  <H3>{{ object.title }}</H3>
   <div class="small">{{ object.publish }}</div>
 </div>
 <hr/>
@@ -32,7 +32,7 @@
 
   {% if object.allow_comments %}
   <div class="comment">
-    <h4 class="text-center">Post your comment</h4>
+    <H4 class="text-center">Post your comment</H4>
     <div class="well">
       {% render_comment_form for object %}
     </div>

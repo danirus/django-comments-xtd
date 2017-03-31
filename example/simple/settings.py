@@ -60,7 +60,6 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(BASE_DIR, "static"),
 )
 
 # List of finder classes that know how to find static files in
@@ -116,10 +115,10 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    django_comments,
 
     'simple.articles',
     'django_comments_xtd',
+    django_comments,
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
@@ -143,5 +142,5 @@ COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
 COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
-
+ 
 COMMENTS_XTD_FORM_CLASS = "articles.forms.ArticleCommentForm"

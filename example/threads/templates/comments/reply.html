@@ -1,4 +1,4 @@
-{% extends "django_comments_xtd/base.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load comments %}
 {% load comments_xtd %}
@@ -6,12 +6,13 @@
 {% block title %}{% trans "Comment reply" %}{% endblock %}
 
 {% block header %}
+<a href="{% url 'homepage' %}">{{ block.super }}</a> -
+<a href="{% url 'article-index' %}">Articles</a> -
 <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
 {% endblock %}
 
 {% block content %}
-<h5 class="text-center">{% trans "Reply to comment" %}</h5>
-<hr/>
+<h4 class="page-header text-center">{% trans "Reply to comment" %}</h4>
 <div class="row">
   <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
     <div class="media">

@@ -1,0 +1,9 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+<ul id="comments" class="media-list">
+  {% for comment in comment_list %}
+  {% include "django_comments_xtd/xtd_comment.html" with object=comment %}
+  {% endfor %}
+</ul>

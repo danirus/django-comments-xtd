@@ -4,7 +4,7 @@
 {% block header %}Homepage{% endblock %}
 
 {% block content %}
-<p>{% trans "The simplest demo site using django-comments-xtd, features" %}:
+<p>{% trans "This is the django-comments-xtd's simple demo site featuring:" %}
   <ol>
     <li>{% trans "An Articles App, with a model <code>Article</code> whose instances accept comments." %}</li> 
     <li>{% trans "COMMENTS_XTD_MAX_THREAD_LEVEL is set to 0, so no threaded comments." %}</li>
@@ -18,5 +18,7 @@
     </li>
   </ol>
 </p>
-<p class="text-center"><a href="{% url 'articles-index' %}">{% trans "Article list" %}</a></p>
+<p class="text-center">
+  <a href="{% url 'articles-index' %}">{% trans "Article list" %}</a>
+</p>
 {% endblock %}

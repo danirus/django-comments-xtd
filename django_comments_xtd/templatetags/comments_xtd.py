@@ -150,7 +150,7 @@ def _get_content_types(tagname, tokens):
 def render_last_xtdcomments(parser, token):
     """
     Render the last N XtdComments through the
-      ``comments_xtd/comment.html`` template
+      ``django_comments_xtd/comment.html`` template
 
     Syntax::
 
@@ -161,7 +161,6 @@ def render_last_xtdcomments(parser, token):
         {% render_last_xtdcomments 5 for blog.story blog.quote using "t.html" %}
     """
     tokens = token.contents.split()
-
     try:
         count = tokens[1]
     except ValueError:
@@ -227,11 +226,60 @@ register.tag(get_last_xtdcomments)
 
 
 # ----------------------------------------------------------------------
+class RenderXtdCommentTreeNode(Node):
+    def __init__(self, obj, cvars, show_participants, template_path=None):
+        self.obj = Variable(obj) if obj else None
+        self.cvars = self.parse_cvars(cvars)
+        self.show_participants = show_participants
+        self.template_path = template_path
+
+    def parse_cvars(self, pairs):
+        cvars = []
+        for vname, vobj in [pair.split("=") for pair in pairs]:
+            cvars.append((vname, Variable(vobj)))
+        return cvars
+        
+    def render(self, context):
+        if self.obj:
+            obj = self.obj.resolve(context)
+            ctype = ContentType.objects.get_for_model(obj)
+            qs = XtdComment.objects.filter(content_type=ctype,
+                                           object_pk=obj.pk,
+                                           site__pk=settings.SITE_ID,
+                                           is_public=True)
+            comments = XtdComment.tree_from_queryset(qs, self.show_participants)
+            context = {'comments': comments}
+        if self.cvars:
+            for vname, vobj in self.cvars:
+                context.update({vname: vobj.resolve(context)})
+        if not self.obj:
+            # Then presume 'comments' exists in the context.
+            try:
+                ctype = context['comments'][0]['comment'].content_type
+            except:
+                raise TemplateSyntaxError("'render_xtdcomment_tree' doesn't "
+                                          "have 'comments' in the context and "
+                                          "neither have been provided with the "
+                                          "clause 'with'.")
+        if self.template_path:
+            template_arg = self.template_path
+        else:
+            template_arg = [
+                "django_comments_xtd/%s/%s/comment_tree.html" % (
+                    ctype.app_label, ctype.model),
+                "django_comments_xtd/%s/comment_tree.html" % (
+                    ctype.app_label,),
+                "django_comments_xtd/comment_tree.html"
+            ]
+        html = loader.render_to_string(template_arg, context)
+        return html
+        
+
 class GetXtdCommentTreeNode(Node):
-    def __init__(self, obj, var_name, with_participants):
+    def __init__(self, obj, var_name, show_participants):
         self.obj = Variable(obj)
         self.var_name = var_name
-        self.with_participants = with_participants
+        self.show_participants = show_participants
 
     def render(self, context):
         obj = self.obj.resolve(context)
@@ -240,14 +288,77 @@ class GetXtdCommentTreeNode(Node):
                                        object_pk=obj.pk,
                                        site__pk=settings.SITE_ID,
                                        is_public=True)
-        diclist = XtdComment.tree_from_queryset(qs, self.with_participants)
+        diclist = XtdComment.tree_from_queryset(qs, self.show_participants)
         context[self.var_name] = diclist
         return ''
 
 
+def render_xtdcomment_tree(parser, token):
+    """
+    Render the nested comment tree structure posted to the given object.
+    By default uses the template ``django_comments_xtd/comments_tree.html``.
+
+    Syntax::
+
+        {% render_xtdcomment_tree [for <object>] [with vname1=<obj1> vname2=<obj2>] [show_participants] [using <template>] %}
+        {% render_xtdcomment_tree with <varname>=<context-var> %}
+
+    Example usage::
+
+        {% render_xtdcomment_tree for object show_participants %}
+        {% render_xtdcomment_tree with comments=comment.children %}
+    """
+    obj = None
+    cvars = []
+    show_participants = False
+    template_path = None
+    tokens = token.contents.split()
+    tag = tokens.pop(0)
+
+    # There must be at least a 'for <object>' or a 'with vname=obj' clause.
+    if len(tokens) < 2 or tokens[0] not in ["for", "with"]:
+        raise TemplateSyntaxError("2nd and 3rd argument in %r must be either "
+                                  "a 'for <object>' or a 'with vname=<obj>' "
+                                  "clause." % tag)
+    while tokens:
+        token = tokens.pop(0)
+        if token == "for":
+            if tokens[0] != "with":
+                obj = tokens[0]
+            else:
+                raise TemplateSyntaxError("3rd argument after 'for' in %r "
+                                          "can't be reserved word 'with'."
+                                          % tag)
+        if token == "with":
+            try:
+                if tokens[0] != "show_participants":
+                    while len(tokens) and tokens[0] not in ['show_participants',
+                                                            'using']:
+                        pair = tokens.pop(0)
+                        if pair.find("=") == -1:
+                            raise Exception()
+                        cvars.append(pair)
+                else:
+                    raise Exception()
+            except Exception:
+                raise TemplateSyntaxError("arguments after 'with' in %r "
+                                          "must be pairs varname=obj." % tag)
+        if token == "show_participants":
+            show_participants = True
+        if token == "using":
+            try:
+                template_path = tokens[0]
+            except IndexError:
+                raise TemplateSyntaxError("The relative path to the template "
+                                          "is missing after 'using' in %r."
+                                          % tag)
+    return RenderXtdCommentTreeNode(obj, cvars, show_participants,
+                                    template_path)
+
+        
 def get_xtdcomment_tree(parser, token):
     """
-    Adds to the template context a list of XtdComment dictionaries for the
+    Add to the template context a list of XtdComment dictionaries for the
     given object. The optional argument *with_participants* adds a list
     'likedit' with the users who liked the comment and a list 'dislikedit'
     with the users who disliked the comment.
@@ -287,6 +398,7 @@ def get_xtdcomment_tree(parser, token):
     return GetXtdCommentTreeNode(obj, var_name, with_participants)
 
 
+register.tag(render_xtdcomment_tree)
 register.tag(get_xtdcomment_tree)
 
 

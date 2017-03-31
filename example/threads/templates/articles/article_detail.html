@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load comments %}
+{% load comments_xtd %}
 
 {% block header %}Article Detail{% endblock %}
 
@@ -43,9 +44,9 @@
 
   {% if comment_count %}
   <hr/>
-  <div id="comment-list">
-    {% render_comment_list for object %}
-  </div>
+  <ul class="media-list" id="comment-list">
+    {% render_xtdcomment_tree for object %}
+  </ul>
   {% endif %}
 </div>
 {% endblock %}

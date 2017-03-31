@@ -125,7 +125,7 @@ class XtdComment(Comment):
             return False
 
     @classmethod
-    def tree_from_queryset(cls, queryset, with_participants=False):
+    def tree_from_queryset(cls, queryset, show_participants=False):
         """Converts a XtdComment queryset into a list of nested dictionaries.
         The queryset has to be ordered by thread_id, order.
         Each dictionary contains two attributes::
@@ -142,7 +142,7 @@ class XtdComment(Comment):
             for item in children:
                 if item['comment'].pk == obj.parent_id:
                     child_dict = {'comment': obj, 'children': []}
-                    if with_participants:
+                    if show_participants:
                         child_dict.update(get_participants(obj))
                     item['children'].append(child_dict)
                     return True
@@ -159,12 +159,12 @@ class XtdComment(Comment):
                 cur_dict = None
             if not cur_dict:
                 cur_dict = {'comment': obj, 'children': []}
-                if with_participants:
+                if show_participants:
                     cur_dict.update(get_participants(obj))
                 continue
             if obj.parent_id == cur_dict['comment'].pk:
                 child_dict = {'comment': obj, 'children': []}
-                if with_participants:
+                if show_participants:
                     child_dict.update(get_participants(obj))
                 cur_dict['children'].append(child_dict)
             else:

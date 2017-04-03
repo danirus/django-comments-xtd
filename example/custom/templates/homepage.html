@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block header %}Homepage{% endblock %}
+
+{% block content %}
+<p>{% trans "The custom demo exhibits how to extend django-comments-xtd. This demo uses the same <strong>articles</strong> app present in the other two demos, plus" %}:
+  <ul>
+    <li>{% trans "A new django application, called <code>mycomments</code>, with a model <code>MyComment</code> that extends the <code>django_comments_xtd.MyComment</code> model with a field <code>title</code>." %}</li>
+  </ul>
+</p>
+<p>{% trans "To extend django-comments-xtd follow the next steps:" %}
+  <ol>
+    <li>{% trans "The setting <code>COMMENTS_APP</code> must be <code>django_comments_xtd</code>" %}</li>
+    <li>{% trans "The setting <code>COMMENTS_XTD_MODEL</code> must be the new model class name. For the case of this demo: <code>mycomments.models.MyComment</code>" %}</li>
+    <li>{% trans "The setting <code>COMMENTS_XTD_FORM_CLASS</code> must be the new form class name. For the case of this demo: <code>mycomments.forms.MyCommentForm</code>" %}</li>
+    <li>{% trans "Change the following templates:" %}
+      <ol type="i">
+        <li><code>comments/form.html</code>, to include new fields, and maybe to avoid requesting users to type their name, email and URL whenever they are logged in.
+        <li><code>comments/preview.html</code>, to preview the new fields.</li>
+        <li><code>django_comments_xtd/email_confirmation_request.{txt|html}</code>, to add the new fields to the confirmation request, if that's necessary (this demo overrides them to include the <code>title</code> field in the email).</li>
+        <li><code>django_comments_xtd/comment_tree.html</code>, to add the new field to the list of comments. If your project doesn't allow nested comments, you might want to override <code>comments/list.html</code> instead.</li>
+      </ol>
+    </li>
+  </ol>
+</p>
+<p class="text-center"><a href="{% url 'articles-index' %}">{% trans "Article list" %}</a></p>
+{% endblock %}

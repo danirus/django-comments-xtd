@@ -4,7 +4,7 @@
 Customizing django-comments-xtd
 ===============================
 
-django-comments-xtd is extendable in the same way as the django-contrib-comments framework. There are only three different details you have to bear in mind:
+django-comments-xtd can be extended in the same way as django-contrib-comments. There are three points to observe:
 
  1. The setting ``COMMENTS_APP`` must be ``'django_comments_xtd'``.
  2. The setting ``COMMENTS_XTD_MODEL`` must be your model class name, i.e.: ``'mycomments.models.MyComment'``.

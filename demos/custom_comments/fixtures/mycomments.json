@@ -1,9 +1,0 @@
-[
-{
-    "model": "mycomments.mycomment",
-    "pk": 1,
-    "fields": {
-        "title": "Lorem ipsum"
-    }
-}
-]

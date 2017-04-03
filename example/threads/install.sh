@@ -3,7 +3,7 @@
 pushd `dirname $0` > /dev/null
 PRJPATH=`pwd`
 popd > /dev/null
-FIXTURESPATH=${PRJPATH}/fixtures
+FIXTURESPATH=${PRJPATH}/../fixtures
 
 check_ret() {
     [[ $? -ne 0 ]] && echo "Failed." && exit 1

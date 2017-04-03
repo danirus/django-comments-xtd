@@ -1,0 +1,79 @@
+{% load i18n %}
+{% load comments %}
+
+<form method="POST" action="{% comment_form_target %}" class="form-horizontal">
+  {% csrf_token %}
+  <fieldset>
+    <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
+    
+    <div class="alert alert-danger hidden" data-comment-element="errors">
+    </div>
+
+    {% for field in form %}
+      {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
+    {% endfor %}
+
+    <div style="display:none">{{ form.honeypot }}</div>
+
+    <div class="form-group {% if 'title' in form.errors %}has-error{% endif %}">
+      <label for="id_title" class="control-label col-lg-3 col-md-3">
+        {{ form.title.label }}
+      </label>
+      <div class="col-lg-7 col-md-7">
+        {{ form.title }}
+      </div>
+    </div>
+    
+    <div class="form-group {% if 'comment' in form.errors %}has-error{% endif %}">
+      <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+        {{ form.comment }}
+      </div>
+    </div>
+
+    {% if not request.user.is_authenticated %}
+    <div class="form-group {% if 'name' in form.errors %}has-error{% endif %}">
+      <label for="id_name" class="control-label col-lg-3 col-md-3">
+        {{ form.name.label }}
+      </label>
+      <div class="col-lg-7 col-md-7">
+        {{ form.name }}
+      </div>
+    </div>
+
+    <div class="form-group {% if 'email' in form.errors %}has-error{% endif %}">
+      <label for="id_email" class="control-label col-lg-3 col-md-3">
+        {{ form.email.label }}
+      </label>
+      <div class="col-lg-7 col-md-7">
+        {{ form.email }}
+        <span class="help-block">{{ form.email.help_text }}</span>
+      </div>
+    </div>
+
+    <div class="form-group {% if 'url' in form.errors %}has-error{% endif %}">
+      <label for="id_url" class="control-label col-lg-3 col-md-3">
+        {{ form.url.label }}
+      </label>
+      <div class="col-lg-7 col-md-7">
+        {{ form.url }}
+      </div>
+    </div>
+    {% endif %}
+    
+    <div class="form-group">
+      <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
+        <div class="checkbox">
+          <label for="id_followup{% if cid %}_{{ cid }}{% endif %}">
+            {{ form.followup }}&nbsp;&nbsp;{{ form.followup.label }}
+          </label>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-group">
+    <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
+      <input type="submit" name="post" value="send" class="btn btn-primary" />
+      <input type="submit" name="preview" value="preview" class="btn btn-default" />
+    </div>
+  </div></form>

@@ -85,7 +85,7 @@ class ConfirmCommentTestCase(TestCase):
         # dependent on the article length.
         l = len(reverse("comments-xtd-confirm",
                         kwargs={'key': self.key}))
-        print("\nXXXXXXXXXXX:", l)
+        # print("\nXXXXXXXXXXX:", l)
         self.assertLessEqual(l, 4096, "Urls can only be a max of 4096")
 
     def test_404_on_bad_signature(self):

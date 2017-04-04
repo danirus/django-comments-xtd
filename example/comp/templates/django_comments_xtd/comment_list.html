@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load comments_xtd %}
+
+{% block menu-class-comments %}active{% endblock %}
+
+{% block content %}
+<h3 class="text-center">{% trans "List of comments" %}</h3>
+<hr/>
+
+<div class="row">
+  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">  
+    <ul class="media-list" id="comment-list">
+      {% render_last_xtdcomments 5 for articles.article quotes.quote %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

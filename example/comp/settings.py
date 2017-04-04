@@ -115,9 +115,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'threads.articles',
+    'comp.common',
+    'comp.articles',
+    'comp.quotes',
     'django_comments_xtd',
-    django_comments,
+    'django_comments',
+    'django_markup',
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
@@ -142,4 +145,4 @@ COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
 
-COMMENTS_XTD_FORM_CLASS = "articles.forms.ArticleCommentForm"
+COMMENTS_XTD_FORM_CLASS = "common.forms.MyCommentForm"

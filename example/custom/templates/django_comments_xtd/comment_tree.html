@@ -15,17 +15,15 @@
       {% if item.comment.is_removed %}
       <p>{% trans "This comment has been removed." %}</p>
       {% else %}
-      <p>
-        <span class="text-uppercase">{{ item.comment.title }}</span>
-        <br/>
+      <span>{{ item.comment.title }}</span><br/>
+      <div class="well well-sm" style="margin-bottom: 0px">
         {{ item.comment.comment|render_markup_comment }}
-        <br/>
-        {% if item.comment.allow_thread and not item.comment.is_removed %}
-        <a class="small mutedlink" href="{{ item.comment.get_reply_url }}">
-          {% trans "Reply" %}
-        </a>
-        {% endif %}
-      </p>
+      </div>
+      {% if item.comment.allow_thread and not item.comment.is_removed %}
+      <a class="small mutedlink" href="{{ item.comment.get_reply_url }}">
+        {% trans "Reply" %}
+      </a>
+      {% endif %}
       {% endif %}
     </div>
     {% if not item.comment.is_removed and item.children %}

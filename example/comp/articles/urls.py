@@ -1,8 +1,8 @@
 from django.conf.urls import url
 from django.views.generic import ListView, DateDetailView
 
-from threads.articles.models import Article
-from threads.articles.views import ArticleDetailView
+from comp.articles.models import Article
+from comp.articles.views import ArticleDetailView
 
 
 urlpatterns = [

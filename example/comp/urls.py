@@ -6,17 +6,20 @@ from django.views.generic import TemplateView
 
 from django_comments_xtd import LatestCommentFeed
 
+from comp import views
 
 admin.autodiscover()
 
 
 urlpatterns = [
-    url(r'^$',
-        TemplateView.as_view(template_name="homepage.html"),
-        name='homepage'),
+    url(r'^$', views.HomepageView.as_view(), name='homepage'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^articles/', include('threads.articles.urls')),
+    url(r'^articles/', include('comp.articles.urls')),
+    url(r'^quotes/', include('comp.quotes.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),
+    url(r'^comments/$', TemplateView.as_view(
+        template_name="django_comments_xtd/comment_list.html"),
+        name='comments-xtd-list'),
     url(r'^feeds/comments/$', LatestCommentFeed(), name='comments-feed'),    
 ]
 

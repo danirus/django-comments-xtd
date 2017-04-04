@@ -23,10 +23,8 @@
             {{ form.cleaned_data.name }}
             {% if form.cleaned_data.url %}</a>{% endif %}
         </h6>
-        <p>
-          <span class="text-uppercase">{{ form.cleaned_data.title }}</span>
-          <br/>{{ comment }}
-        </p>
+        <span>{{ form.cleaned_data.title }}</span><br/>
+        <div class="well well-sm">{{ comment }}</div>
       </div>
       {% endif %}
     </div>

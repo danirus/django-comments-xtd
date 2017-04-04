@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from threads.articles.models import Article
+from comp.articles.models import Article
 
 class ArticleAdmin(admin.ModelAdmin):
     list_display  = ('title', 'publish', 'allow_comments')

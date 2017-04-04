@@ -11,9 +11,6 @@ from django.utils.encoding import python_2_unicode_compatible
 class PublicManager(models.Manager):
     """Returns published articles that are not in the future."""
     
-    if django.VERSION < (1, 6):
-        get_queryset = models.Manager.get_query_set
-
     def published(self):
         return self.get_queryset().filter(publish__lte=datetime.now())
 
@@ -31,7 +28,7 @@ class Article(models.Model):
     objects = PublicManager()
 
     class Meta:
-        db_table = 'threads_articles'
+        db_table = 'comp_articles'
         ordering = ('-publish',)
 
     def __str__(self):
@@ -39,7 +36,7 @@ class Article(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('articles-article-detail', None, 
+        return ('articles-article-detail', (),
                 {'year': self.publish.year,
                  'month': int(self.publish.strftime('%m').lower()),
                  'day': self.publish.day,

@@ -108,9 +108,8 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
                         xtd_comment.content_type.app_label,),
                     "django_comments_xtd/comment.html"
                 ]
-            strlist.append(
-                loader.render_to_string(
-                    template_arg, {"comment": xtd_comment}, context))
+            context.update({'comment': xtd_comment})
+            strlist.append(loader.render_to_string(template_arg, context))
         return ''.join(strlist)
 
 

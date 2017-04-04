@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block menu-class-articles %}active{% endblock %}
+
+{% block content %}
+<div class="text-center">
+  <H3>{{ object.title }}</H3>
+  <div class="small">{{ object.publish }}</div>
+</div>
+<hr/>
+
+<div class="row">
+  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">  
+    <article>
+      {{ object.body|linebreaks }}
+    </article>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">  
+    <div id="comments">
+      {% get_comment_count for object as comment_count %}
+      {% if comment_count %}
+      <H5 class="text-center">
+        {% blocktrans count comment_count=comment_count %}
+        There is {{ comment_count }} comment below.
+        {% plural %}
+        There are {{ comment_count }} comments below.
+        {% endblocktrans %}
+      </H5>
+      <hr/>
+      {% endif %}
+      
+      {% if object.allow_comments %}
+      <div class="comment">
+        <H4 class="text-center">Post your comment</H4>
+        <div class="well">
+          {% render_comment_form for object %}
+        </div>
+      </div>
+      {% else %}
+      <h5 class="text-center">comments are disabled for this article</h5>
+      {% endif %}
+      
+      {% if comment_count %}
+      <hr/>
+      <ul class="media-list" id="comment-list">
+        {% render_xtdcomment_tree for object %}
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

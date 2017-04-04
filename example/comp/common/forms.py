@@ -3,13 +3,13 @@ from django.utils.translation import ugettext_lazy as _
 from django_comments_xtd.forms import XtdCommentForm
 
 
-class ArticleCommentForm(XtdCommentForm):
+class MyCommentForm(XtdCommentForm):
     def __init__(self, *args, **kwargs):
         if 'comment' in kwargs:
             followup_suffix = ('_%d' % kwargs['comment'].pk)
         else:
             followup_suffix = ''
-        super(ArticleCommentForm, self).__init__(*args, **kwargs)
+        super(MyCommentForm, self).__init__(*args, **kwargs)
         for field_name, field_obj in self.fields.items():
             if field_name == 'followup':
                 field_obj.widget.attrs['id'] = 'id_followup%s' % followup_suffix

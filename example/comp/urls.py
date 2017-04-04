@@ -2,9 +2,9 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.views.generic import TemplateView
 
 from django_comments_xtd import LatestCommentFeed
+from django_comments_xtd.views import XtdCommentListView
 
 from comp import views
 
@@ -17,8 +17,8 @@ urlpatterns = [
     url(r'^articles/', include('comp.articles.urls')),
     url(r'^quotes/', include('comp.quotes.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),
-    url(r'^comments/$', TemplateView.as_view(
-        template_name="django_comments_xtd/comment_list.html"),
+    url(r'^comments/$', XtdCommentListView.as_view(
+        content_types=["articles.article", "quotes.quote"]),
         name='comments-xtd-list'),
     url(r'^feeds/comments/$', LatestCommentFeed(), name='comments-feed'),    
 ]

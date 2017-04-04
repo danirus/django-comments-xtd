@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 import six
 
-import django
-
+from django.apps import apps
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import Http404
@@ -11,14 +11,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader, Context
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
+from django.views.generic import ListView
 
-try:
-    from django_comments.models import CommentFlag
-    from django_comments.views.utils import next_redirect, confirmation_view
-except ImportError:
-    from django.contrib.comments.models import CommentFlag
-    from django.contrib.comments.views.utils import (next_redirect,
-                                                     confirmation_view)
+
+from django_comments.models import CommentFlag
+from django_comments.views.utils import next_redirect, confirmation_view
 
 from django_comments_xtd import (get_form, comment_was_posted, signals, signed,
                                  get_model as get_comment_model)
@@ -27,15 +24,6 @@ from django_comments_xtd.models import (TmpXtdComment,
                                         max_thread_level_for_content_type,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
 from django_comments_xtd.utils import send_mail
-
-
-get_model = None
-if django.VERSION[:2] <= (1, 8):
-    from django.db import models
-    get_model = models.get_model
-else:
-    from django.apps import apps
-    get_model = apps.get_model
 
 
 XtdComment = get_comment_model()
@@ -210,8 +198,8 @@ def notify_comment_followers(comment):
             signed.dumps(instance, compress=True,
                          extra_key=settings.COMMENTS_XTD_SALT))
 
-    model = get_model(comment.content_type.app_label,
-                      comment.content_type.model)
+    model = apps.get_model(comment.content_type.app_label,
+                           comment.content_type.model)
     target = model._default_manager.get(pk=comment.object_pk)
     subject = _("new comment posted")
     text_message_template = loader.get_template(
@@ -281,8 +269,8 @@ def mute(request, key):
         is_public=True, followup=True, user_email=comment.user_email
     ).update(followup=False)
 
-    model = get_model(comment.content_type.app_label,
-                      comment.content_type.model)
+    model = apps.get_model(comment.content_type.app_label,
+                           comment.content_type.model)
     target = model._default_manager.get(pk=comment.object_pk)
 
     template_arg = [
@@ -387,3 +375,26 @@ dislike_done = confirmation_view(
     template="django_comments_xtd/disliked.html",
     doc='Displays a "I disliked this comment" success page.'
 )
+
+
+class XtdCommentListView(ListView):
+    content_types = None  # List of "app_name.model_name" strings.
+    template_name = "django_comments_xtd/comment_list.html"
+
+    def get_content_types(self):
+        if self.content_types is None:
+            return None
+        content_types = []
+        for entry in self.content_types:
+            app, model = entry.split('.')
+            content_types.append(
+                ContentType.objects.get(app_label=app, model=model)
+            )
+        return content_types
+        
+    def get_queryset(self):
+        content_types = self.get_content_types()
+        if content_types is None:
+            return None
+        return XtdComment.objects.for_content_types(content_types)
+

@@ -16,12 +16,6 @@
       {% else %}
       <p>
         {{ comment.comment|render_markup_comment }}
-        <br/>
-        {% if comment.allow_thread and not comment.is_removed %}
-        <a class="small mutedlink" href="{{ comment.get_reply_url }}">
-          {% trans "Reply" %}
-        </a>
-        {% endif %}
       </p>
       {% endif %}
     </div>

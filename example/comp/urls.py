@@ -18,7 +18,8 @@ urlpatterns = [
     url(r'^quotes/', include('comp.quotes.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),
     url(r'^comments/$', XtdCommentListView.as_view(
-        content_types=["articles.article", "quotes.quote"]),
+        content_types=["articles.article", "quotes.quote"],
+        paginate_by=10, page_range=5),
         name='comments-xtd-list'),
     url(r'^feeds/comments/$', LatestCommentFeed(), name='comments-feed'),    
 ]

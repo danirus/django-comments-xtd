@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^confirm/(?P<key>[^/]+)$', views.confirm,
         name='comments-xtd-confirm'),
     url(r'^mute/(?P<key>[^/]+)$', views.mute, name='comments-xtd-mute'),
+    url(r'^reply/(?P<cid>[\d]+)$', views.reply, name='comments-xtd-reply'),
 
     # New flags in addition to those provided by django-contrib-comments.
     url(r'^like/(\d+)/$', views.like, name='comments-xtd-like'),
@@ -17,9 +18,3 @@ urlpatterns = [
     url(r'^dislike/(\d+)/$', views.dislike, name='comments-xtd-dislike'),
     url(r'^disliked/$', views.dislike_done, name='comments-xtd-dislike-done'),
 ]
-
-
-if settings.COMMENTS_XTD_MAX_THREAD_LEVEL > 0:
-    urlpatterns.append(
-        url(r'^reply/(?P<cid>[\d]+)$', views.reply, name='comments-xtd-reply')
-    )

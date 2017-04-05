@@ -32,14 +32,13 @@ def max_thread_level_for_content_type(content_type):
 
 
 class MaxThreadLevelExceededException(Exception):
-    def __init__(self, content_type=None):
-        self.max_by_app = max_thread_level_for_content_type(content_type)
+    def __init__(self, comment):
+        self.comment = comment
+        # self.max_by_app = max_thread_level_for_content_type(content_type)
 
     def __str__(self):
-        return (ugettext("Can not post comments over the thread level "
-                         "%{max_thread_level}") %
-                {"max_thread_level": self.max_by_app})
-
+        return (ugettext("Max thread level reached for comment %d") %
+                self.comment.id)
 
 class XtdCommentManager(CommentManager):
     if django.VERSION[:2] < (1, 6):
@@ -88,7 +87,7 @@ class XtdComment(Comment):
                     with atomic():
                         self._calculate_thread_data()
                 else:
-                    raise MaxThreadLevelExceededException(self.content_type)
+                    raise MaxThreadLevelExceededException(self)
             kwargs["force_insert"] = False
             super(Comment, self).save(*args, **kwargs)
 
@@ -97,7 +96,7 @@ class XtdComment(Comment):
         #  http://www.sqlteam.com/article/sql-for-threaded-discussion-forums
         parent = XtdComment.objects.get(pk=self.parent_id)
         if parent.level == max_thread_level_for_content_type(self.content_type):
-            raise MaxThreadLevelExceededException(self.content_type)
+            raise MaxThreadLevelExceededException(self)
 
         self.thread_id = parent.thread_id
         self.level = parent.level + 1

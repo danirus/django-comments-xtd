@@ -1,3 +1,5 @@
+## comp demo
+
 This demo implements two apps, each of which contains a model whose instances can received comments:
 
  1. Django app `articles`, contains the model `Article`
@@ -26,4 +28,4 @@ Detail templates for articles and quotes show the tree of comments posted by usi
 
 #### `render_last_xtdcomments`
 
-The **Comment list** link shown below renders the `django_comments_xtd/comment_list.html` template, which uses the templatetag `render_last_xtdcomments` to show all the comments posted to the list of pairs app.model provided. In this case the templatetag receives both, `articles.article` and `quotes.quote`. The link is registed in the comp demo urls module.
+The **Last 5 Comments** shown in the block at the rigght uses the templatetag `render_last_xtdcomments` to show the last 5 comments posted to either `articles.Article` or `quotes.Quote` instances. The templatetag receives the list of pairs `app.model` from which we want to gather comments and shows the given N last instances posted. The templatetag renders the template `django_comments_xtd/comment.html` for each comment retrieve.

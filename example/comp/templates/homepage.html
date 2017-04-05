@@ -6,7 +6,6 @@
 {% block menu-class-homepage %}active{% endblock %}
 
 {% block content %}
-<h3 class="text-center">{% trans "Homepage" %}</h3>
 <hr/>
 <div class="col-lg-8">
   <p>{{ readme_text|apply_markup:"markdown" }}</p>
@@ -22,8 +21,11 @@
       <ul class="media-list" id="comment-list">
         {% render_last_xtdcomments 5 for articles.article quotes.quote %}
       </ul>
+      <div class="text-right">
+        <span><a href="{% url 'comments-xtd-list' %}">comment list</a></span>
+      </div>
       {% else %}
-      <p>{% trans "Here the last 5 comments posted to either <code>articles.Article</code> or <code>quotes.Quote</p> will be listed." %}</p>
+      <p class="text-center text-muted">No comments yet.</p>
       {% endif %}
     </div>
   </div>

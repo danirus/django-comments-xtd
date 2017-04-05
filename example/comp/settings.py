@@ -140,9 +140,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 COMMENTS_APP = "django_comments_xtd"
 COMMENTS_XTD_CONFIRM_EMAIL = True   # Set to False to disable confirmation
 COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
-COMMENTS_XTD_MAX_THREAD_LEVEL = 2
 COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
 
 COMMENTS_XTD_FORM_CLASS = "common.forms.MyCommentForm"
+COMMENTS_XTD_MAX_THREAD_LEVEL = 0
+COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
+    'articles.article': 2,
+    'quotes.quote': 0, # not required, defaults to COMMENTS_XTD_MAX_THREAD_LEVEL
+}

@@ -263,11 +263,10 @@ class ReplyCommentTestCase(TestCase):
                                   submit_date=datetime.now(),
                                   parent_id=2)
 
-    def test_reply_renders_max_thread_level_template(self):
+    def test_not_allow_threaded_reply_raises_403(self):
         response = self.client.get(reverse("comments-xtd-reply",
                                            kwargs={"cid": 3}))
-        self.assertTemplateUsed(response,
-                                "django_comments_xtd/max_thread_level.html")
+        self.assertEqual(response.status_code, 403)
 
 
 class MuteFollowUpsTestCase(TestCase):

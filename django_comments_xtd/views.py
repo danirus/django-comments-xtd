@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader, Context
 from django.utils.translation import ugettext_lazy as _
@@ -21,6 +21,7 @@ from django_comments_xtd import (get_form, comment_was_posted, signals, signed,
                                  get_model as get_comment_model)
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment,
+                                        MaxThreadLevelExceededException,
                                         max_thread_level_for_content_type,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
 from django_comments_xtd.utils import send_mail
@@ -227,8 +228,12 @@ def notify_comment_followers(comment):
 def reply(request, cid):
     try:
         comment = XtdComment.objects.get(pk=cid)
-    except (XtdComment.DoesNotExist):
-        raise Http404
+        if not comment.allow_thread():
+            raise MaxThreadLevelExceededException(comment)
+    except MaxThreadLevelExceededException as exc:
+        return HttpResponseForbidden(exc)
+    except XtdComment.DoesNotExist as exc:
+        raise Http404(exc)
 
     if comment.level == max_thread_level_for_content_type(comment.content_type):
         return render(request, "django_comments_xtd/max_thread_level.html",
@@ -378,6 +383,7 @@ dislike_done = confirmation_view(
 
 
 class XtdCommentListView(ListView):
+    page_range = 5
     content_types = None  # List of "app_name.model_name" strings.
     template_name = "django_comments_xtd/comment_list.html"
 
@@ -398,3 +404,16 @@ class XtdCommentListView(ListView):
             return None
         return XtdComment.objects.for_content_types(content_types)
 
+
+    def get_context_data(self, **kwargs):
+        context = super(XtdCommentListView, self).get_context_data(**kwargs)
+        if 'paginator' in context:
+            index = context['page_obj'].number - 1
+            prange = [n for n in context['paginator'].page_range]
+            if len(prange) > self.page_range:
+                if len(prange[index:]) >= self.page_range:
+                    prange = prange[index:(index+self.page_range)]
+                else:
+                    prange = prange[-(self.page_range):]
+            context['page_range'] = prange
+        return context

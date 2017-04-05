@@ -25,6 +25,9 @@
       <div class="header clearfix" style="margin-bottom:20px">
         <nav>
           <ul class="nav nav-pills pull-right">
+            {% if request.user.is_authenticated %}
+            <li class="disabled"><a>Hi, {{ request.user.get_full_name }}</a></li>
+            {% endif %}
             <li class="{% block menu-class-homepage %}{% endblock %}" role="presentation">
               <a href="{% url 'homepage' %}">{% trans "Home" %}</a>
             </li>

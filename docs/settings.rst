@@ -41,7 +41,7 @@ A dictionary with `app_label.model` as keys and the maximum thread level for com
 An example::
 
     COMMENTS_XTD_MAX_THREAD_LEVEL = 0
-    COMMENTS_XTD_MAX_THREAD_LEVEL_BY_MODEL = {
+    COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
         'projects.release': 2,
 	'blog.stories': 8, 'blog.quotes': 8, 
 	'blog.diarydetail': 0 # not required as it defaults to COMMENTS_XTD_MAX_THREAD_LEVEL

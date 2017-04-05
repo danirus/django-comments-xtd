@@ -10,15 +10,13 @@ Quick start guide
 
 To get started using django-comments-xtd follow these steps:
 
-#. Install the Django Comments Framework by running ``pip install django-contrib-comments``.
-
-#. Install the django-comments-xtd app by running ``pip install django-comments-xtd``.
+#. ``pip install django-contrib-comments django-comments-xtd``
 
 #. :ref:`Enable the "sites" framework <enabling-the-sites-framework>` by adding ``'django.contrib.sites'`` to :setting:`INSTALLED_APPS` and defining :setting:`SITE_ID`. Be sure that the domain field of the ``Site`` instance points to the correct domain (localhost:8000 when running the default development server), as it will be used by django_comments_xtd to create comment verification URLs, follow-up cancellation URLs, etc.
 
-#. Install the comments framework by adding ``'django_comments'`` to :setting:`INSTALLED_APPS`.
+#. Add ``'django_comments'`` to :setting:`INSTALLED_APPS`.
 
-#. Install the comments-xtd app by adding ``'django_comments_xtd'`` to :setting:`INSTALLED_APPS`.
+#. Add ``'django_comments_xtd'`` to :setting:`INSTALLED_APPS` before ``'django_comments'`` (as django_comments_xtd overrides some of the templates provided by django_comments).
 
 #. Set the :setting:`COMMENTS_APP` setting to ``'django_comments_xtd'``.
 

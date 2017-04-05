@@ -8,7 +8,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template import loader, Context
+from django.template import loader
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView
@@ -46,10 +46,10 @@ def send_email_confirmation_request(
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
     confirmation_url = reverse("comments-xtd-confirm", args=[key])
-    message_context = Context({'comment': comment,
-                               'confirmation_url': confirmation_url,
-                               'contact': settings.COMMENTS_XTD_FROM_EMAIL,
-                               'site': site})
+    message_context = {'comment': comment,
+                       'confirmation_url': confirmation_url,
+                       'contact': settings.COMMENTS_XTD_FROM_EMAIL,
+                       'site': site}
     # prepare text message
     text_message_template = loader.get_template(text_template)
     text_message = text_message_template.render(message_context)
@@ -211,11 +211,11 @@ def notify_comment_followers(comment):
 
     for email, (name, key) in six.iteritems(followers):
         mute_url = reverse('comments-xtd-mute', args=[key])
-        message_context = Context({'user_name': name,
-                                   'comment': comment,
-                                   'content_object': target,
-                                   'mute_url': mute_url,
-                                   'site': comment.site})
+        message_context = {'user_name': name,
+                           'comment': comment,
+                           'content_object': target,
+                           'mute_url': mute_url,
+                           'site': comment.site}
         text_message = text_message_template.render(message_context)
         if settings.COMMENTS_XTD_SEND_HTML_EMAIL:
             html_message = html_message_template.render(message_context)

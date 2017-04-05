@@ -108,8 +108,9 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
                         xtd_comment.content_type.app_label,),
                     "django_comments_xtd/comment.html"
                 ]
-            context.update({'comment': xtd_comment})
-            strlist.append(loader.render_to_string(template_arg, context))
+            strlist.append(
+                loader.render_to_string(template_arg, {'comment': xtd_comment})
+            )
         return ''.join(strlist)
 
 
@@ -239,6 +240,7 @@ class RenderXtdCommentTreeNode(Node):
         return cvars
         
     def render(self, context):
+        ctx = {}
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
@@ -247,10 +249,10 @@ class RenderXtdCommentTreeNode(Node):
                                            site__pk=settings.SITE_ID,
                                            is_public=True)
             comments = XtdComment.tree_from_queryset(qs, self.show_participants)
-            context = {'comments': comments}
+            ctx.update({'comments': comments})
         if self.cvars:
             for vname, vobj in self.cvars:
-                context.update({vname: vobj.resolve(context)})
+                ctx.update({vname: vobj.resolve(context)})
         if not self.obj:
             # Then presume 'comments' exists in the context.
             try:
@@ -270,7 +272,7 @@ class RenderXtdCommentTreeNode(Node):
                     ctype.app_label,),
                 "django_comments_xtd/comment_tree.html"
             ]
-        html = loader.render_to_string(template_arg, context)
+        html = loader.render_to_string(template_arg, ctx)
         return html
         
 

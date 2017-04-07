@@ -373,7 +373,7 @@ Now edit ``blog/models.py`` and add the code corresponding to our new ``PostComm
        moderator.register(Post, PostCommentModerator)       
 
 
-Now we can try to send a comment with any of the bad words listed in badwords_. After sending the comment we will see the ``moderated.html`` template and the comment must be put on hold for approval.
+Now we can try to send a comment with any of the bad words listed in badwords_. After sending the comment we will see the content of the ``django_comments_xtd/moderated.html`` template and the comment will be put in moderation.
 
 If you enable comment confirmation by email, the comment will be put on hold after the user clicks on the confirmation link in the email.
 

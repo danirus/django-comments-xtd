@@ -141,5 +141,3 @@ COMMENTS_XTD_MAX_THREAD_LEVEL = 0  # Default value
 COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
- 
-COMMENTS_XTD_FORM_CLASS = "articles.forms.ArticleCommentForm"

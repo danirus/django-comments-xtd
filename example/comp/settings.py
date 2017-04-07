@@ -115,7 +115,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'comp.common',
     'comp.articles',
     'comp.quotes',
     'django_comments_xtd',
@@ -144,7 +143,6 @@ COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
 
-COMMENTS_XTD_FORM_CLASS = "common.forms.MyCommentForm"
 COMMENTS_XTD_MAX_THREAD_LEVEL = 0
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
     'articles.article': 2,

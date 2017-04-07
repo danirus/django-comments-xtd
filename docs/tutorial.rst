@@ -4,33 +4,58 @@
 Tutorial
 ========
 
-This tutorial guides you through the steps to use every feature of django-comments-xtd together with the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_.
+This tutorial guides you through the steps to use every feature of django-comments-xtd together with the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_. The Django project used throughout the tutorial is available to `download <https://github.com/danirus/django-comments-xtd/example/tutorial.tar.gz>`_. Following the tutorial will take about an hour, and it is highly recommended to get a comprehensive understanding of django-comments-xtd.
 
-The Django project used throughout the tutorial is available to `download <https://github.com/danirus/django-comments-xtd/demo/democx.tgz>`_. Use it at your will to apply the changes while reading each section.
-
+.. contents:: Table of Contents
+   :depth: 2
+   :local:
 
 .. index::
    single: Installation
 
+Introduction
+============
+
+Through the following sections the tutorial will cover the creation of a simple blog with stories to which we will add comments, exercising each and every feature provided by both, django-comments and django-comments-xtd, from comment post verification by mail to comment moderation and nested comments.
+
+
+.. index::
+   single: preparation
+   pair: tutorial; preparation
+   
 Preparation
 ===========
 
-If you opt for coding the examples, download the bare Django project tarball from this `GitHub page <https://github.com/danirus/django-comments-xtd/demo/democx.tgz>`_ and decompress it in a directory of your choice.
-
-The most comfortable approach to set it up consist of creating a virtualenv and installing all the dependencies within it. The dependencies are just a bunch of lightweight packages.
+Before we install any package we will set up a virtualenv and install everything we need in it.
 
    .. code-block:: bash
 
-       $ mkdir ~/comments-xtd-tutorial
-       $ cd ~/comments-xtd-tutorial
+       $ mkdir ~/django-comments-xtd-tutorial
+       $ cd ~/django-comments-xtd-tutorial
        $ virtualenv venv
        $ source venv/bin/activate
-       $ wget https://github.com/danirus/django-comments-xtd/demo/democx.tar.gz
-       $ tar -xvzf democx.tar.gz
-       $ cd democx
+       (venv)$ pip install django-comments-xtd
+       (venv)$ wget https://github.com/danirus/django-comments-xtd/demo/tutorial.tar.gz
+       (venv)$ tar -xvzf tutorial.tar.gz
+       (venv)$ cd tutorial
 
+By installing django-comments-xtd we install all its dependencies, Django and django-contrib-comments among them. So we are ready to work on the project. Take a look at the content of the tutorial directory, it contains:
 
-Take a look at the project. The starting point of this tutorial is a simple Django project with a blog application and a few posts. During the following sections we will configure the project to enable comments to the ``Post`` model and try every possible commenting scenario.
+ * A **blog** app with a **Post** model. It uses two generic class-based views to list the posts, and to show a given post in detail.
+ * The **templates** directory, with a **base.html** template, a **home.html** template, and two templates for the blog app: **blog/post_list.html** and **blog/post_detail.html**.
+ * The **static** directory with a **css/bootstrap.min.css** file (this file is a static asset available, when the app is installed, under the path **django_comments_xtd/css/bootstrap.min.css**).
+ * The **tutorial** directory containing the **settings** and **urls** modules.
+ * And a **fixtures** directory with data files to create the *admin* superuser (with *admin* password), the default site and some blog posts.
+
+Let's finish the initial setup, load the fixtures and run the development server:
+
+   .. code-block:: bash
+
+       (venv)$ python manage.py migrate
+       (venv)$ python manage.py loaddata fixtures/*.json
+       (venv)$ python manage.py runserver
+
+Head to http://localhost:8000 and visit the tutorial site. In the following section we will make changes to enable django-comments-xtd.
 
 
 .. _configuration:
@@ -38,22 +63,15 @@ Take a look at the project. The starting point of this tutorial is a simple Djan
 Configuration
 =============
 
-Configure the project to support django-comments and django-comments-xtd, start installing the packages and then let's change the minimum number of settings to enable comments.
-
-   .. code-block:: bash
-
-       $ pip install Django pytz django-contrib-comments django-comments-xtd \
-                     docutils Markdown django-markup
-
-Edit the settings module of the project, ``democx/democx/settings.py``, and make the following changes:
+Now that the project is up and running we are ready to add comments. Edit the settings module, ``tutorial/settings.py``, and make the following changes:
 
    .. code-block:: python
 
        INSTALLED_APPS = [
            ...
-           'django_comments',
            'django_comments_xtd',
-           ...
+           'django_comments',
+           'blog',
        ]
        ...
        COMMENTS_APP = 'django_comments_xtd'
@@ -83,26 +101,22 @@ Edit the urls module of the project, ``democx/democx/urls.py``, to mount the URL
        ]
 
 
-Now let Django create the tables for the two new applications and launch the development server:
+Now let Django create the tables for the two new applications:
 
    .. code-block:: bash
 
        $ python manage.py migrate
-       $ python manage.py runserver
 
 
-Be sure that the domain field of the ``Site`` instance points to the correct domain, which for the development server is expected to be  ``localhost:8000``. The value is being used by django_comments_xtd to create comment verification URLs, follow-up cancellation URLs, etc. You can edit the site instance in the admin interface to set it to the right value.
+Be sure that the domain field of the ``Site`` instance points to the correct domain, which for the development server is expected to be  ``localhost:8000``. The value is used to create comment verifications, follow-up cancellations, etc. Edit the site instance in the admin interface in case you were using a different value.
+
+After these simple changes the project is ready to use comments, we just need to modify the blog templates.
 
 
-After these simple changes the project is ready to use comments, we just need to modify the templates to include the ``comments`` templatetag module.
+Changes in blog templates
+=========================
 
-
-Changes in templates
-====================
-
-The tutorial project comes ready with a blog application that contains a Post model. Our goal is to provide blog stories with comments, so that people can post comments to the stories and read the comments other people have posted.
-
-The blog application, located in ``democx/blog`` contains a ``blog_detail.html`` template in the ``templates/blog`` directory. We have to edit the template and load the ``comments`` templatetag module, which is provided by the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_:
+In order to be able to post comments to blog stories we need to edit the template file ``blog/post_detail.html`` and load the ``comments`` templatetag module, which is provided by the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_:
 
    .. code-block:: html+django
 
@@ -115,13 +129,13 @@ Let's insert now the tags to:
  #. List the comments already posted, and
  #. Show the comment form, so that people can post comments.
 
-By using the :ttag:`get_comment_count` tag we will show the number of comments posted, right below the text of the blog post. The last part of the template should look like this:
+By using the :ttag:`get_comment_count` tag we will show the number of comments posted, right after the text of the blog post, modify code so that it looks like follows:
 
    .. code-block:: html+django
 
        {% get_comment_count for post as comment_count %}
        <div class="text-center" style="padding-top:20px">
-         <a href="{% url 'blog:post_list' %}">Back to the post list</a>
+         <a href="{% url 'blog:post-list' %}">Back to the post list</a>
          &nbsp;&sdot;&nbsp;
          {{ comment_count }} comments have been posted.
        </div>
@@ -137,18 +151,20 @@ When using the first, :ttag:`render_comment_list`, with a ``blog.post`` object, 
        comments/list.html
 
 
-Let's use :ttag:`render_comment_list` in our ``blog/blog_detail.html`` template to add the list of comments at the end of the page, before the ``endblock`` tag:
+Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`render_comment_list` tag to add the list of comments. At the end of the page, before the ``endblock`` tag:
 
    .. code-block:: html+django
 
+       {% if comment_count %}
        <div class="comments">
          {% render_comment_list for post %}
        </div>
-                   
+       {% endif %}
+ 
 
-Below the list of comments we want to display the comment form (later we will put the form first), so that users can send their own comments. There are two tags available for such purpose, the :ttag:`render_comment_form` and the :ttag:`get_comment_form`. The former renders a template with the comment form while the latter puts the form in the context of the template giving more control over the fields.
+Below the list of comments we want to display the comment form, so that users can send their own comments. There are two tags available for the purpose, the :ttag:`render_comment_form` and the :ttag:`get_comment_form`. The former renders a template with the comment form while the latter puts the form in the context of the template giving more control over the fields.
 
-At the moment we will use the first tag, :ttag:`render_comment_form`:
+At the moment we will use the first tag, :ttag:`render_comment_form`, add the following code before the ``endblock`` tag:
 
    .. code-block:: html+django
 

@@ -26,19 +26,28 @@ class XtdCommentForm(CommentForm):
             initial = kwargs.pop("initial", {})
             initial.update({"reply_to": comment.pk})
             kwargs["initial"] = initial
+            followup_suffix = ('_%d' % kwargs['comment'].pk)
+        else:
+            followup_suffix = ''
         super(CommentForm, self).__init__(*args, **kwargs)
         self.fields['name'] = forms.CharField(
-            widget=forms.TextInput(attrs={'placeholder': _('name')}))
+            widget=forms.TextInput(attrs={'placeholder': _('name'),
+                                          'class': 'form-control'}))
         self.fields['email'] = forms.EmailField(
             label=_("Email"), help_text=_("Required for comment verification"),
-            widget=forms.TextInput(attrs={'placeholder': _('email')})
-            )
+            widget=forms.TextInput(attrs={'placeholder': _('email'),
+                                          'class': 'form-control'}))
         self.fields['url'] = forms.URLField(
             required=False,
-            widget=forms.TextInput(attrs={'placeholder': _('website')}))
+            widget=forms.TextInput(attrs={
+                'placeholder': _('Your name links to'),
+                'class': 'form-control'}))
         self.fields['comment'] = forms.CharField(
-            widget=forms.Textarea(attrs={'placeholder': _('comment')}),
+            widget=forms.Textarea(attrs={'placeholder': _('Your comment'),
+                                         'class': 'form-control'}),
             max_length=settings.COMMENT_MAX_LENGTH)
+        self.fields['comment'].widget.attrs.pop('cols')
+        self.fields['comment'].widget.attrs.pop('rows')
 
     def get_comment_model(self):
         return TmpXtdComment

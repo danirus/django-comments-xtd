@@ -86,7 +86,7 @@ Now that the project is up and running we are ready to add comments. Edit the se
        EMAIL_HOST_PASSWORD = "yourpassword"
        EMAIL_USE_TLS = True
        DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
-       
+
 
 Edit the urls module of the project, ``democx/democx/urls.py``, to mount the URL patterns of django_comments_xtd to the path ``/comments/``. The urls installed with django_comments_xtd include those required by django_comments too:
 
@@ -113,8 +113,26 @@ Be sure that the domain field of the ``Site`` instance points to the correct dom
 After these simple changes the project is ready to use comments, we just need to modify the blog templates.
 
 
-Changes in blog templates
-=========================
+Comment confirmation
+====================
+
+In order to make django-comments-xtd request comment confirmation by mail we need to set the :setting:`COMMENTS_XTD_SALT` setting. This setting helps obfuscating the comment before the user has approved its publication.
+
+This is so because django-comments-xtd does not store comments in the server before they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
+
+This behaviour is disabled for authenticated users, and can be disabled for anonymous users too by simply setting :setting:`COMMENTS_XTD_CONFIRM_MAIL` to ``False``. 
+
+Now let's append the following entry to the settings module to help obfuscating the comment before it is sent for confirmation:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
+                            b"Aequam memento rebus in arduis servare mentem.")
+                   
+
+
+Comments tags
+=============
 
 In order to be able to post comments to blog stories we need to edit the template file ``blog/post_detail.html`` and load the ``comments`` templatetag module, which is provided by the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_:
 
@@ -122,14 +140,13 @@ In order to be able to post comments to blog stories we need to edit the templat
 
        {% load comments %}
 
+We will apply changes in the the blog post detail template:
 
-Let's insert now the tags to:
+ #. To show the number of comments posted to the blog story,
+ #. To list the comments already posted, and
+ #. To show the comment form, so that people can post comments.
 
- #. Show the number of comments posted to the blog story,
- #. List the comments already posted, and
- #. Show the comment form, so that people can post comments.
-
-By using the :ttag:`get_comment_count` tag we will show the number of comments posted, right after the text of the blog post, modify code so that it looks like follows:
+By using the :ttag:`get_comment_count` tag we will show the number of comments posted. Change the code around the link element so that it looks like:
 
    .. code-block:: html+django
 
@@ -140,7 +157,7 @@ By using the :ttag:`get_comment_count` tag we will show the number of comments p
          {{ comment_count }} comments have been posted.
        </div>
 
-Now let's do the changes to list the comments. We can make use of two template tags, :ttag:`render_comment_list` and :ttag:`get_comment_list`. The former renders a template with the comments while the latter put the comment list in a variable in the context of the template.
+Now let's add the code to list the comments posted to the story. We can make use of two template tags, :ttag:`render_comment_list` and :ttag:`get_comment_list`. The former renders a template with the comments while the latter put the comment list in a variable in the context of the template.
 
 When using the first, :ttag:`render_comment_list`, with a ``blog.post`` object, Django will look for the template ``list.html`` in the following directories:
 
@@ -150,8 +167,9 @@ When using the first, :ttag:`render_comment_list`, with a ``blog.post`` object, 
        comments/blog/list.html
        comments/list.html
 
+Both, django-contrib-comments and django-comments-xtd, provide the last of the list. The one in django-comments-xtd includes twitter-bootstrap styling. Django will use the first template found, which depends on what application is listed first in :setting:`INSTALLED_APPS`, django-comments-xtd in this case.
 
-Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`render_comment_list` tag to add the list of comments. At the end of the page, before the ``endblock`` tag:
+Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`render_comment_list` tag to add the list of comments. Add the following code at the end of the page, before the ``endblock`` tag:
 
    .. code-block:: html+django
 
@@ -164,7 +182,7 @@ Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`re
 
 Below the list of comments we want to display the comment form, so that users can send their own comments. There are two tags available for the purpose, the :ttag:`render_comment_form` and the :ttag:`get_comment_form`. The former renders a template with the comment form while the latter puts the form in the context of the template giving more control over the fields.
 
-At the moment we will use the first tag, :ttag:`render_comment_form`, add the following code before the ``endblock`` tag:
+At the moment we will use the first tag, :ttag:`render_comment_form`. Again, add the following code before the ``endblock`` tag:
 
    .. code-block:: html+django
 
@@ -176,7 +194,7 @@ At the moment we will use the first tag, :ttag:`render_comment_form`, add the fo
        </div>
 
 
-Finally, before completing this first set of changes, we could show the number of comments along each post title in the blog's home page. We would have to edit the ``blog/home.html`` template and make the following changes:
+Finally, before completing this first set of changes, we could show the number of comments along with post titles in the blog's home page. Let's edit ``blog/post_list.html`` and make the following changes:
 
    .. code-block:: html+django
 
@@ -193,256 +211,9 @@ Finally, before completing this first set of changes, we could show the number o
        </p>
 
 
-Now we are ready to send comments. If you are logged in the admin site, your comments won't need to be confirmed by mail. To test the reception of the mail confirmation request do logout of the admin interface.
+Now we are ready to send comments. If you are logged in the admin site, your comments won't need to be confirmed by mail. To test the confirmation URL do logout of the admin interface. Bear in mind that :setting:`EMAIL_BACKEND` is set up to send mail messages to the console, so look in the console after you post the comment and find the first long URL in the message. To confirm the comment copy the link and paste it in the location bar of the browser.
 
-By default the setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0``, which means comments can not be nested. In the following sections we will enable threaded comments, we will allow users to flag comments and we will set up comment moderation.
-
-
-Template Style Customization
-============================
-
-The ``democx`` project uses the fronted web framework, Bootstrap_, which allows fast interface development. There are other client side frameworks, this example uses Bootstrap_ because it's probably the most popular.
-
-We will adapt our templates to integrate the list of comments and the comment form with the look provided by Bootstrap CSS classes.
-
-
-Comment list
-------------
-
-We must create a template ``list.html`` inside the ``democx/templates/comments`` directory with the following content:
-
-   .. code-block:: html+django
-
-       {% load comments %}
-       {% load comments_xtd %}
-
-       <ul class="media-list" id="comments">
-         {% for comment in comment_list %}
-         <li class="media" id="c{{ comment.id }}">
-           <div class="media-left">
-             <a href="{{ comment.url }}">{{ comment.user_email|xtd_comment_gravatar }}</a>
-           </div>
-           <div class="media-body">
-             <h6 class="media-heading">
-               <a class="permalink text-muted" href="{% get_comment_permalink comment %}">¶</a>&nbsp;&sdot;
-               {{ comment.submit_date }}&nbsp;-&nbsp;
-               {% if comment.url %}<a href="{{ comment.url }}" target="_new">
-               {% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}
-             </h6>
-             <p>{{ comment.comment }}</p>
-           </div>
-         </li>
-         {% endfor %}
-       </ul>
-
-
-Form class
-----------
-       
-In order to customize the fields of the comment form we will create a new form class inside the blog application and change the setting :setting:`COMMENTS_XTD_FORM_CLASS` to point to that new form class.
-
-First, create a new file ``forms.py`` inside the ``democx/blog`` directory with the following content:
-
-   .. code-block:: python
-
-       from django.utils.translation import ugettext_lazy as _
-
-       from django_comments_xtd.forms import XtdCommentForm
-
-
-       class MyCommentForm(XtdCommentForm):
-           def __init__(self, *args, **kwargs):
-               if 'comment' in kwargs:
-                   followup_suffix = ('_%d' % kwargs['comment'].pk)
-               else:
-                   followup_suffix = ''
-               super(MyCommentForm, self).__init__(*args, **kwargs)
-               for field_name, field_obj in self.fields.items():
-                   if field_name == 'followup':
-                       field_obj.widget.attrs['id'] = 'id_followup%s' % followup_suffix
-                       continue
-                   field_obj.widget.attrs.update({'class': 'form-control'})
-                   if field_name == 'comment':
-                       field_obj.widget.attrs.pop('cols')
-                       field_obj.widget.attrs.pop('rows')
-                       field_obj.widget.attrs['placeholder'] = _('Your comment')
-                       field_obj.widget.attrs['style'] = "font-size: 1.1em"
-                   if field_name == 'url':
-                       field_obj.help_text = _('Optional')
-               self.fields.move_to_end('comment', last=False)
-
-
-In ``democx/democs/settings.py`` add the following:
-
-   .. code-block:: python
-
-       COMMENTS_XTD_FORM_CLASS = "blog.forms.MyCommentForm"
-
-
-Form template
--------------
-       
-Now we must create a file ``form.html`` within the ``democx/template/comments`` directory containing the code that renders the comment form. It must include each and every visible form field: ``comment``, ``name``, ``email``, ``url`` and ``follow up``:
-
-   .. code-block:: html+django
-
-       {% load i18n %}
-       {% load comments %}
-
-       <form method="POST" action="{% comment_form_target %}" class="form-horizontal">
-         {% csrf_token %}
-         <fieldset>
-           <div><input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/></div>
-
-           <div class="alert alert-danger hidden" data-comment-element="errors">
-           </div>
-
-           {% for field in form %}
-             {% if field.is_hidden %}<div>{{ field }}</div>{% endif %}
-           {% endfor %}
-
-           <div style="display:none">{{ form.honeypot }}</div>
-
-           <div class="form-group {% if 'comment' in form.errors %}has-error{% endif %}">
-             <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
-               {{ form.comment }}
-             </div>
-           </div>
-
-           <div class="form-group {% if 'name' in form.errors %}has-error{% endif %}">
-             <label for="id_name" class="control-label col-lg-3 col-md-3">
-               {{ form.name.label }}
-             </label>
-             <div class="col-lg-7 col-md-7">
-               {{ form.name }}
-             </div>
-           </div>
-
-           <div class="form-group {% if 'email' in form.errors %}has-error{% endif %}">
-             <label for="id_email" class="control-label col-lg-3 col-md-3">
-               {{ form.email.label }}
-             </label>
-             <div class="col-lg-7 col-md-7">
-               {{ form.email }}
-               <span class="help-block">{{ form.email.help_text }}</span>
-             </div>
-           </div>
-
-           <div class="form-group {% if 'url' in form.errors %}has-error{% endif %}">
-             <label for="id_url" class="control-label col-lg-3 col-md-3">
-               {{ form.url.label }}
-             </label>
-             <div class="col-lg-7 col-md-7">
-               {{ form.url }}
-             </div>
-           </div>
-    
-           <div class="form-group">
-             <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
-               <div class="checkbox">
-                 <label for="id_followup{% if cid %}_{{ cid }}{% endif %}">
-                   {{ form.followup }}&nbsp;&nbsp;{{ form.followup.label }}
-                 </label>
-               </div>
-             </div>
-           </div>  
-         </fieldset>
-  
-         <div class="form-group">
-           <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
-             <input type="submit" name="post" value="send" class="btn btn-primary" />
-             <input type="submit" name="preview" value="preview" class="btn btn-default" />
-           </div>
-         </div>
-       </form>
-
-
-
-Preview template
-----------------
-       
-When we click on the preview button Django looks for the ``preview.html`` template in different directories and with different names:
-
-   .. code-block:: shell
-
-       comments/blog_post_preview.html
-       comments/blog_preview.html
-       comments/blog/post/preview.html
-       comments/blog/preview.html
-       comments/preview.html
-
-
-We will provide the last of them by adding the file ``preview.html`` to the ``democx/templates/comments/`` directory with the following code:
-
-   .. code-block:: html+django
-
-       {% extends "base.html" %}
-       {% load i18n %}
-       {% load comments_xtd %}
-
-       {% block content %}
-       <h4>{% trans "Preview your comment:" %}</h4>
-       <div class="row">
-         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
-           <div class="media">
-             {% if not comment %}
-             <em>{% trans "Empty comment." %}</em>
-             {% else %}
-             <div class="media-left">
-               <a href="{{ form.cleaned_data.url }}">
-                 {{ form.cleaned_data.email|xtd_comment_gravatar }}
-               </a>
-             </div>
-             <div class="media-body">
-               <h6 class="media-heading">
-                 {% now "N j, Y, P" %}&nbsp;-&nbsp;
-                 {% if form.cleaned_data.url %}
-                 <a href="{{ form.cleaned_data.url }}" target="_new">{% endif %}
-                 {{ form.cleaned_data.name }}
-                 {% if form.cleaned_data.url %}</a>{% endif %}
-               </h6>
-               <p>{{ comment }}</p>
-             </div>
-             {% endif %}
-           </div>
-           <div class="visible-lg-block visible-md-block">
-             <hr/>
-           </div>
-         </div>
-       </div>
-       <div class="well well-lg">
-         {% include "comments/form.html" %}
-       </div>
-       {% endblock %}
-
-
-Posted template
----------------
-
-Finally, when we hit the send button and the comment gets succesfully processed Django renders the template ``comments/posted.html``. We can modify the look of this template by adding a new ``posted.html`` file to our ``democx/templates/comments`` directory with the following code:
-
-   .. code-block:: html+django
-
-       {% extends "base.html" %}
-       {% load i18n %}
-
-       {% block header %}
-       <a href="{% url 'homepage' %}">{{ block.super }}</a> - 
-       <a href="{% url 'blog:post_list' %}">Blog</a>
-       {% endblock %}
-       
-       {% block content %}
-       <h3 class="text-center">{% trans "Comment confirmation requested." %}</h3>
-       <p>{% blocktrans %}A confirmation message has been sent to your
-       email address. Please, click on the link in the message to confirm
-       your comment.{% endblocktrans %}</p>
-       {% endblock %}
-
-Now we have the form and the core templates integrated with the Bootstrap_ framework. You can visit a blog post and give it a try. Remember that to get the comment confirmation request by email you must sign out of the admin interface.
-
-You might want to adapt the design of the rest of :ref:`ref-templates` provided by django-comments-xtd.
-
-.. _Bootstrap: http://getbootstrap.com
+The setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0`` by default, which means comments can not be nested. Later in the threads section we will enable nested comments. Now we will set up comment moderation.
 
 
 .. index::
@@ -457,7 +228,7 @@ Comment moderation is often established to fight spam, but may be used for other
 
 In this section we want to set up comment moderation for our blog application, so that comments sent to a blog post older than a year will be automatically flagged for moderation. Also we want Django to send an email to registered :setting:`MANAGERS` of the project when the comment is flagged.
 
-Let's start adding our email address to the :setting:`MANAGERS` in the ``democx/democx/settings.py`` module:
+Let's start adding our email address to the :setting:`MANAGERS` in the ``tutorial/settings.py`` module:
 
    .. code-block:: python
 
@@ -466,21 +237,17 @@ Let's start adding our email address to the :setting:`MANAGERS` in the ``democx/
        )
 
 
-Now we have to create a new ``Moderator`` class that inherits from Django Comments Frammework's ``CommentModerator``. This class enables moderation by defining a number of class attributes. Read more about it in `moderation options <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html#moderation-options>`_, in the official documentation of the Django Comments Framework.
+Now we will create a new ``Moderator`` class that inherits from Django Comments Frammework's ``CommentModerator``. This class enables moderation by defining a number of class attributes. Read more about it in `moderation options <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html#moderation-options>`_, in the official documentation of the Django Comments Framework.
 
-We also need to register our ``Moderator`` class with the django-comments-xtd's ``moderator`` object. We need to use django-comments-xtd's object instead of django-contrib-comments' because we still want to have confirmation by email for non-registered users, nested comments, follow-up notifications, etc.
+We will also register our ``Moderator`` class with the django-comments-xtd's ``moderator`` object. We use django-comments-xtd's object instead of django-contrib-comments' because we still want to have confirmation by email for non-registered users, nested comments, follow-up notifications, etc.
 
-Let's add those changes to ``democx/blog/model.py`` module:
+Let's add those changes to the ``blog/model.py`` file:
 
    .. code-block:: python
 
        ...
-       # New imports to add below the current ones.
-       try:
-           from django_comments.moderation import CommentModerator
-       except ImportError:
-           from django.contrib.comments.moderation import CommentModerator
-
+       # Append these imports below the current ones.
+       from django_comments.moderation import CommentModerator
        from django_comments_xtd.moderation import moderator
 
        ...
@@ -491,59 +258,36 @@ Let's add those changes to ``democx/blog/model.py`` module:
            auto_moderate_field = 'publish'
            moderate_after = 365
 
+
        moderator.register(Post, PostCommentModerator)
-       
-
-We may want to customize the look of the ``moderated.html`` template. Let's create the directory ``django_comments_xtd`` under ``democx/templates`` and create inside the file ``moderated.html`` with the following code: 
-
-   .. code-block:: html+django
-
-       {% extends "base.html" %}
-       {% load i18n %}
-
-       {% block title %}{% trans "Comment requires approval." %}{% endblock %}
-
-       {% block header %}
-       <a href="{% url 'homepage' %}">{{ block.super }}</a> - 
-       <a href="{% url 'blog:post_list' %}">Blog</a>
-       {% endblock %}
-       
-       {% block content %}
-       <h4 class="text-center">{% trans "Comment in moderation" %}</h4>
-       <p class="text-center">
-       {% blocktrans %}Your comment has to be reviewed before approbal.<br/>
-         It has been put automatically in moderation.<br/>
-         Thank you for your patience and understanding.{% endblocktrans %}
-       </p>
-       {% endblock %}
 
 
-Additionally we need a ``comments/comment_notification_email.txt`` template. This template is used by django-contrib-comments to render the email message that :setting:`MANAGERS` receive when using the moderation option `email_notification <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html#django_comments.moderation.CommentModerator.email_notification>`_, as we do above in our ``PostCommentModerator`` class. Django-comments-xtd comes already with such a template.
+That makes it, moderation is ready. Visit any of the blog posts with a ``publish`` datetime older than a year and try to send a comment. After confirming the comment you will see the ``django_comments_xtd/moderated.html`` template, and your comment will be put on hold for approval.
 
-Now we are ready to try the moderation in place. Let's visit the web page of a blog post with a ``publish`` datetime older than a year and try to send a comment. After confirming the comment you must be redirected to the ``moderated.html`` template and your comment must be put on hold for approval.
+If on the other hand you send a comment to a blog post created within the last year your comment will not be put in moderation. Give it a try as a logged in user and as an anonymous user.
 
-On the other hand if you send a comment to a blog post created within the last year your comment will not be hold for moderation. Exercise it with both, a user logged in (login in the admin_ site with username **admin** and password **admin** will suffice) and logged out (click on **log out** at the top-right corner of the admin_ site).
+When sending a comment to a blog post with a user logged in the comment doesn't have to be confirmed. However, when you send it logged out the comment has to be confirmed by clicking on the confirmation link. Right after clicking on the confirmation link the comment will be put on hold, pending for approval.
 
-When sending a comment to a blog post with a user logged in the comment doesn't have to be confirmed. However, when you send it logged out the comment has to be confirmed by clicking on the confirmation link. Right after the user clicks on the link in the confirmation email the comment is put on hold pending for approval.
+In both cases all mail addresses listed in the :setting:`MANAGERS` setting will receive a notification about the reception of a new comment. If you did not received such message, you might need to review your email settings, or the console output. Read about the mail settings above in the :ref:`configuration` section.
 
-In both cases, if you have provided an active email address in the :setting:`MANAGERS` setting, you will receive a notification about the reception of a new comment, an email with a subject contaning the site domain within angle brackets. If you did not received such message, you might need to review your email settings. Read above the :ref:`configuration` section and see what are the settings you must enable. Add a hash in front of the :setting:`EMAIL_BACKEND` setting to comment it, this way Django won't use the console to output emails but rather the default email backend along with the rest of email settings provided.
-
-A reminder to finish this section: we need to review those comments put on hold. For such purpose we should visit the comments-xtd app in the admin_ interface. After reviewing the non-public comments, we must tick the box of those we want to approve, select the action **Approve selected comments** and click on the **Go** button.
+A last note on comment moderation: comments pending for moderation have to be reviewed and eventually approved. Don't forget to visit the comments-xtd app in the admin_ interface. Tick the box to select those you want to approve, choose **Approve selected comments** in the **action** dropdown at the top left of the comment list and click on the **Go** button.
 
 
 Disallow black listed domains
 -----------------------------
 
-In case you wanted to disable the comment confirmation by email you might be interested in setting up some sort of control to reject spammers. In this section we will go through the steps to disable comment confirmation while enabling a comment filtering solution based on Joe Wein's blacklist_ of spamming domains. We will also add a moderation function that will put on hold comments containing badwords_.
+In the remote case you wanted to disable comment confirmation by mail you might want to set up some sort of control to reject spam.
 
-Let us first disable comment confirmation, we need to edit the ``settings.py`` module:
+In this section we will go through the steps to disable comment confirmation while enabling a comment filtering solution based on Joe Wein's blacklist_ of spamming domains. We will also add a moderation function that will put in moderation comments containing badwords_.
+
+Let us first disable comment confirmation, edit the ``tutorial/settings.py`` file and add:
 
    .. code-block:: python
 
        COMMENTS_XTD_CONFIRM_EMAIL = False
        
 
-Django-comments-xtd comes with a Moderator class that inherits from ``CommentModerator`` and implements a method ``allow`` that will do the filtering for us. We just have to change our ``democx/blog/models.py`` module and replace ``CommentModerator`` with ``SpamModerator``, as follows:
+django-comments-xtd comes with a **Moderator** class that inherits from ``CommentModerator`` and implements a method ``allow`` that will do the filtering for us. We just have to change ``blog/models.py`` and replace ``CommentModerator`` with ``SpamModerator``, as follows:
 
    .. code-block:: python
 
@@ -559,7 +303,7 @@ Django-comments-xtd comes with a Moderator class that inherits from ``CommentMod
 
 Now we can add a domain to the ``BlackListed`` model in the admin_ interface. Or we could download a blacklist_ from Joe Wein's website and load the table with actual spamming domains.
 
-Once we have a ``BlackListed`` domain we can try to send a new comment and use an email address with such a domain. Be sure to log out before trying, otherwise django-comments-xtd will use the logged in user credentials and ignore the email given in the comment form.
+Once we have a ``BlackListed`` domain, try to send a new comment and use an email address with such a domain. Be sure to log out before trying, otherwise django-comments-xtd will use the logged in user credentials and ignore the email given in the comment form. Also be sure to post the comment to a story with a publishing date within the last 365 days, otherwise it will enter in moderation regardless of the mail address domain.
 
 Sending a comment with an email address of the blacklisted domain triggers a **Comment post not allowed** response, which would have been a HTTP 400 Bad Request response with ``DEBUG = False`` in production.
 
@@ -567,24 +311,24 @@ Sending a comment with an email address of the blacklisted domain triggers a **C
 Moderate on bad words
 ---------------------
 
-Let us now create our own Moderator class by subclassing ``SpamModerator``. The goal is to provide a ``moderate`` method that looks in the content of the comment and returns ``False`` whenever it finds a bad word in the message. The effect of returning ``False`` is that the comment's ``is_public`` attribute will be put to ``False`` and therefore the comment will be on hold waiting for approval.
+Let's now create our own Moderator class by subclassing ``SpamModerator``. The goal is to provide a ``moderate`` method that looks in the content of the comment and returns ``False`` whenever it finds a bad word in the message. The effect of returning ``False`` is that comment's ``is_public`` attribute will be put to ``False`` and therefore the comment will be in moderation.
 
-The blog application comes already with what we are going to consider a bad word (for the purpose of this tutorial, we will use this badwords_ list), which are listed in the ``democx/blog/badwords.py`` module.
+The blog application comes with a bad word list in the file ``blog/badwords.py``
 
-We will assume that we already have a list of ``BlackListed`` domains in our database, as explained in the previous section, and we don't want further spam control, so we want to disable comment confirmation by email. Let's edit the ``settings.py`` module:
+We assume we already have a list of ``BlackListed`` domains and we don't need further spam control. So we will disable comment confirmation by email. Edit the ``settings.py`` file:
 
    .. code-block:: python
 
        COMMENTS_XTD_CONFIRM_EMAIL = False
 
 
-Then let's edit the ``democx/blog/models.py`` module and add the following code corresponding to our new ``PostCommentModerator``:
+Now edit ``blog/models.py`` and add the code corresponding to our new ``PostCommentModerator``:
 
    .. code-block:: python
 
        # Below the other imports:
        from django_comments_xtd.moderation import moderator, SpamModerator
-       from .badwords import badwords
+       from blog.badwords import badwords
 
        ...
        
@@ -601,12 +345,13 @@ Then let's edit the ``democx/blog/models.py`` module and add the following code 
                    if word.endswith('.') or word.endswith(','):
                        ret = word[:-1]
                    return ret
-               
+
+               lowcase_comment = comment.comment.lower()
                msg = dict([(clean(w), i)
-                           for i, w in enumerate(comment.comment.lower().split())])
+                           for i, w in enumerate(lowcase_comment.split())])
                for badword in badwords:
                    if isinstance(badword, str):
-                       if badword in msg:
+                       if locase_comment.find(badword) > -1:
                            return True
                    else:
                        lastindex = -1
@@ -628,7 +373,7 @@ Then let's edit the ``democx/blog/models.py`` module and add the following code 
        moderator.register(Post, PostCommentModerator)       
 
 
-Now we can send a comment to a blog post and put any of the words listed in the badwords_ list in the message. After clicking on the send button we must see the ``moderated.html`` template and the comment must be put on hold for approval.
+Now we can try to send a comment with any of the bad words listed in badwords_. After sending the comment we will see the ``moderated.html`` template and the comment must be put on hold for approval.
 
 If you enable comment confirmation by email, the comment will be put on hold after the user clicks on the confirmation link in the email.
 

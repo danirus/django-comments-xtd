@@ -36,7 +36,6 @@ Contents
 
    quickstart
    tutorial
-   tutorial2
    example
    logic
    templatetags

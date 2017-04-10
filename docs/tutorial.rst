@@ -7,7 +7,7 @@ Tutorial
 This tutorial guides you through the steps to use every feature of django-comments-xtd together with the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_. The Django project used throughout the tutorial is available to `download <https://github.com/danirus/django-comments-xtd/example/tutorial.tar.gz>`_. Following the tutorial will take about an hour, and it is highly recommended to get a comprehensive understanding of django-comments-xtd.
 
 .. contents:: Table of Contents
-   :depth: 2
+   :depth: 3
    :local:
 
 .. index::
@@ -564,7 +564,7 @@ Having the new like/dislike links in place, if we click on any of them we will e
 Show the list of users
 **********************
 
-Once the like/dislike flagging options are enabled we might want to display the users who actually liked/disliked comments.
+Once the like/dislike flagging is enabled we might want to display the users who actually liked/disliked comments.
 
 Again, by addind an argument to the ``render_xtdcomment_tree`` templatetag we can get rendered the ``includes/django_comments_xtd/user_feedback.html`` with the list of participants.
 
@@ -591,3 +591,16 @@ Change the ``blog/post_detail.html`` to add the argument ``show_feedback``. For 
 
 .. _twitter-bootstrap: http://getbootstrap.com
        
+
+Final notes
+===========
+
+We have reached the end of the tutorial. I hope you got enough to start using django-comments-xtd in your own project.
+
+The following page introduces the **Demo projects**. The **simple** demo is a straightforward project to provide comment confirmation by mail, with follow-up notifications and mute links. The **custom** demo is an example about how to extend django-comments-xtd Comment model with new attributes. The **comp** demo shows a project using the complete set of features provided by both django-contrib-comments and django-comments-xtd.
+
+Checkout the **Control Logic** page to understand how django-comments-xtd works along with django-contrib-comments. Read on **Filters and Template Tags** to see in detail the list of template tags and filters offered. The page on **Customizing django-comments-xtd** goes through the steps to extend the app with a quick example and little prose. Read the **Settings** page and the **Templates** page to get to know how you can customize the default behaviour and default look and feel.
+
+If you want to help, please, report any bug or enhancement directly to the github_ page of the project. Your contributions are welcome.
+
+.. _github: https://github.com/danirus/django-comments-xtd

@@ -96,6 +96,7 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
             self.content_types)[:self.count]
 
         strlist = []
+        context_dict = context.flatten()
         for xtd_comment in self.qs:
             if self.template_path:
                 template_arg = self.template_path
@@ -108,9 +109,8 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
                         xtd_comment.content_type.app_label,),
                     "django_comments_xtd/comment.html"
                 ]
-            strlist.append(
-                loader.render_to_string(template_arg, {'comment': xtd_comment})
-            )
+            context_dict['comment'] = xtd_comment
+            strlist.append(loader.render_to_string(template_arg, context_dict))
         return ''.join(strlist)
 
 
@@ -227,10 +227,13 @@ register.tag(get_last_xtdcomments)
 
 # ----------------------------------------------------------------------
 class RenderXtdCommentTreeNode(Node):
-    def __init__(self, obj, cvars, show_participants, template_path=None):
+    def __init__(self, obj, cvars, allow_feedback=False, show_feedback=False,
+                 allow_flagging=False, template_path=None):
         self.obj = Variable(obj) if obj else None
         self.cvars = self.parse_cvars(cvars)
-        self.show_participants = show_participants
+        self.allow_feedback = allow_feedback
+        self.show_feedback = show_feedback
+        self.allow_flagging = allow_flagging
         self.template_path = template_path
 
     def parse_cvars(self, pairs):
@@ -240,7 +243,10 @@ class RenderXtdCommentTreeNode(Node):
         return cvars
         
     def render(self, context):
-        ctx = {}
+        context_dict = context.flatten()
+        for attr in ['allow_flagging', 'allow_feedback', 'show_feedback']:
+            context_dict[attr] = (getattr(self, attr, False) or
+                                  context.get(attr, False))
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
@@ -248,11 +254,11 @@ class RenderXtdCommentTreeNode(Node):
                                            object_pk=obj.pk,
                                            site__pk=settings.SITE_ID,
                                            is_public=True)
-            comments = XtdComment.tree_from_queryset(qs, self.show_participants)
-            ctx.update({'comments': comments})
+            comments = XtdComment.tree_from_queryset(qs, self.allow_feedback)
+            context_dict['comments'] = comments
         if self.cvars:
             for vname, vobj in self.cvars:
-                ctx.update({vname: vobj.resolve(context)})
+                context_dict[vname] = vobj.resolve(context)
         if not self.obj:
             # Then presume 'comments' exists in the context.
             try:
@@ -272,15 +278,15 @@ class RenderXtdCommentTreeNode(Node):
                     ctype.app_label,),
                 "django_comments_xtd/comment_tree.html"
             ]
-        html = loader.render_to_string(template_arg, ctx)
+        html = loader.render_to_string(template_arg, context_dict)
         return html
         
 
 class GetXtdCommentTreeNode(Node):
-    def __init__(self, obj, var_name, show_participants):
+    def __init__(self, obj, var_name, with_feedback):
         self.obj = Variable(obj)
         self.var_name = var_name
-        self.show_participants = show_participants
+        self.with_feedback = with_feedback
 
     def render(self, context):
         obj = self.obj.resolve(context)
@@ -289,7 +295,7 @@ class GetXtdCommentTreeNode(Node):
                                        object_pk=obj.pk,
                                        site__pk=settings.SITE_ID,
                                        is_public=True)
-        diclist = XtdComment.tree_from_queryset(qs, self.show_participants)
+        diclist = XtdComment.tree_from_queryset(qs, self.with_feedback)
         context[self.var_name] = diclist
         return ''
 
@@ -301,17 +307,19 @@ def render_xtdcomment_tree(parser, token):
 
     Syntax::
 
-        {% render_xtdcomment_tree [for <object>] [with vname1=<obj1> vname2=<obj2>] [show_participants] [using <template>] %}
+        {% render_xtdcomment_tree [for <object>] [with vname1=<obj1> vname2=<obj2>] [allow_feedback] [show_feedback] [allow_flagging] [using <template>] %}
         {% render_xtdcomment_tree with <varname>=<context-var> %}
 
     Example usage::
 
-        {% render_xtdcomment_tree for object show_participants %}
+        {% render_xtdcomment_tree for object allow_feedback %}
         {% render_xtdcomment_tree with comments=comment.children %}
     """
     obj = None
     cvars = []
-    show_participants = False
+    allow_feedback = False
+    show_feedback = False
+    allow_flagging = False
     template_path = None
     tokens = token.contents.split()
     tag = tokens.pop(0)
@@ -331,10 +339,11 @@ def render_xtdcomment_tree(parser, token):
                                           "can't be reserved word 'with'."
                                           % tag)
         if token == "with":
+            tail_tokens = ["allow_feedback", "show_feedback", "allow_flagging",
+                           "using"]
             try:
-                if tokens[0] != "show_participants":
-                    while len(tokens) and tokens[0] not in ['show_participants',
-                                                            'using']:
+                if tokens[0] not in tail_tokens:
+                    while len(tokens) and tokens[0] not in tail_tokens:
                         pair = tokens.pop(0)
                         if pair.find("=") == -1:
                             raise Exception()
@@ -344,8 +353,12 @@ def render_xtdcomment_tree(parser, token):
             except Exception:
                 raise TemplateSyntaxError("arguments after 'with' in %r "
                                           "must be pairs varname=obj." % tag)
-        if token == "show_participants":
-            show_participants = True
+        if token == "allow_feedback":
+            allow_feedback = True
+        if token == "show_feedback":
+            show_feedback = True
+        if token == "allow_flagging":
+            allow_flagging = True
         if token == "using":
             try:
                 template_path = tokens[0]
@@ -353,14 +366,17 @@ def render_xtdcomment_tree(parser, token):
                 raise TemplateSyntaxError("The relative path to the template "
                                           "is missing after 'using' in %r."
                                           % tag)
-    return RenderXtdCommentTreeNode(obj, cvars, show_participants,
-                                    template_path)
+    return RenderXtdCommentTreeNode(obj, cvars,
+                                    allow_feedback=allow_feedback,
+                                    show_feedback=show_feedback,
+                                    allow_flagging=allow_flagging,
+                                    template_path=template_path)
 
         
 def get_xtdcomment_tree(parser, token):
     """
     Add to the template context a list of XtdComment dictionaries for the
-    given object. The optional argument *with_participants* adds a list
+    given object. The optional argument *with_feedback* adds a list
     'likedit' with the users who liked the comment and a list 'dislikedit'
     with the users who disliked the comment.
 
@@ -370,7 +386,7 @@ def get_xtdcomment_tree(parser, token):
             'children': [ list of child xtdcomment dicts ]
         }
 
-    When called with_participants each XtdComment dictionary will look like::
+    When called with_feedback each XtdComment dictionary will look like::
         {
             'comment': xtdcomment object,
             'children': [ list of child xtdcomment dicts ],
@@ -379,7 +395,7 @@ def get_xtdcomment_tree(parser, token):
         }
 
     Syntax::
-        {% get_xtdcomment_tree for [object] as [varname] [with_participants] %}
+        {% get_xtdcomment_tree for [object] as [varname] [with_feedback] %}
     Example usage::
         {% get_xtdcomment_tree for post as comment_list %}
     """
@@ -392,11 +408,11 @@ def get_xtdcomment_tree(parser, token):
     if not match:
         raise TemplateSyntaxError("%s tag had invalid arguments" % tag_name)
     obj, var_name = match.groups()
-    if args.strip().endswith('with_participants'):
-        with_participants = True
+    if args.strip().endswith('with_feedback'):
+        with_feedback = True
     else:
-        with_participants = False
-    return GetXtdCommentTreeNode(obj, var_name, with_participants)
+        with_feedback = False
+    return GetXtdCommentTreeNode(obj, var_name, with_feedback)
 
 
 register.tag(render_xtdcomment_tree)

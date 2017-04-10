@@ -143,8 +143,7 @@ COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
 
-COMMENTS_XTD_MAX_THREAD_LEVEL = 0
+COMMENTS_XTD_MAX_THREAD_LEVEL = 0  # Quotes won't have nested comments.
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
     'articles.article': 2,
-    'quotes.quote': 0, # not required, defaults to COMMENTS_XTD_MAX_THREAD_LEVEL
 }

@@ -26,7 +26,7 @@ class XtdCommentForm(CommentForm):
             initial = kwargs.pop("initial", {})
             initial.update({"reply_to": comment.pk})
             kwargs["initial"] = initial
-            followup_suffix = ('_%d' % kwargs['comment'].pk)
+            followup_suffix = ('_%d' % comment.pk)
         else:
             followup_suffix = ''
         super(CommentForm, self).__init__(*args, **kwargs)

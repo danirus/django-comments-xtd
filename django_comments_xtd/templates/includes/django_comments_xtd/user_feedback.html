@@ -1,0 +1,7 @@
+{% if show_feedback and item.likedit %}
+<a data-toggle="popover" title="Liked it" data-content="{{ item.likedit|join:'<br/>' }}" data-trigger="focus" role="button" tabindex="0"><span class="small">{{ item.likedit|length }}</span></a>&nbsp;{% else %}<span class="text-muted small">{{ item.likedit|length }}</span>&nbsp;{% endif %}
+<a href="{% url 'comments-xtd-like' item.comment.pk %}" class="mutedlink"><span class="small glyphicon glyphicon-thumbs-up"></span></a>
+<span class="text-muted">&sdot;</span>
+{% if show_feedback and item.dislikedit %}
+<a data-toggle="popover" title="Disliked it" data-content="{{ item.dislikedit|join:'<br/>' }}" data-trigger="focus" role="button" tabindex="0"><span class="small">{{ item.dislikedit|length }}</span></a>&nbsp;{% else %}<span class="text-muted small">{{ item.dislikedit|length }}</span>&nbsp;{% endif %}
+<a href="{% url 'comments-xtd-dislike' item.comment.pk %}" class="mutedlink"><span class="small glyphicon glyphicon-thumbs-down"></span></a>

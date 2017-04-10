@@ -21,6 +21,7 @@
       </div>
     </div>
 
+    {% if not request.user.is_authenticated %}
     <div class="form-group {% if 'name' in form.errors %}has-error{% endif %}">
       <label for="id_name" class="control-label col-lg-3 col-md-3">
         {{ form.name.label }}
@@ -48,6 +49,7 @@
         {{ form.url }}
       </div>
     </div>
+    {% endif %}
     
     <div class="form-group">
       <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">

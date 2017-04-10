@@ -49,9 +49,9 @@
       
       {% if comment_count %}
       <hr/>
-      <ul class="media-list" id="comment-list">
-        {% render_xtdcomment_tree for object %}
-      </ul>
+      <div id="comment-list">
+        {% render_comment_list for object %}
+      </div>
       {% endif %}
     </div>
   </div>

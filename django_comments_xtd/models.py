@@ -124,7 +124,7 @@ class XtdComment(Comment):
             return False
 
     @classmethod
-    def tree_from_queryset(cls, queryset, show_participants=False):
+    def tree_from_queryset(cls, queryset, with_feedback=False):
         """Converts a XtdComment queryset into a list of nested dictionaries.
         The queryset has to be ordered by thread_id, order.
         Each dictionary contains two attributes::
@@ -133,7 +133,7 @@ class XtdComment(Comment):
                 'children': [list of child comment dictionaries]
             }
         """
-        def get_participants(comment):
+        def get_user_feedback(comment):
             return {'likedit': comment.users_who_liked_it(),
                     'dislikedit': comment.users_who_disliked_it()}
 
@@ -141,8 +141,8 @@ class XtdComment(Comment):
             for item in children:
                 if item['comment'].pk == obj.parent_id:
                     child_dict = {'comment': obj, 'children': []}
-                    if show_participants:
-                        child_dict.update(get_participants(obj))
+                    if with_feedback:
+                        child_dict.update(get_user_feedback(obj))
                     item['children'].append(child_dict)
                     return True
                 elif item['children']:
@@ -158,13 +158,13 @@ class XtdComment(Comment):
                 cur_dict = None
             if not cur_dict:
                 cur_dict = {'comment': obj, 'children': []}
-                if show_participants:
-                    cur_dict.update(get_participants(obj))
+                if with_feedback:
+                    cur_dict.update(get_user_feedback(obj))
                 continue
             if obj.parent_id == cur_dict['comment'].pk:
                 child_dict = {'comment': obj, 'children': []}
-                if show_participants:
-                    child_dict.update(get_participants(obj))
+                if with_feedback:
+                    child_dict.update(get_user_feedback(obj))
                 cur_dict['children'].append(child_dict)
             else:
                 add_children(cur_dict['children'], obj)

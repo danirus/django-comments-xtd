@@ -49,10 +49,17 @@
       {% if comment_count %}
       <hr/>
       <ul class="media-list" id="comment-list">
-        {% render_xtdcomment_tree for object %}
+        {% render_xtdcomment_tree for object allow_feedback show_feedback allow_flagging %}
       </ul>
       {% endif %}
     </div>
   </div>
 </div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+$(function () {
+  $('[data-toggle="popover"]').popover({'html':true})
+})</script>
 {% endblock %}

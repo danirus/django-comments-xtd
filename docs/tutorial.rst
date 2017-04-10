@@ -167,7 +167,7 @@ When using the first, :ttag:`render_comment_list`, with a ``blog.post`` object, 
        comments/blog/list.html
        comments/list.html
 
-Both, django-contrib-comments and django-comments-xtd, provide the last of the list. The one in django-comments-xtd includes twitter-bootstrap styling. Django will use the first template found, which depends on what application is listed first in :setting:`INSTALLED_APPS`, django-comments-xtd in this case.
+Both, django-contrib-comments and django-comments-xtd, provide the last of the list. The one in django-comments-xtd includes twitter-bootstrap_ styling. Django will use the first template found, which depends on what application is listed first in :setting:`INSTALLED_APPS`, django-comments-xtd in this case.
 
 Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`render_comment_list` tag to add the list of comments. Add the following code at the end of the page, before the ``endblock`` tag:
 
@@ -547,203 +547,47 @@ Django-comments-xtd adds two new flags: the **Liked it** and the **Disliked it**
 
 Unlike the **Removal suggestion** flag, the **Liked it** and **Disliked it** flags are mutually exclusive. So that a user can't like and dislike a comment at the same time, only the last action counts. Users can like/dislike at any time and only the last action will prevail.
 
-In this section we will make changes in the tutorial project to give our users the capacity to like or dislike comments. We can start by adding the links to the ``comments_tree.html`` template. The links could go immediately after rendering the comment content, at the left side of the Reply link:
+In this section we will make changes in the tutorial project to give our users the capacity to like or dislike comments. We will make changes in the ``blog/post_detail.html`` template to introduce a new argument in the **render_xtdcomment_tree** tag:
 
    .. code-block:: html+django
 
-       ...
-               <p>
-                 {{ item.comment.comment|render_markup_comment }}
-                 <br/>
-                 <!-- Add here the links to let users express whether they like the comment. -->
-                 <a href="{% url 'comments-xtd-like' item.comment.pk %}" class="mutedlink">
-                   <span class="small">{{ item.likedit|length }}</span>&nbsp;
-                   <span class="small glyphicon glyphicon-thumbs-up"></span>
-                 </a>
-                 <span class="text-muted">&sdot;</span>
-                 <a href="{% url 'comments-xtd-dislike' item.comment.pk %}" class="mutedlink">
-                   <span class="small">{{ item.dislikedit|length }}</span>&nbsp;
-                   <span class="small glyphicon glyphicon-thumbs-down"></span>
-                 </a>
-                 <span class="text-muted">&sdot;</span>
-                 <!-- And the reply link -->
-                 {% if item.comment.allow_thread and not item.comment.is_removed %}
-                 <a class="small mutedlink" href="{{ item.comment.get_reply_url }}">
-                   {% trans "Reply" %}
-                 </a>
-                 {% endif %}
-               </p>
-       ...
+       <ul class="media-list">
+         {% render_xtdcomment_tree for object allow_flagging allow_feedback %}
+       </ul>
 
 
-Having the links in place, if we click on any of them we will end up in either the ``like.html`` or the ``dislike.html`` templates. These two templates are new, and meant to request the user to confirm the operation.
+The **allow_feedback** argument makes the templatetag populate a variable ``allow_feedback = True`` in the context in which ``django_comments_xtd/comment_tree.html`` is rendered.
 
-We can create new versions of these templates in the ``democx/templates/django_comments_xtd`` directory to adapt them to the look of the project. Let's create first ``like.html`` with the following content:
+Having the new like/dislike links in place, if we click on any of them we will end up in either the ``django_comments_xtd/like.html`` or the ``django_comments_xtd/dislike.html`` templates, which are meant to request the user a confirmation for the operation.
+
+
+Show the list of users
+**********************
+
+Once the like/dislike flagging options are enabled we might want to display the users who actually liked/disliked comments.
+
+Again, by addind an argument to the ``render_xtdcomment_tree`` templatetag we can get rendered the ``includes/django_comments_xtd/user_feedback.html`` with the list of participants.
+
+Change the ``blog/post_detail.html`` to add the argument ``show_feedback``. For this functionality to work we have to add a bit of JavaScript code. As django-comments-xtd templates use twitter-bootstrap_ we will load jQuery and twitter-bootstrap JavaScript libraries from their respective default CDNs too:
 
    .. code-block:: html+django
 
-       {% extends "base.html" %}
-       {% load i18n %}
-       {% load comments_xtd %}
+       <ul class="media-list">
+         {% render_xtdcomment_tree for object allow_flagging allow_feedback show_feedback %}
+       </ul>
 
-       {% block title %}{% trans "Confirm your opinion" %}{% endblock %}
-
-       {% block header %}
-       <a href="{% url 'homepage' %}">{{ block.super }}</a> -
-       <a href="{% url 'blog:post_list' %}">Blog</a> -
-       <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+       {% block extra-js %}
+       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+           integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+           crossorigin="anonymous"></script>
+       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+           integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+           crossorigin="anonymous"></script>
+       <script>
+       $(function () {
+         $('[data-toggle="popover"]').popover({'html':true})
+       })</script>
        {% endblock %}
 
-       {% block content %}
-       <h4 class="page-header text-center">
-         {% if already_liked_it %}
-         {% trans "You liked this comment, do you want to change it?" %}
-         {% else %}
-         {% trans "Do you like this comment?" %}
-         {% endif %}
-       </h4>
-       <p class="text-center">{% trans "Please, confirm your opinion on this comment:" %}</p>
-       <div class="row">
-         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
-           <div class="media">
-             <div class="media-left">
-               {% if comment.user_url %}
-               <a href="{{ comment.user_url }}">
-                 {{ comment.user_email|xtd_comment_gravatar }}
-               </a>
-               {% else %}
-               {{ comment.user_email|xtd_comment_gravatar }}
-               {% endif %}
-             </div>
-             <div class="media-body">
-               <h6 class="media-heading">
-                 {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-                 {% if comment.user_url %}
-                 <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                   {{ comment.user_name }}
-                   {% if comment.user_url %}
-                 </a>{% endif %}
-               </h6>
-               <p>{{ comment.comment }}</p>
-             </div>
-           </div>
-           <div class="visible-lg-block visible-md-block">
-             <hr/>
-           </div>
-         </div>
-       </div>
-       <div class="row">
-         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
-           {% if already_liked_it %}
-           <div class="alert alert-warning">
-             {% trans 'Click on the "withdraw" button if you want to withdraw your positive opinion on this comment.' %} 
-           </div>
-           {% endif %}
-           <div class="well well-lg">
-             <form action="." method="post" class="form-horizontal">{% csrf_token %}
-               <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
-               <div class="form-group">
-                 <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
-                   <input type="submit" name="submit" class="btn btn-primary" value="{% if already_liked_it %}{% trans 'Withdraw' %}{% else %}{% trans 'I like it' %}{% endif %}"/>
-                   <a class="btn btn-default" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
-                 </div>
-               </div>
-             </form>
-           </div>
-         </div>
-       </div>
-       {% endblock %}
-              
-
-And this could be the content for the ``dislike.html`` template:
-
-   .. code-block:: html+django
-
-       {% extends "base.html" %}
-       {% load i18n %}
-       {% load comments_xtd %}
-
-       {% block title %}{% trans "Confirm your opinion" %}{% endblock %}
-
-       {% block header %}
-       <a href="{% url 'homepage' %}">{{ block.super }}</a> -
-       <a href="{% url 'blog:post_list' %}">Blog</a> -
-       <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
-       {% endblock %}
-
-       {% block content %}
-       <h4 class="page-header text-center">
-         {% if already_disliked_it %}
-         {% trans "You didn't like this comment, do you want to change it?" %}
-         {% else %}
-         {% trans "Do you dislike this comment?" %}
-         {% endif %}
-       </h4>
-       <p class="text-center">{% trans "Please, confirm your opinion on this comment:" %}</p>
-       <div class="row">
-         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
-           <div class="media">
-             <div class="media-left">
-               {% if comment.user_url %}
-               <a href="{{ comment.user_url }}">
-                 {{ comment.user_email|xtd_comment_gravatar }}
-               </a>
-               {% else %}
-               {{ comment.user_email|xtd_comment_gravatar }}
-               {% endif %}
-             </div>
-             <div class="media-body">
-               <h6 class="media-heading">
-                 {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-                 {% if comment.user_url %}
-                 <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                   {{ comment.user_name }}
-                   {% if comment.user_url %}
-                 </a>{% endif %}
-               </h6>
-               <p>{{ comment.comment }}</p>
-             </div>
-           </div>
-           <div class="visible-lg-block visible-md-block">
-             <hr/>
-           </div>
-         </div>
-       </div>
-       <div class="row">
-         <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
-           {% if already_liked_it %}
-           <div class="alert alert-warning">
-             {% trans 'Click on the "withdraw" button if you want to withdraw your negative opinion on this comment.' %} 
-           </div>
-           {% endif %}
-           <div class="well well-lg">
-             <form action="." method="post" class="form-horizontal">{% csrf_token %}
-               <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
-               <div class="form-group">
-                 <div class="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
-                   <input type="submit" name="submit" class="btn btn-primary" value="{% if already_liked_it %}{% trans 'Withdraw' %}{% else %}{% trans 'I dislike it' %}{% endif %}"/>
-                   <a class="btn btn-default" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
-                 </div>
-               </div>
-             </form>
-           </div>
-         </div>
-       </div>
-       {% endblock %}
-
-
-One last change we need to do consist in adding the argument ``with_participants`` to the tag :ttag:`get_xtdcomment_tree` in the blog detail template. The immediate effect of this argument is that in addition to the comment and the children of the comment, in each dictionary of the list retrieved by the template tag we will have the list of users who liked the comment and the list of users who disliked it:
-
-   .. code-block:: python
-
-       [
-           {
-               'comment': comment_object,
-               'children': [ list, of, child, comment, dicts ],
-               'likedit': [user_who_liked_it_1, user_who_liked_it_2, ...],
-               'dislikedit': [user_who_disliked_it_1, user_who_disliked_it_2, ...],
-           },
-           ...
-       ]
-
-Now we have all the changes ready, we can like/dislike comments to see the feature in action.
+.. _twitter-bootstrap: http://getbootstrap.com
+       

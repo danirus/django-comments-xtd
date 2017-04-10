@@ -4,5 +4,3 @@ Django
 docutils
 Markdown
 django-markup
-# Only for Django < 1.7
-#South>=1.0.2

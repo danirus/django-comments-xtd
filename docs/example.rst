@@ -7,30 +7,43 @@ Demo projects
 Django-comments-xtd comes with three demo projects:
 
 1. **simple**: Single model with **non-threaded** comments
-2. **simple_threads**: Single model with **threaded** comments up to level 2
-3. **multiple**: Several models with comments, and a maximum thread level defined for each app.model pair.
-4. **custom_comments**: Single model with comments provided by a new app that extends django-comments-xtd. Comments have a new ``title`` field. Find more details in :ref:`ref-extending`.
+2. **custom**: Single model with comments provided by a new app that extends django-comments-xtd. The new comment model adds a ``title`` field to the XtdComment class. Find more details in :ref:`ref-extending`.
+3. **comp**: Several models with maximum thread level defined on per app.model pair, moderation, removal suggestion flag, like/dislike flags, and list of users who liked/disliked comments.
 
-`Click here <http://github.com/danirus/django-comments-xtd/tree/master/django_comments_xtd/demos>`_ for a quick look at the examples directory in the repository.
+Visit the **example** directory within the repository `in GitHub <http://github.com/danirus/django-comments-xtd/tree/master/example>`_ for a quick look.
 
+.. contents:: Table of Contents
+   :depth: 1
+   :local:
 
 .. index::
    pair: Demo; Setup 
-
+   
 Demo sites setup
 ================
 
-The recommended way to run the demo sites is in its own `virtualenv <http://www.virtualenv.org/en/latest/>`_. Once in a new virtualenv, clone the code and cd into any of the 3 demo sites. Then run the install script and launch the dev server::
+The recommended way to run the demo sites is in its own `virtualenv <http://www.virtualenv.org/en/latest/>`_. Once in a new virtualenv, clone the code and cd into any of the 3 demo sites. Then run the migrate command and load the data in the fixtures directory:
 
-    $ git clone git://github.com/danirus/django-comments-xtd.git
-    $ cd django-comments-xtd/django_comments_xtd/demos/[simple|simple_thread|multiple]
-    $ pip install ../../requirements.pip
-    $ sh ./install.sh (to syncdb, migrate and loaddata)
-    $ python manage.py runserver
+   .. code-block:: bash
 
-By default:
- * There's an ``admin`` user, with password ``admin``
- * Emails are sent to the ``console.EmailBackend``. Comment out ``EMAIL_BACKEND`` in the settings module to send actual emails.
+    $ virtualenv venv
+    $ source venv/bin/activate
+    (venv)$ git clone git://github.com/danirus/django-comments-xtd.git
+    (venv)$ cd django-comments-xtd/example/[simple|custom|comp]
+    (venv)$ python manage.py migrate
+    (venv)$ python manage.py loaddata ../fixtures/auth.json
+    (venv)$ python manage.py loaddata ../fixtures/sites.json
+    (venv)$ python manage.py loaddata ../fixtures/articles.json
+    (venv)$ python manage.py runserver
+
+
+Fixtures data provide:
+
+ * An ``admin`` **User**, with password ``admin``
+ * A default **Site** with domain ``localhost:8000`` so that URLs sent in mail messages use already the URL of the development web server of Django.
+ * A couple of **Article** objects to which the user can post comments.
+
+By default mails are sent directly to the console using the ``console.EmailBackend``. Comment out ``EMAIL_BACKEND`` in the settings module to send actual mails. You will need working values for all the ``EMAIL_`` settings.
 
 
 .. index::
@@ -40,30 +53,35 @@ By default:
 Simple demo site
 ================
 
-The **simple** demo site is a project with just one application called **articles** with an **Article** model whose instances accept comments. The example features: 
+The simple example features:
+  
+ #. An Articles App, with a model ``Article`` whose instances accept comments.
 
- * Comments have to be confirmed by email before they hit the database. 
- * Users may request follow-up notifications.
- * Users may cancel follow-up notifications by clicking on the mute link.
+ #. Confirmation by mail is required before the comment hit the database, unless ``COMMENTS_XTD_CONFIRM_EMAIL`` is set to False. Authenticated users don't have to confirm comments.
+    
+ #. Follow up notifications via mail.
+    
+ #. Mute links to allow cancellation of follow-up notifications.
+    
+ #. It uses the template tag ``render_markup_comment`` to render comment content. So you can use line breaks, Markdown or reStructuredText to format comments. To use special formatting, start the comment with the line ``#!<markup-lang>`` being ``<markup-lang>`` either ``markdown``, ``restructuredtext`` or ``linebreaks``.
+      
+ #. No nested comments.
 
-Follow the next steps to give them a try:
- 
-1. Visit http://localhost:8000/ and look at your articles' detail page. 
 
-2. Log out of the admin site to post comments, otherwise they will be automatically confirmed and no email will be sent.
+Give it a try and test the features. Setup the project as explained above, run the development server, and visit http://localhost:8000/.
 
-3. When adding new articles in the admin interface be sure to tick the box *allow comments*, otherwise comments won't be allowed.
-
-4. Send new comments with the Follow-up box ticked and a different email address. You won't receive follow-up notifications for comments posted from the same email address the new comment is being confirmed from.
-
-5. Click on the Mute link on the Follow-up notification email and send another comment. 
+ * Log out from the admin site to post comments, otherwise they will be automatically confirmed and no email will be sent.
+ * When adding new articles in the admin interface be sure to tick the box *allow comments*, otherwise comments won't be allowed.
+ * Send new comments with the Follow-up box ticked and a different email address. You won't receive follow-up notifications for comments posted from the same email address the new comment is being confirmed from.
+ * Click on the Mute link on the Follow-up notification email and send another comment. You will not receive further notifications.
 
 .. index::
-   single: Simple_threads
-   pair: Simple_treads; Demo
+   single: custom
+   pair: custom; demo
 
-Simple with threads
-===================
+
+Custom demo site
+================
 
 The **simple_threads** demo site extends the **simple** demo functionality featuring:
 

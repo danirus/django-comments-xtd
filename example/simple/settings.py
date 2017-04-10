@@ -99,13 +99,6 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'simple.urls'
 
-try:
-    import imp
-    imp.find_module('django_comments')
-    django_comments = 'django_comments'
-except ImportError:
-    django_comments = 'django.contrib.comments'
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -115,9 +108,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_markup',
     'simple.articles',
     'django_comments_xtd',
-    django_comments,
+    'django_comments',
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'

@@ -19,8 +19,8 @@ Visit the **example** directory within the repository `in GitHub <http://github.
 .. index::
    pair: Demo; Setup 
    
-Demo sites setup
-================
+Setup
+=====
 
 The recommended way to run the demo sites is in its own `virtualenv <http://www.virtualenv.org/en/latest/>`_. Once in a new virtualenv, clone the code and cd into any of the 3 demo sites. Then run the migrate command and load the data in the fixtures directory:
 
@@ -50,8 +50,8 @@ By default mails are sent directly to the console using the ``console.EmailBacke
    single: Simple
    pair: Simple; Demo
 
-Simple demo site
-================
+Simple demo
+===========
 
 The simple example features:
   
@@ -75,13 +75,13 @@ Give it a try and test the features. Setup the project as explained above, run t
  * Send new comments with the Follow-up box ticked and a different email address. You won't receive follow-up notifications for comments posted from the same email address the new comment is being confirmed from.
  * Click on the Mute link on the Follow-up notification email and send another comment. You will not receive further notifications.
 
+
 .. index::
    single: custom
    pair: custom; demo
 
-
-Custom demo site
-================
+Custom demo
+===========
 
 The **simple_threads** demo site extends the **simple** demo functionality featuring:
 
@@ -99,8 +99,8 @@ The **simple_threads** demo site extends the **simple** demo functionality featu
    single: Multiple
    pair: Multiple; Demo
 
-Multiple demo site
-==================
+Comp demo
+=========
 
 The **multiple** demo allows users post comments to three different type of instances: stories, quotes, and releases. Stories and quotes belong to the **blog app** while releases belong to the **projects app**. The demo shows the blog homepage with the last 5 comments posted to either stories or quotes and a link to the complete paginated list of comments posted to the blog. It features:
 

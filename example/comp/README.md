@@ -1,9 +1,9 @@
-## comp demo
+## Comp Demo ##
 
-This demo implements two apps, each of which contains a model whose instances can received comments:
+The Comp Demo implements two apps, each of which contains a model whose instances can received comments:
 
- 1. Django app `articles`, contains the model `Article`
- 1. Django app `quotes`, contains the model `Quote`
+ 1. App `articles` with the model `Article`
+ 1. App `quotes` with the model `Quote`
     
 ### Features
 
@@ -12,7 +12,9 @@ This demo implements two apps, each of which contains a model whose instances ca
  1. Comments hit the database only after they have been confirmed.
  1. Follow up notifications via mail.
  1. Mute links to allow cancellation of follow-up notifications.
- 1. Registered uses can like/dislike comments and can suggest comments removal.
+ 1. Registered users can like/dislike comments and can suggest comments removal.
+ 1. Registered users can see the list of users that liked/disliked comments.
+ 1. The homepage presents the last 5 comments posted either to the `articles.Article` or the `quotes.Quote` model.
 
 #### Threaded comments
 
@@ -24,7 +26,7 @@ The setting `COMMENTS_XTD_MAX_THREAD_LEVEL` is set to 2, meaning that comments m
 
 #### `render_xtdcomment_tree`
 
-Detail templates for articles and quotes show the tree of comments posted by using the templatetag `render_xtdcomment_tree`, which makes use of the template file `django_comments_xtd/comment_tree.html`.
+By using the `render_xtdcomment_tree` templatetag, both, `article_detail.html` and `quote_detail.html`, show the tree of comments posted. `article_detail.html` makes use of the arguments `allow_feedback`, `show_feedback` and `allow_flagging`, while `quote_detail.html` only show the list of comments, with no extra arguments, so users can't flag comments for removal, and neither can submit like/dislike feedback.
 
 #### `render_last_xtdcomments`
 

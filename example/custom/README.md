@@ -2,7 +2,7 @@
 
 The Custom Demo exhibits how to extend django-comments-xtd. This demo used the same **articles** app present in the other two demos, plus:
 
- * A new django application, called `mycomments`, with a model `MyComment` that extends the `django_comments_xtd.MyComment` model with a field `title`.
+ * A new django application, called `mycomments`, with a model `MyComment` that extends the `django_comments_xtd.models.MyComment` model with a field `title`.
  
 To extend django-comments-xtd follow the next steps:
 

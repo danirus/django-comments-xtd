@@ -1,10 +1,10 @@
 ## Example Directory ##
 
-There are three example projects in the example directory:
+Contains three example projects:
 
- 1. simple
- 2. custom
- 3. comp
+ 1. Simple
+ 2. Custom
+ 3. Comp
 
 ### Simple ###
 
@@ -20,7 +20,7 @@ The Simple demo site is a project with an 'articles' application and an 'Article
 The Custom demo exhibits how to extend django-comments-xtd. It uses the same **articles** app present in the other demos, plus:
 
  * A new application, called `mycomments`, with a model `MyComment` that extends the `django_comments_xtd.models.MyComment` model with a field `title`.
- * Checkout the [custom](https://github.com/danirus/django-comments-xtd/example/custom/) demo directory and on [Customizing django-comments-xtd](http://django-comments-xtd.readthedocs.io/en/latest/extending.html) in the documentation.
+ * Checkout the [custom](https://github.com/danirus/django-comments-xtd/example/custom/) demo directory and [Customizing django-comments-xtd](http://django-comments-xtd.readthedocs.io/en/latest/extending.html) in the documentation.
 
 
 ### Comp ###

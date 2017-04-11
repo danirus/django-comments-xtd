@@ -30,7 +30,7 @@ The Comp demo implements two apps, each of which contains a model whose instance
  1. App `articles` with the model `Article`
  1. App `quotes` with the model `Quote`
     
-### Features
+It features:
 
  1. Comments can be nested, and the maximum thread level is established to 2.
  1. Comment confirmation via mail when the users are not authenticated.

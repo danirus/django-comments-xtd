@@ -221,6 +221,8 @@ The setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0`` by default, which 
 .. index::
    single: Moderation
 
+.. _moderation:
+   
 Moderation
 ==========
 
@@ -560,6 +562,8 @@ The **allow_feedback** argument makes the templatetag populate a variable ``allo
 
 Having the new like/dislike links in place, if we click on any of them we will end up in either the ``django_comments_xtd/like.html`` or the ``django_comments_xtd/dislike.html`` templates, which are meant to request the user a confirmation for the operation.
 
+
+.. _show-the-list-of-users:
 
 Show the list of users
 **********************

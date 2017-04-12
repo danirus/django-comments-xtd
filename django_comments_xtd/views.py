@@ -199,9 +199,9 @@ def notify_comment_followers(comment):
             signed.dumps(instance, compress=True,
                          extra_key=settings.COMMENTS_XTD_SALT))
 
-    model = apps.get_model(comment.content_type.app_label,
-                           comment.content_type.model)
-    target = model._default_manager.get(pk=comment.object_pk)
+    # model = apps.get_model(comment.content_type.app_label,
+    #                        comment.content_type.model)
+    # target = model._default_manager.get(pk=comment.object_pk)
     subject = _("new comment posted")
     text_message_template = loader.get_template(
         "django_comments_xtd/email_followup_comment.txt")
@@ -213,7 +213,7 @@ def notify_comment_followers(comment):
         mute_url = reverse('comments-xtd-mute', args=[key])
         message_context = {'user_name': name,
                            'comment': comment,
-                           'content_object': target,
+                           # 'content_object': target,
                            'mute_url': mute_url,
                            'site': comment.site}
         text_message = text_message_template.render(message_context)
@@ -234,10 +234,6 @@ def reply(request, cid):
         return HttpResponseForbidden(exc)
     except XtdComment.DoesNotExist as exc:
         raise Http404(exc)
-
-    if comment.level == max_thread_level_for_content_type(comment.content_type):
-        return render(request, "django_comments_xtd/max_thread_level.html",
-                      {'max_level': settings.COMMENTS_XTD_MAX_THREAD_LEVEL})
 
     form = get_form()(comment.content_object, comment=comment)
     next = request.GET.get("next", reverse("comments-xtd-sent"))
@@ -397,13 +393,12 @@ class XtdCommentListView(ListView):
                 ContentType.objects.get(app_label=app, model=model)
             )
         return content_types
-        
+
     def get_queryset(self):
         content_types = self.get_content_types()
         if content_types is None:
             return None
         return XtdComment.objects.for_content_types(content_types)
-
 
     def get_context_data(self, **kwargs):
         context = super(XtdCommentListView, self).get_context_data(**kwargs)

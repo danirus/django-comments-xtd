@@ -1,7 +1,6 @@
 from django.conf.urls import include, url
 
 from django_comments_xtd import views
-from django_comments_xtd.conf import settings
 
 
 urlpatterns = [

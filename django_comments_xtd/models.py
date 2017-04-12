@@ -40,6 +40,7 @@ class MaxThreadLevelExceededException(Exception):
         return (ugettext("Max thread level reached for comment %d") %
                 self.comment.id)
 
+
 class XtdCommentManager(CommentManager):
     if django.VERSION[:2] < (1, 6):
         get_queryset = models.Manager.get_query_set

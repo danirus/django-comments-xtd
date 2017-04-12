@@ -37,6 +37,7 @@ class XtdCommentCountNode(Node):
         return ''
 
 
+@register.tag
 def get_xtdcomment_count(parser, token):
     """
     Gets the comment count for the given params and populates the template
@@ -66,9 +67,6 @@ def get_xtdcomment_count(parser, token):
 
     content_types = _get_content_types(tokens[0], tokens[4:])
     return XtdCommentCountNode(as_varname, content_types)
-
-
-register.tag(get_xtdcomment_count)
 
 
 # ----------------------------------------------------------------------
@@ -147,6 +145,7 @@ def _get_content_types(tagname, tokens):
     return content_types
 
 
+@register.tag
 def render_last_xtdcomments(parser, token):
     """
     Render the last N XtdComments through the
@@ -186,6 +185,7 @@ def render_last_xtdcomments(parser, token):
     return RenderLastXtdCommentsNode(count, content_types, template)
 
 
+@register.tag
 def get_last_xtdcomments(parser, token):
     """
     Get the last N XtdComments.
@@ -221,10 +221,6 @@ def get_last_xtdcomments(parser, token):
     return GetLastXtdCommentsNode(count, as_varname, content_types)
 
 
-register.tag(render_last_xtdcomments)
-register.tag(get_last_xtdcomments)
-
-
 # ----------------------------------------------------------------------
 class RenderXtdCommentTreeNode(Node):
     def __init__(self, obj, cvars, allow_feedback=False, show_feedback=False,
@@ -241,7 +237,7 @@ class RenderXtdCommentTreeNode(Node):
         for vname, vobj in [pair.split("=") for pair in pairs]:
             cvars.append((vname, Variable(vobj)))
         return cvars
-        
+
     def render(self, context):
         context_dict = context.flatten()
         for attr in ['allow_flagging', 'allow_feedback', 'show_feedback']:
@@ -280,7 +276,7 @@ class RenderXtdCommentTreeNode(Node):
             ]
         html = loader.render_to_string(template_arg, context_dict)
         return html
-        
+
 
 class GetXtdCommentTreeNode(Node):
     def __init__(self, obj, var_name, with_feedback):
@@ -300,6 +296,7 @@ class GetXtdCommentTreeNode(Node):
         return ''
 
 
+@register.tag
 def render_xtdcomment_tree(parser, token):
     """
     Render the nested comment tree structure posted to the given object.
@@ -307,7 +304,9 @@ def render_xtdcomment_tree(parser, token):
 
     Syntax::
 
-        {% render_xtdcomment_tree [for <object>] [with vname1=<obj1> vname2=<obj2>] [allow_feedback] [show_feedback] [allow_flagging] [using <template>] %}
+        {% render_xtdcomment_tree [for <object>] [with vname1=<obj1>
+           vname2=<obj2>] [allow_feedback] [show_feedback] [allow_flagging]
+           [using <template>] %}
         {% render_xtdcomment_tree with <varname>=<context-var> %}
 
     Example usage::
@@ -372,7 +371,8 @@ def render_xtdcomment_tree(parser, token):
                                     allow_flagging=allow_flagging,
                                     template_path=template_path)
 
-        
+
+@register.tag
 def get_xtdcomment_tree(parser, token):
     """
     Add to the template context a list of XtdComment dictionaries for the
@@ -415,10 +415,6 @@ def get_xtdcomment_tree(parser, token):
     return GetXtdCommentTreeNode(obj, var_name, with_feedback)
 
 
-register.tag(render_xtdcomment_tree)
-register.tag(get_xtdcomment_tree)
-
-
 # ----------------------------------------------------------------------
 def render_with_filter(markup_filter, lines):
     try:
@@ -434,6 +430,7 @@ def render_with_filter(markup_filter, lines):
         return output
 
 
+@register.filter
 def render_markup_comment(value):
     """
     Renders a comment using a markup language specified in the first line of
@@ -470,24 +467,17 @@ def render_markup_comment(value):
         return value
 
 
-register.filter(render_markup_comment)
-
-
 # ----------------------------------------------------------------------
+@register.filter
 def xtd_comment_gravatar_url(email, size=48):
     return ("http://www.gravatar.com/avatar/%s?%s&d=mm" %
             (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
              urlencode({'s': str(size)})))
 
 
-register.filter(xtd_comment_gravatar_url)
-
-
 # ----------------------------------------------------------------------
+@register.filter
 def xtd_comment_gravatar(email, size=48):
     url = xtd_comment_gravatar_url(email, size)
     return mark_safe('<img src="%s" height="%d" width="%d">' %
                      (url, size, size))
-
-
-register.filter(xtd_comment_gravatar)

@@ -27,8 +27,8 @@ The ``settings.py`` module contains the following customizations::
 
   INSTALLED_APPS = (
     # ...
-    'django_comments',
     'django_comments_xtd',
+    'django_comments',
     'articles',
     'mycomments',
     # ...
@@ -106,8 +106,10 @@ The admin module provides a new class MyCommentAdmin that inherits from XtdComme
 Templates
 ---------
 
-You will need to customize at least the ``comments/list.html`` template to include the ``title`` field in the template.
+You will need to customize the following templates:
 
-Also change the template ``comments/form.html`` if you want to customize the way the comment form is displayed.
-
-Both templates belong to the django-contrib-comments application.
+    * ``comments/form.html`` to include new fields.
+    * ``comments/preview.html`` to preview new fields.
+    * ``django_comments_xtd/email_confirmation_request.{txt|html}`` to add the new fields to the confirmation request, if it was necessary. This demo overrides them to include the ``title`` field in the mail.
+    * ``django_comments_xtd/comments_tree.html`` to show the new field when displaying the comments. If your project doesn't allow nested comments you can use either this template or `comments/list.html``.
+    * ``django_comments_xtd/reply.html`` to show the new field when displaying the comment the user is replying to.

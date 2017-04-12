@@ -2,7 +2,6 @@
 {% load comments %}
 {% load comments_xtd %}
 
-{% with is_authenticated=request.user.is_authenticated %}
 {% for item in comments %}
 {% if item.comment.level == 0 %}
 <li class="media">{% else %}<div class="media">{% endif %}
@@ -12,7 +11,7 @@
     <div class="comment">
       <h6 class="media-heading">
         {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
-        {% if allow_flagging and is_authenticated %}
+        {% if allow_flagging %}
         <div class="pull-right">
           <a class="mutedlink" href="{% url 'comments-flag' item.comment.pk %}">
             <span class="glyphicon glyphicon-flag" title="flag comment"></span>
@@ -47,4 +46,3 @@
 {% if item.comment.level == 0 %}
 </li>{% else %}</div>{% endif %}
 {% endfor %}
-{% endwith %}

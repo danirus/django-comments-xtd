@@ -1,14 +1,8 @@
 from django import forms
-try:
-    from django.apps import apps
-except ImportError:
-    from django.db.models.loading import cache as apps
+from django.apps import apps
 from django.utils.translation import ugettext_lazy as _
 
-try:
-    from django_comments.forms import CommentForm
-except ImportError:
-    from django.contrib.comments.forms import CommentForm
+from django_comments.forms import CommentForm
 
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import TmpXtdComment
@@ -48,6 +42,8 @@ class XtdCommentForm(CommentForm):
             max_length=settings.COMMENT_MAX_LENGTH)
         self.fields['comment'].widget.attrs.pop('cols')
         self.fields['comment'].widget.attrs.pop('rows')
+        self.fields['followup'].widget.attrs['id'] = (
+            'id_followup%s' % followup_suffix)
 
     def get_comment_model(self):
         return TmpXtdComment

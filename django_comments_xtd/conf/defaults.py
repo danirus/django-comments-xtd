@@ -37,6 +37,3 @@ COMMENTS_XTD_SEND_HTML_EMAIL = True
 # Set it to False to use a third-party app like django-celery-email or
 # your own celery app.
 COMMENTS_XTD_THREADED_EMAILS = True
-
-# Enable moderation for given app.model pairs.
-COMMENTS_XTD_ENABLE_MODERATION = ['articles.article',]

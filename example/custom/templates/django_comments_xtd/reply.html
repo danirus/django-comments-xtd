@@ -1,0 +1,46 @@
+{% extends "django_comments_xtd/base.html" %}
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{% trans "Comment reply" %}{% endblock %}
+
+{% block header %}
+<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+{% endblock %}
+
+{% block content %}
+<h5 class="text-center">{% trans "Reply to comment" %}</h5>
+<hr/>
+<div class="row">
+  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+    <div class="media">
+      <div class="media-left">
+        {% if comment.user_url %}
+        <a href="{{ comment.user_url }}">
+          {{ comment.user_email|xtd_comment_gravatar }}
+        </a>
+        {% else %}
+        {{ comment.user_email|xtd_comment_gravatar }}
+        {% endif %}
+      </div>
+      <div class="media-body">
+        <h6 class="media-heading">
+          {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+          {% if comment.user_url %}
+          <a href="{{ comment.user_url }}" target="_new">{% endif %}
+          {{ comment.user_name }}{% if comment.user_url %}</a>{% endif %}
+        </h6>
+        <span>{{ comment.title }}</span><br/>
+        <div class="well well-sm">{{ comment.comment }}</div>
+      </div>
+    </div>
+    <div class="visible-lg-block visible-md-block">
+      <hr/>
+    </div>
+  </div>
+</div>
+<div class="well well-lg">
+  {% include "comments/form.html" %}
+</div>
+{% endblock %}

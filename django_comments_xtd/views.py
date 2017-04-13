@@ -22,7 +22,6 @@ from django_comments_xtd import (get_form, comment_was_posted, signals, signed,
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment,
                                         MaxThreadLevelExceededException,
-                                        max_thread_level_for_content_type,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
 from django_comments_xtd.utils import send_mail
 

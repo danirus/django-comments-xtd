@@ -13,9 +13,11 @@ env:
  - TOX_ENV=py27-django18
  - TOX_ENV=py27-django19
  - TOX_ENV=py27-django110
+ - TOX_ENV=py27-django111
  - TOX_ENV=py35-django18
  - TOX_ENV=py35-django19
  - TOX_ENV=py35-django110
+ - TOX_ENV=py35-django111
 
 before_install:
  - sudo apt-get update -qq
@@ -34,4 +36,4 @@ install:
 script:
  - env | sort
  - tox -e $TOX_ENV
- - flake8 --show-source --max-line-length=80 --exclude=.tox,docs,django_comments_xtd/tests/settings,django_comments_xtd/__init__.py,django_comments_xtd/migrations,django_comments_xtd/south_migrations,django_comments_xtd/demos django_comments_xtd/
+ - flake8 --show-source --max-line-length=80 --exclude=.tox,docs,django_comments_xtd/tests,django_comments_xtd/__init__.py,django_comments_xtd/migrations django_comments_xtd/

@@ -59,7 +59,7 @@ class XtdCommentManagerTestCase(ArticleBaseTestCase):
         count = XtdComment.objects.for_app_models("tests.article").count()
         self.assert_(count == 3)
 
-# In order to methods save and test _calculate_thread_ata, simulate the
+# In order to test methods 'save' and '_calculate_thread_data', simulate the
 # following threads, in order of arrival:
 #
 # testcase cmt.id   parent level-0  level-1  level-2
@@ -372,17 +372,29 @@ class ThreadStep5TestCase(ArticleBaseTestCase):
                                       parent_id=8)  # already max thread level
 
 
+def add_comment_to_diary_entry(diary_entry):
+    diary_ct = ContentType.objects.get(app_label="tests", model="diary")
+    site = Site.objects.get(pk=1)
+    XtdComment.objects.create(content_type=diary_ct,
+                              object_pk=diary_entry.id,
+                              content_object=diary_entry,
+                              site=site,
+                              comment="cmt to day in diary",
+                              submit_date=datetime.now())
+    
+            
 class DiaryBaseTestCase(DjangoTestCase):
     def setUp(self):
         self.day_in_diary = Diary.objects.create(body="About Today...")
-        diary_ct = ContentType.objects.get(app_label="tests", model="diary")
-        site = Site.objects.get(pk=1)
-        XtdComment.objects.create(content_type=diary_ct,
-                                  object_pk=self.day_in_diary.id,
-                                  content_object=self.day_in_diary,
-                                  site=site,
-                                  comment="cmt to day in diary",
-                                  submit_date=datetime.now())
+        add_comment_to_diary_entry(self.day_in_diary)        
+        # diary_ct = ContentType.objects.get(app_label="tests", model="diary")
+        # site = Site.objects.get(pk=1)
+        # XtdComment.objects.create(content_type=diary_ct,
+        #                           object_pk=self.day_in_diary.id,
+        #                           content_object=self.day_in_diary,
+        #                           site=site,
+        #                           comment="cmt to day in diary",
+        #                           submit_date=datetime.now())
 
     def test_max_thread_level_by_app_model(self):
         diary_ct = ContentType.objects.get(app_label="tests", model="diary")

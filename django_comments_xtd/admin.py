@@ -3,16 +3,9 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-# While there's official support for Django version prior to 1.8
-try:
-    from django_comments import get_model
-    from django_comments.admin import CommentsAdmin
-    from django_comments.models import CommentFlag
-except ImportError:
-    from django.contrib.comments import get_model
-    from django.contrib.comments.admin import CommentsAdmin
-    from django.contrib.comments.models import CommentFlag
-
+from django_comments import get_model
+from django_comments.admin import CommentsAdmin
+from django_comments.models import CommentFlag
 from django_comments_xtd.models import XtdComment, BlackListedDomain
 
 
@@ -45,14 +38,11 @@ class XtdCommentsAdmin(CommentsAdmin):
         return 'c%d' % obj.id
 
 
-if get_model() is XtdComment:
-    admin.site.register(XtdComment, XtdCommentsAdmin)
-    admin.site.register(CommentFlag)
-
-
 class BlackListedDomainAdmin(admin.ModelAdmin):
     search_fields = ['domain']
 
 
 if get_model() is XtdComment:
+    admin.site.register(XtdComment, XtdCommentsAdmin)
+    admin.site.register(CommentFlag)
     admin.site.register(BlackListedDomain, BlackListedDomainAdmin)

@@ -1,0 +1,37 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% for item in comments %}
+{% if item.comment.level == 0 %}
+<li class="media">{% else %}<div class="media">{% endif %}
+  <a name="c{{ item.comment.id }}"></a>
+  <div class="media-left">{{ item.comment.user_email|xtd_comment_gravatar }}</div>
+  <div class="media-body">
+    <div class="comment">
+      <h6 class="media-heading">
+        {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
+      </h6>
+      {% if item.comment.is_removed %}
+      <p>{% trans "This comment has been removed." %}</p>
+      {% else %}
+      <span>{{ item.comment.title }}</span><br/>
+      <div class="well well-sm" style="margin-bottom: 0px">
+        {{ item.comment.comment|render_markup_comment }}
+      </div>
+      {% if item.comment.allow_thread and not item.comment.is_removed %}
+      <a class="small mutedlink" href="{{ item.comment.get_reply_url }}">
+        {% trans "Reply" %}
+      </a>
+      {% endif %}
+      {% endif %}
+    </div>
+    {% if not item.comment.is_removed and item.children %}
+    <div class="media">
+      {% render_xtdcomment_tree with comments=item.children %}
+    </div>
+    {% endif %}
+  </div>
+{% if item.comment.level == 0 %}
+</li>{% else %}</div>{% endif %}
+{% endfor %}

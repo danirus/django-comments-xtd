@@ -1,0 +1,9 @@
+{% extends "django_comments_xtd/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h4 class="text-center">{% trans "Comment confirmation requested." %}</h4>
+<p>{% blocktrans %}A confirmation message has been sent to your
+email address. Please, click on the link in the message to confirm
+your comment.{% endblocktrans %}</p>
+{% endblock %}

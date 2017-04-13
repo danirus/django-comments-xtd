@@ -1,0 +1,68 @@
+{% load i18n %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}django-comments-xtd comp demo{% endblock %}</title>
+    <link href="{% static 'django_comments_xtd/css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+      BODY {
+        padding: 20px 0;
+      }
+      .header h3 {
+        margin-top: 0;
+        margin-bottom: 0;
+        line-height: 40px;
+      }
+      .post-footer, .comments {
+        padding: 20px 0;
+      }
+    </style>    
+  </head>
+  <body>
+    <div class="container">
+      <div class="header clearfix" style="margin-bottom:20px">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            {% if request.user.is_authenticated %}
+            <li class="disabled"><a>Hi, {{ request.user.get_full_name }}</a></li>
+            {% endif %}
+            <li class="{% block menu-class-homepage %}{% endblock %}" role="presentation">
+              <a href="{% url 'homepage' %}">{% trans "Home" %}</a>
+            </li>
+            <li class="{% block menu-class-articles %}{% endblock %}" role="presentation">
+              <a href="{% url 'articles-index' %}">{% trans "articles" %}</a>
+            </li>
+            <li class="{% block menu-class-quotes %}{% endblock %}" role="presentation">
+              <a href="{% url 'quotes-index' %}">{% trans "quotes" %}</a>
+            </li>
+            <li class="{% block menu-class-comments %}{% endblock %}" role="group">
+              <a href="{% url 'comments-xtd-list' %}">{% trans "comments" %}</a>
+            </li>
+          </ul>
+        </nav>
+	    <h3>comp demo</h3>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          {% block content %}
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 col-md-12">
+          <hr/>
+          <p class="text-center text-muted small">django-comments-xtd comp demo.</p>
+        </div>
+      </div>
+    </div>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load markup_tags %}
+
+{% block header %}Homepage{% endblock %}
+
+{% block content %}
+<div class="row">
+  <p>{{ readme_text|apply_markup:"markdown" }}</p>
+</div>
+<div class="row">
+  <p class="text-center">
+    <a href="{% url 'articles-index' %}">Article list</a>
+  </p>
+</div>
+{% endblock %}

@@ -4,60 +4,185 @@
 Templates
 =========
 
-List of template files used by django-comments-xtd.
+This page details the list of templates provided by django-comments-xtd. They are located under the ``django_comments_xtd/`` templates directory.
+
+.. contents:: Table of Contents
+   :depth: 1
+   :local:
+
 
 .. index::
    single: email_confirmation_request
    pair: template; email_confirmation_request
 
-**django_comments_xtd/email_confirmation_request.(html|txt)** (included)
-    Comment confirmation email sent to the user when she clicks on "Post" to send the comment. The user should click on the link in the message to confirm the comment. If the user is authenticated the message is not sent, as the comment is directly approved.
+``email_confirmation_request``
+------------------------------
+   
+As ``.html`` and ``.txt``, this template represents the confirmation message sent to the user when the **Send** button is clicked to post a comment. Both templates are sent in a multipart message, or only in text format if the :setting:`COMMENTS_XTD_SEND_HTML_EMAIL` setting is set to ``False``.
+
+In the context of the template the following objects are expected:
+
+ * The ``site`` object (django-contrib-comments, and in turn django-comments-xtd, use the `Django Sites Framework <https://docs.djangoproject.com/en/1.11/ref/contrib/sites/>`_).
+ * The ``comment`` object.
+ * The ``confirmation_url`` the user has to click on to confirm the comment.
+
+
+.. index::
+   single: comment_tree
+   pair: template; comment_tree
+
+``comment_tree.html``
+---------------------
+
+This template is rendered by the :ref:`render-xtdcomment-tree` to represent the comments posted to an object.
+
+In the context of the template the following objects are expected:
+
+ * A list of dictionaries called ``comments`` in which each element is a dictionary like:
+
+   .. code-block:: python
+
+       {
+           'comment': xtdcomment_object,
+           'children': [ list_of_child_xtdcomment_dicts ]
+       }
+   
+Optionally the following objects can be present in the template:
+
+ * A boolean ``allow_flagging`` to indicate whether the user will have the capacity to suggest comment removal.
+ * A boolean ``allow_feedback`` to indicate whether the user will have the capacity to like/dislike comments. When ``True`` the special template ``user_feedback.html`` will be rendered.
+
+
+.. index::
+   single: comment_tree
+   pair: template; comment_tree
+   
+``user_feedback.html``
+----------------------
+
+This template is expected to be in the directory ``includes/django_comments_xtd/``, and it provides a way to customized the look of the like and dislike buttons as long as the list of users who clicked on them. It is included from ``comment_tree.html``. The template is rendered only when the :ref:`render-xtdcomment-tree` is used with the argument ``allow_feedback``.
+
+In the context of the template is expected:
+
+ * The boolean variable ``show_feedback``, which will be set to ``True`` when passing the argument ``show_feedback`` to the :ref:`render-xtdcomment-tree`. If ``True`` the template will show the list of users who liked the comment and the list of those who disliked it.
+ * A comment ``item``.
+
+Look at the section :ref:`show-the-list-of-users` to read on this particular topic.
+
+
+.. index::
+   single: liked
+   pair: template; liked
+
+``like.html``
+--------------
+
+This template is rendered when the user clicks on the **like** button of a comment.
+
+The context of the template expects:
+
+ * A boolean ``already_liked_it`` that indicates whether the user already clicked on the like button of this comment. In such a case, if the user submits the form a second time the liked-it flag is withdrawn.
+ * The ``comment`` subject to be liked.
+
+
+.. index::
+   single: liked
+   pair: template; liked
+
+``liked.html``
+--------------
+
+This template is rendered when the user click on the submit button of the form presented in the ``like.html`` template. The template is meant to thank the user for the feedback. The context for the template doesn't expect any specific object.
+   
+
+.. index::
+   single: liked
+   pair: template; liked
+
+``dislike.html``
+--------------
+
+This template is rendered when the user clicks on the **dislike** button of a comment.
+
+The context of the template expects:
+
+ * A boolean ``already_disliked_it`` that indicates whether the user already clicked on the dislike button for this comment. In such a case, if the user submits the form a second time the disliked-it flag is withdrawn.
+ * The ``comment`` subject to be liked.
+
+
+.. index::
+   single: liked
+   pair: template; liked
+
+``disliked.html``
+--------------
+
+This template is rendered when the user click on the submit button of the form presented in the ``dislike.html`` template. The template is meant to thank the user for the feedback. The context for the template doesn't expect any specific object.
+
 
 .. index::
    single: discarded
    pair: template; discarded
 
-**django_comments_xtd/discarded.html** (included)
-    Rendered if any receiver of the signal ``confirmation_received`` returns False. Tells the user the comment has been discarded.
+``discarded.html``
+------------------
+
+This template gets rendered if any receiver of the signal ``confirmation_received`` returns ``False``. Informs the user that the comment has been discarded. Read the subsection :ref:`signal-and-receiver-label` in the **Control Logic** to know about the ``confirmation_received`` signal.
+
 
 .. index::
    single: email_followup_comment
    pair: template; email_followup_comment
 
-**django_comments_xtd/email_followup_comment.(html|txt)** (included)
-    Email message sent when there is a new comment following up the user's. To receive this email the user must tick the box *Notify me of follow up comments via email*.
+``email_followup_comment``
+--------------------------
 
-.. index::
-   single: max_thread_level
-   pair: template; max_thread_level
+As ``.html`` and ``.txt``, this template represents the mail message sent when there is a new comment following up the user's. It's sent to the user who posted the comment that is being commented in a thread, or that arrived before the one being sent. To receive this email the user must tick the box *Notify me of follow up comments via email*.
 
-**django_comments_xtd/max_thread_level.html** (included)
-    Rendered when a nested comment is sent with a thread level over the maximum thread level allowed. The template in charge of rendering the list of comments can make use of ``comment.allow_thread`` (True when the comment accepts nested comments) to avoid adding the link "Reply" on comments that don't accept nested comments. See the simple_threads demo site, template ``comment/list.html`` to see a use example of ``comment.allow_thread``.
+The template expects the following objects in the context:
+
+ * The ``site`` object.
+ * The ``comment`` object about which users are being informed.
+ * The ``mute_url`` to offer the notified user the chance to stop receiving notifications on new comments.
+
 
 .. index::
    single: ajax
    pair: template; ajax
 
-**django_comments_xtd/comment.html** (included)
-    Rendered when a logged in user sent a comment via Ajax. The comment gets rendered immediately. JavaScript client side code still has to handle the response.
+``comment.html``
+----------------
+
+This template is rendered under any of the following circumstances:
+
+ * When using the :ref:`render-last-xtdcomments`.
+ * When a logged in user sends a comment via Ajax. The comment gets rendered immediately. JavaScript client side code still has toe handle the response.
+
 
 .. index::
    single: posted
    pair: template; posted
 
-**django_comments_xtd/posted.html**
-    Rendered when a not logged-in user sends a comment. Django-comments-xtd try first to find the template in its own template directory, ``django_comments_xtd/posted.html``. If it doesn't exist, it will use the template in Django Comments Framework directory: ``comments/posted.html``. Look at the demo sites for sample uses.
+``posted.html``
+---------------
+
+Rendered when a not authenticated user sends a comment. It informs the user that a confirmation message has been sent and that the link contained in the mail must be clicked to confirm the publication of the comment.
+
 
 .. index::
    single: reply
    pair: template; reply
 
-**django_comments_xtd/reply.html** (included)
-    Rendered when a user clicks on the *reply* link of a comment. Reply links are created with ``XtdComment.get_reply_url`` method.
+``reply.html``
+--------------
+
+Rendered when a user clicks on the **reply** link of a comment. Reply links are created with ``XtdComment.get_reply_url`` method. They show up below the text of each comment when they allow nested comments.
 
 .. index::
    single: muted
    pair: template; muted
 
-**django_comments_xtd/muted.html** (included)
-    Rendered when a user clicks on the *mute link* of a follow-up email message.
+``muted.html``
+--------------
+
+Rendered when a user clicks on the **mute link** received in a follow-up notification message. It informs the user that the site will not send more notifications on new comments sent to the object.

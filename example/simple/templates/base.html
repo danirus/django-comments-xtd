@@ -1,0 +1,41 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}django-comments-xtd simple demo{% endblock %}</title>
+    <link href="{% static 'django_comments_xtd/css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+      .container {
+        width: auto;
+        max-width: 680px;
+        padding: 0 15px;
+      }
+      .post-footer, .comments {
+        padding: 20px 0;
+      }
+    </style>    
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+	    <h3 class="text-center">simple demo site</h3>
+	    <h4 class="text-center">{% block header %}{% endblock %}</h4>
+      </div>
+    </div>
+
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 col-md-12">
+          <hr/>
+          <p class="text-center text-muted small">django-comments-xtd simple demo.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

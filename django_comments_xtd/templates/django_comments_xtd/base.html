@@ -1,0 +1,32 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}{% endblock %}</title>
+    <link href="{% static 'django_comments_xtd/css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+      .container {
+        width: auto;
+        max-width: 680px;
+        padding: 0 15px;
+      }
+      .post-footer, .comments {
+        padding: 20px 0;
+      }
+    </style>    
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+	    <h4 class="text-center">{% block header %}{% endblock %}</h4>
+      </div>
+    </div>
+
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+  </body>
+</html>

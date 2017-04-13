@@ -1,24 +1,73 @@
-{% extends "comments/base.html" %}
+{% extends "django_comments_xtd/base.html" %}
 {% load i18n %}
+{% load comments_xtd %}
 
 {% block title %}{% trans "Confirm your opinion" %}{% endblock %}
 
+{% block header %}
+<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+{% endblock %}
+
 {% block content %}
-<h1>{% if already_liked_it %}{% trans "You already said you like this comment!" %}{% else %}{% trans "Do you like this comment?" %}{% endif %}</h1>
-
-<blockquote>{{ comment|linebreaks }}</blockquote>
-
-{% if already_liked_it %}
-<p style="color:red">
-  {% trans 'Click on the "withdraw" button if you want to withdraw your positive opinion on this comment.' %}
-</p>
-{% endif %}  
-
-<form action="." method="post">{% csrf_token %}
-  {% if next %}
-  <div><input type="hidden" name="next" value="{{ next }}" id="next"/></div>{% endif %}
-  <p class="submit">
-    <input type="submit" name="submit" value="{% if already_liked_it %}{% trans 'Withdraw my opinion' %}{% else %}{% trans 'I like it' %}{% endif %}"/> or <a href="{{ comment.get_absolute_url }}">{% trans "Cancel" %}</a>
-  </p>
-</form>
+<h4 class="page-header text-center">
+  {% if already_liked_it %}
+  {% trans "You liked this comment, do you want to change it?" %}
+  {% else %}
+  {% trans "Do you like this comment?" %}
+  {% endif %}
+</h4>
+<p class="alert alert-info text-center">{% trans "Please, confirm your opinion about the comment." %}</p>
+<div class="row">
+  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+    <div class="media">
+      <div class="media-left">
+        {% if comment.user_url %}
+        <a href="{{ comment.user_url }}">
+          {{ comment.user_email|xtd_comment_gravatar }}
+        </a>
+        {% else %}
+        {{ comment.user_email|xtd_comment_gravatar }}
+        {% endif %}
+      </div>
+      <div class="media-body">
+        <h6 class="media-heading">
+          {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+          {% if comment.user_url %}
+          <a href="{{ comment.user_url }}" target="_new">{% endif %}
+            {{ comment.user_name }}
+            {% if comment.user_url %}
+          </a>{% endif %}
+        </h6>
+        <p>{{ comment.comment }}</p>
+      </div>
+    </div>
+    <div class="visible-lg-block visible-md-block">
+      <hr/>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+    {% if already_liked_it %}
+    <div class="alert alert-warning text-center">
+      {% trans 'Click on the "withdraw" button if you want to withdraw your positive opinion on this comment.' %}
+    </div>
+    {% endif %}
+    <div class="well well-lg">
+      <form action="." method="post" class="form-horizontal">{% csrf_token %}
+        <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
+        <div class="form-group">
+          <div class="text-center">
+            {% if already_liked_it %}
+            <input type="submit" name="submit" class="btn btn-warning" value="{% trans 'Withdraw' %}"/>
+            {% else %}
+            <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'I like it' %}"/>
+            {% endif %}
+            <a class="btn btn-default" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -32,13 +32,13 @@ def max_thread_level_for_content_type(content_type):
 
 
 class MaxThreadLevelExceededException(Exception):
-    def __init__(self, content_type=None):
-        self.max_by_app = max_thread_level_for_content_type(content_type)
+    def __init__(self, comment):
+        self.comment = comment
+        # self.max_by_app = max_thread_level_for_content_type(content_type)
 
     def __str__(self):
-        return (ugettext("Can not post comments over the thread level "
-                         "%{max_thread_level}") %
-                {"max_thread_level": self.max_by_app})
+        return (ugettext("Max thread level reached for comment %d") %
+                self.comment.id)
 
 
 class XtdCommentManager(CommentManager):
@@ -88,7 +88,7 @@ class XtdComment(Comment):
                     with atomic():
                         self._calculate_thread_data()
                 else:
-                    raise MaxThreadLevelExceededException(self.content_type)
+                    raise MaxThreadLevelExceededException(self)
             kwargs["force_insert"] = False
             super(Comment, self).save(*args, **kwargs)
 
@@ -97,7 +97,7 @@ class XtdComment(Comment):
         #  http://www.sqlteam.com/article/sql-for-threaded-discussion-forums
         parent = XtdComment.objects.get(pk=self.parent_id)
         if parent.level == max_thread_level_for_content_type(self.content_type):
-            raise MaxThreadLevelExceededException(self.content_type)
+            raise MaxThreadLevelExceededException(self)
 
         self.thread_id = parent.thread_id
         self.level = parent.level + 1
@@ -125,7 +125,7 @@ class XtdComment(Comment):
             return False
 
     @classmethod
-    def tree_from_queryset(cls, queryset, with_participants=False):
+    def tree_from_queryset(cls, queryset, with_feedback=False):
         """Converts a XtdComment queryset into a list of nested dictionaries.
         The queryset has to be ordered by thread_id, order.
         Each dictionary contains two attributes::
@@ -134,7 +134,7 @@ class XtdComment(Comment):
                 'children': [list of child comment dictionaries]
             }
         """
-        def get_participants(comment):
+        def get_user_feedback(comment):
             return {'likedit': comment.users_who_liked_it(),
                     'dislikedit': comment.users_who_disliked_it()}
 
@@ -142,8 +142,8 @@ class XtdComment(Comment):
             for item in children:
                 if item['comment'].pk == obj.parent_id:
                     child_dict = {'comment': obj, 'children': []}
-                    if with_participants:
-                        child_dict.update(get_participants(obj))
+                    if with_feedback:
+                        child_dict.update(get_user_feedback(obj))
                     item['children'].append(child_dict)
                     return True
                 elif item['children']:
@@ -154,19 +154,18 @@ class XtdComment(Comment):
         dic_list = []
         cur_dict = None
         for obj in queryset:
-            # A new comment at the same level as thread_dict.
             if cur_dict and obj.level == cur_dict['comment'].level:
                 dic_list.append(cur_dict)
                 cur_dict = None
             if not cur_dict:
                 cur_dict = {'comment': obj, 'children': []}
-                if with_participants:
-                    cur_dict.update(get_participants(obj))
+                if with_feedback:
+                    cur_dict.update(get_user_feedback(obj))
                 continue
             if obj.parent_id == cur_dict['comment'].pk:
                 child_dict = {'comment': obj, 'children': []}
-                if with_participants:
-                    child_dict.update(get_participants(obj))
+                if with_feedback:
+                    child_dict.update(get_user_feedback(obj))
                 cur_dict['children'].append(child_dict)
             else:
                 add_children(cur_dict['children'], obj)

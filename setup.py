@@ -18,7 +18,7 @@ test.run_tests = run_tests
 
 setup(
     name="django-comments-xtd",
-    version="1.7.0",
+    version="1.7.1",
     packages=find_packages(),
     include_package_data=True,
     license="MIT",
@@ -34,6 +34,13 @@ setup(
     maintainer="Daniel Rus Morales",
     maintainer_email="mbox@danir.us",
     url="http://pypi.python.org/pypi/django-comments-xtd",
+    install_requires=[
+        'Django>=1.8',
+        'django-contrib-comments',
+        'docutils',
+        'Markdown',
+        'django-markup'
+    ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',

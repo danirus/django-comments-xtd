@@ -6,8 +6,8 @@ django-comments-xtd |TravisCI|_
 
 Demo site and tests working under officially Django `supported versions <https://www.djangoproject.com/download/#supported-versions>`_:
 
-* Django 1.8, Django 1.9 and Django 1.10
-* Python 2.7 and Python 3 (3.2, 3.4, 3.5, 3.6)
+* Django 1.8, 1.9, 1.10 and 1.11
+* Python 2.7, 3.2, 3.4, 3.5, 3.6
 
 A reusable django app that extends the `django-contrib-comments <https://pypi.python.org/pypi/django-contrib-comments>`_ framework with:
 
@@ -38,17 +38,14 @@ Read the tutorial covering every feature in the documentation at:
 Demo projects
 -------------
 
-Includes several demo sites and an extensive test suite.
+Includes 3 example projects:
 
-Check out the demo projects coming with the package:
-
-#. **simple**: Single model with **non-threaded** comments.
-#. **simple_threads**: Single model with **threaded** comments up to level 2.
-#. **multiple**: Several models with comments, and a maximum thread level defined on per app.model basis.
-#. **custom_comments**: How to extend django-comments-xtd with your own comment model and form.
+#. **simple**: Single model with comments.
+#. **custom**: Showcase how to extend django-comments-xtd with your own comment model and form.
+#. **comp**: Several models with comments, different nesting levels for each model, removal suggestion flags, like and dislike buttons, list of users who liked/disliked comments, etc.
 
 
 Contributions
 -------------
    
-If you commit code, please consider adding proper coverage (especially if it has a chance for a regression) in the test suite. Run the tests with the ``python setup.py test`` command.
+If you commit code, please consider adding proper coverage (especially if it has a chance for a regression) in the test suite. Run the tests with the ``python setup.py test`` command. Check full compatibility with supported versions by running ``tox``.

@@ -45,6 +45,11 @@ USE_I18N = True
 
 STATIC_URL = "/static/"
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = ''
@@ -60,12 +65,6 @@ MEDIA_URL = ''
 ADMIN_MEDIA_PREFIX = '/media/'
 
 SECRET_KEY = 'v2824l&2-n+4zznbsk9c-ap5i)b3e8b+%*a=dxqlahm^%)68jn'
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -103,9 +102,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    django_comments,
+    'django.contrib.staticfiles',
     'django_comments_xtd',
     'django_comments_xtd.tests',
+    django_comments,
 ]
 COMMENTS_APP = "django_comments_xtd"
 
@@ -116,7 +116,4 @@ COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
 COMMENTS_XTD_MAX_THREAD_LEVEL = 2
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {'tests.diary': 0}
 
-if django.VERSION[1] >= 7:
-    TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-else:
-    TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'

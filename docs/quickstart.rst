@@ -10,15 +10,11 @@ Quick start guide
 
 To get started using django-comments-xtd follow these steps:
 
-#. Install the Django Comments Framework by running ``pip install django-contrib-comments``.
+#. ``pip install django-comments-xtd``
 
-#. Install the django-comments-xtd app by running ``pip install django-comments-xtd``.
+#. :ref:`Enable the "sites" framework <enabling-the-sites-framework>` by adding ``'django.contrib.sites'`` to :setting:`INSTALLED_APPS` and defining :setting:`SITE_ID`. Visit the admin site and be sure that the domain field of the ``Site`` instance points to the correct domain (``localhost:8000`` when running the default development server), as it will be used to create comment verification URLs, follow-up cancellations, etc.
 
-#. :ref:`Enable the "sites" framework <enabling-the-sites-framework>` by adding ``'django.contrib.sites'`` to :setting:`INSTALLED_APPS` and defining :setting:`SITE_ID`. Be sure that the domain field of the ``Site`` instance points to the correct domain (localhost:8000 when running the default development server), as it will be used by django_comments_xtd to create comment verification URLs, follow-up cancellation URLs, etc.
-
-#. Install the comments framework by adding ``'django_comments'`` to :setting:`INSTALLED_APPS`.
-
-#. Install the comments-xtd app by adding ``'django_comments_xtd'`` to :setting:`INSTALLED_APPS`.
+#. Add ``'django_comments_xtd'`` and ``'django_comments'``, in that order, to :setting:`INSTALLED_APPS`.
 
 #. Set the :setting:`COMMENTS_APP` setting to ``'django_comments_xtd'``.
 
@@ -26,15 +22,18 @@ To get started using django-comments-xtd follow these steps:
 
    .. code-block:: python
 
-       # 0: No nested comments.
-       # 1: Nested up to level one.
+       # 0: No nested comments:
+       #  Comment (level 0)
+       # 1: Nested up to level one:
+       #  Comment (level 0)
+       #   |-- Comment (level 1)
        # 2: Nested up to level two:
        #  Comment (level 0)
        #   |-- Comment (level 1)
        #        |-- Comment (level 2)
        COMMENTS_XTD_MAX_THREAD_LEVEL = 2
 
-   The thread level can also be established on a per ``<app>.<model>`` basis by using the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` setting, so that different models have enabled different thread levels. ie: no nested comments for food recipes, up to thread level one for blog posts, etc.
+   The thread level can also be established on a per ``<app>.<model>`` basis by using the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` setting. Use it to establish different maximum threading levels for each model. ie: no nested comments for quotes, up to thread level 2 for blog stories, etc.
 
 #. Set the :setting:`COMMENTS_XTD_CONFIRM_EMAIL` to ``True`` to require comment confirmation by email for no logged-in users.
    
@@ -60,9 +59,7 @@ To get started using django-comments-xtd follow these steps:
        EMAIL_HOST_PASSWORD = "yourpassword"
        DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
 
-#. If you wish to allow comments written in a markup language like Markdown_ or reStructuredText_, install django-markup by running ``pip install django-markup``.
-
-#. Use the `comments <https://django-contrib-comments.readthedocs.io/en/latest/quickstart.html#comment-template-tags>`_ templatetag module, provided by the `django-comments <https://django-contrib-comments.readthedocs.io/en/latest/index.html>`_ app. Create a ``comments`` directory in your templates directory and copy the templates you want to customise from the Django Comments Framework. The following are the most important:
+#. As of version 1.8 django-comments-xtd comes with templates styled with `twitter-bootstrap`_ v3 that allows you to start using the app right away. If you want to build your own templates, use the `comments <https://django-contrib-comments.readthedocs.io/en/latest/quickstart.html#comment-template-tags>`_ templatetag module, provided by the `django-comments <https://django-contrib-comments.readthedocs.io/en/latest/index.html>`_ app. Create a ``comments`` directory in your templates directory and copy the templates you want to customise from the Django Comments Framework. The following are the most important:
 
    * ``comments/list.html``, used by the ``render_comments_list`` templatetag.
 
@@ -75,9 +72,9 @@ To get started using django-comments-xtd follow these steps:
 #. Add extra settings to control comments in your project. Check the available settings in the :ref:`Django Comments Framework <settings-comments>` and in the :ref:`django-comments-xtd app <settings-comments-xtd>`.
 
 
-These are in a glance the steps to quickly start using django-comments-xtd. Follow to the next page, the :ref:`ref-tutorial`, to read a detailed guide that takes everything into account. In addition to the tutorial, the :ref:`ref-example` implement several commenting applications.
+These are the steps to quickly start using django-comments-xtd. Follow to the next page, the :ref:`ref-tutorial`, to read a detailed guide that takes everything into account. In addition to the tutorial, the :ref:`ref-example` implement several commenting applications.
 
 
-.. _Markdown: https://daringfireball.net/projects/markdown/
+.. _twitter-bootstrap: https://getbootstrap.com
 .. _reStructuredText: http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
 

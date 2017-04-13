@@ -1,9 +1,15 @@
-{% extends "comments/base.html" %}
+{% extends "django_comments_xtd/base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Comment requires approval" %}.{% endblock %}
 
 {% block content %}
-<h1>{% trans "Comment in moderation" %}</h1>
-<p>{% trans "Your comment has to be reviewed before approval.<br/>It has been put automatically in moderation.<br/>Thank you for your patience and understanding." %}</p>
+<h4 class="text-center">{% trans "Comment in moderation" %}</h4>
+<p class="text-center">
+  {% blocktrans %}
+  Your comment is in moderation.<br/>
+  It will be reviewed before approval.<br/>
+  Thank you for your patience and understanding.
+  {% endblocktrans %}
+</p>
 {% endblock %}

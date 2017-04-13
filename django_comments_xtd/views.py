@@ -1,41 +1,29 @@
 from __future__ import unicode_literals
 import six
 
-import django
-
+from django.apps import apps
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.urlresolvers import reverse
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template import loader, Context
+from django.template import loader
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
+from django.views.generic import ListView
 
-try:
-    from django_comments.models import CommentFlag
-    from django_comments.views.utils import next_redirect, confirmation_view
-except ImportError:
-    from django.contrib.comments.models import CommentFlag
-    from django.contrib.comments.views.utils import (next_redirect,
-                                                     confirmation_view)
+
+from django_comments.models import CommentFlag
+from django_comments.views.utils import next_redirect, confirmation_view
 
 from django_comments_xtd import (get_form, comment_was_posted, signals, signed,
                                  get_model as get_comment_model)
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment,
-                                        max_thread_level_for_content_type,
+                                        MaxThreadLevelExceededException,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
 from django_comments_xtd.utils import send_mail
-
-
-get_model = None
-if django.VERSION[:2] <= (1, 8):
-    from django.db import models
-    get_model = models.get_model
-else:
-    from django.apps import apps
-    get_model = apps.get_model
 
 
 XtdComment = get_comment_model()
@@ -57,10 +45,10 @@ def send_email_confirmation_request(
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
     confirmation_url = reverse("comments-xtd-confirm", args=[key])
-    message_context = Context({'comment': comment,
-                               'confirmation_url': confirmation_url,
-                               'contact': settings.COMMENTS_XTD_FROM_EMAIL,
-                               'site': site})
+    message_context = {'comment': comment,
+                       'confirmation_url': confirmation_url,
+                       'contact': settings.COMMENTS_XTD_FROM_EMAIL,
+                       'site': site}
     # prepare text message
     text_message_template = loader.get_template(text_template)
     text_message = text_message_template.render(message_context)
@@ -210,9 +198,9 @@ def notify_comment_followers(comment):
             signed.dumps(instance, compress=True,
                          extra_key=settings.COMMENTS_XTD_SALT))
 
-    model = get_model(comment.content_type.app_label,
-                      comment.content_type.model)
-    target = model._default_manager.get(pk=comment.object_pk)
+    # model = apps.get_model(comment.content_type.app_label,
+    #                        comment.content_type.model)
+    # target = model._default_manager.get(pk=comment.object_pk)
     subject = _("new comment posted")
     text_message_template = loader.get_template(
         "django_comments_xtd/email_followup_comment.txt")
@@ -222,11 +210,11 @@ def notify_comment_followers(comment):
 
     for email, (name, key) in six.iteritems(followers):
         mute_url = reverse('comments-xtd-mute', args=[key])
-        message_context = Context({'user_name': name,
-                                   'comment': comment,
-                                   'content_object': target,
-                                   'mute_url': mute_url,
-                                   'site': comment.site})
+        message_context = {'user_name': name,
+                           'comment': comment,
+                           # 'content_object': target,
+                           'mute_url': mute_url,
+                           'site': comment.site}
         text_message = text_message_template.render(message_context)
         if settings.COMMENTS_XTD_SEND_HTML_EMAIL:
             html_message = html_message_template.render(message_context)
@@ -239,12 +227,12 @@ def notify_comment_followers(comment):
 def reply(request, cid):
     try:
         comment = XtdComment.objects.get(pk=cid)
-    except (XtdComment.DoesNotExist):
-        raise Http404
-
-    if comment.level == max_thread_level_for_content_type(comment.content_type):
-        return render(request, "django_comments_xtd/max_thread_level.html",
-                      {'max_level': settings.COMMENTS_XTD_MAX_THREAD_LEVEL})
+        if not comment.allow_thread():
+            raise MaxThreadLevelExceededException(comment)
+    except MaxThreadLevelExceededException as exc:
+        return HttpResponseForbidden(exc)
+    except XtdComment.DoesNotExist as exc:
+        raise Http404(exc)
 
     form = get_form()(comment.content_object, comment=comment)
     next = request.GET.get("next", reverse("comments-xtd-sent"))
@@ -281,8 +269,8 @@ def mute(request, key):
         is_public=True, followup=True, user_email=comment.user_email
     ).update(followup=False)
 
-    model = get_model(comment.content_type.app_label,
-                      comment.content_type.model)
+    model = apps.get_model(comment.content_type.app_label,
+                           comment.content_type.model)
     target = model._default_manager.get(pk=comment.object_pk)
 
     template_arg = [
@@ -387,3 +375,39 @@ dislike_done = confirmation_view(
     template="django_comments_xtd/disliked.html",
     doc='Displays a "I disliked this comment" success page.'
 )
+
+
+class XtdCommentListView(ListView):
+    page_range = 5
+    content_types = None  # List of "app_name.model_name" strings.
+    template_name = "django_comments_xtd/comment_list.html"
+
+    def get_content_types(self):
+        if self.content_types is None:
+            return None
+        content_types = []
+        for entry in self.content_types:
+            app, model = entry.split('.')
+            content_types.append(
+                ContentType.objects.get(app_label=app, model=model)
+            )
+        return content_types
+
+    def get_queryset(self):
+        content_types = self.get_content_types()
+        if content_types is None:
+            return None
+        return XtdComment.objects.for_content_types(content_types)
+
+    def get_context_data(self, **kwargs):
+        context = super(XtdCommentListView, self).get_context_data(**kwargs)
+        if 'paginator' in context:
+            index = context['page_obj'].number - 1
+            prange = [n for n in context['paginator'].page_range]
+            if len(prange) > self.page_range:
+                if len(prange[index:]) >= self.page_range:
+                    prange = prange[index:(index+self.page_range)]
+                else:
+                    prange = prange[-(self.page_range):]
+            context['page_range'] = prange
+        return context

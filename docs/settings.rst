@@ -4,117 +4,110 @@
 Settings
 ========
 
-To use django-comments-xtd it's necessary to declare the :setting:`COMMENTS_APP` setting::
+To use django-comments-xtd it is necessary to declare the :setting:`COMMENTS_APP` setting in your project's settings module as::
 
     COMMENTS_APP = "django_comments_xtd"
 
 A number of additional settings are available to customize django-comments-xtd behaviour. 
 
+.. contents:: Table of Contents
+   :depth: 1
+   :local:
+
+
 .. setting:: COMMENTS_XTD_MAX_THREAD_LEVEL
    
-Maximum Thread Level
-====================
+``COMMENTS_XTD_MAXIMUM_THREAD_LEVEL``
+=====================================
 
-:index:`COMMENTS_XTD_MAX_THREAD_LEVEL` - Maximum Thread Level
-
-**Optional**
-
-Indicate the maximum thread level for comments. 
+**Optional**. Indicates the **Maximum thread level** for comments. In other words, whether comments can be nested. This setting established the default value for comments posted to instances of every model instance in Django. It can be overriden on per app.model basis using the :setting:`COMMENTS_XTD_MAXIMUM_THREAD_LEVEL_BY_APP_MODEL``, introduced right after this section.
 
 An example::
 
      COMMENTS_XTD_MAX_THREAD_LEVEL = 8
 
-Defaults to 0. What means threads are not permitted.
+It defaults to ``0``. What means nested comments are not permitted.
+
 
 .. setting:: COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
 
-Maximum Thread Level per App.Model
-==================================
+``COMMENTS_XTD_MAXIMUM_THREAD_LEVEL_BY_APP_MODEL``
+==================================================
 
-:index:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` - Maximum Thread Level per app.model basis
-
-**Optional**
-
-A dictionary with `app_label.model` as keys and the maximum thread level for comments posted to instances of those models as values. It allows definition of max comment thread level on a per `app_label.model` basis.
+**Optional**. The **Maximum thread level on per app.model basis** is a dictionary with pairs `app_label.model` as keys and the maximum thread level for comments posted to instances of those models as values. It allows definition of max comment thread level on a per `app_label.model` basis.
 
 An example::
 
     COMMENTS_XTD_MAX_THREAD_LEVEL = 0
-    COMMENTS_XTD_MAX_THREAD_LEVEL_BY_MODEL = {
+    COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
         'projects.release': 2,
 	'blog.stories': 8, 'blog.quotes': 8, 
 	'blog.diarydetail': 0 # not required as it defaults to COMMENTS_XTD_MAX_THREAD_LEVEL
     }
 
+In the example, comments posted to ``projects.release`` instances can go up to level 2::
+
+    First comment (level 0)
+        |-- Comment to "First comment" (level 1)
+            |-- Comment to "Comment to First comment" (level 2)
+
+
+It defaults to ``{}``. What means the maximum thread level is setup with :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL`.
+    
 
 .. setting:: COMMENTS_XTD_CONFIRM_EMAIL
 
-Confirm Comment Post by Email
+``COMMENTS_XTD_CONFIRM_MAIL``
 =============================
 
-:index:`COMMENTS_XTD_CONFIRM_EMAIL` - Confirm Comment Post by Email
+**Optional**. It specifies the **confirm comment post by mail** setting, establishing whether a comment confirmation should be sent by mail. If set to ``True`` a confirmation message is sent to the user with a link on which she has to click to confirm the comment. If the user is already authenticated the confirmation is not sent and the comment is accepted, if no moderation has been setup up,  with no further confirmation needed.
 
-**Optional**
+If is set to False, and no moderation has been set up to potentially discard it, the comment will be accepted.
 
-This setting establishes whether a comment confirmation should be sent by email. If set to True a confirmation message is sent to the user with a link she has to click on. If the user is already authenticated the confirmation is not sent.
-
-If is set to False the comment is accepted (unless your discard it by returning False when receiving the signal ``comment_will_be_posted``, defined by the Django Comments Framework).
+Read about the :ref:`moderation` topic in the tutorial.
 
 An example::
 
      COMMENTS_XTD_CONFIRM_EMAIL = True
 
-Defaults to True.
+It defaults to ``True``.
 
 
 .. setting:: COMMENTS_XTD_FROM_EMAIL
 
-From Email Address
-==================
+``COMMENTS_XTD_FROM_EMAIL``
+===========================
 
-:index:`COMMENTS_XTD_FROM_EMAIL` - From Email Address
-
-**Optional**
-
-This setting establishes the email address used in the *from* field when sending emails.
+**Optional**. It specifies the **from mail address** setting used in the *from* field when sending emails.
 
 An example::
 
      COMMENTS_XTD_FROM_EMAIL = "helpdesk@yoursite.com"
 
-Defaults to ``settings.DEFAULT_FROM_EMAIL``.
+It defaults to ``settings.DEFAULT_FROM_EMAIL``.
 
 
 .. setting:: COMMENTS_XTD_FORM_CLASS
 
-Comment Form Class
-==================
+``COMMENTS_XTD_FORM_CLASS``
+===========================
 
-:index:`COMMENTS_XTD_FORM_CLASS` - Form class to use when rendering comment forms.
-
-**Optional**
-
-A classpath to the form class that will be used for comments.
+**Optional**, form class to use when rendering comment forms. It's a string with the class path to the form class that will be used for comments.
 
 An example::
 
      COMMENTS_XTD_FORM_CLASS = "mycomments.forms.MyCommentForm"
 
 
-Defaults to `"django_comments_xtd.forms.XtdCommentForm"`.
+It defaults to `"django_comments_xtd.forms.XtdCommentForm"`.
 
 
 .. setting:: COMMENTS_XTD_MODEL
 
-Comment Model
-=============
+``COMMENTS_XTD_MODEL``
+======================
 
-:index:`COMMENTS_XTD_MODEL` - Model to use
-
-**Optional**
-
-A classpath to the model that will be used for comments.
+**Optional**, represents the model class to use for comments. It's a string with the class path to the model that will be used for comments.
 
 An example::
 
@@ -126,86 +119,65 @@ Defaults to `"django_comments_xtd.models.XtdComment"`.
 
 .. setting:: COMMENTS_XTD_LIST_ORDER
 
-Comments Model Ordering
-=======================
+``COMMENTS_XTD_LIST_ORDER``
+===========================
 
-:index:`COMMENTS_XTD_LIST_ORDER` - Field ordering in which comments are retrieve.
+**Optional**, represents the field ordering in which comments are retrieve, a tuple with field names, used by the ``get_queryset`` method of ``XtdComment`` model's manager.
 
-**Optional**
-
-A tuple with field names, used as the ``ordering`` for the ``XtdComment`` mode.
-
-Defaults to ``('thread_id', 'order')``
+It defaults to ``('thread_id', 'order')``
              
 
 .. setting:: COMMENTS_XTD_MARKUP_FALLBACK_FILTER
 
-Comment Markup Fallback Filter
-==============================
+``COMMENTS_XTD_MARKUP_FALLBACK_FILTER``
+=======================================
 
-:index:`COMMENTS_XTD_MARKUP_FALLBACK_FILTER` - Default filter to use when rendering comments
-
-**Optional**
-
-Indicate the default markup filter for comments. This value must be a key in the MARKUP_FILTER setting. If not specified or None, comments that do not indicate an intended markup filter are simply returned as plain text.
+**Optional**, default filter to use when rendering comments. Indicates the default markup filter for comments. This value must be a key in the :setting:`MARKUP_FILTER` setting. If not specified or None, comments that do not indicate an intended markup filter are simply returned as plain text.
 
 An example::
 
     COMMENTS_XTD_MARKUP_FALLBACK_FILTER = 'markdown'
 
-Defaults to None.
+It defaults to ``None``.
 
 
 .. setting:: COMMENTS_XTD_SALT
 
-Salt
-====
+``COMMENTS_XTD_SALT``
+=====================
 
-:index:`COMMENTS_XTD_SALT` - Extra key to salt the form
-
-**Optional**
-
-This setting establishes the ASCII string extra_key used by ``signed.dumps`` to salt the comment form hash. As ``signed.dumps`` docstring says, just in case you're worried that the NSA might try to brute-force your SHA-1 protected secret.
+**Optional**, it is the **extra key to salt the comment form**. It establishes the bytes string extra_key used by ``signed.dumps`` to salt the comment form hash, so that there an additional secret is in use to encode the comment before sending it for confirmation within a URL.
 
 An example::
 
      COMMENTS_XTD_SALT = 'G0h5gt073h6gH4p25GS2g5AQ25hTm256yGt134tMP5TgCX$&HKOYRV'
 
-Defaults to an empty string.
+It defaults to an empty string.
+
 
 .. setting:: COMMENTS_XTD_SEND_HTML_EMAIL
 
-Send HTML Email
-===============
+``COMMENTS_XTD_SEND_HTML_EMAIL``
+================================
 
-:index:`COMMENTS_XTD_SEND_HTML_EMAIL` - Enable/Disable HTML email messages
-
-**Optional**
-
-This boolean setting establishes whether email messages have to be sent in HTML
-format. By the default messages are sent in both Text and HTML format. By
-disabling the setting email messages will be sent only in Text format.
+**Optional**, enable/disable HTML mail messages. This boolean setting establishes whether email messages have to be sent in HTML format. By the default messages are sent in both Text and HTML format. By disabling the setting, mail messages will be sent only in text format.
 
 An example::
 
-    COMMENTS_XTD_SEND_HTML_EMAIL = True
+    COMMENTS_XTD_SEND_HTML_EMAIL = False
 
-Defaults to True.
+It defaults to True.
 
 
 .. setting:: COMMENTS_XTD_THREADED_EMAILS
 
-Threaded Emails
-===============
+``COMMENTS_XTD_THREADED_EMAILS``
+================================
 
-:index:`COMMENTS_XTD_THREADED_EMAILS` - Enable/Disable sending emails in separeate threads
-
-**Optional**
-
-For low traffic websites sending emails in separate threads is a fine solution. However, for medium to high traffic websites such overhead could be reduce by using other solutions, like a Celery application.
+**Optional**, enable/disable sending mails in separated threads. For low traffic websites sending mails in separate threads is a fine solution. However, for medium to high traffic websites such overhead could be reduced by using other solutions, like a Celery application or any other detached from the request-response HTTP loop.
 
 An example::
 
-    COMMENTS_XTD_THREADED_EMAILS = True
+    COMMENTS_XTD_THREADED_EMAILS = False
 
-Defaults to True.
+Defaults to ``True``.

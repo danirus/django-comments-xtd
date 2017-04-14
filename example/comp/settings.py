@@ -115,6 +115,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
     'comp.articles',
     'comp.quotes',
     'django_comments_xtd',

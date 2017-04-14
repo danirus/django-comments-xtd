@@ -1,6 +1,8 @@
 from django.conf.urls import include, url
 
-from django_comments_xtd import views
+from rest_framework.urlpatterns import format_suffix_patterns
+
+from django_comments_xtd import api, views
 
 
 urlpatterns = [
@@ -16,4 +18,11 @@ urlpatterns = [
     url(r'^liked/$', views.like_done, name='comments-xtd-like-done'),
     url(r'^dislike/(\d+)/$', views.dislike, name='comments-xtd-dislike'),
     url(r'^disliked/$', views.dislike_done, name='comments-xtd-dislike-done'),
+
+    # API handlers.
+    url(r'^api/list/$', api.XtdCommentList.as_view()),
+    url(r'^api/(?P<pk>[0-9]+)$', api.XtdCommentDetail.as_view()),
 ]
+
+
+urlpatterns = format_suffix_patterns(urlpatterns)

@@ -20,7 +20,7 @@ urlpatterns = [
     url(r'^disliked/$', views.dislike_done, name='comments-xtd-dislike-done'),
 
     # API handlers.
-    url(r'^api/(?P<content_type>\w+[\w-]*\w+)/(?P<object_pk>[0-9]+)/list/$',
+    url(r'^api/(?P<content_type>\w+[\w-]*\w+)/(?P<object_pk>[0-9]+)/$',
         api.XtdCommentList.as_view()),
     url(r'^api/(?P<pk>[0-9]+)$', api.XtdCommentDetail.as_view()),
 ]

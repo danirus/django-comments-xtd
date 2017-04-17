@@ -22,6 +22,8 @@ urlpatterns = [
         paginate_by=10, page_range=5),
         name='comments-xtd-list'),
     url(r'^feeds/comments/$', LatestCommentFeed(), name='comments-feed'),    
+    url(r'^api-auth/', include('rest_framework.urls',
+                               namespace='rest_framework')),
 ]
 
 

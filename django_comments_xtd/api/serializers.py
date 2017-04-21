@@ -4,7 +4,6 @@ from rest_framework import serializers
 from django_comments_xtd.models import XtdComment
 
 
-
 class XtdCommentSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(max_length=50, read_only=True)
     user_email = serializers.CharField(max_length=254, read_only=True)
@@ -14,7 +13,7 @@ class XtdCommentSerializer(serializers.ModelSerializer):
     parent_id = serializers.IntegerField(default=0)
     level = serializers.IntegerField(read_only=True)
     order = serializers.IntegerField(read_only=True)
-    followup = serializers.BooleanField(write_only=True)
+    followup = serializers.BooleanField(write_only=True, default=False)
     
     class Meta:
         model = XtdComment

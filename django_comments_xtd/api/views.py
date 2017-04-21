@@ -5,7 +5,8 @@ from django.http import Http404
 from rest_framework import generics, permissions
 
 from django_comments_xtd.models import XtdComment
-from django_comments_xtd.serializers import XtdCommentSerializer
+from django_comments_xtd.api.permissions import IsOwnerOrReadOnly
+from django_comments_xtd.api.serializers import XtdCommentSerializer
 
 
 class XtdCommentList(generics.ListCreateAPIView):
@@ -37,7 +38,8 @@ class XtdCommentList(generics.ListCreateAPIView):
             'user': self.request.user,
             'user_name': (self.request.user.get_full_name() or
                           self.request.user.get_username()),
-            'user_email': self.request.user.email
+            'user_email': self.request.user.email,
+            'ip_address': self.request.META.get('REMOTE_ADDR', None)
         }
         serializer.save(**kwargs)
 
@@ -47,4 +49,5 @@ class XtdCommentDetail(generics.RetrieveUpdateAPIView):
 
     queryset = XtdComment.objects.all()
     serializer_class = XtdCommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly)

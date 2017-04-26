@@ -1,14 +1,20 @@
 import hashlib
+import re
+
 try:
     from urllib.parse import urlencode
 except ImportError:
     from urllib import urlencode
-import re
 
 from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader)
 from django.utils.safestring import mark_safe
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
@@ -481,3 +487,11 @@ def xtd_comment_gravatar(email, size=48):
     url = xtd_comment_gravatar_url(email, size)
     return mark_safe('<img src="%s" height="%d" width="%d">' %
                      (url, size, size))
+
+# ----------------------------------------------------------------------
+@register.filter
+def xtdcomment_api_url(obj):
+    ctype = ContentType.objects.get_for_model(obj)
+    ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
+    return reverse('comments-xtd-api', kwargs={'content_type': ctype_slug,
+                                               'object_pk': obj.id})

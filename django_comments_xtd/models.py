@@ -1,20 +1,13 @@
-import django
 from django.db import models
-from django.db.models import F, Max, Min
+from django.db.models import F, Max, Min, Q
+from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
+from django.dispatch import receiver
 from django.utils.translation import ugettext, ugettext_lazy as _
 
-try:
-    from django.db.transaction import atomic
-except ImportError:
-    from django.db.transaction import commit_on_success as atomic
-
-try:
-    from django_comments.managers import CommentManager
-    from django_comments.models import Comment
-except ImportError:
-    from django.contrib.comments.managers import CommentManager
-    from django.contrib.comments.models import Comment
+from django_comments.managers import CommentManager
+from django_comments.models import Comment, CommentFlag
+from django_comments.signals import comment_was_flagged
 
 from django_comments_xtd.conf import settings
 
@@ -42,8 +35,6 @@ class MaxThreadLevelExceededException(Exception):
 
 
 class XtdCommentManager(CommentManager):
-    if django.VERSION[:2] < (1, 6):
-        get_queryset = models.Manager.get_query_set
 
     def for_app_models(self, *args):
         """Return XtdComments for pairs "app.model" given in args"""
@@ -178,6 +169,13 @@ class XtdComment(Comment):
 
     def users_who_disliked_it(self):
         return [flag.user for flag in self.flags.filter(flag=DISLIKEDIT_FLAG)]
+
+
+@receiver(comment_was_flagged)
+def unpublish_nested_comments_on_removal_flag(sender, comment, flag, **kwargs):
+    if flag.flag == CommentFlag.MODERATOR_DELETION:
+        XtdComment.objects.filter(~(Q(pk=comment.id)), parent_id=comment.id)\
+                          .update(is_public=False)
 
 
 class DummyDefaultManager:

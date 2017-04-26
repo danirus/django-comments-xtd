@@ -1,4 +1,5 @@
 django-contrib-comments
+djangorestframework
 six
 Django
 docutils

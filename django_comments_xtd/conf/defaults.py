@@ -37,3 +37,15 @@ COMMENTS_XTD_SEND_HTML_EMAIL = True
 # Set it to False to use a third-party app like django-celery-email or
 # your own celery app.
 COMMENTS_XTD_THREADED_EMAILS = True
+
+
+# Define what app.models can have what commenting features.
+# TODO: Put django-comments-xtd settings under a dictionary, and merge
+#       COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL with this one.
+COMMENTS_XTD_APP_MODEL_PERMISSIONS = {
+    # 'articles.article': {
+    #     'allow_flagging': True,
+    #     'allow_feedback': True,
+    #     'show_feedback': True,
+    # }
+}

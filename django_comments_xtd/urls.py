@@ -21,7 +21,8 @@ urlpatterns = [
 
     # API handlers.
     url(r'^api/(?P<content_type>\w+[\w-]*\w+)/(?P<object_pk>[0-9]+)/$',
-        api.XtdCommentList.as_view()),
+        api.XtdCommentList.as_view(),
+        name='comments-xtd-api'),
     url(r'^api/(?P<pk>[0-9]+)/$', api.XtdCommentDetail.as_view()),
 ]
 

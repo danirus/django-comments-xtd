@@ -148,3 +148,11 @@ COMMENTS_XTD_MAX_THREAD_LEVEL = 0  # Quotes won't have nested comments.
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
     'articles.article': 2,
 }
+COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
+COMMENTS_XTD_APP_MODEL_PERMISSIONS = {
+    'articles.article': {
+        'allow_flagging': True,
+        'allow_feedback': True,
+        'show_feedback': True,
+    }
+}

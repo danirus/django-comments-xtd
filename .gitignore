@@ -8,6 +8,7 @@ db.sqlite3
 docs/_build
 build/
 dist/
+node_modules/
 .coverage
 .emacs.desktop*
 .tox

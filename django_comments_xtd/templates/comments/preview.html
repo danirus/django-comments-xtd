@@ -2,10 +2,19 @@
 {% load i18n %}
 {% load comments_xtd %}
 
+{% block title %}{% trans "Preview your comment" %}{% endblock %}
+
 {% block content %}
-<h4>{% trans "Preview your comment:" %}</h4>
+<h4 class="text-center">{% trans "Preview your comment" %}</h4>
+<p class="text-center">
+  {% trans "Preview your comment for:" %}<br/>
+  <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+</p>
 <div class="row">
-  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">
+    <div class="visible-lg-block visible-md-block">
+      <hr/>
+    </div>
     <div class="media">
       {% if not comment %}
       <em>{% trans "Empty comment." %}</em>

@@ -22,8 +22,7 @@ class XtdCommentList(generics.ListCreateAPIView):
         content_type = ContentType.objects.get_by_natural_key(app_label, model)
         qs = XtdComment.objects.filter(content_type=content_type,
                                        object_pk=int(object_pk_arg),
-                                       is_public=True,
-                                       is_removed=False)
+                                       is_public=True)
         return qs
 
     def perform_create(self, serializer):

@@ -397,7 +397,8 @@ class XtdCommentListView(ListView):
         content_types = self.get_content_types()
         if content_types is None:
             return None
-        return XtdComment.objects.for_content_types(content_types)
+        return XtdComment.objects.for_content_types(content_types)\
+                                 .filter(is_removed=False)
 
     def get_context_data(self, **kwargs):
         context = super(XtdCommentListView, self).get_context_data(**kwargs)

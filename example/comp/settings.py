@@ -156,3 +156,4 @@ COMMENTS_XTD_APP_MODEL_PERMISSIONS = {
         'show_feedback': True,
     }
 }
+COMMENTS_XTD_USER_REPRESENTATION = lambda u: u.get_full_name()

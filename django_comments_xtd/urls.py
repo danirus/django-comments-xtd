@@ -4,7 +4,6 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from django_comments_xtd import api, views
 
-
 urlpatterns = [
     url(r'', include("django_comments.urls")),
     url(r'^sent/$', views.sent, name='comments-xtd-sent'),
@@ -20,10 +19,9 @@ urlpatterns = [
     url(r'^disliked/$', views.dislike_done, name='comments-xtd-dislike-done'),
 
     # API handlers.
-    url(r'^api/(?P<content_type>\w+[\w-]*\w+)/(?P<object_pk>[0-9]+)/$',
-        api.XtdCommentList.as_view(),
-        name='comments-xtd-api'),
-    url(r'^api/(?P<pk>[0-9]+)/$', api.XtdCommentDetail.as_view()),
+    url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[0-9]+)/$',
+        api.CommentCreateList.as_view(), name='comments-xtd-api-list'),
+    url(r'^api/flag/$', api.ToggleFlag.as_view(), name='comments-xtd-api-flag'),
 ]
 
 

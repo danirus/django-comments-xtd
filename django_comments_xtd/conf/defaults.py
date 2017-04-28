@@ -49,3 +49,7 @@ COMMENTS_XTD_APP_MODEL_PERMISSIONS = {
     #     'show_feedback': True,
     # }
 }
+
+# Define a lambda function to return the user representation. Used by
+# the web API to represent user strings in response objects.
+COMMENTS_XTD_API_USER_REPR = lambda u: u.username

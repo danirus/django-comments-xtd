@@ -256,7 +256,8 @@ class RenderXtdCommentTreeNode(Node):
                                            object_pk=obj.pk,
                                            site__pk=settings.SITE_ID,
                                            is_public=True)
-            comments = XtdComment.tree_from_queryset(qs, self.allow_feedback)
+            comments = XtdComment.tree_from_queryset(qs, self.allow_feedback,
+                                                     user=context['user'])
             context_dict['comments'] = comments
         if self.cvars:
             for vname, vobj in self.cvars:
@@ -297,7 +298,8 @@ class GetXtdCommentTreeNode(Node):
                                        object_pk=obj.pk,
                                        site__pk=settings.SITE_ID,
                                        is_public=True)
-        diclist = XtdComment.tree_from_queryset(qs, self.with_feedback)
+        diclist = XtdComment.tree_from_queryset(qs, self.with_feedback,
+                                                user=context['user'])
         context[self.var_name] = diclist
         return ''
 
@@ -490,8 +492,8 @@ def xtd_comment_gravatar(email, size=48):
 
 # ----------------------------------------------------------------------
 @register.filter
-def xtdcomment_api_url(obj):
+def comments_xtd_api_list(obj):
     ctype = ContentType.objects.get_for_model(obj)
     ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
-    return reverse('comments-xtd-api', kwargs={'content_type': ctype_slug,
-                                               'object_pk': obj.id})
+    return reverse('comments-xtd-api-list', kwargs={'content_type': ctype_slug,
+                                                    'object_pk': obj.id})

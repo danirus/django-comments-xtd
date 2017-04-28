@@ -116,7 +116,7 @@ class XtdComment(Comment):
             return False
 
     @classmethod
-    def tree_from_queryset(cls, queryset, with_feedback=False):
+    def tree_from_queryset(cls, queryset, with_feedback=False, user=None):
         """Converts a XtdComment queryset into a list of nested dictionaries.
         The queryset has to be ordered by thread_id, order.
         Each dictionary contains two attributes::
@@ -125,20 +125,26 @@ class XtdComment(Comment):
                 'children': [list of child comment dictionaries]
             }
         """
-        def get_user_feedback(comment):
-            return {'likedit': comment.users_who_liked_it(),
-                    'dislikedit': comment.users_who_disliked_it()}
+        def get_user_feedback(comment, user):
+            d = {'likedit_users': comment.users_who_liked_it(),
+                 'dislikedit_users': comment.users_who_disliked_it()}
+            if user is not None:
+                if user in d['likedit_users']:
+                    d['likedit'] = True
+                if user in d['dislikedit_users']:
+                    d['dislikedit'] = True
+            return d
 
-        def add_children(children, obj):
+        def add_children(children, obj, user):
             for item in children:
                 if item['comment'].pk == obj.parent_id:
                     child_dict = {'comment': obj, 'children': []}
                     if with_feedback:
-                        child_dict.update(get_user_feedback(obj))
+                        child_dict.update(get_user_feedback(obj, user))
                     item['children'].append(child_dict)
                     return True
                 elif item['children']:
-                    if add_children(item['children'], obj):
+                    if add_children(item['children'], obj, user):
                         return True
             return False
 
@@ -151,15 +157,15 @@ class XtdComment(Comment):
             if not cur_dict:
                 cur_dict = {'comment': obj, 'children': []}
                 if with_feedback:
-                    cur_dict.update(get_user_feedback(obj))
+                    cur_dict.update(get_user_feedback(obj, user))
                 continue
             if obj.parent_id == cur_dict['comment'].pk:
                 child_dict = {'comment': obj, 'children': []}
                 if with_feedback:
-                    child_dict.update(get_user_feedback(obj))
+                    child_dict.update(get_user_feedback(obj, user))
                 cur_dict['children'].append(child_dict)
             else:
-                add_children(cur_dict['children'], obj)
+                add_children(cur_dict['children'], obj, user)
         if cur_dict:
             dic_list.append(cur_dict)
         return dic_list

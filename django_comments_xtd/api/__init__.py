@@ -1,1 +1,1 @@
-from django_comments_xtd.api.views import XtdCommentList, XtdCommentDetail
+from django_comments_xtd.api.views import CommentCreateList, ToggleFlag

@@ -351,7 +351,8 @@ def perform_like(request, comment):
                                    flag=DISLIKEDIT_FLAG).delete()
     else:
         flag.delete()
-
+    return created
+        
 
 def perform_dislike(request, comment):
     """Actually set the 'Dislikedit' flag on a comment from a request."""
@@ -364,6 +365,7 @@ def perform_dislike(request, comment):
                                    flag=LIKEDIT_FLAG).delete()
     else:
         flag.delete()
+    return created
 
 
 like_done = confirmation_view(

@@ -2,17 +2,20 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
 
-from rest_framework import generics, permissions
+from django_comments.models import CommentFlag
+from rest_framework import generics, mixins, permissions, status
+from rest_framework.response import Response
 
+from django_comments_xtd import views
+from django_comments_xtd.api import serializers
+from django_comments_xtd.api.permissions import IsOwner
 from django_comments_xtd.models import XtdComment
-from django_comments_xtd.api.permissions import IsOwnerOrReadOnly
-from django_comments_xtd.api.serializers import XtdCommentSerializer
 
 
-class XtdCommentList(generics.ListCreateAPIView):
+class CommentCreateList(generics.ListCreateAPIView):
     """List all comments or create a new comment."""
 
-    serializer_class = XtdCommentSerializer
+    serializer_class = serializers.CommentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
@@ -43,10 +46,19 @@ class XtdCommentList(generics.ListCreateAPIView):
         serializer.save(**kwargs)
 
 
-class XtdCommentDetail(generics.RetrieveUpdateAPIView):
-    """Retrieve or update a comment instance."""
+class ToggleFlag(generics.CreateAPIView, mixins.DestroyModelMixin):
+    """Create and delete like/dislike flags."""
 
-    queryset = XtdComment.objects.all()
-    serializer_class = XtdCommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly)
+    serializer_class = serializers.FlagSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwner)
+
+    def post(self, request, *args, **kwargs):
+        response = super(ToggleFlag, self).post(request, *args, **kwargs)
+        if self.created:
+            return response
+        else:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    def perform_create(self, serializer):
+        f = getattr(views, 'perform_%s' % self.request.data['flag'])
+        self.created = f(self.request, serializer.validated_data['comment'])

@@ -7,7 +7,10 @@ except ImportError:
     import queue as queue  # python3
 
 import threading
+
 from django.core.mail import EmailMultiAlternatives
+from django.contrib.contenttypes.models import ContentType
+
 from django_comments_xtd.conf import settings
 
 
@@ -27,7 +30,7 @@ class EmailThread(threading.Thread):
 
     def run(self):
         _send_mail(self.subject, self.body, self.from_email,
-                   self.recipient_list, self.fail_silently, self.html)
+                   seglf.recipient_list, self.fail_silently, self.html)
         mail_sent_queue.put(True)
 
 
@@ -57,3 +60,18 @@ def import_formatter():
         return formatter
     except ImportError:
         return False
+
+
+def get_app_model_permissions(comment):
+    _default = {
+        'allow_flagging': False,
+        'allow_feedback': False,
+        'show_feedback': False
+    }
+    content_type = ContentType.objects.get_for_model(comment.content_object)
+    key = "%s.%s" % (content_type.app_label, content_type.model)
+    try:
+        return settings.COMMENTS_XTD_APP_MODEL_PERMISSIONS[key]
+    except KeyError:
+        return settings.COMMENTS_XTD_APP_MODEL_PERMISSIONS.setdefault(
+            'default', _default)

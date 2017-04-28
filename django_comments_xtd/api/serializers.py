@@ -1,16 +1,18 @@
-from django_comments_xtd.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
 from django_comments import signals
 from django_comments.models import CommentFlag
 from rest_framework import serializers
 
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+from django_comments_xtd.utils import get_app_model_permissions
 
 
 class CommentSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(max_length=50, read_only=True)
-    user_email = serializers.CharField(max_length=254, read_only=True)
+    user_email = serializers.CharField(max_length=254, write_only=True)
     user_url = serializers.CharField(read_only=True)
     submit_date = serializers.DateTimeField(read_only=True)
     thread_id = serializers.IntegerField(read_only=True)
@@ -38,22 +40,48 @@ class CommentSerializer(serializers.ModelSerializer):
             return obj.comment
 
     def get_likedit_users(self, obj):
-        return [settings.COMMENTS_XTD_API_USER_REPR(user)
-                for user in obj.users_who_liked_it()]
+        if get_app_model_permissions(obj)['show_feedback']:
+            return [settings.COMMENTS_XTD_API_USER_REPR(user)
+                    for user in obj.users_who_liked_it()]
+        else:
+            return None
 
     def get_dislikedit_users(self, obj):
-        return [settings.COMMENTS_XTD_API_USER_REPR(user)
-                for user in obj.users_who_disliked_it()]
+        if get_app_model_permissions(obj)['show_feedback']:
+            return [settings.COMMENTS_XTD_API_USER_REPR(user)
+                    for user in obj.users_who_disliked_it()]
+        else:
+            return None
 
 
 class FlagSerializer(serializers.ModelSerializer):
-    flag_choices = {'like': LIKEDIT_FLAG, 'dislike': DISLIKEDIT_FLAG}
+    flag_choices = {'like': LIKEDIT_FLAG,
+                    'dislike': DISLIKEDIT_FLAG,
+                    'report': CommentFlag.SUGGEST_REMOVAL}
 
     class Meta:
         model = CommentFlag
         fields = ('comment', 'flag',)
 
-    def validate_flag(self, value):
-        if value not in self.flag_choices:
+    def validate(self, data):
+        # Validate flag.
+        if data['flag'] not in self.flag_choices:
             raise serializers.ValidationError("Invalid flag.")
-        return self.flag_choices[value]
+        # Check commenting permissions on object being commented.
+        permission = ''
+        if data['flag'] in ['like', 'dislike']:
+            permission = 'allow_feedback'
+        elif data['flag'] == 'report':
+            permission = 'allow_flagging'
+        comment = data['comment']
+        if not get_app_model_permissions(comment)[permission]:
+            ctype = ContentType.objects.get_for_model(comment.content_object)
+            raise serializers.ValidationError(
+                "Comments posted to instances of '%s.%s' are not explicitly "
+                "allowed to receive '%s' flags. Check "
+                "COMMENTS_XTD_APP_MODEL_PERMISSIONS setting." % (
+                    ctype.app_label, ctype.model, data['flag']
+                )
+            )
+        data['flag'] = self.flag_choices[data['flag']]
+        return data

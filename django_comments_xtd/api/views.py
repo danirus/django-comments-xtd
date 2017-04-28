@@ -3,12 +3,12 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
 
 from django_comments.models import CommentFlag
+from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 
 from django_comments_xtd import views
 from django_comments_xtd.api import serializers
-from django_comments_xtd.api.permissions import IsOwner
 from django_comments_xtd.models import XtdComment
 
 
@@ -46,14 +46,15 @@ class CommentCreateList(generics.ListCreateAPIView):
         serializer.save(**kwargs)
 
 
-class ToggleFlag(generics.CreateAPIView, mixins.DestroyModelMixin):
+class ToggleFeedbackFlag(generics.CreateAPIView, mixins.DestroyModelMixin):
     """Create and delete like/dislike flags."""
 
     serializer_class = serializers.FlagSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwner)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def post(self, request, *args, **kwargs):
-        response = super(ToggleFlag, self).post(request, *args, **kwargs)
+        response = super(ToggleFeedbackFlag, self).post(request, *args,
+                                                        **kwargs)
         if self.created:
             return response
         else:
@@ -62,3 +63,13 @@ class ToggleFlag(generics.CreateAPIView, mixins.DestroyModelMixin):
     def perform_create(self, serializer):
         f = getattr(views, 'perform_%s' % self.request.data['flag'])
         self.created = f(self.request, serializer.validated_data['comment'])
+
+
+class CreateReportFlag(generics.CreateAPIView):
+    """Create 'removal suggestion' flags."""
+
+    serializer_class = serializers.FlagSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def perform_create(self, serializer):
+        perform_flag(self.request, serializer.validated_data['comment'])

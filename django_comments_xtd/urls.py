@@ -21,7 +21,10 @@ urlpatterns = [
     # API handlers.
     url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[0-9]+)/$',
         api.CommentCreateList.as_view(), name='comments-xtd-api-list'),
-    url(r'^api/flag/$', api.ToggleFlag.as_view(), name='comments-xtd-api-flag'),
+    url(r'^api/feedback/$', api.ToggleFeedbackFlag.as_view(),
+        name='comments-xtd-api-feedback'),
+    url(r'^api/flag/$', api.CreateReportFlag.as_view(),
+        name='comments-xtd-api-flag'),
 ]
 
 

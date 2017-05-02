@@ -8,7 +8,7 @@ const SOURCE_DIR = path.resolve(STATIC_DIR, 'src');
 
 module.exports = {
   entry: {
-    vendor: ['react', 'react-dom'],
+    vendor: ['react', 'react-dom', 'jquery'],
     plugin: path.resolve(SOURCE_DIR, 'react.plugin.jsx'),
   },
   output: {

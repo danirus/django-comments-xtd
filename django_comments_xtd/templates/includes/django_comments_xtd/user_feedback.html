@@ -1,7 +1,16 @@
-{% if show_feedback and item.likedit_users %}
-<a data-toggle="popover" title="Liked it" data-content="{{ item.likedit_users|join:'<br/>' }}" data-trigger="focus" role="button" tabindex="0"><span class="small">{{ item.likedit_users|length }}</span></a>&nbsp;{% else %}<span class="text-muted small">{{ item.likedit_users|length }}</span>&nbsp;{% endif %}
-<a href="{% url 'comments-xtd-like' item.comment.pk %}" class="{% if not item.likedit %}mutedlink{% endif %}"><span class="small glyphicon glyphicon-thumbs-up"></span></a>
-<span class="text-muted">&sdot;</span>
-{% if show_feedback and item.dislikedit_users %}
-<a data-toggle="popover" title="Disliked it" data-content="{{ item.dislikedit_users|join:'<br/>' }}" data-trigger="focus" role="button" tabindex="0"><span class="small">{{ item.dislikedit_users|length }}</span></a>&nbsp;{% else %}<span class="text-muted small">{{ item.dislikedit_users|length }}</span>&nbsp;{% endif %}
-<a href="{% url 'comments-xtd-dislike' item.comment.pk %}" class="{% if not item.dislikedit %}mutedlink{% endif %}"><span class="small glyphicon glyphicon-thumbs-down"></span></a>
+{% if allow_feedback %}
+<span class="small">
+  {% if show_feedback and item.likedit_users %}
+  <a data-toggle="tooltip" title="{{ item.likedit_users|join:'<br/>' }}"><span class="small">{{ item.likedit_users|length }}</span></a>
+  {% endif %}
+
+  <a href="{% url 'comments-xtd-like' item.comment.pk %}" class="{% if not item.likedit %}mutedlink{% endif %}"><span class="small glyphicon glyphicon-thumbs-up"></span></a>
+  <span class="text-muted">|</span>
+
+  {% if show_feedback and item.dislikedit_users %}
+  <a data-toggle="tooltip" title="{{ item.dislikedit_users|join:'<br/>' }}"><span class="small">{{ item.dislikedit_users|length }}</span></a>
+  {% endif %}
+  
+  <a href="{% url 'comments-xtd-dislike' item.comment.pk %}" class="{% if not item.dislikedit %}mutedlink{% endif %}"><span class="small glyphicon glyphicon-thumbs-down"></span></a>
+</span>
+{% endif %}

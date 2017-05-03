@@ -61,8 +61,7 @@ class Comment extends React.Component {
   }
 
   _get_feedback_chunk(dir) {
-    if(!this.props.settings.allow_feedback ||
-       !this.props.settings.is_authenticated)
+    if(!this.props.settings.allow_feedback)
       return "";
 
     let show_users_chunk = "";
@@ -118,8 +117,7 @@ class Comment extends React.Component {
       );
 
     let feedback = "";
-    if(this.props.settings.allow_feedback &&
-       this.props.settings.is_authenticated)
+    if(this.props.settings.allow_feedback)
     {
       let like_feedback = this._get_feedback_chunk("like");
       let dislike_feedback = this._get_feedback_chunk("dislike");

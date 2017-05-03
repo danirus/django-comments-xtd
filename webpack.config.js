@@ -8,7 +8,7 @@ const SOURCE_DIR = path.resolve(STATIC_DIR, 'src');
 
 module.exports = {
   entry: {
-    vendor: ['react', 'react-dom', 'jquery'],
+    vendor: ['react', 'react-dom', 'jquery', 'bootstrap'],
     plugin: path.resolve(SOURCE_DIR, 'react.plugin.jsx'),
   },
   output: {
@@ -20,11 +20,27 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',  // Specify the common bundle's name.
       minChunks: Infinity
+    }),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      "window.jQuery": 'jquery'
     })
   ],
   module: {
     rules: [
-      {test: /\.jsx?/, include: SOURCE_DIR, use: 'babel-loader'}
+      {
+        test: /\.jsx?/,
+        include: SOURCE_DIR,
+        use: [
+          { loader: 'babel-loader',
+            options: {
+              compact: false,
+              presets: ["es2015", "react"]
+            }
+          }
+        ]
+      }
     ]
   }
 };

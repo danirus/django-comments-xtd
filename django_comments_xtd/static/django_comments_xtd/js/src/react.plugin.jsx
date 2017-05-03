@@ -13,64 +13,150 @@ class CommentForm extends React.Component {
 
 
 class Comment extends React.Component {
-  render() {
-    let user_name, right_div, comment_p;
+  _get_username_chunk() {
+    let username = this.props.data.user_name, moderator = "";
 
-    // Simple user name or link to user's website.
-    if(this.props.data.user_url && !this.props.data.is_removed) {
-      user_name = <a href={this.props.data.user_url}>
-        {this.props.data.user_name}
-      </a>;
-    } else {
-      user_name = this.props.data.user_name;
-    }
+    if(this.props.data.user_url && !this.props.data.is_removed)
+      username = <a href={this.props.data.user_url}>{username}</a>;
 
-    if(this.props.data.is_removed) {
-      comment_p = <p className="text-muted">
-        <em>{this.props.data.comment}</em>
-        </p>;
-    } else {
-      /* If comment has not been removed, check whether to allow flagging,
-       * whether to user can moderate the comment, display the text of the
-       * comment and append a line at the bottom with feedback options and
-       * a link to reply. 
-       */
-      let allow_flagging="",
-          allow_moderate="",
-          allow_feedback="",
-          show_feedback="",
-          bottom_line="";
-      if(this.props.settings.is_authenticated &&
-         this.props.settings.allow_flagging)
-      {
-        allow_flagging = <a className="mutedlink" href="#">
-          <span className="glyphicon glyphicon-flag" title="flag comment">
-          </span></a>;
-      }
-      if(this.props.settings.is_authenticated &&
-         this.props.settings.can_moderate)
-      {
-        allow_moderate = <a className="mutedlink" href="#">
-          <span className="glyphicon glyphicon-trash" title="remove comment">
-          </span></a>;
-      }
-      right_div = <p className="pull-right">
-        {allow_flagging}&nbsp;{allow_moderate}</p>;
-
-      if(this.props.settings.is_authenticated &&
-         this.props.settings.allow_feedback)
-      {
-        bottom_line = "";
-      }
-      bottom_line = "";
-      comment_p = <p>{this.props.data.comment}<br/>{bottom_line}</p>;
-    }
-
+    if(this.props.data.is_moderator)
+      moderator = (<span>
+                   &nbsp;<span className="label label-default">moderator</span>
+                   </span>);
     
-    var nodes = "";
-    var settings = this.props.settings;
+    return <span>{username}{moderator}</span>;
+  }
+
+  _get_right_div_chunk() {
+    let flagging_html = "", moderate_html = "";
+
+    if(this.props.data.is_removed)
+      return "";
+    
+    if(this.props.settings.is_authenticated &&
+       this.props.settings.allow_flagging)
+    {
+      flagging_html = (
+        <a className="mutedlink" href="#">
+          <span className="glyphicon glyphicon-flag" title="flag comment">
+          </span>
+        </a>);
+    }
+    
+    if(this.props.settings.is_authenticated &&
+       this.props.settings.can_moderate)
+    {
+      moderate_html = (
+        <a className="mutedlink" href="#">
+          <span className="glyphicon glyphicon-trash" title="remove comment">
+          </span>
+        </a>);
+    }
+    
+    return (
+      <p className="pull-right">
+        {flagging_html} {moderate_html}
+      </p>
+    );
+  }
+
+  _get_feedback_chunk(dir) {
+    if(!this.props.settings.allow_feedback ||
+       !this.props.settings.is_authenticated)
+      return "";
+
+    let show_users_chunk = "";
+    if(this.props.settings.show_feedback) {
+      let attr_users = dir + "dit_users";  // Produce (dis)likedit_users
+      if(this.props.data[attr_users].length) {
+        let users = this.props.data[attr_users].join("<br/>");
+        show_users_chunk = (
+          <a data-toggle="tooltip" title={users}>
+            <span className="small">
+              {this.props.data[attr_users].length}
+            </span>
+          </a>
+        );
+      }
+    }
+    
+    let attr_bool = "i" + dir + "dit";
+    let css_class = this.props.data[attr_bool] ? '' : 'mutedlink';
+    let icon = dir == 'like' ? 'thumbs-up' : 'thumbs-down';
+    let class_icon = "small glyphicon glyphicon-"+icon;
+    return (
+      <span>
+        {show_users_chunk}  <a href="#" className={css_class}>
+          <span className={class_icon}></span>
+        </a>
+      </span>
+    );
+  }
+  
+  _get_reply_link_chunk() {
+    if(this.props.data.reply_url==null)
+      return "";
+    
+    let separator = "";
+    if(this.props.settings.allow_feedback)
+      separator = <span className="text-muted">&bull;</span>;
+
+    return (
+      <span>&nbsp;&nbsp;{separator}&nbsp;&nbsp;
+        <a className="small mutedlink"
+           href={this.props.data.reply_url}>Reply</a>
+      </span>
+    );
+  }
+  
+  _get_comment_p_chunk() {
+    if(this.props.data.is_removed)
+      return (
+        <p className="text-muted">
+          <em>{this.props.data.comment}</em>
+        </p>
+      );
+
+    let feedback = "";
+    if(this.props.settings.allow_feedback &&
+       this.props.settings.is_authenticated)
+    {
+      let like_feedback = this._get_feedback_chunk("like");
+      let dislike_feedback = this._get_feedback_chunk("dislike");
+      feedback = (
+        <span className="small">
+          {like_feedback}
+          <span className="text-muted"> | </span>
+          {dislike_feedback}
+        </span>
+      );
+    }
+
+    let reply_link = this._get_reply_link_chunk();
+    return (
+      <p>
+        {this.props.data.comment}
+        <br/>
+        {feedback}{reply_link}
+      </p>
+    );
+  }
+
+  componentDidMount() {
+    let comment_id = "c" + this.props.data.id;
+    $('#'+comment_id+' A[data-toggle="tooltip"]').tooltip({html:true});
+  }
+  
+  render() {
+    let user_name = this._get_username_chunk();  // Plain name or link.
+    let right_div = this._get_right_div_chunk();  // Flagging & moderation.
+    let comment_p = this._get_comment_p_chunk();
+    let comment_id = "c" + this.props.data.id;
+    
+    let children = "";
+    let settings = this.props.settings;
     if (this.props.data.children != null) {
-      var nodes = this.props.data.children.map(function(item) {
+      children = this.props.data.children.map(function(item) {
         return (
           <Comment key={item.id} data={item} settings={settings}/>
         );
@@ -78,20 +164,22 @@ class Comment extends React.Component {
     }
 
     return (
-      <div className="media">
-        <a name="c{this.props.data.id}"></a>
+      <div className="media" id={comment_id}>
         <div className="media-left">
           <img src={this.props.data.avatar} height="48" width="48" />
         </div>
         <div className="media-body">
           <div className="comment">
             <h6 className="media-heading">
-              {this.props.data.submit_date}&nbsp;-&nbsp;{user_name}
+              {this.props.data.submit_date} - {user_name}
+              &nbsp;&nbsp;
+              <a className="permalink" href={this.props.data.permalink}>¶</a>
               {right_div}
             </h6>
             {comment_p}
+            <a name={comment_id}></a>
           </div>
-          {nodes}
+          {children}
         </div>
       </div>
     );

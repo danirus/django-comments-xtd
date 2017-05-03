@@ -31,24 +31,61 @@ class CommentSerializer(serializers.ModelSerializer):
     is_removed = serializers.BooleanField(read_only=True)
 
     comment = serializers.SerializerMethodField()
+    ilikedit = serializers.SerializerMethodField()
+    idislikedit = serializers.SerializerMethodField()
     likedit_users = serializers.SerializerMethodField()
     dislikedit_users = serializers.SerializerMethodField()
+    is_moderator = serializers.SerializerMethodField()
+    permalink = serializers.SerializerMethodField()
+    reply_url = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
     
     class Meta:
         model = XtdComment
-        fields = ('id', 'user_name', 'user_email', 'user_url', 'comment',
-                  'submit_date', 'thread_id', 'parent_id', 'level', 'order',
-                  'followup', 'is_removed', 'likedit_users', 'dislikedit_users',
-                  'avatar'
+        fields = ('id', 'user_name', 'user_email', 'user_url', 'is_moderator',
+                  'avatar', 'permalink', 'comment', 'submit_date', 'thread_id',
+                  'parent_id', 'level', 'order', 'followup', 'is_removed',
+                  'reply_url', 'likedit_users', 'dislikedit_users',
+                  'ilikedit', 'idislikedit', 
         )
 
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs['context']['request']
+        super(CommentSerializer, self).__init__(*args, **kwargs)
+        
     def get_comment(self, obj):
         if obj.is_removed:
             return _("This comment has been removed.")
         else:
             return render_markup_comment(obj.comment)
 
+    def get_is_moderator(self, obj):
+        try:
+            if obj.user and obj.user.has_perm('comments.can_moderate'):
+                return True
+            else:
+                return False
+        except:
+            return None
+        
+    def get_ilikedit(self, obj):
+        try:
+            if self.request.user in obj.users_who_liked_it():
+                return True
+            else:
+                return False
+        except:
+            return None
+
+    def get_idislikedit(self, obj):
+        try:
+            if self.request.user in obj.users_who_disliked_it():
+                return True
+            else:
+                return False
+        except:
+            return None
+            
     def get_likedit_users(self, obj):
         if get_app_model_permissions(obj)['show_feedback']:
             return [settings.COMMENTS_XTD_API_USER_REPR(user)
@@ -63,11 +100,20 @@ class CommentSerializer(serializers.ModelSerializer):
         else:
             return None
 
+    def get_reply_url(self, obj):
+        if obj.allow_thread():
+            return obj.get_reply_url()
+        else:
+            return None
+        
     def get_avatar(self, obj):
         path = hashlib.md5(obj.user_email.lower().encode('utf-8')).hexdigest()
         param = urlencode({'s': 48})
         return "http://www.gravatar.com/avatar/%s?%s&d=mm" % (path, param)
-    
+
+    def get_permalink(self, obj):
+        return obj.get_absolute_url()
+            
 
 class FlagSerializer(serializers.ModelSerializer):
     flag_choices = {'like': LIKEDIT_FLAG,

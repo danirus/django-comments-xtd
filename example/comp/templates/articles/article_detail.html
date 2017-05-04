@@ -67,9 +67,11 @@
 {% block extra_js %}
 <script>
   window.django_comments_xtd_props = {
-    list_url: '{{ object|comments_xtd_api_list }}',
+    list_url: '{{ object|comments_xtd_api_list_url }}',
+    flag_url: '{% url "comments-flag" 0 %}',
+    delete_url: '{% url "comments-delete" 0 %}',
+    reply_url: '{% url "comments-xtd-reply" cid=0 %}',
     feedback_url: '{% url "comments-xtd-api-feedback" %}',
-    flag_url: '{% url "comments-xtd-api-flag" %}',
     allow_feedback: true,
     show_feedback: true,
     allow_flagging: true,

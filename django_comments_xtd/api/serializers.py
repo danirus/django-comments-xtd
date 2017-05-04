@@ -4,6 +4,11 @@ try:
 except ImportError:
     from urllib import urlencode
 
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
+    
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
@@ -31,13 +36,14 @@ class CommentSerializer(serializers.ModelSerializer):
     is_removed = serializers.BooleanField(read_only=True)
 
     comment = serializers.SerializerMethodField()
-    ilikedit = serializers.SerializerMethodField()
-    idislikedit = serializers.SerializerMethodField()
+    flagged = serializers.SerializerMethodField()
+    likedit = serializers.SerializerMethodField()
+    dislikedit = serializers.SerializerMethodField()
     likedit_users = serializers.SerializerMethodField()
     dislikedit_users = serializers.SerializerMethodField()
     is_moderator = serializers.SerializerMethodField()
+    allow_reply = serializers.SerializerMethodField()
     permalink = serializers.SerializerMethodField()
-    reply_url = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
     
     class Meta:
@@ -45,8 +51,8 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'user_name', 'user_email', 'user_url', 'is_moderator',
                   'avatar', 'permalink', 'comment', 'submit_date', 'thread_id',
                   'parent_id', 'level', 'order', 'followup', 'is_removed',
-                  'reply_url', 'likedit_users', 'dislikedit_users',
-                  'ilikedit', 'idislikedit', 
+                  'allow_reply', 'likedit_users', 'dislikedit_users',
+                  'flagged', 'likedit', 'dislikedit', 
         )
 
     def __init__(self, *args, **kwargs):
@@ -67,30 +73,40 @@ class CommentSerializer(serializers.ModelSerializer):
                 return False
         except:
             return None
-        
-    def get_ilikedit(self, obj):
+
+    def get_flagged(self, obj):
         try:
-            if self.request.user in obj.users_who_liked_it():
+            users_flagging = obj.users_flagging(CommentFlag.SUGGEST_REMOVAL)
+            if self.request.user in users_flagging:
+                return True
+            else:
+                return False
+        except:
+            return None
+        
+    def get_likedit(self, obj):
+        try:
+            if self.request.user in obj.users_flagging(LIKEDIT_FLAG):
                 return True
             else:
                 return False
         except:
             return None
 
-    def get_idislikedit(self, obj):
+    def get_dislikedit(self, obj):
         try:
-            if self.request.user in obj.users_who_disliked_it():
+            if self.request.user in obj.users_flagging(DISLIKEDIT_FLAG):
                 return True
             else:
                 return False
         except:
             return None
-            
+        
     def get_likedit_users(self, obj):
         if get_app_model_permissions(obj)['show_feedback']:
             return ["%d:%s" % (user.id,
                                settings.COMMENTS_XTD_API_USER_REPR(user))
-                    for user in obj.users_who_liked_it()]
+                    for user in obj.users_flagging(LIKEDIT_FLAG)]
         else:
             return None
 
@@ -98,16 +114,13 @@ class CommentSerializer(serializers.ModelSerializer):
         if get_app_model_permissions(obj)['show_feedback']:
             return ["%d:%s" % (user.id,
                                settings.COMMENTS_XTD_API_USER_REPR(user))
-                    for user in obj.users_who_disliked_it()]
+                    for user in obj.users_flagging(DISLIKEDIT_FLAG)]
         else:
             return None
 
-    def get_reply_url(self, obj):
-        if obj.allow_thread():
-            return obj.get_reply_url()
-        else:
-            return None
-        
+    def get_allow_reply(self, obj):
+        return obj.allow_thread()
+
     def get_avatar(self, obj):
         path = hashlib.md5(obj.user_email.lower().encode('utf-8')).hexdigest()
         param = urlencode({'s': 48})

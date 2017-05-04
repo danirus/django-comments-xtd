@@ -4,6 +4,7 @@ except ImportError:
     from mock import patch
 import unittest
 
+from django.contrib.auth.models import AnonymousUser
 from django.template import Context, Template, TemplateSyntaxError
 from django.test import TestCase as DjangoTestCase
 
@@ -173,7 +174,8 @@ class XtdCommentsTestCase(DjangoTestCase):
     def test_render_xtdcomment_tree(self):
         t = ("{% load comments_xtd %}"
              "{% render_xtdcomment_tree for object %}")
-        output = Template(t).render(Context({'object': self.article}))
+        output = Template(t).render(Context({'object': self.article,
+                                             'user': AnonymousUser()}))
         self.assertEqual(output.count('<a name='), 9)
         # See test_models.py, ThreadStep5TestCase to get a quick
         # view of the comments posted and their thread structure.

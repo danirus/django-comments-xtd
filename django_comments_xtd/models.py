@@ -116,7 +116,8 @@ class XtdComment(Comment):
             return False
 
     @classmethod
-    def tree_from_queryset(cls, queryset, with_feedback=False, user=None):
+    def tree_from_queryset(cls, queryset, with_flagging=False,
+                           with_feedback=False, user=None):
         """Converts a XtdComment queryset into a list of nested dictionaries.
         The queryset has to be ordered by thread_id, order.
         Each dictionary contains two attributes::
@@ -126,8 +127,8 @@ class XtdComment(Comment):
             }
         """
         def get_user_feedback(comment, user):
-            d = {'likedit_users': comment.users_who_liked_it(),
-                 'dislikedit_users': comment.users_who_disliked_it()}
+            d = {'likedit_users': comment.users_flagging(LIKEDIT_FLAG),
+                 'dislikedit_users': comment.users_flagging(DISLIKEDIT_FLAG)}
             if user is not None:
                 if user in d['likedit_users']:
                     d['likedit'] = True
@@ -148,6 +149,15 @@ class XtdComment(Comment):
                         return True
             return False
 
+        def get_new_dict(obj):
+            new_dict = {'comment': obj, 'children': []}
+            if with_feedback:
+                new_dict.update(get_user_feedback(obj, user))
+            if with_flagging:
+                users_flagging = obj.users_flagging(CommentFlag.SUGGEST_REMOVAL)
+                new_dict.update({'flagged': user in users_flagging})
+            return new_dict
+                
         dic_list = []
         cur_dict = None
         for obj in queryset:
@@ -155,14 +165,10 @@ class XtdComment(Comment):
                 dic_list.append(cur_dict)
                 cur_dict = None
             if not cur_dict:
-                cur_dict = {'comment': obj, 'children': []}
-                if with_feedback:
-                    cur_dict.update(get_user_feedback(obj, user))
+                cur_dict = get_new_dict(obj)
                 continue
             if obj.parent_id == cur_dict['comment'].pk:
-                child_dict = {'comment': obj, 'children': []}
-                if with_feedback:
-                    child_dict.update(get_user_feedback(obj, user))
+                child_dict = get_new_dict(obj)
                 cur_dict['children'].append(child_dict)
             else:
                 add_children(cur_dict['children'], obj, user)
@@ -170,11 +176,8 @@ class XtdComment(Comment):
             dic_list.append(cur_dict)
         return dic_list
 
-    def users_who_liked_it(self):
-        return [flag.user for flag in self.flags.filter(flag=LIKEDIT_FLAG)]
-
-    def users_who_disliked_it(self):
-        return [flag.user for flag in self.flags.filter(flag=DISLIKEDIT_FLAG)]
+    def users_flagging(self, flag):
+        return [obj.user for obj in self.flags.filter(flag=flag)]
 
 
 @receiver(comment_was_flagged)

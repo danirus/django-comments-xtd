@@ -71,7 +71,7 @@ class ConfirmCommentTestCase(TestCase):
         self.response = self.client.post(reverse("comments-post-comment"),
                                          data=data)
         self.assert_(self.mock_mailer.call_count == 1)
-        self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         self.addCleanup(patcher.stop)
 
@@ -149,7 +149,7 @@ class ConfirmCommentTestCase(TestCase):
         self.response = self.client.post(reverse("comments-post-comment"),
                                          data=data)
         self.assertEqual(self.mock_mailer.call_count, 2)
-        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
         self.get_confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 3)
@@ -176,7 +176,7 @@ class ConfirmCommentTestCase(TestCase):
 
         self.response = self.client.post(reverse("comments-post-comment"),
                                          data=data)
-        self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         # 1) confirmation for Bob (sent in `setUp()`)
         # 2) confirmation for Charlie
@@ -192,7 +192,7 @@ class ConfirmCommentTestCase(TestCase):
         self.response = self.client.post(reverse("comments-post-comment"),
                                          data=data)
         self.assertEqual(self.mock_mailer.call_count, 3)
-        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
         self.get_confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 4)
@@ -216,7 +216,7 @@ class ConfirmCommentTestCase(TestCase):
         self.response = self.client.post(reverse("comments-post-comment"),
                                          data=data)
         self.assertEqual(self.mock_mailer.call_count, 2)
-        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
         self.get_confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 2)
@@ -288,7 +288,7 @@ class MuteFollowUpsTestCase(TestCase):
         data.update(self.form.initial)
         self.client.post(reverse("comments-post-comment"), data=data)
         self.assert_(self.mock_mailer.call_count == 1)
-        bobkey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        bobkey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                self.mock_mailer.call_args[0][1]).group("key"))
         self.get_confirm_comment_url(bobkey)  # confirm Bob's comment
 
@@ -299,14 +299,14 @@ class MuteFollowUpsTestCase(TestCase):
         data.update(self.form.initial)
         self.client.post(reverse("comments-post-comment"), data=data)
         self.assert_(self.mock_mailer.call_count == 2)
-        alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         self.get_confirm_comment_url(alicekey)  # confirm Alice's comment
 
         # Bob receives a follow-up notification
         self.assert_(self.mock_mailer.call_count == 3)
         self.bobs_mutekey = str(re.search(
-            r'http://.+/mute/(?P<key>[\S]+)',
+            r'http://.+/mute/(?P<key>[\S]+)/',
             self.mock_mailer.call_args[0][1]).group("key"))
         self.addCleanup(patcher.stop)
 
@@ -332,7 +332,7 @@ class MuteFollowUpsTestCase(TestCase):
         self.client.post(reverse("comments-post-comment"), data=data)
         # Alice confirms her comment...
         self.assert_(self.mock_mailer.call_count == 4)
-        alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         self.get_confirm_comment_url(alicekey)  # confirm Alice's comment
         # Alice confirmed her comment, but this time Bob won't receive any

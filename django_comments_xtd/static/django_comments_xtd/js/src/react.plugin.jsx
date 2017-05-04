@@ -29,8 +29,8 @@ class Comment extends React.Component {
     super(props);
     this.state = {
       current_user: props.settings.current_user,
-      ilikedit: props.data.ilikedit,
-      idislikedit: props.data.idislikedit,
+      likedit: props.data.likedit,
+      dislikedit: props.data.dislikedit,
       likedit_users: props.data.likedit_users,
       dislikedit_users: props.data.dislikedit_users      
     };
@@ -53,7 +53,7 @@ class Comment extends React.Component {
   }
 
   _get_right_div_chunk() {
-    let flagging_html = "", moderate_html = "";
+    let flagging_html = "", moderate_html = "", url = "";
 
     if(this.props.data.is_removed)
       return "";
@@ -61,18 +61,29 @@ class Comment extends React.Component {
     if(this.props.settings.is_authenticated &&
        this.props.settings.allow_flagging)
     {
-      flagging_html = (
-        <a className="mutedlink" href="#">
-          <span className="glyphicon glyphicon-flag" title="flag comment">
+      if(this.props.data.flagged) {
+        flagging_html = (
+          <span className="glyphicon glyphicon-flag text-danger"
+                title="I flagged it as inappropriate">
           </span>
-        </a>);
+        );
+      } else {
+        url = this.props.settings.flag_url.replace('0', this.props.data.id);
+        flagging_html = (
+          <a className="mutedlink" href={url}>
+            <span className="glyphicon glyphicon-flag"
+                  title="flag comment as inappropriate">
+            </span>
+          </a>);
+      }
     }
     
     if(this.props.settings.is_authenticated &&
        this.props.settings.can_moderate)
     {
+      url = this.props.settings.delete_url.replace('0', this.props.data.id);
       moderate_html = (
-        <a className="mutedlink" href="#">
+        <a className="mutedlink" href={url}>
           <span className="glyphicon glyphicon-trash" title="remove comment">
           </span>
         </a>);
@@ -89,11 +100,12 @@ class Comment extends React.Component {
     if(!this.props.settings.allow_feedback)
       return "";
 
-    let attr_opinion = "i" + dir + "dit";
+    let attr_opinion = dir + "dit";
     let attr_list = dir + "dit_users";  // Produce (dis)likedit_users
 
     let show_users_chunk = "";
     if(this.props.settings.show_feedback) {
+
       // Check whether the user is no longer liking/disliking the comment,
       // and be sure the list list of users who liked/disliked the comment
       // is up-to-date likewise.
@@ -126,15 +138,20 @@ class Comment extends React.Component {
         );
       }
     }
+
     let css_class = this.state[attr_opinion] ? '' : 'mutedlink';
     let icon = dir == 'like' ? 'thumbs-up' : 'thumbs-down';
     let class_icon = "small glyphicon glyphicon-"+icon;
     let click_hdl = dir == 'like' ? this.actionLike : this.actionDislike;
+    let opinion = "";
+    if(this.state[attr_opinion])
+      opinion = dir == 'like' ? 'I like it' : 'I dislike it';
+
     return (
       <span>
         {show_users_chunk}  <a href="#" onClick={click_hdl}
                                className={css_class}>
-          <span className={class_icon}></span>
+          <span className={class_icon} title={opinion}></span>
         </a>
       </span>
     );
@@ -202,15 +219,15 @@ class Comment extends React.Component {
         201: function() {
           let state = {};
           if(flag=='like')
-            this.setState({ilikedit: true, idislikedit: false});
+            this.setState({likedit: true, dislikedit: false});
           else if(flag=='dislike')
-            this.setState({idislikedit: true, ilikedit: false});
+            this.setState({dislikedit: true, likedit: false});
         }.bind(this),
         204: function() {
           if(flag=='like')
-            this.setState({ilikedit: false});
+            this.setState({likedit: false});
           else if(flag=='dislike')
-            this.setState({idislikedit: false});
+            this.setState({dislikedit: false});
         }.bind(this)
       },
       error: function(xhr, status, err) {
@@ -302,6 +319,8 @@ class CommentTree extends React.Component {
         allow_flagging: this.props.allow_flagging || false,
         can_moderate: this.props.can_moderate || false,
         feedback_url: this.props.feedback_url,
+        delete_url: this.props.delete_url,
+        reply_url: this.props.reply_url,
         flag_url: this.props.flag_url
       },
       tree: []

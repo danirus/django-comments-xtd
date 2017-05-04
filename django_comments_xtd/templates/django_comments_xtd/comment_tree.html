@@ -13,9 +13,11 @@
         {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
         {% if not item.comment.is_removed %}
         <div class="pull-right">
-          {% if allow_flagging %}
+          {% if allow_flagging and item.flagged %}
+          <span class="glyphicon glyphicon-flag text-danger" title="comment flagged"></span>
+          {% else %}
           <a class="mutedlink" href="{% url 'comments-flag' item.comment.pk %}">
-            <span class="glyphicon glyphicon-flag" title="flag comment"></span></a>
+            <span class="glyphicon glyphicon-flag" title="flag comment"></span></a>          
           {% endif %}
           {% if perms.comments.can_moderate %}
           <a class="mutedlink" href="{% url 'comments-delete' item.comment.pk %}"><span class="glyphicon glyphicon-trash" title="remove comment"></span></a>

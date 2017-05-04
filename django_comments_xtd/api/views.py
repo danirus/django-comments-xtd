@@ -72,7 +72,6 @@ class CreateReportFlag(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def post(self, request, *args, **kwargs):
-        import ipdb; ipdb.set_trace()
         return super(CreateReportFlag, self).post(request, *args, **kwargs)
     
     def perform_create(self, serializer):

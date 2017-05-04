@@ -252,12 +252,16 @@ class RenderXtdCommentTreeNode(Node):
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
-            qs = XtdComment.objects.filter(content_type=ctype,
-                                           object_pk=obj.pk,
-                                           site__pk=settings.SITE_ID,
-                                           is_public=True)
-            comments = XtdComment.tree_from_queryset(qs, self.allow_feedback,
-                                                     user=context['user'])
+            queryset = XtdComment.objects.filter(content_type=ctype,
+                                                 object_pk=obj.pk,
+                                                 site__pk=settings.SITE_ID,
+                                                 is_public=True)
+            comments = XtdComment.tree_from_queryset(
+                queryset,
+                with_flagging=self.allow_flagging,
+                with_feedback=self.allow_feedback,
+                user=context['user']
+            )
             context_dict['comments'] = comments
         if self.cvars:
             for vname, vobj in self.cvars:
@@ -294,13 +298,16 @@ class GetXtdCommentTreeNode(Node):
     def render(self, context):
         obj = self.obj.resolve(context)
         ctype = ContentType.objects.get_for_model(obj)
-        qs = XtdComment.objects.filter(content_type=ctype,
-                                       object_pk=obj.pk,
-                                       site__pk=settings.SITE_ID,
-                                       is_public=True)
-        diclist = XtdComment.tree_from_queryset(qs, self.with_feedback,
-                                                user=context['user'])
-        context[self.var_name] = diclist
+        queryset = XtdComment.objects.filter(content_type=ctype,
+                                             object_pk=obj.pk,
+                                             site__pk=settings.SITE_ID,
+                                             is_public=True)
+        dic_list = XtdComment.tree_from_queryset(
+            queryset,
+            with_feedback=self.with_feedback,
+            user=context['user']
+        )
+        context[self.var_name] = di_clist
         return ''
 
 
@@ -492,7 +499,7 @@ def xtd_comment_gravatar(email, size=48):
 
 # ----------------------------------------------------------------------
 @register.filter
-def comments_xtd_api_list(obj):
+def comments_xtd_api_list_url(obj):
     ctype = ContentType.objects.get_for_model(obj)
     ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
     return reverse('comments-xtd-api-list', kwargs={'content_type': ctype_slug,

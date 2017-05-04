@@ -88,14 +88,16 @@ class CommentSerializer(serializers.ModelSerializer):
             
     def get_likedit_users(self, obj):
         if get_app_model_permissions(obj)['show_feedback']:
-            return [settings.COMMENTS_XTD_API_USER_REPR(user)
+            return ["%d:%s" % (user.id,
+                               settings.COMMENTS_XTD_API_USER_REPR(user))
                     for user in obj.users_who_liked_it()]
         else:
             return None
 
     def get_dislikedit_users(self, obj):
         if get_app_model_permissions(obj)['show_feedback']:
-            return [settings.COMMENTS_XTD_API_USER_REPR(user)
+            return ["%d:%s" % (user.id,
+                               settings.COMMENTS_XTD_API_USER_REPR(user))
                     for user in obj.users_who_disliked_it()]
         else:
             return None

@@ -115,7 +115,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
     'rest_framework',
     'comp.articles',
     'comp.quotes',
@@ -158,4 +158,4 @@ COMMENTS_XTD_APP_MODEL_PERMISSIONS = {
         'show_feedback': True,
     }
 }
-COMMENTS_XTD_USER_REPRESENTATION = lambda u: u.get_full_name()
+COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()

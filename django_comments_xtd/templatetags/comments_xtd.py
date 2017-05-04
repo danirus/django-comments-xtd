@@ -97,7 +97,7 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
             self.count = int(self.count.resolve(context))
 
         self.qs = XtdComment.objects.for_content_types(
-            self.content_types)[:self.count]
+            self.content_types).order_by('submit_date')[:self.count]
 
         strlist = []
         context_dict = context.flatten()

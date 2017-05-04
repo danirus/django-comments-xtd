@@ -400,7 +400,8 @@ class XtdCommentListView(ListView):
         if content_types is None:
             return None
         return XtdComment.objects.for_content_types(content_types)\
-                                 .filter(is_removed=False)
+                                 .filter(is_removed=False)\
+                                 .order_by('submit_date')
 
     def get_context_data(self, **kwargs):
         context = super(XtdCommentListView, self).get_context_data(**kwargs)

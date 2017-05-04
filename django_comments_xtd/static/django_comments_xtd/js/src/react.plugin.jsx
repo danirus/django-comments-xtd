@@ -2,6 +2,18 @@ import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import * as lib from './local-lib.js';
+
+
+$.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+    if (!lib.csrfSafeMethod(settings.type) && !this.crossDomain) {
+      xhr.setRequestHeader("X-CSRFToken", lib.getCookie('csrftoken'));
+    }
+  }
+});
+
+
 class CommentForm extends React.Component {
   render() {
     return (
@@ -13,6 +25,19 @@ class CommentForm extends React.Component {
 
 
 class Comment extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      current_user: props.settings.current_user,
+      ilikedit: props.data.ilikedit,
+      idislikedit: props.data.idislikedit,
+      likedit_users: props.data.likedit_users,
+      dislikedit_users: props.data.dislikedit_users      
+    };
+    this.actionLike = this.actionLike.bind(this);
+    this.actionDislike = this.actionDislike.bind(this);
+  }
+  
   _get_username_chunk() {
     let username = this.props.data.user_name, moderator = "";
 
@@ -64,28 +89,51 @@ class Comment extends React.Component {
     if(!this.props.settings.allow_feedback)
       return "";
 
+    let attr_opinion = "i" + dir + "dit";
+    let attr_list = dir + "dit_users";  // Produce (dis)likedit_users
+
     let show_users_chunk = "";
     if(this.props.settings.show_feedback) {
-      let attr_users = dir + "dit_users";  // Produce (dis)likedit_users
-      if(this.props.data[attr_users].length) {
-        let users = this.props.data[attr_users].join("<br/>");
+      // Check whether the user is no longer liking/disliking the comment,
+      // and be sure the list list of users who liked/disliked the comment
+      // is up-to-date likewise.
+      let current_user_id = this.state.current_user.split(":")[0];
+      let user_ids = this.state[attr_list].map(function(item) {
+        return item.split(":")[0];
+      });
+      if(this.state[attr_opinion] &&       // If user expressed opinion, and
+         (user_ids.indexOf(current_user_id) == -1)) // user is not included.
+      { // Append user to the list.
+        this.state[attr_list].push(this.state.current_user);
+      } else if(!this.state[attr_opinion] && // If user doesn't have an opinion
+                (user_ids.indexOf(current_user_id) > -1)) // user is included.
+      { // Remove the user from the list.
+        var pos = user_ids.indexOf(current_user_id);
+        this.state[attr_list].splice(pos, 1);
+      }
+      
+      if(this.state[attr_list].length) {
+        let users = this.state[attr_list].map(function(item) {
+          return item.split(":")[1];
+        });
+        users = users.join("<br/>");
         show_users_chunk = (
-          <a data-toggle="tooltip" title={users}>
+          <a className="cfb-counter" data-toggle="tooltip" title={users}>
             <span className="small">
-              {this.props.data[attr_users].length}
+              {this.state[attr_list].length}
             </span>
           </a>
         );
       }
     }
-    
-    let attr_bool = "i" + dir + "dit";
-    let css_class = this.props.data[attr_bool] ? '' : 'mutedlink';
+    let css_class = this.state[attr_opinion] ? '' : 'mutedlink';
     let icon = dir == 'like' ? 'thumbs-up' : 'thumbs-down';
     let class_icon = "small glyphicon glyphicon-"+icon;
+    let click_hdl = dir == 'like' ? this.actionLike : this.actionDislike;
     return (
       <span>
-        {show_users_chunk}  <a href="#" className={css_class}>
+        {show_users_chunk}  <a href="#" onClick={click_hdl}
+                               className={css_class}>
           <span className={class_icon}></span>
         </a>
       </span>
@@ -119,10 +167,13 @@ class Comment extends React.Component {
     let feedback = "";
     if(this.props.settings.allow_feedback)
     {
+      let feedback_id = "feedback-"+this.props.data.id;
+      if(this.props.settings.show_feedback)
+        this.destroyTooltips(feedback_id);
       let like_feedback = this._get_feedback_chunk("like");
       let dislike_feedback = this._get_feedback_chunk("dislike");
       feedback = (
-        <span className="small">
+        <span id={feedback_id} className="small">
           {like_feedback}
           <span className="text-muted"> | </span>
           {dislike_feedback}
@@ -140,9 +191,63 @@ class Comment extends React.Component {
     );
   }
 
+  _post_feedback(flag) {
+    $.ajax({
+      method: 'POST',
+      url: this.props.settings.feedback_url,
+      data: {comment: this.props.data.id, flag: flag},
+      dataType: 'json',
+      cache: false,
+      statusCode: {
+        201: function() {
+          let state = {};
+          if(flag=='like')
+            this.setState({ilikedit: true, idislikedit: false});
+          else if(flag=='dislike')
+            this.setState({idislikedit: true, ilikedit: false});
+        }.bind(this),
+        204: function() {
+          if(flag=='like')
+            this.setState({ilikedit: false});
+          else if(flag=='dislike')
+            this.setState({idislikedit: false});
+        }.bind(this)
+      },
+      error: function(xhr, status, err) {
+        console.error(this.props.settings.feedback_url, status, err.toString());
+      }.bind(this)
+    });
+  }
+
+  actionLike(event) {
+    event.preventDefault();
+    return this._post_feedback('like');
+  }
+
+  actionDislike(event) {
+    event.preventDefault();
+    return this._post_feedback('dislike');
+  }
+
+  destroyTooltips(feedback_id) {
+    $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
+  }
+  
   componentDidMount() {
-    let comment_id = "c" + this.props.data.id;
-    $('#'+comment_id+' A[data-toggle="tooltip"]').tooltip({html:true});
+    let feedback_id = "feedback-" + this.props.data.id;
+    let options = {html: true, selector: '.cfb-counter'};
+    $('#'+feedback_id).tooltip(options);
+  }
+
+  componentDidUpdate() {
+    let feedback_id = "feedback-" + this.props.data.id;
+    let options = {html: true, selector: '.cfb-counter'};
+    $('#'+feedback_id).tooltip(options);
+  }
+  
+  componentWillUnmount() {
+    let feedback_id = "feedback-" + this.props.data.id;
+    $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
   }
   
   render() {
@@ -190,11 +295,14 @@ class CommentTree extends React.Component {
     super(props);
     this.state = {
       settings: {
+        current_user: this.props.current_user || "0:Anonymous",
         is_authenticated: this.props.is_authenticated || false,
         allow_feedback: this.props.allow_feedback || false,
         show_feedback: this.props.show_feedback || false,
         allow_flagging: this.props.allow_flagging || false,
-        can_moderate: this.props.can_moderate || false
+        can_moderate: this.props.can_moderate || false,
+        feedback_url: this.props.feedback_url,
+        flag_url: this.props.flag_url
       },
       tree: []
     };
@@ -235,14 +343,14 @@ class CommentTree extends React.Component {
   
   componentDidMount() {
     $.ajax({
-      url: this.props.url,
+      url: this.props.list_url,
       dataType: 'json',
       cache: false,
       success: function(data) {
         this.createTree(data);
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
+        console.error(this.props.list_url, status, err.toString());
       }.bind(this)
     });
   }

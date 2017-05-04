@@ -71,5 +71,9 @@ class CreateReportFlag(generics.CreateAPIView):
     serializer_class = serializers.FlagSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
+    def post(self, request, *args, **kwargs):
+        import ipdb; ipdb.set_trace()
+        return super(CreateReportFlag, self).post(request, *args, **kwargs)
+    
     def perform_create(self, serializer):
         perform_flag(self.request, serializer.validated_data['comment'])

@@ -21,6 +21,9 @@
           {% endif %}
           {% if perms.comments.can_moderate %}
           <a class="mutedlink" href="{% url 'comments-delete' item.comment.pk %}"><span class="glyphicon glyphicon-trash" title="remove comment"></span></a>
+          {% if item.flagged_count %}
+          <span class="label label-warning">{{ item.flagged_count }}</span>
+          {% endif %}
           {% endif %}
         </div>
         {% endif %}

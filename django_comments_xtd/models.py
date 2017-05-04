@@ -155,6 +155,8 @@ class XtdComment(Comment):
                 new_dict.update(get_user_feedback(obj, user))
             if with_flagging:
                 users_flagging = obj.users_flagging(CommentFlag.SUGGEST_REMOVAL)
+                if user.has_perm('django_comments.can_moderate'):
+                    new_dict.update({'flagged_count': len(users_flagging)})
                 new_dict.update({'flagged': user in users_flagging})
             return new_dict
                 

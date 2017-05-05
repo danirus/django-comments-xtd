@@ -9,7 +9,13 @@ const SOURCE_DIR = path.resolve(STATIC_DIR, 'src');
 module.exports = {
   entry: {
     vendor: ['react', 'react-dom', 'jquery', 'bootstrap'],
-    plugin: path.resolve(SOURCE_DIR, 'react.plugin.jsx'),
+    plugin: path.resolve(SOURCE_DIR, 'index.js')
+      // path.resolve(SOURCE_DIR, 'react.plugin.jsx'),
+    //   path.resolve(SOURCE_DIR, 'index.js'),
+    //   path.resolve(SOURCE_DIR, 'comment.jsx'),
+    //   path.resolve(SOURCE_DIR, 'commentform.jsx'),
+    //   path.resolve(SOURCE_DIR, 'commenttree.jsx')
+    // ]
   },
   output: {
     // filename: '[name].[chunkhash].js',

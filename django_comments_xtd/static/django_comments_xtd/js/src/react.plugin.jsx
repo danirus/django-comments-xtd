@@ -29,10 +29,12 @@ class Comment extends React.Component {
     super(props);
     this.state = {
       current_user: props.settings.current_user,
-      likedit: props.data.likedit,
-      dislikedit: props.data.dislikedit,
-      likedit_users: props.data.likedit_users,
-      dislikedit_users: props.data.dislikedit_users      
+      removal: props.data.flags.removal.active,
+      removal_count: props.data.flags.removal.count,
+      like: props.data.flags.like.active,
+      like_users: props.data.flags.like.users,
+      dislike: props.data.flags.dislike.active,
+      dislike_users: props.data.flags.dislike.users      
     };
     this.actionLike = this.actionLike.bind(this);
     this.actionDislike = this.actionDislike.bind(this);
@@ -44,7 +46,7 @@ class Comment extends React.Component {
     if(this.props.data.user_url && !this.props.data.is_removed)
       username = <a href={this.props.data.user_url}>{username}</a>;
 
-    if(this.props.data.is_moderator)
+    if(this.props.data.user_moderator)
       moderator = (<span>
                    &nbsp;<span className="label label-default">moderator</span>
                    </span>);
@@ -61,7 +63,7 @@ class Comment extends React.Component {
     if(this.props.settings.is_authenticated &&
        this.props.settings.allow_flagging)
     {
-      if(this.props.data.flagged) {
+      if(this.state.removal) {
         flagging_html = (
           <span className="glyphicon glyphicon-flag text-danger"
                 title="I flagged it as inappropriate">
@@ -87,6 +89,21 @@ class Comment extends React.Component {
           <span className="glyphicon glyphicon-trash" title="remove comment">
           </span>
         </a>);
+      if(this.state.removal_count>0) {
+        var text = "";
+        if(this.state.removal_count == 1)
+          text = "A user has flagged this comment as inappropriate.";
+        else if(this.state.removal_count > 1)
+          text = (this.state.removal_count +
+                  " users have flagged this comment as inappropriate.");
+        moderate_html = (
+          <span>
+            {moderate_html}&nbsp;
+            <span className="label label-warning" title={text}>
+              {this.state.removal_count}</span>
+          </span>
+        );
+      }
     }
     
     return (
@@ -100,8 +117,8 @@ class Comment extends React.Component {
     if(!this.props.settings.allow_feedback)
       return "";
 
-    let attr_opinion = dir + "dit";
-    let attr_list = dir + "dit_users";  // Produce (dis)likedit_users
+    let attr_opinion = dir;
+    let attr_list = dir + "_users";  // Produce (dis)like_users
 
     let show_users_chunk = "";
     if(this.props.settings.show_feedback) {
@@ -219,15 +236,15 @@ class Comment extends React.Component {
         201: function() {
           let state = {};
           if(flag=='like')
-            this.setState({likedit: true, dislikedit: false});
+            this.setState({like: true, dislike: false});
           else if(flag=='dislike')
-            this.setState({dislikedit: true, likedit: false});
+            this.setState({dislike: true, like: false});
         }.bind(this),
         204: function() {
           if(flag=='like')
-            this.setState({likedit: false});
+            this.setState({like: false});
           else if(flag=='dislike')
-            this.setState({dislikedit: false});
+            this.setState({dislike: false});
         }.bind(this)
       },
       error: function(xhr, status, err) {
@@ -286,7 +303,7 @@ class Comment extends React.Component {
     return (
       <div className="media" id={comment_id}>
         <div className="media-left">
-          <img src={this.props.data.avatar} height="48" width="48" />
+          <img src={this.props.data.user_avatar} height="48" width="48" />
         </div>
         <div className="media-body">
           <div className="comment">

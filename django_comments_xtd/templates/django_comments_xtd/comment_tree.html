@@ -10,7 +10,7 @@
   <div class="media-body">
     <div class="comment">
       <h6 class="media-heading">
-        {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
+        {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if perms.comments.can_moderate %}&nbsp;<span class="label label-default">moderator</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
         {% if not item.comment.is_removed %}
         <div class="pull-right">
           {% if allow_flagging and item.flagged %}
@@ -22,7 +22,7 @@
           {% if perms.comments.can_moderate %}
           <a class="mutedlink" href="{% url 'comments-delete' item.comment.pk %}"><span class="glyphicon glyphicon-trash" title="remove comment"></span></a>
           {% if item.flagged_count %}
-          <span class="label label-warning">{{ item.flagged_count }}</span>
+          <span class="label label-warning" title="{% blocktrans count counter=item.flagged_count %}A user has flagged this comment as inappropriate.{% plural %}{{ counter }} users have flagged this comment as inappropriate.{% endblocktrans %}">{{ item.flagged_count }}</span>
           {% endif %}
           {% endif %}
         </div>

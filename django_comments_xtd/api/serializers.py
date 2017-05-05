@@ -26,6 +26,8 @@ class CommentSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(max_length=50, read_only=True)
     user_email = serializers.CharField(max_length=254, write_only=True)
     user_url = serializers.CharField(read_only=True)
+    user_moderator = serializers.SerializerMethodField()
+    user_avatar = serializers.SerializerMethodField()
     submit_date = serializers.DateTimeField(read_only=True,
                                             format="%B %-d, %Y, %-I:%M %p")
     thread_id = serializers.IntegerField(read_only=True)
@@ -34,25 +36,17 @@ class CommentSerializer(serializers.ModelSerializer):
     order = serializers.IntegerField(read_only=True)
     followup = serializers.BooleanField(write_only=True, default=False)
     is_removed = serializers.BooleanField(read_only=True)
-
     comment = serializers.SerializerMethodField()
-    flagged = serializers.SerializerMethodField()
-    likedit = serializers.SerializerMethodField()
-    dislikedit = serializers.SerializerMethodField()
-    likedit_users = serializers.SerializerMethodField()
-    dislikedit_users = serializers.SerializerMethodField()
-    is_moderator = serializers.SerializerMethodField()
     allow_reply = serializers.SerializerMethodField()
     permalink = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()
+    flags = serializers.SerializerMethodField()
     
     class Meta:
         model = XtdComment
-        fields = ('id', 'user_name', 'user_email', 'user_url', 'is_moderator',
-                  'avatar', 'permalink', 'comment', 'submit_date', 'thread_id',
-                  'parent_id', 'level', 'order', 'followup', 'is_removed',
-                  'allow_reply', 'likedit_users', 'dislikedit_users',
-                  'flagged', 'likedit', 'dislikedit', 
+        fields = ('id', 'user_name', 'user_email', 'user_url', 'user_moderator',
+                  'user_avatar', 'permalink', 'comment', 'submit_date',
+                  'thread_id', 'parent_id', 'level', 'order', 'followup',
+                  'is_removed', 'allow_reply', 'flags'
         )
 
     def __init__(self, *args, **kwargs):
@@ -65,7 +59,7 @@ class CommentSerializer(serializers.ModelSerializer):
         else:
             return render_markup_comment(obj.comment)
 
-    def get_is_moderator(self, obj):
+    def get_user_moderator(self, obj):
         try:
             if obj.user and obj.user.has_perm('comments.can_moderate'):
                 return True
@@ -74,54 +68,46 @@ class CommentSerializer(serializers.ModelSerializer):
         except:
             return None
 
-    def get_flagged(self, obj):
-        try:
+    def get_flags(self, obj):
+        flags = {
+            'like': {'active': False, 'users': None},
+            'dislike': {'active': False, 'users': None},
+            'removal': {'active': False, 'count': None},
+        }
+        users_likedit, users_dislikedit = None, None
+        
+        if get_app_model_permissions(obj)['allow_flagging']:
             users_flagging = obj.users_flagging(CommentFlag.SUGGEST_REMOVAL)
             if self.request.user in users_flagging:
-                return True
-            else:
-                return False
-        except:
-            return None
-        
-    def get_likedit(self, obj):
-        try:
-            if self.request.user in obj.users_flagging(LIKEDIT_FLAG):
-                return True
-            else:
-                return False
-        except:
-            return None
-
-    def get_dislikedit(self, obj):
-        try:
-            if self.request.user in obj.users_flagging(DISLIKEDIT_FLAG):
-                return True
-            else:
-                return False
-        except:
-            return None
-        
-    def get_likedit_users(self, obj):
+                flags['removal']['active'] = True
+            if self.request.user.has_perm("django_comments.can_moderate"):
+                flags['removal']['count'] = len(users_flagging)
+ 
+        if (
+                get_app_model_permissions(obj)['allow_feedback'] or
+                get_app_model_permissions(obj)['show_feedback']
+        ):
+            users_likedit = obj.users_flagging(LIKEDIT_FLAG)
+            users_dislikedit = obj.users_flagging(DISLIKEDIT_FLAG)
+            
+        if get_app_model_permissions(obj)['allow_feedback']:
+            if self.request.user in users_likedit:
+                flags['like']['active'] = True
+            elif self.request.user in users_dislikedit:
+                flags['dislike']['active'] = True
         if get_app_model_permissions(obj)['show_feedback']:
-            return ["%d:%s" % (user.id,
-                               settings.COMMENTS_XTD_API_USER_REPR(user))
-                    for user in obj.users_flagging(LIKEDIT_FLAG)]
-        else:
-            return None
-
-    def get_dislikedit_users(self, obj):
-        if get_app_model_permissions(obj)['show_feedback']:
-            return ["%d:%s" % (user.id,
-                               settings.COMMENTS_XTD_API_USER_REPR(user))
-                    for user in obj.users_flagging(DISLIKEDIT_FLAG)]
-        else:
-            return None
-
+            flags['like']['users'] = [
+                "%d:%s" % (user.id, settings.COMMENTS_XTD_API_USER_REPR(user))
+                for user in users_likedit]
+            flags['dislike']['users'] = [
+                "%d:%s" % (user.id, settings.COMMENTS_XTD_API_USER_REPR(user))
+                for user in users_dislikedit]
+        return flags
+                
     def get_allow_reply(self, obj):
         return obj.allow_thread()
 
-    def get_avatar(self, obj):
+    def get_user_avatar(self, obj):
         path = hashlib.md5(obj.user_email.lower().encode('utf-8')).hexdigest()
         param = urlencode({'s': 48})
         return "http://www.gravatar.com/avatar/%s?%s&d=mm" % (path, param)

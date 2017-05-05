@@ -4,6 +4,8 @@
 *.zip
 *.egg-info
 *.db
+plugin-*.js
+vendor-*.js
 db.sqlite3
 docs/_build
 build/
@@ -12,3 +14,4 @@ dist/
 .emacs.desktop*
 .tox
 .cache
+node_modules/

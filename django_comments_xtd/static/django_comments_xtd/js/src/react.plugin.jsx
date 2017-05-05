@@ -175,17 +175,17 @@ class Comment extends React.Component {
   }
   
   _get_reply_link_chunk() {
-    if(this.props.data.reply_url==null)
+    if(!this.props.data.allow_reply)
       return "";
     
     let separator = "";
     if(this.props.settings.allow_feedback)
       separator = <span className="text-muted">&bull;</span>;
+    let url = this.props.settings.reply_url.replace('0', this.props.data.id);
 
     return (
       <span>&nbsp;&nbsp;{separator}&nbsp;&nbsp;
-        <a className="small mutedlink"
-           href={this.props.data.reply_url}>Reply</a>
+        <a className="small mutedlink" href={url}>Reply</a>
       </span>
     );
   }

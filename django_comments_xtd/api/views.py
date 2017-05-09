@@ -12,10 +12,29 @@ from django_comments_xtd.api import serializers
 from django_comments_xtd.models import XtdComment
 
 
-class CommentCreateList(generics.ListCreateAPIView):
-    """List all comments or create a new comment."""
+class CommentCreate(generics.CreateAPIView):
+    """Create a comment."""
+    serializer_class = serializers.WriteCommentSerializer
 
-    serializer_class = serializers.CommentSerializer
+    def post(self, request, *args, **kwargs):
+        response = super(CommentCreate, self).post(request, *args, **kwargs)
+
+        if self.comment.user.is_authenticated:
+            # The comment has been created without need for further
+            # confirmation, however it could be held for approval, or
+            # be immediately discarded.
+            return response
+        else:
+            return Response(status=status.HTTP_200_OK)
+
+    def perform_create(self, serializer):
+        self.comment = serializer.save()
+
+
+class CommentList(generics.ListCreateAPIView):
+    """List all comments for a given ContentType and object ID."""
+
+    serializer_class = serializers.ReadCommentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
@@ -59,7 +78,7 @@ class ToggleFeedbackFlag(generics.CreateAPIView, mixins.DestroyModelMixin):
             return response
         else:
             return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     def perform_create(self, serializer):
         f = getattr(views, 'perform_%s' % self.request.data['flag'])
         self.created = f(self.request, serializer.validated_data['comment'])
@@ -73,6 +92,6 @@ class CreateReportFlag(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         return super(CreateReportFlag, self).post(request, *args, **kwargs)
-    
+
     def perform_create(self, serializer):
         perform_flag(self.request, serializer.validated_data['comment'])

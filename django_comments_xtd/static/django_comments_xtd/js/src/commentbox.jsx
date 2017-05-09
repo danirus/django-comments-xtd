@@ -3,6 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import * as lib from './lib.js';
+import {CommentForm} from './commentform.jsx';
+import {CommentTree} from './commenttree.jsx';
 
 
 export class CommentBox extends React.Component {
@@ -20,7 +22,8 @@ export class CommentBox extends React.Component {
         feedback_url: this.props.feedback_url,
         delete_url: this.props.delete_url,
         reply_url: this.props.reply_url,
-        flag_url: this.props.flag_url
+        flag_url: this.props.flag_url,
+        list_url: this.props.list_url
       }
     };
   }
@@ -32,7 +35,7 @@ export class CommentBox extends React.Component {
         text = "There are " + this.props.comment_count + " comments below.";
       return (
         <span>
-          <H5 className="text-center">{text}</H5>
+          <h5 className="text-center">{text}</h5>
           <hr/>
         </span>
       );
@@ -42,6 +45,14 @@ export class CommentBox extends React.Component {
 
   _get_form_block() {
     if(this.props.allow_comments) {
+      return (
+        <div className="comment">
+          <h4 className="text-center">Post your comment.</h4>
+          <div className="well">
+            <CommentForm settings={this.state.settings} />
+          </div>
+        </div>
+      );
     } else {
       return (
         <h5>Comments are disabled for this article.</h5>

@@ -19,8 +19,10 @@ urlpatterns = [
     url(r'^disliked/$', views.dislike_done, name='comments-xtd-dislike-done'),
 
     # API handlers.
+    url(r'^api/comment/$', api.CommentCreate.as_view(),
+        name='comments-xtd-api-create'),
     url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[0-9]+)/$',
-        api.CommentCreateList.as_view(), name='comments-xtd-api-list'),
+        api.CommentList.as_view(), name='comments-xtd-api-list'),
     url(r'^api/feedback/$', api.ToggleFeedbackFlag.as_view(),
         name='comments-xtd-api-feedback'),
     url(r'^api/flag/$', api.CreateReportFlag.as_view(),

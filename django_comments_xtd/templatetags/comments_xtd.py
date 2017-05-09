@@ -1,3 +1,4 @@
+import json
 import hashlib
 import re
 
@@ -431,6 +432,78 @@ def get_xtdcomment_tree(parser, token):
 
 
 # ----------------------------------------------------------------------
+class GetCommentBoxPropsNode(Node):
+    def __init__(self, obj):
+        self.obj = Variable(obj)
+
+    def render(self, context):
+        d = {
+            "comment_count": 0,
+            "allow_comments": True,
+            "list_url": None,
+            "flag_url": reverse("comments-flag", args=(0,)),
+            "delete_url": reverse("comments-delete", args=(0,)),
+            "reply_url": reverse("comments-xtd-reply", kwargs={'cid': 0}),
+            "feedback_url": reverse("comments-xtd-api-feedback"),
+            "current_user": "0:Anonymous",
+            "is_authenticated": False,
+            "can_moderate": False
+        }
+        obj = self.obj.resolve(context)
+        ctype = ContentType.objects.get_for_model(obj)
+        queryset = XtdComment.objects.filter(content_type=ctype,
+                                             object_pk=obj.pk,
+                                             site__pk=settings.SITE_ID,
+                                             is_public=True)
+        # comment_count prop.
+        d['comment_count'] = queryset.count()
+        # list_url prop.
+        ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
+        d['list_url'] = reverse('comments-xtd-api-list',
+                                kwargs={'content_type': ctype_slug,
+                                        'object_pk': obj.id})
+        # current_user prop.
+        user = context.get('user', None)
+        if user and user.is_authenticated():
+            d['current_user'] = "%d:%s" % (
+                user.pk, settings.COMMENTS_XTD_API_USER_REPR(user))
+            d['is_authenticated'] = True
+            d['can_moderate'] = user.has_perm("django_comments.can_moderate")
+        return json.dumps(d)
+
+
+@register.tag
+def get_commentbox_props(parser, token):
+    """
+    Returns a JSON object with the initial props for the CommentBox component.
+
+    The returned JSON object contains the following attributes::
+        {
+            comment_count: <int>,  // Count of comments posted to the object.
+            allow_comments: <bool>,  // Whether to allow comments to this post.
+            list_url: <api-url-to-list-comments>,
+            flag_url: <api-url-to-suggest-comment-removal>,
+            delete_url: <api-url-for-moderators-to-remove-comment>,
+            reply_url: <api-url-to-reply-comments>,
+            feedback_url: <api-url-to-send-like/dislike-feedback>,
+            current_user: <str as "user_id:user_name">,
+            is_authenticated: <bool>,  // Whether current_user is authenticated.
+            can_moderate: <bool>,  // Whether current_user can moderate.
+        }
+    """
+    try:
+        tag_name, args = token.contents.split(None, 1)
+    except ValueError:
+        raise TemplateSyntaxError("%s tag requires arguments" %
+                                  token.contents.split()[0])
+    match = re.search(r'for (\w+)', args)
+    if not match:
+        raise TemplateSyntaxError("%s tag had invalid arguments" % tag_name)
+    obj = match.groups()[0]
+    return GetCommentBoxPropsNode(obj)
+
+
+# ----------------------------------------------------------------------
 def render_with_filter(markup_filter, lines):
     try:
         if formatter:
@@ -496,6 +569,7 @@ def xtd_comment_gravatar(email, size=48):
     url = xtd_comment_gravatar_url(email, size)
     return mark_safe('<img src="%s" height="%d" width="%d">' %
                      (url, size, size))
+
 
 # ----------------------------------------------------------------------
 @register.filter

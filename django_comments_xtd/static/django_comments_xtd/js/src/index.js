@@ -6,6 +6,8 @@ import {CommentTree} from './commenttree.jsx';
 
 
 ReactDOM.render(
-  React.createElement(CommentTree, window.django_comments_xtd_props),
+  React.createElement(CommentTree,
+                      Object.assign(window.comments_props,
+                                    window.comments_props_override)),
   document.getElementById('comment-tree')
 );

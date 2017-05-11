@@ -25,41 +25,7 @@
 
 <div class="row">
   <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">  
-    <div id="comments">
-      {% get_comment_count for object as comment_count %}
-      {% if comment_count %}
-      <H5 class="text-center">
-        {% blocktrans count comment_count=comment_count %}
-        There is {{ comment_count }} comment below.
-        {% plural %}
-        There are {{ comment_count }} comments below.
-        {% endblocktrans %}
-      </H5>
-      <hr/>
-      {% endif %}
-      
-      {% if object.allow_comments %}
-      <div class="comment">
-        <H4 class="text-center">Post your comment.</H4>
-        <div class="well">
-          {% render_comment_form for object %}
-        </div>
-      </div>
-      {% else %}
-      <h5 class="text-center">Comments are disabled for this article.</h5>
-      {% endif %}
-      
-      {% if comment_count %}
-      <hr/>
-      <div id="comment-tree">
-        <p class="alert alert-info text-center">Loading comments...</p>
-      </div>
-      <!--hr/-->
-      <!--ul class="media-list" id="comment-tree">
-        {# render_xtdcomment_tree for object allow_feedback show_feedback allow_flagging #}
-      </ul-->
-      {% endif %}
-    </div>
+    <div id="comments"></div>
   </div>
 </div>
 {% endblock content %}

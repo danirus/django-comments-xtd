@@ -15,8 +15,8 @@ export class Comment extends React.Component {
       dislike: props.data.flags.dislike.active,
       dislike_users: props.data.flags.dislike.users      
     };
-    this.actionLike = this.actionLike.bind(this);
-    this.actionDislike = this.actionDislike.bind(this);
+    this.action_like = this.action_like.bind(this);
+    this.action_dislike = this.action_dislike.bind(this);
   }
   
   _get_username_chunk() {
@@ -138,7 +138,7 @@ export class Comment extends React.Component {
     let css_class = this.state[attr_opinion] ? '' : 'mutedlink';
     let icon = dir == 'like' ? 'thumbs-up' : 'thumbs-down';
     let class_icon = "small glyphicon glyphicon-"+icon;
-    let click_hdl = dir == 'like' ? this.actionLike : this.actionDislike;
+    let click_hdl = dir == 'like' ? this.action_like : this.action_dislike;
     let opinion = "";
     if(this.state[attr_opinion])
       opinion = dir == 'like' ? 'I like it' : 'I dislike it';
@@ -232,12 +232,12 @@ export class Comment extends React.Component {
     });
   }
 
-  actionLike(event) {
+  action_like(event) {
     event.preventDefault();
     return this._post_feedback('like');
   }
 
-  actionDislike(event) {
+  action_dislike(event) {
     event.preventDefault();
     return this._post_feedback('dislike');
   }

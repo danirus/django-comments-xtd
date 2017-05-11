@@ -18,8 +18,7 @@ class CommentCreate(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         response = super(CommentCreate, self).post(request, *args, **kwargs)
-
-        if self.comment.user.is_authenticated:
+        if self.comment.user and self.comment.user.is_authenticated():
             # The comment has been created without need for further
             # confirmation, however it could be held for approval, or
             # be immediately discarded.

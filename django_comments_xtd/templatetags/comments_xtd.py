@@ -17,6 +17,7 @@ try:
 except ImportError:
     from django.core.urlresolvers import reverse
 
+from django_comments.forms import CommentSecurityForm
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
 
@@ -436,33 +437,39 @@ class GetCommentBoxPropsNode(Node):
     def __init__(self, obj):
         self.obj = Variable(obj)
 
-    def render(self, context):
-        d = {
-            "comment_count": 0,
-            "allow_comments": True,
-            "list_url": None,
-            "flag_url": reverse("comments-flag", args=(0,)),
-            "delete_url": reverse("comments-delete", args=(0,)),
-            "reply_url": reverse("comments-xtd-reply", kwargs={'cid': 0}),
-            "feedback_url": reverse("comments-xtd-api-feedback"),
-            "current_user": "0:Anonymous",
-            "is_authenticated": False,
-            "can_moderate": False
-        }
+    def render(self, context):        
         obj = self.obj.resolve(context)
+        form = CommentSecurityForm(obj)
         ctype = ContentType.objects.get_for_model(obj)
         queryset = XtdComment.objects.filter(content_type=ctype,
                                              object_pk=obj.pk,
                                              site__pk=settings.SITE_ID,
                                              is_public=True)
-        # comment_count prop.
-        d['comment_count'] = queryset.count()
-        # list_url prop.
         ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
-        d['list_url'] = reverse('comments-xtd-api-list',
+        d = {
+            "comment_count": queryset.count(),
+            "allow_comments": True,
+            "current_user": "0:Anonymous",
+            "is_authenticated": False,
+            "allow_flagging": False,
+            "allow_feedback": False,
+            "show_feedback": False,
+            "can_moderate": False,
+            "feedback_url": reverse("comments-xtd-api-feedback"),
+            "delete_url": reverse("comments-delete", args=(0,)),
+            "reply_url": reverse("comments-xtd-reply", kwargs={'cid': 0}),
+            "flag_url": reverse("comments-flag", args=(0,)),
+            "list_url": reverse('comments-xtd-api-list',
                                 kwargs={'content_type': ctype_slug,
-                                        'object_pk': obj.id})
-        # current_user prop.
+                                        'object_pk': obj.id}),
+            "send_url": reverse("comments-xtd-api-create"),
+            "form": {
+                "content_type": form['content_type'].value(),
+                "object_pk": form['object_pk'].value(),
+                "timestamp": form['timestamp'].value(),
+                "security_hash": form['security_hash'].value()
+            }
+        }
         user = context.get('user', None)
         if user and user.is_authenticated():
             d['current_user'] = "%d:%s" % (
@@ -481,6 +488,7 @@ def get_commentbox_props(parser, token):
         {
             comment_count: <int>,  // Count of comments posted to the object.
             allow_comments: <bool>,  // Whether to allow comments to this post.
+            send_url: <api-irl-to-send-a-comment>,
             list_url: <api-url-to-list-comments>,
             flag_url: <api-url-to-suggest-comment-removal>,
             delete_url: <api-url-for-moderators-to-remove-comment>,

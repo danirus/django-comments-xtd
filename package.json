@@ -21,6 +21,7 @@
     "webpack": "^2.4.1"
   },
   "dependencies": {
+    "remarkable": "^1.7.0",
     "bootstrap": "^3.3.7",
     "jquery": "^3.2.1"
   }

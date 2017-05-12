@@ -48,8 +48,8 @@ export class CommentTree extends React.Component {
 
     this.setState({tree:tree});
   }
-  
-  componentDidMount() {
+
+  loadComments() {
     $.ajax({
       url: this.settings.list_url,
       dataType: 'json',
@@ -61,6 +61,10 @@ export class CommentTree extends React.Component {
         console.error(this.settings.list_url, status, err.toString());
       }.bind(this)
     });
+  }
+  
+  componentDidMount() {
+    this.loadComments();
   }
   
   render() {

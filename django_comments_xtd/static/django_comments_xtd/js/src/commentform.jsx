@@ -1,22 +1,19 @@
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Remarkable from 'remarkable';
 
 
 export class CommentForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      email: '',
-      url: '',
-      followup: false,
-      comment: '',
+      name: '', email: '', url: '', followup: false, comment: '',
       visited: {name: false, email: false, comment: false},
       errors: {name: false, email: false, comment: false}
     };
     this.handle_input_change = this.handle_input_change.bind(this);
     this.handle_blur = this.handle_blur.bind(this);
+    this.handle_submit = this.handle_submit.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
     this.fhelp = <span className="help-block">This field is required.</span>;
   }
@@ -34,7 +31,6 @@ export class CommentForm extends React.Component {
       var visited = this.state.visited;
       visited[field] = true;
       this.setState({visited: visited});
-      console.log("visited status for field "+field+" changed to true");
     };
     return handler.bind(this);
   }
@@ -66,9 +62,9 @@ export class CommentForm extends React.Component {
   }
 
   render_field_comment() {
-    let cssc = "", help = "";
+    let cssc = "form-group ", help = "";
     if (this.state.errors.comment) {
-      cssc = "form-group " + (this.state.errors.comment ? "has-error" : "");
+      cssc += (this.state.errors.comment ? "has-error" : "");
       help = this.fhelp;
     }
     return (
@@ -88,9 +84,9 @@ export class CommentForm extends React.Component {
   render_field_name() {
     if(this.props.settings.is_authenticated)
       return "";
-    let cssc = "", help = "";
+    let cssc = "form-group ", help = "";
     if (this.state.errors.name) {
-      cssc = "form-group " + (this.state.errors.name ? "has-error" : "");
+      cssc += (this.state.errors.name ? "has-error" : "");
       help = this.fhelp;
     }
     return (
@@ -142,7 +138,7 @@ export class CommentForm extends React.Component {
         </label>
         <div className="col-lg-7 col-md-7">
           <input type="text" name="url" id="id_url" value={this.state.url}
-                 placeholder="URL your name links to (optional)"
+                 placeholder="url your name links to (optional)"
                  onChange={this.handle_input_change}
                  className="form-control" />
         </div>
@@ -152,8 +148,6 @@ export class CommentForm extends React.Component {
   }
 
   render_field_followup() {
-    if(this.props.settings.is_authenticated)
-      return "";
     return (
       <div className="form-group">
         <div className="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
@@ -171,25 +165,88 @@ export class CommentForm extends React.Component {
     );
   }
 
+  reset_form() {
+    this.setState({
+      name: '', email: '', url: '', followup: false, comment: '',
+      visited: {name: false, email: false, comment: false},
+      errors: {name: false, email: false, comment: false}
+    });
+  }
+  
+  handle_submit(event) {
+    event.preventDefault();
+    if(!this.validate())
+      return;
+    const cssc = "text-center alert alert-";
+    const message = {
+      202: "Your comment will be reviewed. Thank your for your patience.",
+      204: "Thank you, a comment confirmation request has been sent by mail.",
+      403: "Sorry, your comment has been rejected."
+    };
+    $.ajax({
+      method: 'POST',
+      url: this.props.settings.send_url,
+      data: {
+        content_type: this.props.form.content_type,
+        object_pk: this.props.form.object_pk,
+        timestamp: this.props.form.timestamp,
+        security_hash: this.props.form.security_hash,
+        honeypot: '',
+        comment: this.state.comment,
+        name: this.state.name,
+        email: this.state.email,
+        url: this.state.url,
+        followup: this.state.followup,
+        reply_to: 0
+      },
+      dataType: 'json',
+      cache: false,
+      statusCode: {
+        201: function() {
+          this.reset_form();
+          this.props.reloadComments();
+        }.bind(this),
+        202: function() {
+          this.reset_form();
+          this.props.onCommentSubmit({'message': message[202],
+                                      'cssc': cssc+"info"});
+        }.bind(this),
+        204: function() {
+          this.reset_form();
+          this.props.onCommentSubmit({'message': message[204],
+                                      'cssc': cssc+"info"});
+        }.bind(this),
+        403: function() {
+          this.reset_form();
+          this.props.onCommentSubmit({'message': message[403],
+                                      'cssc': cssc+"danger"});
+        }.bind(this)
+      },
+      error: function(xhr, status, err) {
+        console.error(this.props.settings.send_url, status, err.toString());
+      }.bind(this)
+    });
+  }
+  
   handle_preview(event) {
     event.preventDefault();
     if(this.validate()) {
-      this.props.onCommentPreview({name: this.state.name,
-                                   email: this.state.email,
-                                   url: this.state.url,
-                                   comment: this.state.comment});
+      this.props.onCommentPreview(this.state.name,
+                                  this.state.email,
+                                  this.state.url,
+                                  this.state.comment);
     }
   }
-
+  
   render() {
     let comment = this.render_field_comment();
     let name = this.render_field_name();
     let mail = this.render_field_email();
     let url = this.render_field_url();
     let followup = this.render_field_followup();
-
+    
     return (
-      <form method="POST" action={this.props.settings.send_url}
+      <form method="POST" onSubmit={this.handle_submit}
             className="form-horizontal">
         <input type="hidden" name="content_type"
                value={this.props.form.content_type}/>

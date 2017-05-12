@@ -34,7 +34,7 @@ class XtdCommentForm(CommentForm):
         self.fields['url'] = forms.URLField(
             label=_("Link"), required=False,
             widget=forms.TextInput(attrs={
-                'placeholder': _('URL your name links to (optional)'),
+                'placeholder': _('url your name links to (optional)'),
                 'class': 'form-control'}))
         self.fields['comment'] = forms.CharField(
             widget=forms.Textarea(attrs={'placeholder': _('Your comment'),

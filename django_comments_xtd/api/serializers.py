@@ -15,12 +15,16 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
-from django_comments import  get_form, signals
+from django_comments import  get_form
 from django_comments.models import CommentFlag
+from django_comments.signals import comment_will_be_posted, comment_was_posted
 from rest_framework import serializers
 
+from django_comments_xtd import signed, views
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+from django_comments_xtd.models import (TmpXtdComment, XtdComment,
+                                        LIKEDIT_FLAG, DISLIKEDIT_FLAG)
+from django_comments_xtd.signals import confirmation_received
 from django_comments_xtd.templatetags.comments_xtd import render_markup_comment
 from django_comments_xtd.utils import get_app_model_permissions
 
@@ -100,9 +104,18 @@ class WriteCommentSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        comment = self.form.get_comment_object(
-            site_id=get_current_site(self.request).id)
-        comment.ip_address = self.request.META.get("REMOTE_ADDR", None)
+        # resp object is a dictionary. The code key indicates the possible
+        # four states the comment can be in:
+        #  * Comment created (http 201),
+        #  * Confirmation sent by mail (http 204),
+        #  * Comment in moderation (http 202),
+        #  * Comment rejected (http 403).
+        site = get_current_site(self.request)
+        resp = {
+            'code': -1,
+            'comment': self.form.get_comment_object(site_id=site.id)
+        }
+        resp['comment'].ip_address = self.request.META.get("REMOTE_ADDR", None)
 
         try:
             user_is_authenticated = self.request.user.is_authenticated()
@@ -110,29 +123,40 @@ class WriteCommentSerializer(serializers.Serializer):
             user_is_authenticated = self.request.user.is_authenticated
 
         if user_is_authenticated:
-            comment.user = self.request.user
+            resp['comment'].user = self.request.user
 
         # Signal that the comment is about to be saved
-        responses = signals.comment_will_be_posted.send(
-            sender=comment.__class__,
-            comment=comment,
-            request=self.request
-        )
-
+        responses = comment_will_be_posted.send(sender=TmpXtdComment,
+                                                comment=resp['comment'],
+                                                request=self.request)
         for (receiver, response) in responses:
             if response is False:
-                raise Exception(
-                    "comment_will_be_posted receiver %r killed the comment" %
-                    receiver.__name__)
+                resp['code'] = 403  # Rejected.
+                return resp
 
-        # Save the comment and signal that it was saved
-        comment.save()
-        signals.comment_was_posted.send(
-            sender=comment.__class__,
-            comment=comment,
-            request=self.request
-        )
-        return comment
+        # Replicate logic from django_comments_xtd.views.on_comment_was_posted.
+        if not settings.COMMENTS_XTD_CONFIRM_EMAIL or user_is_authenticated:
+            if not views._comment_exists(resp['comment']):
+                new_comment = views._create_comment(resp['comment'])
+                resp['comment'].xtd_comment = new_comment
+                confirmation_received.send(sender=TmpXtdComment,
+                                           comment=resp['comment'],
+                                           request=self.request)
+                comment_was_posted.send(sender=new_comment.__class__,
+                                        comment=new_comment,
+                                        request=self.request)
+                if resp['comment'].is_public:
+                    resp['code'] = 201
+                    views.notify_comment_followers(new_comment)
+                else:
+                    resp['code'] = 202
+        else:
+            key = signed.dumps(resp['comment'], compress=True,
+                               extra_key=settings.COMMENTS_XTD_SALT)
+            views.send_email_confirmation_request(resp['comment'], key, site)
+            resp['code'] = 204  # Confirmation sent by mail.
+                    
+        return resp
 
 
 class ReadCommentSerializer(serializers.ModelSerializer):

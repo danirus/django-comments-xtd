@@ -1,6 +1,8 @@
 import $ from 'jquery';
+import md5 from 'md5';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Remarkable from 'remarkable';
 
 import * as lib from './lib.js';
 import {CommentForm} from './commentform.jsx';
@@ -10,41 +12,29 @@ import {CommentTree} from './commenttree.jsx';
 export class CommentBox extends React.Component {
   constructor(props) {
     super(props);
-  //   lib.jquery_ajax_setup('csrftoken');
-    // this.state = {
-    //   settings: {
-    //     current_user: this.props.current_user || "0:Anonymous",
-    //     is_authenticated: this.props.is_authenticated || false,
-    //     allow_flagging: this.props.allow_flagging || false,
-    //     allow_feedback: this.props.allow_feedback || false,
-    //     show_feedback: this.props.show_feedback || false,
-    //     can_moderate: this.props.can_moderate || false,
-    //     feedback_url: this.props.feedback_url,
-    //     delete_url: this.props.delete_url,
-    //     reply_url: this.props.reply_url,
-    //     flag_url: this.props.flag_url,
-    //     list_url: this.props.list_url,
-    //     send_url: this.props.send_url,
-    //     form: this.props.form
-    //   }
-    // };
     this.state = {
+      alert: {message: '', cssc: ''},
       previewing: false,
-      preview: {
-        name: '',
-        email: '',
-        url: '',
-        comment: ''
-      }
+      preview: {name: '', email: '', url: '', comment: ''}
     };
+    this.handle_submit = this.handle_submit.bind(this);
+    this.handle_preview = this.handle_preview.bind(this);
   }
 
+  handle_submit(data) {
+    this.setState({alert: data});
+  }
+  
   handle_preview(name, email, url, comment) {
-    this.setState({preview: {name: name,
-                             email: email,
-                             url: url,
-                             comment: comment},
-                   previewing: true});
+    var override = {
+      preview: {name: name,
+                email: email,
+                url: url,
+                comment: comment},
+      previewing: true
+    };
+    // var state = Object.assign(this.state, override);
+    this.setState(override);
   }
 
   render_comment_counter() {
@@ -53,27 +43,76 @@ export class CommentBox extends React.Component {
       if(this.props.comment_count > 1)
         text = "There are " + this.props.comment_count + " comments below.";
       return (
-        <span>
+        <div>
           <h5 className="text-center">{text}</h5>
           <hr/>
-        </span>
+        </div>
       );
     } else
       return "";
   }
 
+  rawMarkup() {
+    var md = new Remarkable();
+    const rawMarkup = md.render(this.state.preview.comment);
+    return { __html: rawMarkup };
+  }
+  
   render_comment_preview() {
+    if(!this.state.previewing)
+      return "";
+    var media_left = "", heading_name = "";
+
+    // Build Gravatar.
+    const hash = md5(this.state.preview.email.toLowerCase());
+    const avatar_url = "http://www.gravatar.com/avatar/"+hash+"?s=48&d=mm";
+    const avatar_img = <img src={avatar_url} height="48" width="48"/>;
+    
+    if(this.state.preview.url) {
+      media_left = <a href={this.state.preview.url}>{avatar_img}</a>;
+      heading_name = (<a href={this.state.preview.url} target="_new">
+                      {this.state.preview.name}</a>);
+    } else {
+      media_left = avatar_img;
+      if(this.props.is_authenticated)
+        heading_name = this.props.current_user.split(":")[1];
+      else heading_name = this.state.preview.name;
+    }
+    
+    return (
+      <div>
+        <h5 className="text-center">Your comment in preview</h5>
+        <div className="media">
+          <div className="media-left">{media_left}</div>
+          <div className="media-body">
+            <h6 className="media-heading">Now&nbsp;-&nbsp;{heading_name}</h6>
+            <p dangerouslySetInnerHTML={this.rawMarkup()} />
+          </div>
+        </div>
+        <hr/>
+      </div>
+    );
   }
 
   render_comment_form() {
     if(this.props.allow_comments) {
+      let alert_div = "";
       let settings = {send_url: this.props.send_url,
                       is_authenticated: this.props.is_authenticated};
+      if(this.state.alert.message) {
+        alert_div = (
+          <div className={this.state.alert.cssc}>
+            {this.state.alert.message}
+          </div>
+        );
+      }
       return (
         <div className="comment">
-          <h4 className="text-center">Post your comment.</h4>
+          <h4 className="text-center">Post your comment</h4>
+          {alert_div}
           <div className="well well-lg">
             <CommentForm form={this.props.form} settings={settings}
+                         onCommentSubmit={this.handle_submit}
                          onCommentPreview={this.handle_preview} />
           </div>
         </div>

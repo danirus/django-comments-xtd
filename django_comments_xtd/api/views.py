@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.http import Http404
+from django.utils.translation import ugettext_lazy as _
 
 from django_comments.models import CommentFlag
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
+from rest_framework.utils.serializer_helpers import ReturnDict
 
 from django_comments_xtd import views
 from django_comments_xtd.api import serializers
@@ -18,16 +20,13 @@ class CommentCreate(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         response = super(CommentCreate, self).post(request, *args, **kwargs)
-        if self.comment.user and self.comment.user.is_authenticated():
-            # The comment has been created without need for further
-            # confirmation, however it could be held for approval, or
-            # be immediately discarded.
+        if self.resp_dict['code'] == 201:  # The comment has been created.
             return response
-        else:
-            return Response(status=status.HTTP_200_OK)
-
+        elif self.resp_dict['code'] in [202, 204, 403]:
+            return Response(status=self.resp_dict['code'])
+        
     def perform_create(self, serializer):
-        self.comment = serializer.save()
+        self.resp_dict = serializer.save()
 
 
 class CommentList(generics.ListCreateAPIView):

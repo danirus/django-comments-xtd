@@ -8,7 +8,7 @@ const SOURCE_DIR = path.resolve(STATIC_DIR, 'src');
 
 module.exports = {
   entry: {
-    vendor: ['react', 'react-dom', 'remarkable', 'jquery', 'bootstrap'],
+    vendor: ['md5', 'react', 'react-dom', 'remarkable', 'jquery', 'bootstrap'],
     plugin: path.resolve(SOURCE_DIR, 'index.js')
   },
   output: {

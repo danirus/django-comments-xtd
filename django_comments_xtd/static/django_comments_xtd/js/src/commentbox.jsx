@@ -12,10 +12,12 @@ import {CommentTree} from './commenttree.jsx';
 export class CommentBox extends React.Component {
   constructor(props) {
     super(props);
+    lib.jquery_ajax_setup('csrftoken');
     this.state = {
       alert: {message: '', cssc: ''},
       previewing: false,
-      preview: {name: '', email: '', url: '', comment: ''}
+      preview: {name: '', email: '', url: '', comment: ''},
+      tree: []
     };
     this.handle_submit = this.handle_submit.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
@@ -149,6 +151,57 @@ export class CommentBox extends React.Component {
       );
     }
   }
+
+  create_tree(data) {
+    let tree = new Array();
+    let order = new Array();
+    let comments = {};
+    let children = {};
+
+    function get_children(cid) {
+      return children[cid].map(function(index) {
+        if(comments[index].children == undefined) {
+          comments[index].children = get_children(index);
+        }
+        return comments[index];
+      });
+    };
+    
+    for (let item of data) {
+      comments[item.id] = item;
+      if(item.level == 0) {
+        order.push(item.id);
+      }
+      children[item.id] = [];
+      if(item.parent_id!==item.id) {
+        children[item.parent_id].push(item.id);
+      }
+    }
+    for (let cid of order) {
+      comments[cid].children = get_children(cid);
+      tree.push(comments[cid]);
+    }
+
+    this.setState({tree:tree});
+  }
+  
+  loadComments() {
+    $.ajax({
+      url: this.props.list_url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.create_tree(data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.list_url, status, err.toString());
+      }.bind(this)
+    });
+  }
+  
+  componentDidMount() {
+    this.loadComments();
+  }
   
   render() {
     var settings = this.props;
@@ -162,7 +215,7 @@ export class CommentBox extends React.Component {
         {comment_form}
         <hr/>
         <div className="comment-tree">
-          <CommentTree settings={settings}/>
+          <CommentTree settings={settings} tree={this.state.tree} />
         </div>
       </div>
     );

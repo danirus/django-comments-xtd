@@ -15,6 +15,7 @@ export class CommentForm extends React.Component {
     this.handle_blur = this.handle_blur.bind(this);
     this.handle_submit = this.handle_submit.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
+    this.reset_form = this.reset_form.bind(this);
     this.fhelp = <span className="help-block">This field is required.</span>;
   }
 
@@ -41,7 +42,7 @@ export class CommentForm extends React.Component {
     if(!this.state.comment.length)
       errors.comment = true;
     else errors.comment = false;
-    if(!this.props.settings.is_authenticated) {
+    if(!this.props.isAuthenticated) {
       if(!this.state.name.length)
         errors.name = true;
       else errors.name = false;
@@ -82,7 +83,7 @@ export class CommentForm extends React.Component {
   }
 
   render_field_name() {
-    if(this.props.settings.is_authenticated)
+    if(this.props.isAuthenticated)
       return "";
     let cssc = "form-group ", help = "";
     if (this.state.errors.name) {
@@ -107,7 +108,7 @@ export class CommentForm extends React.Component {
   }
 
   render_field_email() {
-    if(this.props.settings.is_authenticated)
+    if(this.props.isAuthenticated)
       return "";
     let cssc = "form-group " + (this.state.errors.email ? "has-error" : "");
     return (
@@ -128,7 +129,7 @@ export class CommentForm extends React.Component {
   }
 
   render_field_url() {
-    if(this.props.settings.is_authenticated)
+    if(this.props.isAuthenticated)
       return "";
     let cssc = "form-group " + (this.state.errors.url ? "has-error" : "");
     return (
@@ -177,55 +178,20 @@ export class CommentForm extends React.Component {
     event.preventDefault();
     if(!this.validate())
       return;
-    const cssc = "text-center alert alert-";
-    const message = {
-      202: "Your comment will be reviewed. Thank your for your patience.",
-      204: "Thank you, a comment confirmation request has been sent by mail.",
-      403: "Sorry, your comment has been rejected."
+    const data = {
+      content_type: this.props.form.content_type,
+      object_pk: this.props.form.object_pk,
+      timestamp: this.props.form.timestamp,
+      security_hash: this.props.form.security_hash,
+      honeypot: '',
+      comment: this.state.comment,
+      name: this.state.name,
+      email: this.state.email,
+      url: this.state.url,
+      followup: this.state.followup,
+      reply_to: 0
     };
-    $.ajax({
-      method: 'POST',
-      url: this.props.settings.send_url,
-      data: {
-        content_type: this.props.form.content_type,
-        object_pk: this.props.form.object_pk,
-        timestamp: this.props.form.timestamp,
-        security_hash: this.props.form.security_hash,
-        honeypot: '',
-        comment: this.state.comment,
-        name: this.state.name,
-        email: this.state.email,
-        url: this.state.url,
-        followup: this.state.followup,
-        reply_to: 0
-      },
-      dataType: 'json',
-      cache: false,
-      statusCode: {
-        201: function() {
-          this.reset_form();
-          this.props.reloadComments();
-        }.bind(this),
-        202: function() {
-          this.reset_form();
-          this.props.onCommentSubmit({'message': message[202],
-                                      'cssc': cssc+"info"});
-        }.bind(this),
-        204: function() {
-          this.reset_form();
-          this.props.onCommentSubmit({'message': message[204],
-                                      'cssc': cssc+"info"});
-        }.bind(this),
-        403: function() {
-          this.reset_form();
-          this.props.onCommentSubmit({'message': message[403],
-                                      'cssc': cssc+"danger"});
-        }.bind(this)
-      },
-      error: function(xhr, status, err) {
-        console.error(this.props.settings.send_url, status, err.toString());
-      }.bind(this)
-    });
+    this.props.onCommentSubmit(data, this.reset_form);
   }
   
   handle_preview(event) {

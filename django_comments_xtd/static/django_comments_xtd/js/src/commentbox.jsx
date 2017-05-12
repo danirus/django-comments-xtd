@@ -21,8 +21,35 @@ export class CommentBox extends React.Component {
     this.handle_preview = this.handle_preview.bind(this);
   }
 
-  handle_submit(data) {
-    this.setState({alert: data});
+  handle_submit(data, cb) {
+    const cssc = "text-center alert alert-";
+    const message = {
+      202: "Your comment will be reviewed. Thank your for your patience.",
+      204: "Thank you, a comment confirmation request has been sent by mail.",
+      403: "Sorry, your comment has been rejected."
+    };
+    $.ajax({
+      method: 'POST',
+      url: this.props.send_url,
+      data: data,
+      dataType: 'json',
+      cache: false,
+      success: function(data, textStatus, xhr) {
+        debugger;
+        if([201, 202, 204, 403].indexOf(xhr.status) > -1) {
+          var css_class = "";
+          if(xhr.status == 403)
+            css_class = cssc + "danger";
+          else css_class = cssc + "info";
+          this.setState({alert: {message: message[xhr.status],
+                                 cssc: css_class}});
+          cb();
+        }
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.send_url, status, err.toString());
+      }.bind(this)
+    });
   }
   
   handle_preview(name, email, url, comment) {
@@ -97,8 +124,6 @@ export class CommentBox extends React.Component {
   render_comment_form() {
     if(this.props.allow_comments) {
       let alert_div = "";
-      let settings = {send_url: this.props.send_url,
-                      is_authenticated: this.props.is_authenticated};
       if(this.state.alert.message) {
         alert_div = (
           <div className={this.state.alert.cssc}>
@@ -111,7 +136,8 @@ export class CommentBox extends React.Component {
           <h4 className="text-center">Post your comment</h4>
           {alert_div}
           <div className="well well-lg">
-            <CommentForm form={this.props.form} settings={settings}
+            <CommentForm form={this.props.form}
+                         isAuthenticated={this.props.is_authenticated}
                          onCommentSubmit={this.handle_submit}
                          onCommentPreview={this.handle_preview} />
           </div>

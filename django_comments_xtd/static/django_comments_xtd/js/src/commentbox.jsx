@@ -46,6 +46,8 @@ export class CommentBox extends React.Component {
           this.setState({alert: {message: message[xhr.status],
                                  cssc: css_class}});
           cb();
+          this.reset_preview();
+          this.loadComments();
         }
       }.bind(this),
       error: function(xhr, status, err) {
@@ -55,17 +57,19 @@ export class CommentBox extends React.Component {
   }
   
   handle_preview(name, email, url, comment) {
-    var override = {
-      preview: {name: name,
-                email: email,
-                url: url,
-                comment: comment},
+    this.setState({
+      preview: {name: name, email: email, url: url, comment: comment},
       previewing: true
-    };
-    // var state = Object.assign(this.state, override);
-    this.setState(override);
+    });
   }
 
+  reset_preview() {
+    this.setState({
+      preview: {name: '', email: '', url: '', comment: ''},
+      previewing: false
+    });
+  }
+  
   render_comment_counter() {
     if (this.props.comment_count > 0) {
       var text = "There is one comment below.";

@@ -169,6 +169,7 @@ export class Comment extends React.Component {
         <CommentForm form={this.props.settings.form}
                      reply_to={this.props.data.id}
                      send_url={this.props.settings.send_url}
+                     current_user={this.props.settings.current_user}
                      is_authenticated={this.props.settings.is_authenticated}
                      on_comment_created={this.props.on_comment_created} />
       );

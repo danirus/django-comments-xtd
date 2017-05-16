@@ -215,7 +215,7 @@ export class CommentForm extends React.Component {
       email: this.state.email,
       url: this.state.url,
       followup: this.state.followup,
-      reply_to: 0
+      reply_to: this.state.reply_to
     };
     const cssc = "text-center alert alert-";
     const message = {
@@ -283,18 +283,31 @@ export class CommentForm extends React.Component {
         heading_name = this.props.current_user.split(":")[1];
       else heading_name = this.state.name;
     }
+
+    let div_cssc = "", div_style = "", hr_line = <hr/>;
+    let label = "";
+    let header = <h5 className="text-center">Your comment in preview</h5>;
+    if(this.state.reply_to > 0) {
+      div_cssc = "well well-sm";
+      div_style = {marginTop: "1em"};
+      header = "";
+      label = <div className="label label-info">preview</div>;
+      hr_line = "";
+    }
     
     return (
-      <div>
-        <h5 className="text-center">Your comment in preview</h5>
+      <div className={div_cssc} style={div_style}>
+        {header}
         <div className="media">
           <div className="media-left">{media_left}</div>
           <div className="media-body">
-            <h6 className="media-heading">Now&nbsp;-&nbsp;{heading_name}</h6>
+            <h6 className="media-heading">
+              Now&nbsp;-&nbsp;{heading_name}&nbsp;&nbsp;{label}
+            </h6>
             <p dangerouslySetInnerHTML={this.rawMarkup()} />
           </div>
         </div>
-        <hr/>
+        {hr_line}
       </div>
     );
   }

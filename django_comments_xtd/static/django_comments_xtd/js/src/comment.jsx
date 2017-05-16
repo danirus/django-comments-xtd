@@ -2,6 +2,8 @@ import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import {CommentForm} from './commentform.jsx';
+
 
 export class Comment extends React.Component {
   constructor(props) {
@@ -13,10 +15,15 @@ export class Comment extends React.Component {
       like: props.data.flags.like.active,
       like_users: props.data.flags.like.users,
       dislike: props.data.flags.dislike.active,
-      dislike_users: props.data.flags.dislike.users      
+      dislike_users: props.data.flags.dislike.users,
+      reply_form: {
+        component: null,
+        show: false
+      }
     };
     this.action_like = this.action_like.bind(this);
     this.action_dislike = this.action_dislike.bind(this);
+    this.handle_reply_click = this.handle_reply_click.bind(this);
   }
   
   _get_username_chunk() {
@@ -152,6 +159,22 @@ export class Comment extends React.Component {
       </span>
     );
   }
+
+  handle_reply_click(event) {
+    event.preventDefault();
+    var component = this.state.reply_form.component;
+    var visible = !this.state.reply_form.show;
+    if(component==null) 
+      component = (
+        <CommentForm form={this.props.settings.form}
+                     reply_to={this.props.data.id}
+                     send_url={this.props.settings.send_url}
+                     is_authenticated={this.props.settings.is_authenticated}
+                     on_comment_created={this.props.on_comment_created} />
+      );
+    this.setState({reply_form: {component: component,
+                                show: visible}});
+  }
   
   _get_reply_link_chunk() {
     if(!this.props.data.allow_reply)
@@ -164,12 +187,13 @@ export class Comment extends React.Component {
 
     return (
       <span>&nbsp;&nbsp;{separator}&nbsp;&nbsp;
-        <a className="small mutedlink" href={url}>Reply</a>
+        <a className="small mutedlink" href={url}
+           onClick={this.handle_reply_click}>Reply</a>
       </span>
     );
   }
   
-  _get_comment_p_chunk() {
+  render_comment_body() {
     if(this.props.data.is_removed)
       return (
         <p className="text-muted">
@@ -204,6 +228,14 @@ export class Comment extends React.Component {
     );
   }
 
+  render_reply_form() {
+    if(!this.state.reply_form.show)
+      return "";
+    return (
+      <div>{this.state.reply_form.component}</div>
+    );
+  }
+  
   _post_feedback(flag) {
     $.ajax({
       method: 'POST',
@@ -266,8 +298,9 @@ export class Comment extends React.Component {
   render() {
     let user_name = this._get_username_chunk();  // Plain name or link.
     let right_div = this._get_right_div_chunk();  // Flagging & moderation.
-    let comment_p = this._get_comment_p_chunk();
+    let comment_body = this.render_comment_body();
     let comment_id = "c" + this.props.data.id;
+    let reply_form = this.render_reply_form();
     
     let children = "";
     let settings = this.props.settings;
@@ -292,8 +325,9 @@ export class Comment extends React.Component {
               <a className="permalink" href={this.props.data.permalink}>¶</a>
               {right_div}
             </h6>
-            {comment_p}
             <a name={comment_id}></a>
+            {comment_body}
+            {reply_form}
           </div>
           {children}
         </div>

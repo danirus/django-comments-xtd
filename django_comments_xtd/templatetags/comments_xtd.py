@@ -488,15 +488,23 @@ def get_commentbox_props(parser, token):
         {
             comment_count: <int>,  // Count of comments posted to the object.
             allow_comments: <bool>,  // Whether to allow comments to this post.
-            send_url: <api-irl-to-send-a-comment>,
-            list_url: <api-url-to-list-comments>,
-            flag_url: <api-url-to-suggest-comment-removal>,
-            delete_url: <api-url-for-moderators-to-remove-comment>,
-            reply_url: <api-url-to-reply-comments>,
-            feedback_url: <api-url-to-send-like/dislike-feedback>,
             current_user: <str as "user_id:user_name">,
             is_authenticated: <bool>,  // Whether current_user is authenticated.
+            allow_flagging: false,
+            allow_feedback: false,
+            show_feedback: false,
             can_moderate: <bool>,  // Whether current_user can moderate.
+            feedback_url: <api-url-to-send-like/dislike-feedback>,
+            delete_url: <api-url-for-moderators-to-remove-comment>,
+            reply_url: <api-url-to-reply-comments>,
+            flag_url: <api-url-to-suggest-comment-removal>,
+            list_url: <api-url-to-list-comments>,
+            send_url: <api-irl-to-send-a-comment>,
+            form: {
+                content_type: <value>,
+                object_pk: <value>,
+                timestamp: <value>,
+                security_hash: <value>
         }
     """
     try:

@@ -231,7 +231,6 @@ export class CommentForm extends React.Component {
       dataType: 'json',
       cache: false,
       success: function(data, textStatus, xhr) {
-        debugger;
         if([201, 202, 204, 403].indexOf(xhr.status) > -1) {
           var css_class = "";
           if(xhr.status == 403)
@@ -241,8 +240,7 @@ export class CommentForm extends React.Component {
                                  cssc: css_class},
                          previewing: false});
           this.reset_form();
-          if(xhr.status==201)
-            this.props.on_comment_created();
+          this.props.on_comment_created();
         }
       }.bind(this),
       error: function(xhr, status, err) {
@@ -284,7 +282,7 @@ export class CommentForm extends React.Component {
       else heading_name = this.state.name;
     }
 
-    let div_cssc = "", div_style = "", hr_line = <hr/>;
+    let div_cssc = "", div_style = {}, hr_line = <hr/>;
     let label = "";
     let header = <h5 className="text-center">Your comment in preview</h5>;
     if(this.state.reply_to > 0) {

@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Remarkable from 'remarkable';
 
 import {CommentForm} from './commentform.jsx';
 
@@ -176,7 +177,7 @@ export class Comment extends React.Component {
     this.setState({reply_form: {component: component,
                                 show: visible}});
   }
-  
+
   _get_reply_link_chunk() {
     if(!this.props.data.allow_reply)
       return "";
@@ -193,8 +194,14 @@ export class Comment extends React.Component {
       </span>
     );
   }
+
+  rawMarkup() {
+    var md = new Remarkable();
+    const rawMarkup = md.render(this.props.data.comment);
+    return { __html: rawMarkup.slice(3, -5) };
+  }
   
-  render_comment_body() {
+  render_comment_body() {  
     if(this.props.data.is_removed)
       return (
         <p className="text-muted">
@@ -218,11 +225,10 @@ export class Comment extends React.Component {
         </span>
       );
     }
-
     let reply_link = this._get_reply_link_chunk();
     return (
       <p>
-        {this.props.data.comment}
+        <span dangerouslySetInnerHTML={this.rawMarkup()}/>
         <br/>
         {feedback}{reply_link}
       </p>
@@ -308,9 +314,10 @@ export class Comment extends React.Component {
     if (this.props.data.children != null) {
       children = this.props.data.children.map(function(item) {
         return (
-          <Comment key={item.id} data={item} settings={settings}/>
+          <Comment key={item.id} data={item} settings={settings}
+                   on_comment_created={this.props.on_comment_created} />
         );
-      });
+      }.bind(this));
     }
 
     return (

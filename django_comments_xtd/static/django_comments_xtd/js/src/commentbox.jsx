@@ -18,10 +18,11 @@ export class CommentBox extends React.Component {
     };
     this.handle_comment_created = this.handle_comment_created.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
+    this.handle_update = this.handle_update.bind(this);
   }
 
   handle_comment_created() {
-    this.loadComments();
+    this.load_comments();
   }
   
   handle_preview(name, email, url, comment) {
@@ -29,6 +30,11 @@ export class CommentBox extends React.Component {
       preview: {name: name, email: email, url: url, comment: comment},
       previewing: true
     });
+  }
+
+  handle_update(event) {
+    event.preventDefault();
+    this.load_comments();
   }
 
   reset_preview() {
@@ -102,12 +108,15 @@ export class CommentBox extends React.Component {
     this.setState({tree:tree});
   }
   
-  loadComments() {
+  load_comments() {
     $.ajax({
       url: this.props.list_url,
       dataType: 'json',
       cache: false,
       success: function(data) {
+        // Set here a cookie with the last time comments have been retrieved.
+        // I'll use it to add a label 'new' to every new comment received
+        // after the timestamp stored in the cookie.
         this.create_tree(data);
       }.bind(this),
       error: function(xhr, status, err) {
@@ -117,7 +126,7 @@ export class CommentBox extends React.Component {
   }
   
   componentDidMount() {
-    this.loadComments();
+    this.load_comments();
   }
   
   render() {
@@ -139,6 +148,13 @@ export class CommentBox extends React.Component {
         {comment_counter}
         {comment_form}
         <hr/>
+        <div className="alert alert-info">
+          There are 2 new comments.
+          <div className="pull-right">
+            <button type="button" className="btn btn-default btn-xs"
+                    onClick={this.handle_update}>update</button>
+          </div>
+        </div>
         <div className="comment-tree">
           <div className="media-list">
             {nodes}

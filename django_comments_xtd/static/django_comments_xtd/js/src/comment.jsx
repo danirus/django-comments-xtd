@@ -143,11 +143,11 @@ export class Comment extends React.Component {
       }
     }
 
-    let css_class = this.state[attr_opinion] ? '' : 'mutedlink';
-    let icon = dir == 'like' ? 'thumbs-up' : 'thumbs-down';
-    let class_icon = "small glyphicon glyphicon-"+icon;
-    let click_hdl = dir == 'like' ? this.action_like : this.action_dislike;
-    let opinion = "";
+    var css_class = this.state[attr_opinion] ? '' : 'mutedlink';
+    var icon = dir == 'like' ? 'thumbs-up' : 'thumbs-down';
+    var class_icon = "small glyphicon glyphicon-"+icon;
+    var click_hdl = dir == 'like' ? this.action_like : this.action_dislike;
+    var opinion="", link="#";
     if(this.state[attr_opinion])
       opinion = dir == 'like' ? 'I like it' : 'I dislike it';
 
@@ -273,12 +273,25 @@ export class Comment extends React.Component {
 
   action_like(event) {
     event.preventDefault();
-    return this._post_feedback('like');
+    debugger;
+    if(this.props.settings.is_authenticated)
+      return this._post_feedback('like');
+    else
+      return window.location.href = (
+        this.props.settings.login_url + "?next=" +
+        this.props.settings.like_url.replace('0', this.props.data.id)
+      );
   }
 
   action_dislike(event) {
     event.preventDefault();
-    return this._post_feedback('dislike');
+    if(this.props.settings.is_authenticated)
+      return this._post_feedback('dislike');
+    else
+      return window.location.href = (
+        this.props.settings.login_url + "?next=" +
+        this.props.settings.dislike_url.replace('0', this.props.id)
+      );
   }
 
   destroyTooltips(feedback_id) {

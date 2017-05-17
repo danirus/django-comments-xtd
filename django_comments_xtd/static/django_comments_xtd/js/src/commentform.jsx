@@ -217,7 +217,7 @@ export class CommentForm extends React.Component {
       followup: this.state.followup,
       reply_to: this.state.reply_to
     };
-    const cssc = "text-center alert alert-";
+    const cssc = "alert alert-";
     const message = {
       202: "Your comment will be reviewed. Thank your for your patience.",
       204: "Thank you, a comment confirmation request has been sent by mail.",

@@ -462,6 +462,9 @@ class GetCommentBoxPropsNode(Node):
             "list_url": reverse('comments-xtd-api-list',
                                 kwargs={'content_type': ctype_slug,
                                         'object_pk': obj.id}),
+            "count_url": reverse('comments-xtd-api-count',
+                                 kwargs={'content_type': ctype_slug,
+                                         'object_pk': obj.id}),
             "send_url": reverse("comments-xtd-api-create"),
             "form": {
                 "content_type": form['content_type'].value(),
@@ -476,6 +479,10 @@ class GetCommentBoxPropsNode(Node):
                 user.pk, settings.COMMENTS_XTD_API_USER_REPR(user))
             d['is_authenticated'] = True
             d['can_moderate'] = user.has_perm("django_comments.can_moderate")
+        else:
+            d['login_url'] = "/admin/login/"
+            d['like_url'] = reverse("comments-xtd-like", args=(0,))
+            d['dislike_url'] = reverse("comments-xtd-dislike", args=(0,))
         return json.dumps(d)
 
 
@@ -496,15 +503,21 @@ def get_commentbox_props(parser, token):
             can_moderate: <bool>,  // Whether current_user can moderate.
             feedback_url: <api-url-to-send-like/dislike-feedback>,
             delete_url: <api-url-for-moderators-to-remove-comment>,
+            login_url: settings.LOGIN_URL,
             reply_url: <api-url-to-reply-comments>,
             flag_url: <api-url-to-suggest-comment-removal>,
             list_url: <api-url-to-list-comments>,
+            count_url: <api-url-to-count-comments>,
             send_url: <api-irl-to-send-a-comment>,
             form: {
                 content_type: <value>,
                 object_pk: <value>,
                 timestamp: <value>,
                 security_hash: <value>
+            },
+            login_url: <only_when_user_is_not_authenticated>,
+            like_url: <only_when_user_is_not_authenticated>,
+            dislike_url: <only_when_user_is_not_authenticated>
         }
     """
     try:

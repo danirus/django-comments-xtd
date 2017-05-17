@@ -23,6 +23,8 @@ urlpatterns = [
         name='comments-xtd-api-create'),
     url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[0-9]+)/$',
         api.CommentList.as_view(), name='comments-xtd-api-list'),
+    url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[0-9]+)/count/$',
+        api.CommentCount.as_view(), name='comments-xtd-api-count'),
     url(r'^api/feedback/$', api.ToggleFeedbackFlag.as_view(),
         name='comments-xtd-api-feedback'),
     url(r'^api/flag/$', api.CreateReportFlag.as_view(),

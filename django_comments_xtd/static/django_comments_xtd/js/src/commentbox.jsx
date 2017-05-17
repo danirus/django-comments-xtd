@@ -14,7 +14,7 @@ export class CommentBox extends React.Component {
     this.state = {
       previewing: false,
       preview: {name: '', email: '', url: '', comment: ''},
-      tree: []
+      tree: [], cids: [], newcids: [], counter: 0
     };
     this.handle_comment_created = this.handle_comment_created.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
@@ -75,11 +75,31 @@ export class CommentBox extends React.Component {
     }
   }
 
+  render_update_alert() {
+    var diff = this.state.counter - this.state.cids.length;
+    if (diff > 0) {
+      var message = "";
+      if (diff == 1) message = "There is a new comment.";
+      else message = "There are " + diff + " new comments.";
+      return (
+        <div className="alert alert-info">
+          {message}
+          <div className="pull-right">
+            <button type="button" className="btn btn-default btn-xs"
+                    onClick={this.handle_update}>update</button>
+          </div>
+        </div>
+      );
+    } else
+      return "";
+  }
+
   create_tree(data) {
-    let tree = new Array();
-    let order = new Array();
-    let comments = {};
-    let children = {};
+    var tree = new Array();
+    var order = new Array();
+    var comments = {};
+    var children = {};
+    var incids = [], curcids = [], newcids = [];
 
     function get_children(cid) {
       return children[cid].map(function(index) {
@@ -91,23 +111,41 @@ export class CommentBox extends React.Component {
     };
     
     for (let item of data) {
+      incids.push(item.id);
       comments[item.id] = item;
-      if(item.level == 0) {
+      if (item.level == 0) {
         order.push(item.id);
       }
       children[item.id] = [];
-      if(item.parent_id!==item.id) {
+      if (item.parent_id!==item.id) {
         children[item.parent_id].push(item.id);
       }
     }
-    for (let cid of order) {
-      comments[cid].children = get_children(cid);
-      tree.push(comments[cid]);
+    for (let id of order) {
+      comments[id].children = get_children(id);
+      tree.push(comments[id]);
     }
 
-    this.setState({tree:tree});
+    // Update attributes curcids and newcids.
+    if (incids.length) {
+      if (this.state.cids.length) {
+        for (let id of incids) {
+          if (this.state.cids.indexOf(id) == -1)
+            newcids.push(id);
+          curcids.push(id);
+        }
+      } else {
+        curcids = incids;
+        newcids = [];
+      }
+    }
+
+    this.setState({tree:tree,
+                   cids: curcids,
+                   newcids: newcids,
+                   counter: curcids.length});
   }
-  
+
   load_comments() {
     $.ajax({
       url: this.props.list_url,
@@ -124,14 +162,31 @@ export class CommentBox extends React.Component {
       }.bind(this)
     });
   }
+
+  load_count() {
+    $.ajax({
+      url: this.props.count_url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({counter: data.count});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.count_url, status, err.toString());
+      }.bind(this)
+    });
+  }
   
   componentDidMount() {
     this.load_comments();
+    if(this.props.poll_interval)
+      setInterval(this.load_count.bind(this), this.props.poll_interval);
   }
   
   render() {
     var settings = this.props;
     var comment_counter = this.render_comment_counter();
+    var update_alert = this.render_update_alert();
     var comment_form = this.render_comment_form();
 
     var nodes = this.state.tree.map(function(item) {
@@ -139,6 +194,7 @@ export class CommentBox extends React.Component {
         <Comment key={item.id}
                  data={item}
                  settings={settings}
+                 newcids={this.state.newcids}
                  on_comment_created={this.handle_comment_created} />
       );
     }.bind(this));
@@ -148,13 +204,7 @@ export class CommentBox extends React.Component {
         {comment_counter}
         {comment_form}
         <hr/>
-        <div className="alert alert-info">
-          There are 2 new comments.
-          <div className="pull-right">
-            <button type="button" className="btn btn-default btn-xs"
-                    onClick={this.handle_update}>update</button>
-          </div>
-        </div>
+        {update_alert}
         <div className="comment-tree">
           <div className="media-list">
             {nodes}

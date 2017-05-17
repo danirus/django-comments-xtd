@@ -168,7 +168,6 @@ export class CommentForm extends React.Component {
         </div>
       </div>
     );
-    return "";
   }
 
   render_field_followup() {

@@ -294,40 +294,66 @@ export class Comment extends React.Component {
       );
   }
 
+  is_hover(elem) {
+    return (elem.parentElement.querySelector(':hover') === elem);
+  }
+
   destroyTooltips(feedback_id) {
-    $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
+    // console.log("feedback_id = "+feedback_id);
+    var elem = document.getElementById(feedback_id);
+    var is_hover = elem && this.is_hover(elem);
+    if(elem && !is_hover) {
+      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
+    }
   }
   
   componentDidMount() {
-    let feedback_id = "feedback-" + this.props.data.id;
-    let options = {html: true, selector: '.cfb-counter'};
+    var feedback_id = "feedback-" + this.props.data.id;
+    var options = {html: true, selector: '.cfb-counter'};
     $('#'+feedback_id).tooltip(options);
   }
 
   componentDidUpdate() {
-    let feedback_id = "feedback-" + this.props.data.id;
-    let options = {html: true, selector: '.cfb-counter'};
+    var feedback_id = "feedback-" + this.props.data.id;
+    var options = {html: true, selector: '.cfb-counter'};
     $('#'+feedback_id).tooltip(options);
   }
   
   componentWillUnmount() {
-    let feedback_id = "feedback-" + this.props.data.id;
-    $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
+    var feedback_id = "feedback-" + this.props.data.id;
+    var elem = document.getElementById(feedback_id);
+    var is_hover = elem && this.is_hover(elem);
+    if(elem && !is_hover) {
+      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
+    }
   }
   
   render() {
-    let user_name = this._get_username_chunk();  // Plain name or link.
-    let right_div = this._get_right_div_chunk();  // Flagging & moderation.
-    let comment_body = this.render_comment_body();
-    let comment_id = "c" + this.props.data.id;
-    let reply_form = this.render_reply_form();
+    var user_name = this._get_username_chunk();  // Plain name or link.
+    var right_div = this._get_right_div_chunk();  // Flagging & moderation.
+    var comment_body = this.render_comment_body();
+    var comment_id = "c" + this.props.data.id;
+    var reply_form = this.render_reply_form();
+
+    var new_label = "";
+    if (this.props.newcids.indexOf(this.props.data.id) > -1) {
+      console.log("New comment: " + this.props.data.id);
+      new_label = (
+        <span>
+          <span className="label label-success">new</span>&nbsp;-&nbsp;
+        </span>
+      );
+    }
     
-    let children = "";
-    let settings = this.props.settings;
+    var children = "";
+    var settings = this.props.settings;
     if (this.props.data.children != null) {
       children = this.props.data.children.map(function(item) {
         return (
-          <Comment key={item.id} data={item} settings={settings}
+          <Comment key={item.id}
+                   data={item}
+                   settings={settings}
+                   newcids={this.props.newcids}
                    on_comment_created={this.props.on_comment_created} />
         );
       }.bind(this));
@@ -341,7 +367,7 @@ export class Comment extends React.Component {
         <div className="media-body">
           <div className="comment">
             <h6 className="media-heading">
-              {this.props.data.submit_date} - {user_name}
+              {new_label}{this.props.data.submit_date} - {user_name}
               &nbsp;&nbsp;
               <a className="permalink" href={this.props.data.permalink}>¶</a>
               {right_div}

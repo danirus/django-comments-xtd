@@ -274,11 +274,11 @@ That makes it, moderation is ready. Visit any of the blog posts with a ``publish
 
 If on the other hand you send a comment to a blog post created within the last year your comment will not be put in moderation. Give it a try as a logged in user and as an anonymous user.
 
-When sending a comment to a blog post with a user logged in the comment doesn't have to be confirmed. However, when you send it logged out the comment has to be confirmed by clicking on the confirmation link. Right after clicking on the confirmation link the comment will be put on hold, pending for approval.
+When sending a comment as a logged-in user the comment won't have to be confirmed and will be put in moderation immediately. However, when you send it as an anonymous user the comment will have to be confirmed by clicking on the confirmation link, right after the comment will be put on hold pending for approval.
 
-In both cases all mail addresses listed in the :setting:`MANAGERS` setting will receive a notification about the reception of a new comment. If you did not received such message, you might need to review your email settings, or the console output. Read about the mail settings above in the :ref:`configuration` section.
+In both cases, due to the attribute ``email_notification = True`` above, all mail addresses listed in the :setting:`MANAGERS` setting will receive a notification about the reception of a new comment. If you did not received such message, you might need to review your email settings, or the console output. Read about the mail settings above in the :ref:`configuration` section. The mail message received is based on the ``comments/comment_notification_email.txt`` template provided with django-comments-xtd.
 
-A last note on comment moderation: comments pending for moderation have to be reviewed and eventually approved. Don't forget to visit the comments-xtd app in the admin_ interface. Tick the box to select those you want to approve, choose **Approve selected comments** in the **action** dropdown at the top left of the comment list and click on the **Go** button.
+A last note on comment moderation: comments pending for moderation have to be reviewed and eventually approved. Don't forget to visit the comments-xtd app in the admin_ interface. Filter comments by `is public: No` and `is removed: No`. Tick the box of those you want to approve, choose **Approve selected comments** in the **action** dropdown, at the top left of the comment list, and click on the **Go** button.
 
 
 Disallow black listed domains
@@ -359,7 +359,7 @@ Now edit ``blog/models.py`` and add the code corresponding to our new ``PostComm
                            for i, w in enumerate(lowcase_comment.split())])
                for badword in badwords:
                    if isinstance(badword, str):
-                       if locase_comment.find(badword) > -1:
+                       if lowcase_comment.find(badword) > -1:
                            return True
                    else:
                        lastindex = -1
@@ -400,7 +400,7 @@ Threads
 
 Up until this point in the tutorial django-comments-xtd has been configured to disallow nested comments. Every comment is at thread level 0. It is so because by default the setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is set to 0.
 
-When the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is greater than 0, comments below the maximum thread level may receive replies that will be nested up to the maximum thread level. A comment in a the thread level below the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` can show a **Reply** link that allows users to send nested comments.
+When the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is greater than 0, comments below the maximum thread level may receive replies that will nest inside each other up to the maximum thread level. A comment in a the thread level below the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` can show a **Reply** link that allows users to send nested comments.
 
 In this section we will enable nested comments by modifying :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` and apply some changes to our ``blog_detail.html`` template.
 
@@ -462,15 +462,17 @@ Edit ``blog/post_detail.html`` to make it look like follows:
 
 The tag :ttag:`render_xtdcomment_tree` renders the template ``django_comments_xtd/comment_tree.html``.
 
+Now visit any of the blog posts to which you have already sent comments and see that a new `Reply` link shows up below each comment. Click on the link and post a new comment. It will appear nested inside the parent comment. The new comment will not show a `Reply` link because :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` has been set to 1. Raise it to 2 and reload the page to offer the chance to nest comments inside one level deeper.
+
        
 Different max thread levels
 ---------------------------
 
-There might be cases in which nested comments have a lot of sense and others in which we would prefer a plain comment sequence. We can handle both scenarios under the same Django project with django-comments-xtd.
+There might be cases in which nested comments have a lot of sense and others in which we would prefer a plain comment sequence. We can handle both scenarios under the same Django project.
 
-We just have to use both settings, the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` and :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL`. The former would be set to the default wide site thread level while the latter would be a dictionary of app.model keys and maximum thread level values.
+We just have to use both settings, :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` and :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL`. The former establishes the default maximum thread level site wide, while the latter sets the maximum thread level on `app.model` basis.
 
-If we wanted to disable nested comments site wide, and enable nested comments up to level one for blog posts, we would need to set it up as follows in our ``settings.py`` module:
+If we wanted to disable nested comments site wide, and enable nested comments up to level one for blog posts, we would set it up as follows in our ``settings.py`` module:
 
    .. code-block:: python
 
@@ -485,7 +487,7 @@ If we wanted to disable nested comments site wide, and enable nested comments up
 Flags
 =====
 
-The Django Comments Framework supports `flagging <https://django-contrib-comments.readthedocs.io/en/latest/example.html#flagging>`_ comments, so comments can be flagged for:
+The Django Comments Framework supports `comment flagging <https://django-contrib-comments.readthedocs.io/en/latest/example.html#flagging>`_, so comments can be flagged for:
 
  * **Removal suggestion**, when a registered user suggests the removal of a comment.
  * **Moderator deletion**, when a comment moderator marks the comment as deleted.
@@ -497,7 +499,7 @@ django-comments-xtd expands flagging with two more flags:
  * **Disliked it**, when a registered user dislikes the comment.
 
 
-In this section we will see how to enable a user with the capacity to flag a comment for removal with the **Removal suggestion** flag, how to express likeability, conformity, acceptance or acknowledgement with the **Liked it** flag, and how to express the opposite with the **Disliked it** flag.  
+In this section we will see how to enable a user with the capacity to flag a comment for removal with the **Removal suggestion** flag, how to express likeability, conformity, acceptance or acknowledgement with the **Liked it** flag and the opposite with the **Disliked it** flag.
 
 One important requirement to flag a comment is that the user setting the flag must be authenticated. In other words, comments can not be flagged by anonymous users.
 
@@ -505,7 +507,7 @@ One important requirement to flag a comment is that the user setting the flag mu
 Removal suggestion
 ------------------
 
-Let us enable the comment removal flag. Edit the ``blog/post_detail.html`` template, and at the bottom of the file change the ``render_xtdcomment_tree`` templatetag by adding the argument **allow_flagging**:
+Enabling the comment removal flag is about including the **allow_flagging** argument in the ``render_xtdcomment_tree`` template tag. Edit the ``blog/post_detail.html`` template and append the argument:
 
    .. code-block:: html+django
 
@@ -517,21 +519,21 @@ Let us enable the comment removal flag. Edit the ``blog/post_detail.html`` templ
 
 The **allow_flagging** argument makes the templatetag populate a variable ``allow_flagging = True`` in the context in which ``django_comments_xtd/comment_tree.html`` is rendered.
 
-Now let's suggest a removal. First we need to login in the admin_ interface so that we are not an anonymous user. Then we can visit any of the blog posts we sent comments to. When hovering the comments we must see a flag at the right side of the comment's header. After we click on it we land in a page in which we are requested to confirm our removal suggestion. Finally, click on the red **Flag** button to confirm the request.
+Now let's suggest a removal. First we need to login in the admin_ interface so that we are not an anonymous user. Then we can visit any of the blog posts we sent comments to. There is a flag at the right side of every comment's header. Clicking on it bring the user to a page in which she is requested to confirm the removal suggestion. Finally, clicking on the red **Flag** button confirms the request.
 
-Once we have flagged a comment we can find the flag entry in the admin_ interface, in the **Comment flags** model, under the Django Comments application. 
+Once we flag a comment we can find the flag entry in the admin_ interface, under the **Comment flags** model, within the Django Comments application. 
 
 
 Getting notifications
 *********************
 
-A user might want to flag a comment on the basis of a violation of our site's terms of use, maybe on hate speech content, racism or the like. To prevent a comment from staying published long after it has been flagged we might want to receive notifications on flagging events.
+A user might want to flag a comment on the basis of a violation of the site's terms of use, hate speech, racism or the like. To prevent a comment from staying published long after it has been flagged we might want to receive notifications on flagging events.
 
-For such purpose django-comments-xtd provides the class :pclass:`XtdCommentModerator`, which extends django-contrib-comments' :pclass:`CommentModerator`.
+For such purpose django-comments-xtd provides the class **XtdCommentModerator**, which extends django-contrib-comments' **CommentModerator**.
 
-In addition to all the `options <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html#moderation-options>`_ of its parent class, :pclass:`XtdCommentModerator` offers the ``removal_suggestion_notification`` attribute, that when set to ``True`` makes Django send a mail to all the :setting:`MANAGERS` on every **Removal suggestion** flag created.
+In addition to all the `options <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html#moderation-options>`_ of its parent class, **XtdCommentModerator** offers the ``removal_suggestion_notification`` attribute, that when set to ``True`` makes Django send a mail to all the :setting:`MANAGERS` on every **Removal suggestion** flag created.
 
-Let's use :pclass:`XtdCommentModerator`, edit ``blog/models.py`` and if you are already using the class ``SpamModerator``, which alreadt inherits from :pclass:`XtdCommentModerator`, just add ``removal_suggestion_notification = True`` to your ``PostCommentModeration`` class. Otherwise add the following code:
+To see an example let's edit ``blog/models.py``. If you are already using the class **SpamModerator**, which inherits from **XtdCommentModerator**, just add ``removal_suggestion_notification = True`` to your ``PostCommentModeration`` class. Otherwise add the following code:
 
    .. code-block:: python
 

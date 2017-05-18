@@ -609,3 +609,12 @@ def comments_xtd_api_list_url(obj):
     ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
     return reverse('comments-xtd-api-list', kwargs={'content_type': ctype_slug,
                                                     'object_pk': obj.id})
+
+
+# ----------------------------------------------------------------------
+@register.filter
+def has_permission(user_obj, str_permission):
+    try:
+        return user_obj.has_perm(str_permission)
+    except Exception as exc:
+        raise exc

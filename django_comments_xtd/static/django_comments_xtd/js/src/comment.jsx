@@ -47,8 +47,7 @@ export class Comment extends React.Component {
     if(this.props.data.is_removed)
       return "";
     
-    if(this.props.settings.is_authenticated &&
-       this.props.settings.allow_flagging)
+    if (this.props.settings.allow_flagging)
     {
       if(this.state.removal) {
         flagging_html = (
@@ -57,7 +56,12 @@ export class Comment extends React.Component {
           </span>
         );
       } else {
-        url = this.props.settings.flag_url.replace('0', this.props.data.id);
+        if (this.props.settings.is_authenticated) {
+          url = this.props.settings.flag_url.replace('0', this.props.data.id);
+        } else {
+          url = (this.props.settings.login_url + "?next=" +
+                 this.props.settings.flag_url.replace('0', this.props.data.id));
+        }
         flagging_html = (
           <a className="mutedlink" href={url}>
             <span className="glyphicon glyphicon-flag"

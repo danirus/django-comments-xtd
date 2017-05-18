@@ -9,9 +9,11 @@ As of version 1.8.0 of django-comments-xtd, all notable changes to this project 
 
 - Javascript plugin (based on InfernoJS).
 - Web API to:
- * List and create comments.
+ * Create a commen for a given content type and object ID.
+ * List comments for a given content type and object ID.
  * Send feedback flags (like/dislike) on comments.
  * Send report flag (removal suggestion) for a comment.
+- Template filter `has_permission` applicable to a user object and accepting a string specifying the `app_label.permission` being checked. It returns `True` if the user has the given permission, otherwise returns False. 
 - Setting `COMMENTS_XTD_API_USER_REPR` defines a lambda function to return the user string representation used by the web API in response objects.
 - Setting `COMMENTS_XTD_APP_MODEL_PERMISSIONS` to explicitly define what commenting features are enabled on per app.model basis.
 - Templates `comments/delete.html` and `comments/deleted.html` matching django-comments-xtd default twitter-bootstrap styling.

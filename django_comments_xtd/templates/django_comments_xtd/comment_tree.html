@@ -10,12 +10,12 @@
   <div class="media-body">
     <div class="comment">
       <h6 class="media-heading">
-        {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if perms.comments.can_moderate %}&nbsp;<span class="label label-default">moderator</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
+        {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="label label-default">moderator</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
         {% if not item.comment.is_removed %}
         <div class="pull-right">
           {% if allow_flagging and item.flagged %}
           <span class="glyphicon glyphicon-flag text-danger" title="comment flagged"></span>
-          {% else %}
+          {% elif allow_flagging %}
           <a class="mutedlink" href="{% url 'comments-flag' item.comment.pk %}">
             <span class="glyphicon glyphicon-flag" title="flag comment"></span></a>          
           {% endif %}

@@ -25,7 +25,6 @@ from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
 from django_comments_xtd.signals import confirmation_received
-from django_comments_xtd.templatetags.comments_xtd import render_markup_comment
 from django_comments_xtd.utils import get_app_model_permissions
 
 
@@ -189,7 +188,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         if obj.is_removed:
             return _("This comment has been removed.")
         else:
-            return render_markup_comment(obj.comment)
+            return obj.comment
 
     def get_user_moderator(self, obj):
         try:

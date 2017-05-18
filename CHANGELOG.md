@@ -17,10 +17,18 @@ As of version 1.8.0 of django-comments-xtd, all notable changes to this project 
 * Setting `COMMENTS_XTD_API_USER_REPR` defines a lambda function to return the user string representation used by the web API in response objects.
 * Setting `COMMENTS_XTD_APP_MODEL_PERMISSIONS` to explicitly define what commenting features are enabled on per app.model basis.
 * Templates `comments/delete.html` and `comments/deleted.html` matching django-comments-xtd default twitter-bootstrap styling.
+* Dependencies on Python packages: djangorestframework, django-markdown2.
 
 ### Changed
 
 * Enable removal link in `django_comments_xtd/comment_tree.html` when the user has the permission `django_comments.can_moderate`.
+* When the user logged has `django_comments.can_moderate` permission, template `django_comments_xtd/comment_tree.html` will show the number of removal suggestions a comment has received.
 * When a comment is marked as removed by a moderator (using django-comments' `comments-delete` url) every nested comment below the one removed is unpublished (`is_public` attribute is turned to `False`).
 * View helper functions, `perform_like` and `perform_dislike` now returns a boolean indicating whether a flag was created. If `True` the flag has been created. If `False` the flag has been deleted. These two functions behave as toggle functions.
 * Templates `comments/preview.html`, `comments/flag.html` and `comments/flagged.hml`.
+
+### Removed
+
+* Dependency on django-markup.
+* Template filter `render_markup_comment`.
+* Setting `MARKUP_FALLBACK_FILTER`.

@@ -52,16 +52,6 @@ def send_mail(subject, body, from_email, recipient_list,
                    fail_silently, html)
 
 
-def import_formatter():
-    try:
-        from django_markup.markup import formatter
-        # from markdown import markdown
-        # from docutils import core
-        return formatter
-    except ImportError:
-        return False
-
-
 def get_app_model_permissions(comment):
     _default = {
         'allow_flagging': False,

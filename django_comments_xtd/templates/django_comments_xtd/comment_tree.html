@@ -32,7 +32,7 @@
       <p class="text-muted"><em>{% trans "This comment has been removed." %}</em></p>
       {% else %}
       <p>
-        {{ item.comment.comment|render_markup_comment }}
+        {% include "includes/django_comments_xtd/render_comment.html" with content=item.comment.comment %}
         <br/>
         {% if allow_feedback %}
         {% include "includes/django_comments_xtd/user_feedback.html" %}

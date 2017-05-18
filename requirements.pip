@@ -3,5 +3,4 @@ djangorestframework
 six
 Django
 docutils
-Markdown
-django-markup
+django-markdown2

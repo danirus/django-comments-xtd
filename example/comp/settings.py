@@ -117,6 +117,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     
     'rest_framework',
+    'django_markdown2',
     'comp.articles',
     'comp.quotes',
     'django_comments_xtd',

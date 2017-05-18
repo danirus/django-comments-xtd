@@ -36,6 +36,12 @@ The recommended way to run the demo sites is in its own `virtualenv <http://www.
     (venv)$ python manage.py loaddata ../fixtures/articles.json
     (venv)$ python manage.py runserver
 
+The three demo projects make use of the package `django-markdown2 <https://github.com/svetlyak40wt/django-markdown2>`_, which in turn depends on `Markdown2 <https://github.com/trentm/python-markdown2>`_, to render comments using `Markdown <https://en.wikipedia.org/wiki/Markdown>`_ syntax. Pip install the package:
+
+   .. code-block:: bash
+
+    (venv)$ pip install django-markdown2
+
 
 Fixtures data provide:
 
@@ -43,7 +49,7 @@ Fixtures data provide:
  * A default **Site** with domain ``localhost:8000`` so that URLs sent in mail messages use already the URL of the development web server of Django.
  * A couple of **Article** objects to which the user can post comments.
 
-By default mails are sent directly to the console using the ``console.EmailBackend``. Comment out ``EMAIL_BACKEND`` in the settings module to send actual mails. You will need working values for all the ``EMAIL_`` settings.
+By default mails are sent directly to the console using the ``console.EmailBackend``. Comment out ``EMAIL_BACKEND`` in the settings module to send actual mails. You will need working values for all the ``EMAIL_*`` settings.
 
 
 .. index::

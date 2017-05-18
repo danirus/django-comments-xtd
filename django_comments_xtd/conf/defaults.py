@@ -27,9 +27,6 @@ COMMENTS_XTD_FORM_CLASS = "django_comments_xtd.forms.XtdCommentForm"
 # Model to use.
 COMMENTS_XTD_MODEL = "django_comments_xtd.models.XtdComment"
 
-# Default markup filter to use.
-COMMENTS_XTD_MARKUP_FALLBACK_FILTER = None
-
 # Send HTML emails.
 COMMENTS_XTD_SEND_HTML_EMAIL = True
 
@@ -53,3 +50,11 @@ COMMENTS_XTD_APP_MODEL_PERMISSIONS = {
 # Define a lambda function to return the user representation. Used by
 # the web API to represent user strings in response objects.
 COMMENTS_XTD_API_USER_REPR = lambda u: u.username
+
+# Whether to interpret comments' text as Markdown text.
+# COMMENTS_XTD_ENABLE_MARKDOWN2 = False
+
+# When previous settings is enabled, the following setting list the extras
+# to apply when using Markdown2 to render comments.
+# Check https://github.com/trentm/python-markdown2/wiki/Extras
+# COMMENTS_XTD_MARKDOWN2_EXTRAS = []

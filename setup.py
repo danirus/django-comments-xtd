@@ -40,7 +40,7 @@ setup(
         'djangorestframework>=3.6,<3.7',
         'docutils',
         'Markdown',
-        'django-markup'
+        'django-markdown2'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

@@ -35,14 +35,14 @@ Before we install any package we will set up a virtualenv and install everything
        $ virtualenv venv
        $ source venv/bin/activate
        (venv)$ pip install django-comments-xtd
-       (venv)$ wget https://github.com/danirus/django-comments-xtd/demo/tutorial.tar.gz
+       (venv)$ wget https://github.com/danirus/django-comments-xtd/raw/master/example/tutorial.tar.gz
        (venv)$ tar -xvzf tutorial.tar.gz
        (venv)$ cd tutorial
 
 By installing django-comments-xtd we install all its dependencies, Django and django-contrib-comments among them. So we are ready to work on the project. Take a look at the content of the tutorial directory, it contains:
 
- * A **blog** app with a **Post** model. It uses two generic class-based views to list the posts, and to show a given post in detail.
- * The **templates** directory, with a **base.html** template, a **home.html** template, and two templates for the blog app: **blog/post_list.html** and **blog/post_detail.html**.
+ * A **blog** app with a **Post** model. It uses two generic class-based views to list the posts and show a post in detail.
+ * The **templates** directory, with a **base.html** and **home.html**, and the templates for the blog app: **blog/post_list.html** and **blog/post_detail.html**.
  * The **static** directory with a **css/bootstrap.min.css** file (this file is a static asset available, when the app is installed, under the path **django_comments_xtd/css/bootstrap.min.css**).
  * The **tutorial** directory containing the **settings** and **urls** modules.
  * And a **fixtures** directory with data files to create the *admin* superuser (with *admin* password), the default site and some blog posts.
@@ -55,7 +55,7 @@ Let's finish the initial setup, load the fixtures and run the development server
        (venv)$ python manage.py loaddata fixtures/*.json
        (venv)$ python manage.py runserver
 
-Head to http://localhost:8000 and visit the tutorial site. In the following section we will make changes to enable django-comments-xtd.
+Head to http://localhost:8000 and visit the tutorial site.
 
 
 .. _configuration:
@@ -63,7 +63,7 @@ Head to http://localhost:8000 and visit the tutorial site. In the following sect
 Configuration
 =============
 
-Now that the project is up and running we are ready to add comments. Edit the settings module, ``tutorial/settings.py``, and make the following changes:
+Now that the project is running we are ready to add comments. Edit the settings module, ``tutorial/settings.py``, and make the following changes:
 
    .. code-block:: python
 
@@ -88,7 +88,7 @@ Now that the project is up and running we are ready to add comments. Edit the se
        DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
 
 
-Edit the urls module of the project, ``democx/democx/urls.py``, to mount the URL patterns of django_comments_xtd to the path ``/comments/``. The urls installed with django_comments_xtd include those required by django_comments too:
+Edit the urls module of the project, ``tutorial/tutorial/urls.py`` and mount the URL patterns of django_comments_xtd in the path ``/comments/``. The urls installed with django_comments_xtd include django_comments' urls too:
 
    .. code-block:: python
 
@@ -116,9 +116,9 @@ After these simple changes the project is ready to use comments, we just need to
 Comment confirmation
 ====================
 
-In order to make django-comments-xtd request comment confirmation by mail we need to set the :setting:`COMMENTS_XTD_SALT` setting. This setting helps obfuscating the comment before the user has approved its publication.
+Before we go any further we need to set up the :setting:`COMMENTS_XTD_SALT` setting. This setting plays an important role during the comment confirmation by mail. It helps obfuscating the comment before the user has approved its publication.
 
-This is so because django-comments-xtd does not store comments in the server before they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
+It is so because django-comments-xtd does not store comments in the server before they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
 
 This behaviour is disabled for authenticated users, and can be disabled for anonymous users too by simply setting :setting:`COMMENTS_XTD_CONFIRM_MAIL` to ``False``. 
 
@@ -134,19 +134,20 @@ Now let's append the following entry to the settings module to help obfuscating 
 Comments tags
 =============
 
-In order to be able to post comments to blog stories we need to edit the template file ``blog/post_detail.html`` and load the ``comments`` templatetag module, which is provided by the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_:
+Next step consist of editing ``blog/post_detail.html`` and loading the ``comments`` templatetag module after the ``extends`` tag:
 
    .. code-block:: html+django
 
+       {% extends "base.html" %}
        {% load comments %}
 
-We will apply changes in the the blog post detail template:
+Now we will change the blog post detail template to:
 
- #. To show the number of comments posted to the blog story,
- #. To list the comments already posted, and
- #. To show the comment form, so that people can post comments.
+ #. Show the number of comments posted to the blog story,
+ #. List the comments already posted, and
+ #. Show the comment form, so that comments can be sent.
 
-By using the :ttag:`get_comment_count` tag we will show the number of comments posted. Change the code around the link element so that it looks like:
+By using the :ttag:`get_comment_count` tag we will show the number of comments posted. Change the code around the link element so that it looks like following:
 
    .. code-block:: html+django
 
@@ -167,9 +168,11 @@ When using the first, :ttag:`render_comment_list`, with a ``blog.post`` object, 
        comments/blog/list.html
        comments/list.html
 
-Both, django-contrib-comments and django-comments-xtd, provide the last of the list. The one in django-comments-xtd includes twitter-bootstrap_ styling. Django will use the first template found, which depends on what application is listed first in :setting:`INSTALLED_APPS`, django-comments-xtd in this case.
+Both, django-contrib-comments and django-comments-xtd, provide the last template of the list, ``comments/list.html``. The one provided within django-comments-xtd comes with styling based on twitter-bootstrap_.
 
-Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`render_comment_list` tag to add the list of comments. Add the following code at the end of the page, before the ``endblock`` tag:
+Django will use the first template found depending on the order in which applications are listed in :setting:`INSTALLED_APPS`. In this tutorial django-comments-xtd is listed first and therefore its ``comment/list.html`` template will be found first.
+
+Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`render_comment_list`. Add the following code at the end of the page, before the ``endblock`` tag:
 
    .. code-block:: html+django
 
@@ -180,9 +183,9 @@ Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`re
        {% endif %}
  
 
-Below the list of comments we want to display the comment form, so that users can send their own comments. There are two tags available for the purpose, the :ttag:`render_comment_form` and the :ttag:`get_comment_form`. The former renders a template with the comment form while the latter puts the form in the context of the template giving more control over the fields.
+Below the list of comments we want to display the comment form. There are two template tags available for that purpose, the :ttag:`render_comment_form` and the :ttag:`get_comment_form`. The former renders a template with the comment form while the latter puts the form in the context of the template giving more control over the fields.
 
-At the moment we will use the first tag, :ttag:`render_comment_form`. Again, add the following code before the ``endblock`` tag:
+We will use the first tag, :ttag:`render_comment_form`. Again, add the following code before the ``endblock`` tag:
 
    .. code-block:: html+django
 
@@ -196,7 +199,7 @@ At the moment we will use the first tag, :ttag:`render_comment_form`. Again, add
        {% endif %}
        
 
-Finally, before completing this first set of changes, we could show the number of comments along with post titles in the blog's home page. Let's edit ``blog/post_list.html`` and make the following changes:
+Finally, before completing this first set of changes, we could show the number of comments along with post titles in the blog's home page. For this we have to edit ``blog/post_list.html`` and make the following changes:
 
    .. code-block:: html+django
 

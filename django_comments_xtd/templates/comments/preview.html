@@ -5,13 +5,15 @@
 {% block title %}{% trans "Preview your comment" %}{% endblock %}
 
 {% block content %}
-<h4 class="text-center">{% trans "Preview your comment" %}</h4>
-<p class="text-center">
-  {% trans "Preview your comment for:" %}<br/>
-  <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
-</p>
 <div class="row">
-  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">
+  <h4 class="text-center">{% trans "Preview your comment" %}</h4>
+  <p class="text-center">
+    {% trans "Preview your comment for:" %}<br/>
+    <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+  </p>
+</div>
+<div class="row">
+  <!--div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8"-->
     <div class="visible-lg-block visible-md-block">
       <hr/>
     </div>
@@ -39,13 +41,13 @@
     <div class="visible-lg-block visible-md-block">
       <hr/>
     </div>
-  </div>
+  <!--/div-->
 </div>
 <div class="row">
-  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">
+  <!--div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8"-->
     <div class="well well-lg">
       {% include "comments/form.html" %}
     </div>
-  </div>
+  <!--/div-->
 </div>
 {% endblock %}

@@ -1,5 +1,11 @@
 include AUTHORS
 include LICENSE
 include CHANGELOG
+include tox.ini
+include package.json
+include webpack.config.js
+include requirements.pip
+include requirements_tests.pip
 recursive-include docs *
 recursive-include django_comments_xtd/templates *
+recursive-include django_comments_xtd/static *

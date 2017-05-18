@@ -222,7 +222,8 @@ class TmpXtdComment(dict):
         if self.xtd_comment:
             return self.xtd_comment._get_pk_val()
         else:
-            return ""
+            content_type = "%s.%s" % self.content_type.natural_key()
+            return "%s:%s" % (content_type, self.object_pk)
 
     def __setstate__(self, state):
         ct_key = state.pop('content_type_key')

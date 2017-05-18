@@ -30,7 +30,7 @@ class EmailThread(threading.Thread):
 
     def run(self):
         _send_mail(self.subject, self.body, self.from_email,
-                   seglf.recipient_list, self.fail_silently, self.html)
+                   self.recipient_list, self.fail_silently, self.html)
         mail_sent_queue.put(True)
 
 

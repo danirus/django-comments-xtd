@@ -12,4 +12,11 @@
   Thank you for your patience and understanding.
   {% endblocktrans %}
 </p>
+<p class="text-center">
+  {% with content_object_url=comment.content_object.get_absolute_url content_object_str=comment.content_object %}
+  {% blocktrans %}
+  Go back to <a href="{{ content_object_url }}">{{ content_object_str }}</a>
+  {% endblocktrans %}
+  {% endwith %}
+</p>
 {% endblock %}

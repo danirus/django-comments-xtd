@@ -177,6 +177,7 @@ Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`re
    .. code-block:: html+django
 
        {% if comment_count %}
+       <hr/>
        <div class="comments">
          {% render_comment_list for object %}
        </div>
@@ -229,7 +230,7 @@ The setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0`` by default, which 
 Moderation
 ==========
 
-One of the differences between django-comments-xtd and other commenting applications is the fact that by default it requires comment confirmation by email when users are not logged in, a very effective feature to discard unwanted comments. However there might be cases in which we would prefer to follow a different approach. The Django Comments Framework has the `moderation capabilities <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_ upon which we can build our own comment filtering.
+One of the differences between django-comments-xtd and other commenting applications is the fact that by default it requires comment confirmation by email when users are not logged in, a very effective feature to discard unwanted comments. However there might be cases in which you would prefer a different approach. Django Comments Framework comes with `moderation capabilities <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_ included, upon which we can build our own comment filtering.
 
 Comment moderation is often established to fight spam, but may be used for other purposes, like triggering actions based on comment content, rejecting comments based on how old is the subject being commented and whatnot.
 

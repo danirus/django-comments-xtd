@@ -165,6 +165,25 @@ export class Comment extends React.Component {
     );
   }
 
+  render_feedback_btns() {
+    if(this.props.settings.allow_feedback)
+    {
+      let feedback_id = "feedback-"+this.props.data.id;
+      if(this.props.settings.show_feedback)
+        this.destroyTooltips(feedback_id);
+      let like_feedback = this._get_feedback_chunk("like");
+      let dislike_feedback = this._get_feedback_chunk("dislike");
+      return (
+        <span id={feedback_id} className="small">
+          {like_feedback}
+          <span className="text-muted"> | </span>
+          {dislike_feedback}
+        </span>
+      );
+    } else
+      return "";
+  }
+  
   handle_reply_click(event) {
     event.preventDefault();
     var component = this.state.reply_form.component;
@@ -202,41 +221,18 @@ export class Comment extends React.Component {
   rawMarkup() {
     var md = new Remarkable();
     const rawMarkup = md.render(this.props.data.comment);
-    return { __html: rawMarkup.slice(3, -5) };
+    return { __html: rawMarkup };
   }
   
   render_comment_body() {  
     if(this.props.data.is_removed)
       return (
-        <p className="text-muted">
-          <em>{this.props.data.comment}</em>
-        </p>
+        <p className="text-muted"><em>{this.props.data.comment}</em></p>
       );
-
-    let feedback = "";
-    if(this.props.settings.allow_feedback)
-    {
-      let feedback_id = "feedback-"+this.props.data.id;
-      if(this.props.settings.show_feedback)
-        this.destroyTooltips(feedback_id);
-      let like_feedback = this._get_feedback_chunk("like");
-      let dislike_feedback = this._get_feedback_chunk("dislike");
-      feedback = (
-        <span id={feedback_id} className="small">
-          {like_feedback}
-          <span className="text-muted"> | </span>
-          {dislike_feedback}
-        </span>
+    else
+      return (
+        <div className="content" dangerouslySetInnerHTML={this.rawMarkup()}/>
       );
-    }
-    let reply_link = this._get_reply_link_chunk();
-    return (
-      <p>
-        <span dangerouslySetInnerHTML={this.rawMarkup()}/>
-        <br/>
-        {feedback}{reply_link}
-      </p>
-    );
   }
 
   render_reply_form() {
@@ -336,6 +332,8 @@ export class Comment extends React.Component {
     var user_name = this._get_username_chunk();  // Plain name or link.
     var right_div = this._get_right_div_chunk();  // Flagging & moderation.
     var comment_body = this.render_comment_body();
+    var feedback_btns = this.render_feedback_btns();
+    var reply_link = this._get_reply_link_chunk();
     var comment_id = "c" + this.props.data.id;
     var reply_form = this.render_reply_form();
 
@@ -377,7 +375,7 @@ export class Comment extends React.Component {
               {right_div}
             </h6>
             <a name={comment_id}></a>
-            {comment_body}
+            {comment_body}{feedback_btns}{reply_link}
             {reply_form}
           </div>
           {children}

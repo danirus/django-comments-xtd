@@ -219,6 +219,8 @@ Finally, before completing this first set of changes, we could show the number o
 
 Now we are ready to send comments. If you are logged in the admin site, your comments won't need to be confirmed by mail. To test the confirmation URL do logout of the admin interface. Bear in mind that :setting:`EMAIL_BACKEND` is set up to send mail messages to the console, so look in the console after you post the comment and find the first long URL in the message. To confirm the comment copy the link and paste it in the location bar of the browser.
 
+.. image:: images/comments-enabled.png
+
 The setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0`` by default, which means comments can not be nested. Later in the threads section we will enable nested comments. Now we will set up comment moderation.
 
 
@@ -464,6 +466,8 @@ The tag :ttag:`render_xtdcomment_tree` renders the template ``django_comments_xt
 
 Now visit any of the blog posts to which you have already sent comments and see that a new `Reply` link shows up below each comment. Click on the link and post a new comment. It will appear nested inside the parent comment. The new comment will not show a `Reply` link because :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` has been set to 1. Raise it to 2 and reload the page to offer the chance to nest comments inside one level deeper.
 
+.. image:: images/reply-link.png
+
        
 Different max thread levels
 ---------------------------
@@ -521,7 +525,11 @@ The **allow_flagging** argument makes the templatetag populate a variable ``allo
 
 Now let's suggest a removal. First we need to login in the admin_ interface so that we are not an anonymous user. Then we can visit any of the blog posts we sent comments to. There is a flag at the right side of every comment's header. Clicking on it bring the user to a page in which she is requested to confirm the removal suggestion. Finally, clicking on the red **Flag** button confirms the request.
 
-Once we flag a comment we can find the flag entry in the admin_ interface, under the **Comment flags** model, within the Django Comments application. 
+Users with the ``django_comments.can_moderate`` permission will see a yellow labelled counter near the flag button in each flagged comment, representing how many times comments have been flagged. Also notice that when a user flags a comment for removal the icon turns red.
+
+.. image:: images/flag-counter.png
+
+Administrators/moderators can find flagged comment entries in the admin_ interface, under the **Comment flags** model, within the Django Comments application. 
 
 
 Getting notifications
@@ -553,9 +561,9 @@ Liked it, Disliked it
 
 Django-comments-xtd adds two new flags: the **Liked it** and the **Disliked it** flags.
 
-Unlike the **Removal suggestion** flag, the **Liked it** and **Disliked it** flags are mutually exclusive. So that a user can't like and dislike a comment at the same time, only the last action counts. Users can like/dislike at any time and only the last action will prevail.
+Unlike the **Removal suggestion** flag, the **Liked it** and **Disliked it** flags are mutually exclusive. A user can not like and dislike a comment at the same time. Users can like/dislike at any time and only the last action will prevail.
 
-In this section we will make changes in the tutorial project to give our users the capacity to like or dislike comments. We will make changes in the ``blog/post_detail.html`` template to introduce a new argument in the **render_xtdcomment_tree** tag:
+In this section we make changes to give our users the capacity to like or dislike comments. Following the same pattern as with the removal flag, enabling like/dislike buttons is about adding an argument to the ``render_xtdcomment_tree``, the argument ``allow_feedback``. Edit the ``blog/post_detail.html`` template and add the new argument:
 
    .. code-block:: html+django
 
@@ -566,6 +574,8 @@ In this section we will make changes in the tutorial project to give our users t
 
 The **allow_feedback** argument makes the templatetag populate a variable ``allow_feedback = True`` in the context in which ``django_comments_xtd/comment_tree.html`` is rendered.
 
+.. image:: images/feedback-buttons.png
+
 Having the new like/dislike links in place, if we click on any of them we will end up in either the ``django_comments_xtd/like.html`` or the ``django_comments_xtd/dislike.html`` templates, which are meant to request the user a confirmation for the operation.
 
 
@@ -574,11 +584,7 @@ Having the new like/dislike links in place, if we click on any of them we will e
 Show the list of users
 **********************
 
-Once the like/dislike flagging is enabled we might want to display the users who actually liked/disliked comments.
-
-Again, by addind an argument to the ``render_xtdcomment_tree`` templatetag we can get rendered the ``includes/django_comments_xtd/user_feedback.html`` with the list of participants.
-
-Change the ``blog/post_detail.html`` to add the argument ``show_feedback``. For this functionality to work we have to add a bit of JavaScript code. As django-comments-xtd templates use twitter-bootstrap_ we will load jQuery and twitter-bootstrap JavaScript libraries from their respective default CDNs too:
+With the like/dislike buttons enabled we might as well consider to display the users who actually liked/disliked comments. Again addind an argument to the ``render_xtdcomment_tree`` will enable the feature. Change the ``blog/post_detail.html`` and add the argument ``show_feedback`` to the template tag:
 
    .. code-block:: html+django
 
@@ -595,12 +601,65 @@ Change the ``blog/post_detail.html`` to add the argument ``show_feedback``. For 
            crossorigin="anonymous"></script>
        <script>
        $(function () {
-         $('[data-toggle="popover"]').popover({'html':true})
+         $('[data-toggle="tooltip"]').tooltip({html: true})
        })</script>
        {% endblock %}
 
+For this functionality to work we have to add a bit of JavaScript code too. As django-comments-xtd by default uses twitter-bootstrap_ we will load jQuery and twitter-bootstrap libraries from their respective default CDNs.
+
 .. _twitter-bootstrap: http://getbootstrap.com
-       
+
+.. image:: images/feedback-users.png
+
+Move the mouse over the counters near the like/dislike buttons. It will show a twitter-bootstrap_ Tooltip with the list of users who liked/disliked the comment.
+
+
+Markdown
+========
+
+In versions prior to 1.8 django-comments-xtd required the installation of django-markup as a dependency, and provided a specific template filter, ``render_markup_comment``, to render comment's content in the markup language the user selected.
+
+As of version 1.8 django-comments-xtd does not require the installation of any additional application to parser comments' content. It is up to the developer to take such decision and choose the markup language and interpreter it better suits their project.
+
+The content of the comment is presented by default in plain text, but it is easily customizable by overriding the template ``includes/django_comments_xtd/render_comment.html``.
+
+In this section we will send a Markdown formatted comment, and once published we will install support for Markdown, with `django-markdown2 <https://pypi.python.org/pypi/django-markdown2>`_, and we override the template mentioned above, so that comments are interpreted as Markdown by default.
+
+Send a comment formatted in Markdown, as the one in the following image.
+
+.. image:: images/markdown-input.png
+
+Now we install `django-markdown2 <https://pypi.python.org/pypi/django-markdown2>`_, and create the template directory and the template file:
+
+   .. code-block:: bash
+
+       (venv)$ pip install django-markdown2
+       (venv)$ mkdir -p templates/includes/django_comments_xtd/
+       (venv)$ touch templates/includes/django_comments_xtd/comment_content.html
+
+We have to add ``django_markdown2`` to our :setting:`INSTALLED_APPS`, and add the following template code to the file ``comment_content.html`` we just created:
+
+   .. code-block:: html+django
+
+       {% load md2 %}
+       {{ content|markdown:"safe, code-friendly, code-color" }}
+
+After reloading the comment's page it will look like this:
+
+.. image:: images/markdown-comment.png
+
+
+
+JavaScript plugin
+=================
+
+Up until now Django has carried all the weight of the application. Using a JavaScript plugin we move part of the weight to the browser and improve the overall usability of the application as users don't have to leave the blog post page to preview, submit or reply comments, or to like/dislike them.
+
+In this section we make use of the JavaScript plugin provided within django-comments-xtd in our ``blog/post_detail.html``. Edit the template and add the following code at the end of the file:
+
+To know more about the JavaScript side of the application read the specific page on the :doc:`javascript`.
+
+
 
 Final notes
 ===========

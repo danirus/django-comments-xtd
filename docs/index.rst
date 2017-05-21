@@ -38,6 +38,8 @@ Contents
    tutorial
    example
    logic
+   webapi
+   javascript
    templatetags
    extending
    settings

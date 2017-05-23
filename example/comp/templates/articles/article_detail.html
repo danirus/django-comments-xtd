@@ -31,7 +31,6 @@
 {% endblock content %}
 
 {% block extra_js %}
-{% get_comment_count for object as comment_count %}
 <script>
   window.comments_props = {% get_commentbox_props for object %};
   window.comments_props_override = {

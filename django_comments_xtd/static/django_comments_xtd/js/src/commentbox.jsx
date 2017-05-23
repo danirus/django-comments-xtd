@@ -179,8 +179,8 @@ export class CommentBox extends React.Component {
   
   componentDidMount() {
     this.load_comments();
-    if(this.props.pull_interval)
-      setInterval(this.load_count.bind(this), this.props.pull_interval);
+    if(this.props.polling_interval)
+      setInterval(this.load_count.bind(this), this.props.polling_interval);
   }
   
   render() {

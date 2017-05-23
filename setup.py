@@ -39,8 +39,6 @@ setup(
         'django-contrib-comments>=1.8,<1.9',
         'djangorestframework>=3.6,<3.7',
         'docutils',
-        'Markdown',
-        'django-markdown2'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

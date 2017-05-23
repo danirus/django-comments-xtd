@@ -27,7 +27,7 @@ DATABASES = {
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Brussels'
+TIME_ZONE = 'Europe/Berlin'
 USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
@@ -122,7 +122,6 @@ INSTALLED_APPS = (
     'comp.quotes',
     'django_comments_xtd',
     'django_comments',
-    'django_markup',
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'

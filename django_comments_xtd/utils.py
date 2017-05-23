@@ -52,7 +52,7 @@ def send_mail(subject, body, from_email, recipient_list,
                    fail_silently, html)
 
 
-def get_app_model_permissions(comment):
+def has_app_model_option(comment):
     _default = {
         'allow_flagging': False,
         'allow_feedback': False,
@@ -61,7 +61,7 @@ def get_app_model_permissions(comment):
     content_type = ContentType.objects.get_for_model(comment.content_object)
     key = "%s.%s" % (content_type.app_label, content_type.model)
     try:
-        return settings.COMMENTS_XTD_APP_MODEL_PERMISSIONS[key]
+        return settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key]
     except KeyError:
-        return settings.COMMENTS_XTD_APP_MODEL_PERMISSIONS.setdefault(
+        return settings.COMMENTS_XTD_APP_MODEL_OPTIONS.setdefault(
             'default', _default)

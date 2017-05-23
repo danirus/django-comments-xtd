@@ -14,9 +14,9 @@ export class Comment extends React.Component {
       removal: props.data.flags.removal.active,
       removal_count: props.data.flags.removal.count,
       like: props.data.flags.like.active,
-      like_users: props.data.flags.like.users,
+      like_users: props.data.flags.like.users || [],
       dislike: props.data.flags.dislike.active,
-      dislike_users: props.data.flags.dislike.users,
+      dislike_users: props.data.flags.dislike.users || [],
       reply_form: {
         component: null,
         show: false
@@ -107,7 +107,6 @@ export class Comment extends React.Component {
   _get_feedback_chunk(dir) {
     if(!this.props.settings.allow_feedback)
       return "";
-
     let attr_opinion = dir;
     let attr_list = dir + "_users";  // Produce (dis)like_users
 
@@ -266,14 +265,18 @@ export class Comment extends React.Component {
         }.bind(this)
       },
       error: function(xhr, status, err) {
-        console.error(this.props.settings.feedback_url, status, err.toString());
+        debugger;
+        if(xhr.status==400 && xhr.responseJSON.non_field_errors.length)
+          alert(xhr.responseJSON.non_field_errors[0]);
+        else
+          console.error(this.props.settings.feedback_url, status,
+                        err.toString());
       }.bind(this)
     });
   }
 
   action_like(event) {
     event.preventDefault();
-    debugger;
     if(this.props.settings.is_authenticated)
       return this._post_feedback('like');
     else

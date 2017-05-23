@@ -9,6 +9,8 @@ Demo site and tests working under officially Django `supported versions <https:/
 * Django 1.8, 1.9, 1.10 and 1.11
 * Python 2.7, 3.2, 3.4, 3.5, 3.6
 
+.. image:: https://github.com/danirus/django-comments-xtd/blob/master/docs/images/cover.png
+  
 A reusable django app that extends the `django-contrib-comments <https://pypi.python.org/pypi/django-contrib-comments>`_ framework with:
 
 #. Thread support, so comments may be nested.

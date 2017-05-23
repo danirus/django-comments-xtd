@@ -10,4 +10,3 @@ ReactDOM.render(
                                     window.comments_props_override)),
   document.getElementById('comments')
 );
-  

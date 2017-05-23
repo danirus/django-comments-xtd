@@ -12,7 +12,7 @@ django-comments-xtd
 
 .. highlightlang:: html+django
 
-A Django pluggable application that can be used to add comments to your models. It extends the once official `Django Comments Framework <https://pypi.python.org/pypi/django-contrib-comments>`_ with the following features:
+A Django pluggable application that adds comments to your models. It extends the once official `Django Comments Framework <https://pypi.python.org/pypi/django-contrib-comments>`_ with the following features:
 
 .. index::
    single: Features
@@ -28,6 +28,8 @@ A Django pluggable application that can be used to add comments to your models. 
 9. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
 10. Fully functional JavaScript plugin using ReactJS, jQuery, Bootstrap, Remarkable and MD5.
 
+.. image:: images/cover.png
+    
 Contents
 ========
    

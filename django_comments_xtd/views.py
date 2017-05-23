@@ -23,7 +23,7 @@ from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment,
                                         MaxThreadLevelExceededException,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
-from django_comments_xtd.utils import send_mail
+from django_comments_xtd.utils import send_mail, has_app_model_option
 
 
 XtdComment = get_comment_model()
@@ -289,6 +289,39 @@ def mute(request, key):
 
 @csrf_protect
 @login_required
+def flag(request, comment_id, next=None):
+    """
+    Flags a comment. Confirmation on GET, action on POST.
+
+    Templates: :template:`comments/flag.html`,
+    Context:
+        comment
+            the flagged `comments.comment` object
+    """
+    comment = get_object_or_404(get_comment_model(),
+                                pk=comment_id,
+                                site__pk=get_current_site(request).pk)
+    if not has_app_model_option(comment)['allow_feedback']:
+        ctype = ContentType.objects.get_for_model(comment.content_object)
+        raise Http404("Comments posted to instances of '%s.%s' are not "
+                      "explicitly allowed to receive 'removal suggestion' "
+                      "flags. Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
+                      "setting." % (ctype.app_label, ctype.model))
+    # Flag on POST
+    if request.method == 'POST':
+        perform_flag(request, comment)
+        return next_redirect(request, fallback=next or 'comments-flag-done',
+                             c=comment.pk)
+
+    # Render a form on GET
+    else:
+        return render(request, 'comments/flag.html',
+                      {'comment': comment,
+                       'next': next})
+
+
+@csrf_protect
+@login_required
 def like(request, comment_id, next=None):
     """
     Like a comment. Confirmation on GET, action on POST.
@@ -300,6 +333,12 @@ def like(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=settings.SITE_ID)
+    if not has_app_model_option(comment)['allow_feedback']:
+        ctype = ContentType.objects.get_for_model(comment.content_object)
+        raise Http404("Comments posted to instances of '%s.%s' are not "
+                      "explicitly allowed to receive 'liked it' flags. "
+                      "Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
+                      "setting." % (ctype.app_label, ctype.model))
     # Flag on POST
     if request.method == 'POST':
         perform_like(request, comment)
@@ -328,6 +367,12 @@ def dislike(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=settings.SITE_ID)
+    if not has_app_model_option(comment)['allow_feedback']:
+        ctype = ContentType.objects.get_for_model(comment.content_object)
+        raise Http404("Comments posted to instances of '%s.%s' are not "
+                      "explicitly allowed to receive 'disliked it' flags. "
+                      "Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
+                      "setting." % (ctype.app_label, ctype.model))
     # Flag on POST
     if request.method == 'POST':
         perform_dislike(request, comment)

@@ -617,13 +617,13 @@ Move the mouse over the counters near the like/dislike buttons. It will show a t
 Markdown
 ========
 
-In versions prior to 1.8 django-comments-xtd required the installation of django-markup as a dependency, and provided a specific template filter, ``render_markup_comment``, to render comment's content in the markup language the user selected.
+In versions prior to 1.8 django-comments-xtd required the installation of django-markup as a dependency. It also provided a specific template filter, ``render_markup_comment``, to render comment's content in the markup language the user selected.
 
-As of version 1.8 django-comments-xtd does not require the installation of any additional application to parser comments' content. It is up to the developer to take such decision and choose the markup language and interpreter it better suits their project.
+As of version 1.8 the backend side of the application does not require the installation of any additional package to parser comments' content, and does not provide the ``render_markup_comment`` filter anymore. However, in the client side, the JavaScript plugin uses Markdown by default to render comments' content. In the plan for the future remains the need to develop the JavaScript plugin further to support a better build process and more markup languages.
 
-The content of the comment is presented by default in plain text, but it is easily customizable by overriding the template ``includes/django_comments_xtd/render_comment.html``.
+As for the backend side, comment's content is presented by default in plain text, but it is easily customizable by overriding the template ``includes/django_comments_xtd/render_comment.html``.
 
-In this section we will send a Markdown formatted comment, and once published we will install support for Markdown, with `django-markdown2 <https://pypi.python.org/pypi/django-markdown2>`_, and we override the template mentioned above, so that comments are interpreted as Markdown by default.
+In this section we will send a Markdown formatted comment, and once published we will install support for Markdown, with `django-markdown2 <https://pypi.python.org/pypi/django-markdown2>`_. We'll then override the template mentioned above so that comments are interpreted as Markdown.
 
 Send a comment formatted in Markdown, as the one in the following image.
 
@@ -653,11 +653,54 @@ After reloading the comment's page it will look like this:
 JavaScript plugin
 =================
 
-Up until now Django has carried all the weight of the application. Using a JavaScript plugin we move part of the weight to the browser and improve the overall usability of the application as users don't have to leave the blog post page to preview, submit or reply comments, or to like/dislike them.
+Up until now we have used django-comments-xtd as a backend application. As of version 1.8 it includes a JavaScript plugin that helps moving part of the logic to the browser improving the overall usability. By making use of the JavaScript plugin users don't have to leave the blog post page to preview, submit or reply comments, or to like/dislike them. But it comes at the cost of assuming a number of opinions as:
 
-In this section we make use of the JavaScript plugin provided within django-comments-xtd in our ``blog/post_detail.html``. Edit the template and add the following code at the end of the file:
+ * The use of jQuery, ReactJS and Remarkable.
+ * The use of Twitter-Bootstrap for the UI.
 
-To know more about the JavaScript side of the application read the specific page on the :doc:`javascript`.
+To know more about the client side of the application and the build process read the specific page on the :doc:`javascript`.
+   
+In this section of the tutorial we go through the steps to make use of the JavaScript plugin.
+
+Enable Web API
+--------------
+
+The JavaScript plugin uses the Web API provided by django-comments-xtd. In order to enable the Web API we need to install the `django-rest-framework <http://www.django-rest-framework.org/>`_:
+
+   .. code-block:: bash
+
+       (venv)$ pip install djangorestframework
+
+Once installed, add it to our tutorial :setting:`INSTALLED_APPS` setting:
+
+   .. code-block:: python
+
+       INSTALLED_APPS = [
+           ...
+           'rest_framework',
+           ...
+       ]
+
+Enable app.model options
+------------------------
+
+Be sure the :setting:`COMMENTS_XTD_APP_MODEL_OPTION` setting includes the options we want to enable for comments sent to Blog posts. In this case we will allow users to flag comments for removal (allow_flagging option), to like/dislike comments (allow_feedback), and we want to show the list of users who liked/disliked comments:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_APP_MODEL_OPTIONS = {
+           'blog.post': {
+               'allow_flagging': True,
+               'allow_feedback': True,
+               'show_feedback': True,
+           }
+       }
+
+Load the plugin
+---------------
+
+Now let's edit ``blog/post_detail.html`` and add the following code at the end of the file:
+
 
 
 

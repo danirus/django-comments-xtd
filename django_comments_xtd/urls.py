@@ -5,13 +5,14 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from django_comments_xtd import api, views
 
 urlpatterns = [
-    url(r'', include("django_comments.urls")),
     url(r'^sent/$', views.sent, name='comments-xtd-sent'),
     url(r'^confirm/(?P<key>[^/]+)/$', views.confirm,
         name='comments-xtd-confirm'),
     url(r'^mute/(?P<key>[^/]+)/$', views.mute, name='comments-xtd-mute'),
     url(r'^reply/(?P<cid>[\d]+)/$', views.reply, name='comments-xtd-reply'),
 
+    # Remap comments-flag to check allow-flagging is enabled.
+    url(r'^flag/(\d+)/$', views.flag, name='comments-flag'),
     # New flags in addition to those provided by django-contrib-comments.
     url(r'^like/(\d+)/$', views.like, name='comments-xtd-like'),
     url(r'^liked/$', views.like_done, name='comments-xtd-like-done'),
@@ -29,6 +30,8 @@ urlpatterns = [
         name='comments-xtd-api-feedback'),
     url(r'^api/flag/$', api.CreateReportFlag.as_view(),
         name='comments-xtd-api-flag'),
+
+    url(r'', include("django_comments.urls")),
 ]
 
 

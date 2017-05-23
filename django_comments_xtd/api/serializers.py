@@ -25,7 +25,7 @@ from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
 from django_comments_xtd.signals import confirmation_received
-from django_comments_xtd.utils import get_app_model_permissions
+from django_comments_xtd.utils import has_app_model_option
 
 
 COMMENT_MAX_LENGTH = getattr(settings, 'COMMENT_MAX_LENGTH', 3000)
@@ -207,7 +207,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         }
         users_likedit, users_dislikedit = None, None
         
-        if get_app_model_permissions(obj)['allow_flagging']:
+        if has_app_model_option(obj)['allow_flagging']:
             users_flagging = obj.users_flagging(CommentFlag.SUGGEST_REMOVAL)
             if self.request.user in users_flagging:
                 flags['removal']['active'] = True
@@ -215,18 +215,18 @@ class ReadCommentSerializer(serializers.ModelSerializer):
                 flags['removal']['count'] = len(users_flagging)
  
         if (
-                get_app_model_permissions(obj)['allow_feedback'] or
-                get_app_model_permissions(obj)['show_feedback']
+                has_app_model_option(obj)['allow_feedback'] or
+                has_app_model_option(obj)['show_feedback']
         ):
             users_likedit = obj.users_flagging(LIKEDIT_FLAG)
             users_dislikedit = obj.users_flagging(DISLIKEDIT_FLAG)
             
-        if get_app_model_permissions(obj)['allow_feedback']:
+        if has_app_model_option(obj)['allow_feedback']:
             if self.request.user in users_likedit:
                 flags['like']['active'] = True
             elif self.request.user in users_dislikedit:
                 flags['dislike']['active'] = True
-        if get_app_model_permissions(obj)['show_feedback']:
+        if has_app_model_option(obj)['show_feedback']:
             flags['like']['users'] = [
                 "%d:%s" % (user.id, settings.COMMENTS_XTD_API_USER_REPR(user))
                 for user in users_likedit]
@@ -260,19 +260,19 @@ class FlagSerializer(serializers.ModelSerializer):
         # Validate flag.
         if data['flag'] not in self.flag_choices:
             raise serializers.ValidationError("Invalid flag.")
-        # Check commenting permissions on object being commented.
-        permission = ''
+        # Check commenting options on object being commented.
+        option = ''
         if data['flag'] in ['like', 'dislike']:
-            permission = 'allow_feedback'
+            option = 'allow_feedback'
         elif data['flag'] == 'report':
-            permission = 'allow_flagging'
+            option = 'allow_flagging'
         comment = data['comment']
-        if not get_app_model_permissions(comment)[permission]:
+        if not has_app_model_option(comment)[option]:
             ctype = ContentType.objects.get_for_model(comment.content_object)
             raise serializers.ValidationError(
                 "Comments posted to instances of '%s.%s' are not explicitly "
-                "allowed to receive '%s' flags. Check "
-                "COMMENTS_XTD_APP_MODEL_PERMISSIONS setting." % (
+                "allowed to receive '%s' flags. Check the "
+                "COMMENTS_XTD_APP_MODEL_OPTIONS setting." % (
                     ctype.app_label, ctype.model, data['flag']
                 )
             )

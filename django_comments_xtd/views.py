@@ -15,6 +15,7 @@ from django.views.generic import ListView
 
 
 from django_comments.models import CommentFlag
+from django_comments.views.moderation import perform_flag
 from django_comments.views.utils import next_redirect, confirmation_view
 
 from django_comments_xtd import (get_form, comment_was_posted, signals, signed,

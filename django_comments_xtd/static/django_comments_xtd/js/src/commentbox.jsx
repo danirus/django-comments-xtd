@@ -14,7 +14,7 @@ export class CommentBox extends React.Component {
     this.state = {
       previewing: false,
       preview: {name: '', email: '', url: '', comment: ''},
-      tree: [], cids: [], newcids: [], counter: 0
+      tree: [], cids: [], newcids: [], counter: this.props.comment_count
     };
     this.handle_comment_created = this.handle_comment_created.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
@@ -45,10 +45,10 @@ export class CommentBox extends React.Component {
   }
 
   render_comment_counter() {
-    if (this.props.comment_count > 0) {
+    if (this.state.counter > 0) {
       var text = "There is one comment below.";
-      if(this.props.comment_count > 1)
-        text = "There are " + this.props.comment_count + " comments below.";
+      if(this.state.cids.length > 1)
+        text = "There are " + this.state.cids.length + " comments below.";
       return (
         <div>
           <h5 className="text-center">{text}</h5>
@@ -179,8 +179,8 @@ export class CommentBox extends React.Component {
   
   componentDidMount() {
     this.load_comments();
-    if(this.props.poll_interval)
-      setInterval(this.load_count.bind(this), this.props.poll_interval);
+    if(this.props.pull_interval)
+      setInterval(this.load_count.bind(this), this.props.pull_interval);
   }
   
   render() {

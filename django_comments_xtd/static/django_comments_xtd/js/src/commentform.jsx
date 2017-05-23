@@ -301,7 +301,8 @@ export class CommentForm extends React.Component {
             <h6 className="media-heading">
               Now&nbsp;-&nbsp;{heading_name}&nbsp;&nbsp;{label}
             </h6>
-            <p dangerouslySetInnerHTML={this.rawMarkup()} />
+            <div className="preview"
+                 dangerouslySetInnerHTML={this.rawMarkup()} />
           </div>
         </div>
         {hr_line}

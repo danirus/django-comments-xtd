@@ -29,20 +29,23 @@ class CommentCreate(generics.CreateAPIView):
         self.resp_dict = serializer.save()
 
 
-class CommentList(generics.ListCreateAPIView):
+class CommentList(generics.ListAPIView):
     """List all comments for a given ContentType and object ID."""
-
     serializer_class = serializers.ReadCommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         content_type_arg = self.kwargs.get('content_type', None)
         object_pk_arg = self.kwargs.get('object_pk', None)
         app_label, model = content_type_arg.split("-")
-        content_type = ContentType.objects.get_by_natural_key(app_label, model)
-        qs = XtdComment.objects.filter(content_type=content_type,
-                                       object_pk=int(object_pk_arg),
-                                       is_public=True)
+        try:
+            content_type = ContentType.objects.get_by_natural_key(app_label,
+                                                                  model)
+        except ContentType.DoesNotExist as exc:
+            qs = XtdComment.objects.none()
+        else:
+            qs = XtdComment.objects.filter(content_type=content_type,
+                                           object_pk=int(object_pk_arg),
+                                           is_public=True)
         return qs
 
     def perform_create(self, serializer):
@@ -64,9 +67,7 @@ class CommentList(generics.ListCreateAPIView):
 
 
 class CommentCount(generics.GenericAPIView):
-    """
-    Retrieve number of comments available for a pair ContentType, object ID.
-    """
+    """Get number of comments posted to a given ContentType and object ID."""
     serializer_class = serializers.ReadCommentSerializer
 
     def get_queryset(self):

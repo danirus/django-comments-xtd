@@ -7440,10 +7440,12 @@ A {
 .comment .mutedlink {
   color: #bbbbbb;
 }
-.comment > .content > p:last-child {
+.comment > .content > p:last-child,
+.comment i .preview > p:last-child {
   margin: 0px;
 }
-.comment > .content > p {
+.comment > .content > p,
+.comment .preview > p {
   line-height: 1.4em;
   font-size: 92%;
 }

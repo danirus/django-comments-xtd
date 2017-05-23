@@ -11,7 +11,7 @@ This tutorial guides you through the steps to use every feature of django-commen
    :local:
 
 .. index::
-   single: Installation
+   single: Introduction
 
 Introduction
 ============
@@ -282,6 +282,8 @@ In both cases, due to the attribute ``email_notification = True`` above, all mai
 
 A last note on comment moderation: comments pending for moderation have to be reviewed and eventually approved. Don't forget to visit the comments-xtd app in the admin_ interface. Filter comments by `is public: No` and `is removed: No`. Tick the box of those you want to approve, choose **Approve selected comments** in the **action** dropdown, at the top left of the comment list, and click on the **Go** button.
 
+
+.. _disallow:
 
 Disallow black listed domains
 -----------------------------
@@ -681,6 +683,8 @@ Once installed, add it to our tutorial :setting:`INSTALLED_APPS` setting:
            ...
        ]
 
+To know more about the Web API provided by django-comments-xtd read on the :doc:`webapi` page.
+
 Enable app.model options
 ------------------------
 
@@ -699,19 +703,67 @@ Be sure the :setting:`COMMENTS_XTD_APP_MODEL_OPTION` setting includes the option
 Load the plugin
 ---------------
 
-Now let's edit ``blog/post_detail.html`` and add the following code at the end of the file:
+Now let's edit ``blog/post_detail.html`` and make it look like it follows:
+
+   .. code-block:: html+django
+
+       {% extends "base.html" %}
+       {% load static %}
+       {% load comments %}
+       {% load comments_xtd %}
+
+       {% block title %}{{ object.title }}{% endblock %}
+
+       {% block content %}
+       <h3 class="page-header text-center">{{ object.title }}</h3>
+       <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
+       <p>
+         {{ object.body|linebreaks }}
+       </p>
+
+       <div class="text-center" style="padding-top:20px">
+         <a href="{% url 'blog:post-list' %}">Back to the post list</a>
+       </div>
+
+       <div id="comments"></div>
+       {% endblock %}
+
+       {% block extra-js %}
+       <script>
+         window.comments_props = {% get_commentbox_props for object %};
+         window.comments_props_override = {
+           allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+           allow_feedback: true,
+           show_feedback: true,
+           allow_flagging: true,
+           pull_interval: 5000, // In milliseconds.
+         };
+       </script>
+       <script src="{% static 'django_comments_xtd/js/vendor-1.8.0.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-1.8.0.js' %}"></script>
+       {% endblock %}
 
 
+The blog post page is now ready to handle comment user interactions, whether as an anonymous user or a signed in user, through the JavaScript plugin including:
 
+ #. Post comments.
+ #. Preview comments, with instant preview update while typing.
+ #. Reply comment in the same page, with instant preview while typing.
+ #. Notifications of new incoming comments by pulling (override *pull_interval* parameter, see code above).
+ #. Button to reload the tree of comments, highlighting new comments (see image below).
+ #. Immediate like/dislike actions.
+
+.. image:: images/update-comment-tree.png
+    
 
 Final notes
 ===========
 
 We have reached the end of the tutorial. I hope you got enough to start using django-comments-xtd in your own project.
 
-The following page introduces the **Demo projects**. The **simple** demo is a straightforward project to provide comment confirmation by mail, with follow-up notifications and mute links. The **custom** demo is an example about how to extend django-comments-xtd Comment model with new attributes. The **comp** demo shows a project using the complete set of features provided by both django-contrib-comments and django-comments-xtd.
+The following page introduces the **Demo projects**. The **simple** demo is a straightforward backend handled project that uses comment confirmation by mail, with follow-up notifications and mute links. The **custom** demo is an example about how to extend django-comments-xtd **Comment** model with new attributes. The **comp** demo shows a project using the complete set of features provided by both django-contrib-comments and django-comments-xtd.
 
-Checkout the **Control Logic** page to understand how django-comments-xtd works along with django-contrib-comments. Read on **Filters and Template Tags** to see in detail the list of template tags and filters offered. The page on **Customizing django-comments-xtd** goes through the steps to extend the app with a quick example and little prose. Read the **Settings** page and the **Templates** page to get to know how you can customize the default behaviour and default look and feel.
+Checkout the **Control Logic** page to understand how django-comments-xtd works along with django-contrib-comments. The **Web API** page details the API provided. The **JavaScript Plugin** covers every aspect regarding the frontend code. Read on **Filters and Template Tags** to see in detail the list of template tags and filters offered. The page on **Customizing django-comments-xtd** goes through the steps to extend the app with a quick example and little prose. Read the **Settings** page and the **Templates** page to get to know how you can customize the default behaviour and default look and feel.
 
 If you want to help, please, report any bug or enhancement directly to the github_ page of the project. Your contributions are welcome.
 

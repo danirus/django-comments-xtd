@@ -184,10 +184,12 @@ A {
     & .mutedlink {
         color: @text-muted;
     }
-    & > .content > p:last-child {
+    & > .content > p:last-child, i
+    .preview > p:last-child  {
         margin: 0px;
     }
-    & > .content > p {
+    & > .content > p,
+    .preview > p {
         line-height: 1.4em;
         font-size: 92%;
     }

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{{ block.super }}&nbsp;&raquo;&nbsp;joder ostias{% endblock %}
+
+{% block menu-class-articles %}active{% endblock %}
+
+{% block content %}
+<div class="text-center">
+  <H3>{{ object.title }}</H3>
+  <div class="small">{{ object.publish }}</div>
+</div>
+<hr/>
+
+<div class="row">
+  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">  
+    <article>
+      {{ object.body|linebreaks }}
+    </article>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">  
+    <div id="comments"></div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+  window.comments_props = {% get_commentbox_props for object %};
+  window.comments_props_override = {
+    allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+    allow_feedback: true,
+    show_feedback: true,
+    allow_flagging: true,
+    poll_interval: 2000,
+  };
+</script>
+<script src="{% static 'django_comments_xtd/js/vendor-1.8.0.js' %}"></script>
+<script src="{% static 'django_comments_xtd/js/plugin-1.8.0.js' %}"></script>
+{% endblock %}

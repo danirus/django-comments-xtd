@@ -53,6 +53,7 @@ USE_I18N = True
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 # ADMIN_MEDIA_PREFIX = '/media/'
+
 STATIC_URL = '/static/'
 
 # Additional locations of static files
@@ -99,6 +100,13 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'urls'
 
+try:
+    import imp
+    imp.find_module('django_comments')
+    django_comments = 'django_comments'
+except ImportError:
+    django_comments = 'django.contrib.comments'
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -107,16 +115,19 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
+    'rest_framework',
     'django_markdown2',
-    'custom.articles',
-    'custom.mycomments',
+    'i18n.articles',
+    'i18n.quotes',
     'django_comments_xtd',
     'django_comments',
+
+    'rosetta',
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-    
+
 # EMAIL_HOST          = "smtp.gmail.com" 
 # EMAIL_PORT          = "587"
 # EMAIL_HOST_USER     = "username@gmail.com"
@@ -130,12 +141,26 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 COMMENTS_APP = "django_comments_xtd"
-COMMENTS_XTD_CONFIRM_EMAIL = True # Set to True to request confirmations
+COMMENTS_XTD_CONFIRM_EMAIL = True   # Set to False to disable confirmation
 COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
-COMMENTS_XTD_MAX_THREAD_LEVEL = 2
 COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
 
-COMMENTS_XTD_MODEL = 'custom.mycomments.models.MyComment'
-COMMENTS_XTD_FORM_CLASS = 'custom.mycomments.forms.MyCommentForm'
+# Quotes can have 1-level depth nested comments.
+COMMENTS_XTD_MAX_THREAD_LEVEL = 1
+COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
+    'articles.article': 2,
+}
+COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
+COMMENTS_XTD_APP_MODEL_OPTIONS = {
+    'articles.article': {
+        'allow_flagging': True,
+        'allow_feedback': True,
+        'show_feedback': True,
+    }
+}
+COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
+
+LOGIN_URL = "/admin/login/"
+LOGIN_REDIRECT_URL = LOGIN_URL

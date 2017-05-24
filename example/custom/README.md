@@ -1,4 +1,4 @@
-## Custom Demo ##
+## Custom example project ##
 
 The Custom Demo exhibits how to extend django-comments-xtd. This demo used the same **articles** app present in the other two demos, plus:
 

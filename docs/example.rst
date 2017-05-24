@@ -4,11 +4,12 @@
 Demo projects
 =============
 
-Django-comments-xtd comes with three demo projects:
+There are four example projects available within django-comments-xtd:
 
-1. **simple**: Single model with **non-threaded** comments
-2. **custom**: Single model with comments provided by a new app that extends django-comments-xtd. The new comment model adds a ``title`` field to the XtdComment class. Find more details in :ref:`ref-extending`.
-3. **comp**: Several models with maximum thread level defined on per app.model pair, moderation, removal suggestion flag, like/dislike flags, and list of users who liked/disliked comments.
+1. **simple**: Provides non-threaded comment support to articles. It's an only-backend project, meant as a test case of the basic features (confirmation by mail, follow-up notifications, mute link).
+2. **custom**: Provides threaded comment support to articles using a new Comment class that inherits from django-comments-xtd's. The new comment model adds a **title** field to the **XtdComment** class. Find more details in :ref:`ref-extending`.
+3. **comp**: This example project provides comment support to several models, defining the maximum thread level on per app.model basis. It uses moderation, removal suggestion flag, like/dislike flags, and list of users who liked/disliked comments. Comment support for Articles are frontend based while comments for Quotes are backend based.
+4. **i18n**: The last example project is meant to help adding i18n support to django-comments-xtd. It uses django-rosetta to expose the translatable strings. Contributions are welcome.
 
 Visit the **example** directory within the repository `in GitHub <http://github.com/danirus/django-comments-xtd/tree/master/example>`_ for a quick look.
 
@@ -29,7 +30,7 @@ The recommended way to run the demo sites is in its own `virtualenv <http://www.
     $ virtualenv venv
     $ source venv/bin/activate
     (venv)$ git clone git://github.com/danirus/django-comments-xtd.git
-    (venv)$ cd django-comments-xtd/example/[simple|custom|comp]
+    (venv)$ cd django-comments-xtd/example/[simple|custom|comp|i18n]
     (venv)$ pip install django-markdown2
     (venv)$ python manage.py migrate
     (venv)$ python manage.py loaddata ../fixtures/auth.json
@@ -37,41 +38,35 @@ The recommended way to run the demo sites is in its own `virtualenv <http://www.
     (venv)$ python manage.py loaddata ../fixtures/articles.json
     (venv)$ python manage.py runserver
 
-The three demo projects make use of the package `django-markdown2 <https://github.com/svetlyak40wt/django-markdown2>`_, which in turn depends on `Markdown2 <https://github.com/trentm/python-markdown2>`_, to render comments using `Markdown <https://en.wikipedia.org/wiki/Markdown>`_ syntax.
+Example projects make use of the package `django-markdown2 <https://github.com/svetlyak40wt/django-markdown2>`_, which in turn depends on `Markdown2 <https://github.com/trentm/python-markdown2>`_, to render comments using `Markdown <https://en.wikipedia.org/wiki/Markdown>`_ syntax.
 
+Fixtures provide:
+ * A User admin, with password admin.
+ * A default Site with domain localhost:8000 so that comment confirmation URLs are ready to hit the Django development web server.
+ * A couple of article objects to which the user can post comments.
 
-Fixtures data provide:
- * An ``admin`` **User**, with password ``admin``
- * A default **Site** with domain ``localhost:8000`` so that URLs sent in mail messages use already the URL of the development web server of Django.
- * A couple of **Article** objects to which the user can post comments.
-
-By default mails are sent directly to the console using the ``console.EmailBackend``. Comment out ``EMAIL_BACKEND`` in the settings module to send actual mails. You will need working values for all the ``EMAIL_*`` settings.
+By default mails are sent directly to the console using the ``console.EmailBackend``. Comment out ``EMAIL_BACKEND`` in the settings module to send actual mails. You will need to provide working values for all ``EMAIL_*`` settings.
 
 
 .. index::
    single: Simple
    pair: Simple; Demo
 
-Simple demo
-===========
+Simple project
+==============
 
-The simple example features:
+The simple example project features:
   
  #. An Articles App, with a model ``Article`` whose instances accept comments.
-
  #. Confirmation by mail is required before the comment hit the database, unless ``COMMENTS_XTD_CONFIRM_EMAIL`` is set to False. Authenticated users don't have to confirm comments.
-    
  #. Follow up notifications via mail.
-    
  #. Mute links to allow cancellation of follow-up notifications.
-    
- #. It uses the template tag ``render_markup_comment`` to render comment content. So you can use line breaks, Markdown or reStructuredText to format comments. To use special formatting, start the comment with the line ``#!<markup-lang>`` being ``<markup-lang>`` either ``markdown``, ``restructuredtext`` or ``linebreaks``.
-      
  #. No nested comments.
 
 
-Give it a try and test the features. Setup the project as explained above, run the development server, and visit http://localhost:8000/.
+This example project tests the initial features provided by django-comments-xtd. Setup the project as explained above.
 
+Some hints:
  * Log out from the admin site to post comments, otherwise they will be automatically confirmed and no email will be sent.
  * When adding new articles in the admin interface be sure to tick the box *allow comments*, otherwise comments won't be allowed.
  * Send new comments with the Follow-up box ticked and a different email address. You won't receive follow-up notifications for comments posted from the same email address the new comment is being confirmed from.
@@ -82,67 +77,65 @@ Give it a try and test the features. Setup the project as explained above, run t
    single: custom
    pair: custom; demo
 
-Custom demo
-===========
+Custom project
+==============
 
-The **simple_threads** demo site extends the **simple** demo functionality featuring:
+The **custom** example project extends the **simple** project functionality featuring:
 
  * Thread support up to level 2
+ * A new comment class that inherits from **XtdComment** with a new **Title** field and a new form class.
 
-1. Visit http://localhost:8000/ and look at the first article page with 9 comments.
-
-2. See the comments in the admin interface too:
-
- * The first field represents the thread level.
- * When in a nested comment the first field refers to the parent comment.
+.. image:: images/extend-comments-app.png
 
 
 .. index::
    single: Multiple
    pair: Multiple; Demo
 
-Comp demo
-=========
+Comp project
+============
 
-The **multiple** demo allows users post comments to three different type of instances: stories, quotes, and releases. Stories and quotes belong to the **blog app** while releases belong to the **projects app**. The demo shows the blog homepage with the last 5 comments posted to either stories or quotes and a link to the complete paginated list of comments posted to the blog. It features:
+The Comp Demo implements two apps, each of which contains a model whose instances can received comments:
 
- * Definition of maximum thread level on a per app.model basis.
- * Use of comments_xtd template tags, ``get_xtdcomment_count``, ``render_last_xtdcomments``, ``get_last_xtdcomments``, and the filter ``render_markup_comment``.
+ * App **articles** with the model **Article**
+ * App **quotes** with the model **Quote**
 
-1. Visit http://localhost:8000/ and take a look at the **Blog** and **Projects** pages. 
+Features:
+ #. Comments can be nested, and the maximum thread level is established to 2.
+ #. Comment confirmation via mail when the users are not authenticated.
+ #. Comments hit the database only after they have been confirmed.
+ #. Follow up notifications via mail.
+ #. Mute links to allow cancellation of follow-up notifications.
+ #. Registered users can like/dislike comments and can suggest comments removal.
+ #. Registered users can see the list of users that liked/disliked comments.
+ #. The homepage presents the last 5 comments posted either to the `articles.Article` or the `quotes.Quote` model.
 
- * The **Blog** contains **Stories** and **Quotes**. Instances of both models have comments. The blog index page shows the **last 5 comments** posted to either stories or quotes. It also gives access to the **complete paginated list of comments**. 
 
- * Project releases have comments as well but are not included in the complete paginated list of comments shown in the blog. 
+Threaded comments
+-----------------
 
-2. To render the last 5 comments the site uses:
+The setting `COMMENTS_XTD_MAX_THREAD_LEVEL` is set to 2, meaning that comments may be threaded up to 2 levels below the the first level (internally known as level 0)::
+    
+    First comment (level 0)
+        |-- Comment to "First comment" (level 1)
+            |-- Comment to "Comment to First comment" (level 2)
 
- * The templatetag ``{% render_last_xtdcomments 5 for blog.story blog.quote %}``
+render_xtdcomment_tree
+----------------------
 
- * And the following template files from the ``demos/multiple/templates`` directory: 
+By using the `render_xtdcomment_tree` templatetag, both, `article_detail.html` and `quote_detail.html`, show the tree of comments posted. `article_detail.html` makes use of the arguments `allow_feedback`, `show_feedback` and `allow_flagging`, while `quote_detail.html` only show the list of comments, with no extra arguments, so users can't flag comments for removal, and neither can submit like/dislike feedback.
 
-  * ``django_comments_xtd/blog/story/comment.html`` to render comments posted to **stories**
+render_last_xtdcomments
+-----------------------
 
-  * ``django_comments_xtd/blog/quote/comment.html`` to render comments posted to **quotes**
+The **Last 5 Comments** shown in the block at the rigght uses the templatetag `render_last_xtdcomments` to show the last 5 comments posted to either `articles.Article` or `quotes.Quote` instances. The templatetag receives the list of pairs `app.model` from which we want to gather comments and shows the given N last instances posted. The templatetag renders the template `django_comments_xtd/comment.html` for each comment retrieve.
 
- * You may rather use a common template to render comments:
 
-  * For all blog app models: ``django_comments_xtd/blog/comment.html``
+.. index::
+   single: i18n
+   pair: i18n; Project
 
-  * For all the website models: ``django_comments_xtd/comment.html``
+i18n Project
+============
 
-3. To render the complete paginated list of comments the site uses:
-
- * An instance of a generic ``ListView`` class declared in ``blog/urls.py`` that uses the following queryset:
-
-  * ``XtdComment.objects.for_app_models("blog.story", "blog.quote")``
-
-4. The comment posted to the story **Net Neutrality in Jeopardy** starts with a specific line to get the content rendered as reStructuredText. Go to the admin site and see the source of the comment; it's the one sent by Alice to the story 2.
-
- * To format and render a comment in a markup language, make sure the first line of the comment looks like: ``#!<markup-language>`` being ``<markup-language>`` any of the following options:
-
-  * markdown
-  * restructuredtext
-  * linebreaks
-
- * Then use the filter ``render_markup_comment`` with the comment field in your template to interpret the content (see ``demos/multiple/templates/comments/list.html``).
+The goal of the example i18n project is to help translators add language support to django-comments-xtd. The homepage shows the steps to display all the translatable strings contained in the code.

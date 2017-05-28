@@ -32,7 +32,12 @@ USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = (
+    ('en', 'English'),
+    ('es', 'Spanish'),
+)
 
 SITE_ID = 1
 
@@ -91,8 +96,9 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -100,12 +106,6 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'urls'
 
-try:
-    import imp
-    imp.find_module('django_comments')
-    django_comments = 'django_comments'
-except ImportError:
-    django_comments = 'django.contrib.comments'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -115,13 +115,16 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
+    'rosetta',
     'rest_framework',
     'django_markdown2',
-    'comp.articles',
-    'comp.quotes',
     'django_comments_xtd',
     'django_comments',
+
+    'comp',
+    'comp.articles',
+    'comp.quotes',
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'

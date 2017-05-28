@@ -13,6 +13,7 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^$', views.HomepageView.as_view(), name='homepage'),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^articles/', include('comp.articles.urls')),
     url(r'^quotes/', include('comp.quotes.urls')),
@@ -29,3 +30,6 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
+
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += [url(r'^rosetta/', include('rosetta.urls'))]

@@ -8,7 +8,7 @@ const SOURCE_DIR = path.resolve(STATIC_DIR, 'src');
 
 module.exports = {
   entry: {
-    vendor: ['md5', 'react', 'react-dom', 'remarkable', 'jquery', 'bootstrap'],
+    vendor: ['md5', 'react', 'react-dom', 'remarkable'],
     plugin: path.resolve(SOURCE_DIR, 'index.js')
   },
   output: {
@@ -19,11 +19,6 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: Infinity
-    }),
-    new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-      "window.jQuery": 'jquery'
     })
   ],
   module: {
@@ -41,5 +36,9 @@ module.exports = {
         ]
       }
     ]
+  },
+  externals: {
+    jquery: 'jQuery',
+    bootstrap: 'bootstrap'
   }
 };

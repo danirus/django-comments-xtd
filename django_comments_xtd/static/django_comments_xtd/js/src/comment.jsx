@@ -1,4 +1,6 @@
 import $ from 'jquery';
+import django from 'django';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Remarkable from 'remarkable';
@@ -49,10 +51,12 @@ export class Comment extends React.Component {
     
     if (this.props.settings.allow_flagging)
     {
+      var inappropriate_msg = "";
       if(this.state.removal) {
+        inappropriate_msg = django.gettext("I flagged it as inappropriate");
         flagging_html = (
           <span className="glyphicon glyphicon-flag text-danger"
-                title="I flagged it as inappropriate">
+                title={inappropriate_msg}>
           </span>
         );
       } else {
@@ -62,11 +66,11 @@ export class Comment extends React.Component {
           url = (this.props.settings.login_url + "?next=" +
                  this.props.settings.flag_url.replace('0', this.props.data.id));
         }
+        inappropriate_msg = django.gettext("flag comment as inappropriate");
         flagging_html = (
           <a className="mutedlink" href={url}>
             <span className="glyphicon glyphicon-flag"
-                  title="flag comment as inappropriate">
-            </span>
+                  title={inappropriate_msg}></span>
           </a>);
       }
     }
@@ -74,19 +78,20 @@ export class Comment extends React.Component {
     if(this.props.settings.is_authenticated &&
        this.props.settings.can_moderate)
     {
+      var remove_msg = django.gettext("remove comment");
       url = this.props.settings.delete_url.replace('0', this.props.data.id);
+      var 
       moderate_html = (
         <a className="mutedlink" href={url}>
-          <span className="glyphicon glyphicon-trash" title="remove comment">
+          <span className="glyphicon glyphicon-trash" title={remove_msg}>
           </span>
         </a>);
       if(this.state.removal_count>0) {
-        var text = "";
-        if(this.state.removal_count == 1)
-          text = "A user has flagged this comment as inappropriate.";
-        else if(this.state.removal_count > 1)
-          text = (this.state.removal_count +
-                  " users have flagged this comment as inappropriate.");
+        var fmts = django.ngettext(
+          "A user has flagged this comment as inappropriate.",
+          "%s users have flagged this comment as inappropriate.",
+          this.state.removal_count);
+        var text = django.interpolate(fmts, [this.state.removal_count]);
         moderate_html = (
           <span>
             {moderate_html}&nbsp;

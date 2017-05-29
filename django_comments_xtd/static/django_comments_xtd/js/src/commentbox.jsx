@@ -3,6 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import * as lib from './lib.js';
+import django from 'django';
+
 import {Comment} from './comment.jsx';
 import {CommentForm} from './commentform.jsx';
 
@@ -46,9 +48,10 @@ export class CommentBox extends React.Component {
 
   render_comment_counter() {
     if (this.state.counter > 0) {
-      var text = "There is one comment below.";
-      if(this.state.cids.length > 1)
-        text = "There are " + this.state.cids.length + " comments below.";
+      var fmts = django.ngettext("There is one comment below.",
+                                 "There are %s comments below.",
+                                 this.state.cids.length);
+      var text = django.interpolate(fmts, [this.state.cids.length]);
       return (
         <div>
           <h5 className="text-center">{text}</h5>
@@ -78,9 +81,9 @@ export class CommentBox extends React.Component {
   render_update_alert() {
     var diff = this.state.counter - this.state.cids.length;
     if (diff > 0) {
-      var message = "";
-      if (diff == 1) message = "There is a new comment.";
-      else message = "There are " + diff + " new comments.";
+      var fmts = django.ngettext("There is a new comment.",
+                                 "There are %s new comments.", diff);
+      var message = django.interpolate(fmts, [diff]);
       return (
         <div className="alert alert-info">
           {message}

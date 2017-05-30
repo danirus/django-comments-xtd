@@ -91,7 +91,6 @@
     <script
       type="text/javascript"
       src="{% url 'javascript-catalog' %}"></script>
-    {% block extra_js %}
     <script>
       function set_language(event) {
         event.preventDefault();
@@ -107,6 +106,7 @@
         $("UL#selectlanguage A[data-name=language]").click(set_language);
       });
     </script>
+    {% block extra_js %}
     {% endblock %}
   </body>
 </html>

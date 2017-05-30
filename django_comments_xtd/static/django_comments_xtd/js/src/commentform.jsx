@@ -1,4 +1,6 @@
 import $ from 'jquery';
+import django from 'django';
+
 import md5 from 'md5';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -75,11 +77,12 @@ export class CommentForm extends React.Component {
       cssc += (this.state.errors.comment ? "has-error" : "");
       help = this.fhelp;
     }
+    var placeholder = django.gettext("Your comment");
     return (
       <div className={cssc}>
         <div className="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
           <textarea required name="comment" id="id_comment"
-                    placeholder="Your comment" maxLength="3000"
+                    placeholder={placeholder} maxLength="3000"
                     className="form-control" value={this.state.comment}
                     onChange={this.handle_input_change}
                     onBlur={this.handle_blur('comment')} />
@@ -101,6 +104,7 @@ export class CommentForm extends React.Component {
       div_cssc += " has-error";
       help = this.fhelp;
     }
+    var placeholder = django.gettext('name');
     return (
       <div className={div_cssc}>
         <label htmlFor="id_name" className="control-label col-lg-3 col-md-3">
@@ -108,7 +112,7 @@ export class CommentForm extends React.Component {
         </label>
         <div className="col-lg-7 col-md-7">
           <input type="text" name="name" required id="id_name"
-                 value={this.state.name} placeholder="name"
+                 value={this.state.name} placeholder={placeholder}
                  onChange={this.handle_input_change}
                  onBlur={this.handle_blur('name')}
                  className={input_cssc} />
@@ -128,6 +132,8 @@ export class CommentForm extends React.Component {
     }
     if (this.state.errors.email)
       div_cssc += " has-error";
+    var placeholder = django.gettext('mail address');
+    var helptext = django.gettext('Required for comment verification.');
     return (
       <div className={div_cssc}>
         <label htmlFor="id_email" className="control-label col-lg-3 col-md-3">
@@ -135,11 +141,11 @@ export class CommentForm extends React.Component {
         </label>
         <div className="col-lg-7 col-md-7">
           <input type="text" name="email" required id="id_email"
-                 value={this.state.email} placeholder="mail address"
+                 value={this.state.email} placeholder={placeholder}
                  onChange={this.handle_input_change}
                  onBlur={this.handle_blur('email')}
                  className={input_cssc} />
-          <span className="help-block">Required for comment verification.</span>
+          <span className="help-block">{helptext}</span>
         </div>
       </div>
     );
@@ -155,6 +161,7 @@ export class CommentForm extends React.Component {
     }
     if(this.state.errors.url)
       div_cssc += " form-group";
+    var placeholder = django.gettext("url your name links to (optional)");
     return (
       <div className={div_cssc}>
         <label htmlFor="id_url" className="control-label col-lg-3 col-md-3">
@@ -162,7 +169,7 @@ export class CommentForm extends React.Component {
         </label>
         <div className="col-lg-7 col-md-7">
           <input type="text" name="url" id="id_url" value={this.state.url}
-                 placeholder="url your name links to (optional)"
+                 placeholder={placeholder}
                  onChange={this.handle_input_change}
                  className={input_cssc} />
         </div>
@@ -174,6 +181,7 @@ export class CommentForm extends React.Component {
     let div_cssc = "checkbox";
     if(this.state.reply_to > 0)
       div_cssc += " small";
+    var label = django.gettext("Notify me about follow-up comments");
     return (
       <div className="form-group">
         <div className="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
@@ -182,7 +190,7 @@ export class CommentForm extends React.Component {
               <input type="checkbox" checked={this.state.followup}
                      onChange={this.handle_input_change}
                      name="followup" id="id_followup" />
-              &nbsp;Notify me about follow-up comments
+              &nbsp;{label}
             </label>
           </div>
         </div>
@@ -217,10 +225,13 @@ export class CommentForm extends React.Component {
       reply_to: this.state.reply_to
     };
     const cssc = "alert alert-";
+    var msg_202 = django.gettext("Your comment will be reviewed. Thank your for your patience.");
+    var msg_204 = django.gettext("Thank you, a comment confirmation request has been sent by mail.");
+    var msg_403 = django.gettext("Sorry, your comment has been rejected.");
     const message = {
-      202: "Your comment will be reviewed. Thank your for your patience.",
-      204: "Thank you, a comment confirmation request has been sent by mail.",
-      403: "Sorry, your comment has been rejected."
+      202: msg_202,
+      204: msg_204,
+      403: msg_403
     };
     
     $.ajax({
@@ -283,7 +294,8 @@ export class CommentForm extends React.Component {
 
     let div_cssc = "", div_style = {}, hr_line = <hr/>;
     let label = "";
-    let header = <h5 className="text-center">Your comment in preview</h5>;
+    var header_text = django.gettext("Your comment in preview");
+    let header = <h5 className="text-center">{header_text}</h5>;
     if(this.state.reply_to > 0) {
       div_cssc = "well well-sm";
       div_style = {marginTop: "1em"};
@@ -291,7 +303,7 @@ export class CommentForm extends React.Component {
       label = <div className="label label-info">preview</div>;
       hr_line = "";
     }
-    
+    var nowtext = django.gettext("Now");
     return (
       <div className={div_cssc} style={div_style}>
         {header}
@@ -299,7 +311,7 @@ export class CommentForm extends React.Component {
           <div className="media-left">{media_left}</div>
           <div className="media-body">
             <h6 className="media-heading">
-              Now&nbsp;-&nbsp;{heading_name}&nbsp;&nbsp;{label}
+              {nowtext}&nbsp;-&nbsp;{heading_name}&nbsp;&nbsp;{label}
             </h6>
             <div className="preview"
                  dangerouslySetInnerHTML={this.rawMarkup()} />
@@ -363,8 +375,9 @@ export class CommentForm extends React.Component {
     let preview = this.render_preview();
     let header = "";
     let div_class = "well well-sm";
+    var label = django.gettext("Post your comment");
     if(this.state.reply_to == 0) {
-      header = <h4 className="text-center">Post your comment</h4>;
+      header = <h4 className="text-center">{label}</h4>;
       div_class = "well well-lg";
     }
     let alert_div = "";

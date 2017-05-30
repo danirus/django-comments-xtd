@@ -80,7 +80,6 @@ export class Comment extends React.Component {
     {
       var remove_msg = django.gettext("remove comment");
       url = this.props.settings.delete_url.replace('0', this.props.data.id);
-      var 
       moderate_html = (
         <a className="mutedlink" href={url}>
           <span className="glyphicon glyphicon-trash" title={remove_msg}>
@@ -156,8 +155,11 @@ export class Comment extends React.Component {
     var class_icon = "small glyphicon glyphicon-"+icon;
     var click_hdl = dir == 'like' ? this.action_like : this.action_dislike;
     var opinion="", link="#";
-    if(this.state[attr_opinion])
-      opinion = dir == 'like' ? 'I like it' : 'I dislike it';
+    if(this.state[attr_opinion]) {
+      if (dir == 'like')
+        opinion = django.gettext('I like it');
+      else django.gettext('I dislike it');
+    }
 
     return (
       <span>
@@ -347,7 +349,6 @@ export class Comment extends React.Component {
 
     var new_label = "";
     if (this.props.newcids.indexOf(this.props.data.id) > -1) {
-      console.log("New comment: " + this.props.data.id);
       new_label = (
         <span>
           <span className="label label-success">new</span>&nbsp;-&nbsp;

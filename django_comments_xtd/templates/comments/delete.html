@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load comments_xtd %}
 
-{% block title %}{% trans "Remove this comment" %}{% endblock %}
+{% block title %}{% trans "Remove comment" %}{% endblock %}
 
 {% block header %}
 <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
@@ -12,7 +12,7 @@
 <div class="row">
   <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">
     <h4 class="text-center">{% trans "Remove this comment?" %}</h4>
-    <p>{% trans "As a moderator you can delete comments. Deleting a comment does not remove it from the site, only prevents from showing the text in your website. Click on the remove button to delete the following comment:" %}</p>
+    <p>{% trans "As a moderator you can delete comments. Deleting a comment does not remove it from the site, only prevents your website from showing the text. Click on the remove button to delete the following comment:" %}</p>
     <div class="well well-lg">
       <div class="media">
         <div class="media-left">

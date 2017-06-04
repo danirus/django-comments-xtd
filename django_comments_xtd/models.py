@@ -30,8 +30,7 @@ class MaxThreadLevelExceededException(Exception):
         # self.max_by_app = max_thread_level_for_content_type(content_type)
 
     def __str__(self):
-        return (ugettext("Max thread level reached for comment %d") %
-                self.comment.id)
+        return ("Max thread level reached for comment %d" % self.comment.id)
 
 
 class XtdCommentManager(CommentManager):
@@ -63,8 +62,7 @@ class XtdComment(Comment):
     level = models.SmallIntegerField(default=0)
     order = models.IntegerField(default=1, db_index=True)
     followup = models.BooleanField(blank=True, default=False,
-                                   help_text=_("Receive by email further "
-                                               "comments in this conversation"))
+                                   help_text=_("Notify follow-up comments"))
     objects = XtdCommentManager()
 
     def save(self, *args, **kwargs):

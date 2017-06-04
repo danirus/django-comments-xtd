@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 
 from django_comments import get_model
 from django_comments.admin import CommentsAdmin
@@ -16,11 +15,11 @@ class XtdCommentsAdmin(CommentsAdmin):
     list_display_links = ('cid',)
     list_filter = ('content_type', 'is_public', 'is_removed', 'followup')
     fieldsets = (
-        (None,          {'fields': ('content_type', 'object_pk', 'site')}),
-        (_('Content'),  {'fields': ('user', 'user_name', 'user_email',
-                                    'user_url', 'comment', 'followup')}),
-        (_('Metadata'), {'fields': ('submit_date', 'ip_address',
-                                    'is_public', 'is_removed')}),
+        (None,       {'fields': ('content_type', 'object_pk', 'site')}),
+        ('Content',  {'fields': ('user', 'user_name', 'user_email',
+                                 'user_url', 'comment', 'followup')}),
+        ('Metadata', {'fields': ('submit_date', 'ip_address',
+                                 'is_public', 'is_removed')}),
     )
     date_hierarchy = 'submit_date'
     ordering = ('thread_id', 'order')

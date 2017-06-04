@@ -2,13 +2,13 @@
 {% load i18n %}
 {% load comments_xtd %}
 
-{% block title %}{% trans "Thanks for flagging" %}.{% endblock %}
+{% block title %}{% trans "Comment flagged" %}.{% endblock %}
 
 {% block header %}
 <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
 {% endblock %}
 
 {% block content %}
-<h4 class="text-center">{% trans "Thanks for flagging" %}</h4>
+<h4 class="text-center">{% trans "The comment has been flagged." %}</h4>
 <p class="text-center">{% trans "Thank you for taking the time to improve the quality of discussion in our site." %}<p>
 {% endblock %}

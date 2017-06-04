@@ -48,8 +48,7 @@ export class CommentBox extends React.Component {
 
   render_comment_counter() {
     if (this.state.counter > 0) {
-      var fmts = django.ngettext("There is one comment below.",
-                                 "There are %s comments below.",
+      var fmts = django.ngettext("One comment.", "%s comments.",
                                  this.state.cids.length);
       var text = django.interpolate(fmts, [this.state.cids.length]);
       return (

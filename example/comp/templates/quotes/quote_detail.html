@@ -28,9 +28,9 @@
       {% if comment_count %}
       <H5 class="text-center">
         {% blocktrans count comment_count=comment_count %}
-        There is {{ comment_count }} comment below.
+        {{ comment_count }} comment.
         {% plural %}
-        There are {{ comment_count }} comments below.
+        {{ comment_count }} comments.
         {% endblocktrans %}
       </H5>
       <hr/>

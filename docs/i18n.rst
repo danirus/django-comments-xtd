@@ -1,12 +1,10 @@
 .. _ref-i18n:
 
-============================
-Internationalization support
-============================
+====================
+Internationalization
+====================
 
-django-comments-xtd is i18n ready. Please, consider extending support for your language if it's not listed below.
-
-At the moment it's available in:
+django-comments-xtd is i18n ready. Please, consider extending support for your language if it's not listed below. At the moment it's available only in:
 
  * English, **en** (default language)
  * Spanish, **es**
@@ -15,9 +13,7 @@ At the moment it's available in:
 Contributions
 =============
 
-Here is a step by step guide to help extending internationalization support to more languages.
-
-Install the **comp** example site. It will be used along with `django-rosetta <https://github.com/mbi/django-rosetta>`_ to help with translations.
+This is a step by step guide to help extending the internationalization of django-comments-xtd. Install the **comp** example site. It will be used along with `django-rosetta <https://github.com/mbi/django-rosetta>`_ to help with translations.
 
    .. code-block:: bash
 
@@ -66,12 +62,12 @@ Keep the runserver command launched above running in one terminal and open anoth
     (venv)$ django-admin makemessages -l de
     (venv)$ django-admin makemessages -d djangojs -l de
 
-Now you can head to the rosetta page, under http://localhost:8000/rosetta/ (do login with user ``admin`` and password ``admin``), and proceed to translate the messages. Find the two catalogs for django-comments-xtd under the **Third Party** filter, at the top-right side of the page.
+Now head to the rosetta page, under http://localhost:8000/rosetta/, do login with user ``admin`` and password ``admin``, and proceed to translate the messages. Find the two catalogs for django-comments-xtd under the **Third Party** filter, at the top-right side of the page.
 
-Django must have the catalogs compiled before the messages show up in the new language in the comp site. Run the compile message for that purpose:
+Django must have the catalogs compiled before the messages show up in the comp site. Run the compile message for that purpose:
 
    .. code-block:: bash
 
     (venv)$ django-admin compilemessages
 
-The **comp** example site is ready to show the messages in the new language. It's time to verify that the translation fits the UI.
+The **comp** example site is now ready to show the messages in the new language. It's time to verify that the translation fits the UI. If everything looks good, please, make a Pull Request to add the new .po files to the upstream repository.

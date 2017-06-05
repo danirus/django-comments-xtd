@@ -336,7 +336,8 @@ export class CommentForm extends React.Component {
       btn_preview_class += " btn-sm";
       group_style = {marginBottom: "0px"};
     }
-    
+    var btn_label_preview = django.gettext("preview");
+    var btn_label_send = django.gettext("send");
     
     return (
       <form method="POST" onSubmit={this.handle_submit}
@@ -360,9 +361,9 @@ export class CommentForm extends React.Component {
         
         <div className="form-group" style={group_style}>
           <div className="col-lg-offset-3 col-md-offset-3 col-lg-7 col-md-7">
-            <input type="submit" name="post" value="send"
+            <input type="submit" name="post" value={btn_label_send}
                    className={btn_submit_class} />&nbsp;
-            <input type="button" name="preview" value="preview"
+            <input type="button" name="preview" value={btn_label_preview}
                    className={btn_preview_class}
                    onClick={this.handle_preview} />
           </div>

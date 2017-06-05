@@ -4,7 +4,7 @@
    pair: Filters; Templatetags
 
 =========================
-Filters and Template Tags
+Filters and template tags
 =========================
 
 Django-comments-xtd provides 5 template tags and 3 filters. Load the module to make use of them in your templates::

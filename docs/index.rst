@@ -44,5 +44,6 @@ Contents
    javascript
    templatetags
    extending
+   i18n
    settings
    templates

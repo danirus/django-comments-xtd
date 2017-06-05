@@ -4,12 +4,11 @@
 Demo projects
 =============
 
-There are four example projects available within django-comments-xtd:
+There are three example projects available within django-comments-xtd:
 
 1. **simple**: Provides non-threaded comment support to articles. It's an only-backend project, meant as a test case of the basic features (confirmation by mail, follow-up notifications, mute link).
 2. **custom**: Provides threaded comment support to articles using a new Comment class that inherits from django-comments-xtd's. The new comment model adds a **title** field to the **XtdComment** class. Find more details in :ref:`ref-extending`.
 3. **comp**: This example project provides comment support to several models, defining the maximum thread level on per app.model basis. It uses moderation, removal suggestion flag, like/dislike flags, and list of users who liked/disliked comments. Comment support for Articles are frontend based while comments for Quotes are backend based.
-4. **i18n**: The last example project is meant to help adding i18n support to django-comments-xtd. It uses django-rosetta to expose the translatable strings. Contributions are welcome.
 
 Visit the **example** directory within the repository `in GitHub <http://github.com/danirus/django-comments-xtd/tree/master/example>`_ for a quick look.
 
@@ -30,12 +29,14 @@ The recommended way to run the demo sites is in its own `virtualenv <http://www.
     $ virtualenv venv
     $ source venv/bin/activate
     (venv)$ git clone git://github.com/danirus/django-comments-xtd.git
-    (venv)$ cd django-comments-xtd/example/[simple|custom|comp|i18n]
+    (venv)$ cd django-comments-xtd/example/[simple|custom|comp]
     (venv)$ pip install django-markdown2
     (venv)$ python manage.py migrate
     (venv)$ python manage.py loaddata ../fixtures/auth.json
     (venv)$ python manage.py loaddata ../fixtures/sites.json
     (venv)$ python manage.py loaddata ../fixtures/articles.json
+    (venv)$ # The **comp** example project needs quotes.json too:
+    (venv)$ python manage.py loaddata ../fixtures/quotes.json    
     (venv)$ python manage.py runserver
 
 Example projects make use of the package `django-markdown2 <https://github.com/svetlyak40wt/django-markdown2>`_, which in turn depends on `Markdown2 <https://github.com/trentm/python-markdown2>`_, to render comments using `Markdown <https://en.wikipedia.org/wiki/Markdown>`_ syntax.
@@ -129,13 +130,3 @@ render_last_xtdcomments
 -----------------------
 
 The **Last 5 Comments** shown in the block at the rigght uses the templatetag `render_last_xtdcomments` to show the last 5 comments posted to either `articles.Article` or `quotes.Quote` instances. The templatetag receives the list of pairs `app.model` from which we want to gather comments and shows the given N last instances posted. The templatetag renders the template `django_comments_xtd/comment.html` for each comment retrieve.
-
-
-.. index::
-   single: i18n
-   pair: i18n; Project
-
-i18n Project
-============
-
-The goal of the example i18n project is to help translators add language support to django-comments-xtd. The homepage shows the steps to display all the translatable strings contained in the code.

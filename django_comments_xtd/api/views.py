@@ -48,22 +48,22 @@ class CommentList(generics.ListAPIView):
                                            is_public=True)
         return qs
 
-    def perform_create(self, serializer):
-        content_type_arg = self.kwargs.get('content_type', None)
-        object_pk_arg = self.kwargs.get('object_pk', None)
-        app_label, model = content_type_arg.split("-")
-        content_type = ContentType.objects.get_by_natural_key(app_label, model)
-        kwargs = {
-            'content_type': content_type,
-            'object_pk': int(object_pk_arg),
-            'site_id': settings.SITE_ID,
-            'user': self.request.user,
-            'user_name': (self.request.user.get_full_name() or
-                          self.request.user.get_username()),
-            'user_email': self.request.user.email,
-            'ip_address': self.request.META.get('REMOTE_ADDR', None)
-        }
-        serializer.save(**kwargs)
+    # def perform_create(self, serializer):
+    #     content_type_arg = self.kwargs.get('content_type', None)
+    #     object_pk_arg = self.kwargs.get('object_pk', None)
+    #     app_label, model = content_type_arg.split("-")
+    #     content_type = ContentType.objects.get_by_natural_key(app_label, model)
+    #     kwargs = {
+    #         'content_type': content_type,
+    #         'object_pk': int(object_pk_arg),
+    #         'site_id': settings.SITE_ID,
+    #         'user': self.request.user,
+    #         'user_name': (self.request.user.get_full_name() or
+    #                       self.request.user.get_username()),
+    #         'user_email': self.request.user.email,
+    #         'ip_address': self.request.META.get('REMOTE_ADDR', None)
+    #     }
+    #     serializer.save(**kwargs)
 
 
 class CommentCount(generics.GenericAPIView):

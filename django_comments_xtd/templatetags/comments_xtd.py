@@ -452,7 +452,7 @@ class GetCommentBoxPropsNode(Node):
             "allow_feedback": False,
             "show_feedback": False,
             "can_moderate": False,
-            "polling_interval": 2000,
+            "poll_interval": 2000,
             "feedback_url": reverse("comments-xtd-api-feedback"),
             "delete_url": reverse("comments-delete", args=(0,)),
             "reply_url": reverse("comments-xtd-reply", kwargs={'cid': 0}),
@@ -499,7 +499,7 @@ def get_commentbox_props(parser, token):
             allow_feedback: false,
             show_feedback: false,
             can_moderate: <bool>,  // Whether current_user can moderate.
-            polling_interval: 2000, // Check for new comments every 2 seconds.
+            poll_interval: 2000, // Check for new comments every 2 seconds.
             feedback_url: <api-url-to-send-like/dislike-feedback>,
             delete_url: <api-url-for-moderators-to-remove-comment>,
             login_url: settings.LOGIN_URL,

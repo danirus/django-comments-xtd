@@ -12,8 +12,9 @@ except ImportError:
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
+from django.utils import formats
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, activate, get_language
 
 from django_comments import  get_form
 from django_comments.models import CommentFlag
@@ -163,8 +164,10 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     user_url = serializers.CharField(read_only=True)
     user_moderator = serializers.SerializerMethodField()
     user_avatar = serializers.SerializerMethodField()
-    submit_date = serializers.DateTimeField(read_only=True,
-                                            format="%B %-d, %Y, %-I:%M %p")
+    submit_date = serializers.SerializerMethodField()
+    # submit_date = serializers.DateTimeField(read_only=True,
+    #                                         format=settings.DATETIME_FORMAT)
+    #                                         # format="%B %-d, %Y, %-I:%M %p")
     parent_id = serializers.IntegerField(default=0, read_only=True)
     level = serializers.IntegerField(read_only=True)
     is_removed = serializers.BooleanField(read_only=True)
@@ -183,6 +186,12 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         self.request = kwargs['context']['request']
         super(ReadCommentSerializer, self).__init__(*args, **kwargs)
+
+    def get_submit_date(self, obj):
+        activate(get_language())
+        print("Language: ", get_language())
+        return formats.date_format(obj.submit_date, 'DATETIME_FORMAT',
+                                   use_l10n=True)
         
     def get_comment(self, obj):
         if obj.is_removed:

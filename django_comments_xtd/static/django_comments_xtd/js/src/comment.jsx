@@ -35,11 +35,12 @@ export class Comment extends React.Component {
     if(this.props.data.user_url && !this.props.data.is_removed)
       username = <a href={this.props.data.user_url}>{username}</a>;
 
-    if(this.props.data.user_moderator)
+    if(this.props.data.user_moderator) {
+      var label = django.gettext("moderator");
       moderator = (<span>
-                   &nbsp;<span className="label label-default">moderator</span>
+                   &nbsp;<span className="label label-default">{label}</span>
                    </span>);
-    
+    }
     return <span>{username}{moderator}</span>;
   }
 
@@ -111,7 +112,6 @@ export class Comment extends React.Component {
   _get_feedback_chunk(dir) {
     if(!this.props.settings.allow_feedback)
       return "";
-    let attr_opinion = dir;
     let attr_list = dir + "_users";  // Produce (dis)like_users
 
     let show_users_chunk = "";
@@ -124,11 +124,11 @@ export class Comment extends React.Component {
       let user_ids = this.state[attr_list].map(function(item) {
         return item.split(":")[0];
       });
-      if(this.state[attr_opinion] &&       // If user expressed opinion, and
+      if(this.state[dir] &&       // If user expressed opinion, and
          (user_ids.indexOf(current_user_id) == -1)) // user is not included.
       { // Append user to the list.
         this.state[attr_list].push(this.state.current_user);
-      } else if(!this.state[attr_opinion] && // If user doesn't have an opinion
+      } else if(!this.state[dir] && // If user doesn't have an opinion
                 (user_ids.indexOf(current_user_id) > -1)) // user is included.
       { // Remove the user from the list.
         var pos = user_ids.indexOf(current_user_id);
@@ -150,16 +150,14 @@ export class Comment extends React.Component {
       }
     }
 
-    var css_class = this.state[attr_opinion] ? '' : 'mutedlink';
+    var css_class = this.state[dir] ? '' : 'mutedlink';
     var icon = dir == 'like' ? 'thumbs-up' : 'thumbs-down';
     var class_icon = "small glyphicon glyphicon-"+icon;
     var click_hdl = dir == 'like' ? this.action_like : this.action_dislike;
     var opinion="", link="#";
-    if(this.state[attr_opinion]) {
-      if (dir == 'like')
-        opinion = django.gettext('I like it');
-      else django.gettext('I dislike it');
-    }
+    if (dir == 'like')
+      opinion = django.gettext('I like it');
+    else opinion = django.gettext('I dislike it');
 
     return (
       <span>
@@ -215,11 +213,12 @@ export class Comment extends React.Component {
     if(this.props.settings.allow_feedback)
       separator = <span className="text-muted">&bull;</span>;
     let url = this.props.settings.reply_url.replace('0', this.props.data.id);
-
+    let reply_label = django.gettext("Reply");
+    
     return (
       <span>&nbsp;&nbsp;{separator}&nbsp;&nbsp;
         <a className="small mutedlink" href={url}
-           onClick={this.handle_reply_click}>Reply</a>
+           onClick={this.handle_reply_click}>{reply_label}</a>
       </span>
     );
   }
@@ -369,7 +368,7 @@ export class Comment extends React.Component {
         );
       }.bind(this));
     }
-
+    
     return (
       <div className="media" id={comment_id}>
         <div className="media-left">

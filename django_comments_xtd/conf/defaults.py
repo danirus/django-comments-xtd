@@ -35,7 +35,6 @@ COMMENTS_XTD_SEND_HTML_EMAIL = True
 # your own celery app.
 COMMENTS_XTD_THREADED_EMAILS = True
 
-
 # Define what commenting features a pair app_label.model can have.
 # TODO: Put django-comments-xtd settings under a dictionary, and merge
 #       COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL with this one.
@@ -50,4 +49,3 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 # Define a lambda function to return the user representation. Used by
 # the web API to represent user strings in response objects.
 COMMENTS_XTD_API_USER_REPR = lambda u: u.username
-

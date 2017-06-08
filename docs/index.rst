@@ -43,6 +43,7 @@ Contents
    webapi
    javascript
    templatetags
+   migrating
    extending
    i18n
    settings

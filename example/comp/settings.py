@@ -27,11 +27,17 @@ DATABASES = {
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Brussels'
+TIME_ZONE = 'Europe/Berlin'
+USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = (
+    ('en', 'English'),
+    ('es', 'Spanish'),
+)
 
 SITE_ID = 1
 
@@ -84,14 +90,16 @@ TEMPLATES = [
                 'django.template.context_processors.request',
 		'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'comp.context_processors.settings',
 	    ],
 	},
     },
 ]
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -99,12 +107,6 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'urls'
 
-try:
-    import imp
-    imp.find_module('django_comments')
-    django_comments = 'django_comments'
-except ImportError:
-    django_comments = 'django.contrib.comments'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -115,11 +117,15 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'comp.articles',
-    'comp.quotes',
+    'rosetta',
+    'rest_framework',
+    'django_markdown2',
     'django_comments_xtd',
     'django_comments',
-    'django_markup',
+
+    'comp',
+    'comp.articles',
+    'comp.quotes',
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
@@ -139,11 +145,26 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 COMMENTS_APP = "django_comments_xtd"
 COMMENTS_XTD_CONFIRM_EMAIL = True   # Set to False to disable confirmation
 COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
+COMMENTS_XTD_FROM_EMAIL = 'noreply@example.com'
+COMMENTS_XTD_CONTACT_EMAIL = 'helpdesk@example.com'
 COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
 
-COMMENTS_XTD_MAX_THREAD_LEVEL = 0  # Quotes won't have nested comments.
+# Quotes can have 1-level depth nested comments.
+COMMENTS_XTD_MAX_THREAD_LEVEL = 1
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
     'articles.article': 2,
 }
+COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
+COMMENTS_XTD_APP_MODEL_OPTIONS = {
+    'articles.article': {
+        'allow_flagging': True,
+        'allow_feedback': True,
+        'show_feedback': True,
+    }
+}
+COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
+
+LOGIN_URL = "/admin/login/"
+LOGIN_REDIRECT_URL = LOGIN_URL

@@ -75,7 +75,7 @@ class ModeratorApprovesComment(TestCase):
         self.assert_(self.mailer_app1.call_count == 0)
         self.assert_(self.mailer_app2.call_count == 1)
         mail_msg = self.mailer_app2.call_args[0][1]
-        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                             mail_msg).group("key"))
         self.get_confirm_comment_url(key)
         self.assert_(self.mailer_app1.call_count == 1)
@@ -127,7 +127,7 @@ class ModeratorHoldsComment(TestCase):
         self.assert_(self.mailer_app1.call_count == 0)
         self.assert_(self.mailer_app2.call_count == 1)
         mail_msg = self.mailer_app2.call_args[0][1]
-        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)',
+        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                             mail_msg).group("key"))
         self.get_confirm_comment_url(key)
         self.assert_(self.mailer_app1.call_count == 1)

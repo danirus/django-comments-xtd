@@ -6,12 +6,14 @@
 *.db
 plugin-*.js
 vendor-*.js
+django*.mo
 db.sqlite3
 docs/_build
 build/
 dist/
+node_modules/
 .coverage
 .emacs.desktop*
 .tox
 .cache
-node_modules/
+.eggs

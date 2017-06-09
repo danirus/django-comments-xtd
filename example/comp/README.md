@@ -1,4 +1,4 @@
-## Comp Demo ##
+## Comp example project ##
 
 The Comp Demo implements two apps, each of which contains a model whose instances can received comments:
 

@@ -4,14 +4,14 @@
 Tutorial
 ========
 
-This tutorial guides you through the steps to use every feature of django-comments-xtd together with the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_. The Django project used throughout the tutorial is available to `download <https://github.com/danirus/django-comments-xtd/example/tutorial.tar.gz>`_. Following the tutorial will take about an hour, and it is highly recommended to get a comprehensive understanding of django-comments-xtd.
+This tutorial guides you through the steps to use every feature of django-comments-xtd together with the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_. The Django project used throughout the tutorial is available to `download <https://github.com/danirus/django-comments-xtd/raw/master/example/tutorial.tar.gz>`_. Following the tutorial will take about an hour, and it is highly recommended to get a comprehensive understanding of django-comments-xtd.
 
 .. contents:: Table of Contents
    :depth: 3
    :local:
 
 .. index::
-   single: Installation
+   single: Introduction
 
 Introduction
 ============
@@ -35,14 +35,14 @@ Before we install any package we will set up a virtualenv and install everything
        $ virtualenv venv
        $ source venv/bin/activate
        (venv)$ pip install django-comments-xtd
-       (venv)$ wget https://github.com/danirus/django-comments-xtd/demo/tutorial.tar.gz
+       (venv)$ wget https://github.com/danirus/django-comments-xtd/raw/master/example/tutorial.tar.gz
        (venv)$ tar -xvzf tutorial.tar.gz
        (venv)$ cd tutorial
 
 By installing django-comments-xtd we install all its dependencies, Django and django-contrib-comments among them. So we are ready to work on the project. Take a look at the content of the tutorial directory, it contains:
 
- * A **blog** app with a **Post** model. It uses two generic class-based views to list the posts, and to show a given post in detail.
- * The **templates** directory, with a **base.html** template, a **home.html** template, and two templates for the blog app: **blog/post_list.html** and **blog/post_detail.html**.
+ * A **blog** app with a **Post** model. It uses two generic class-based views to list the posts and show a post in detail.
+ * The **templates** directory, with a **base.html** and **home.html**, and the templates for the blog app: **blog/post_list.html** and **blog/post_detail.html**.
  * The **static** directory with a **css/bootstrap.min.css** file (this file is a static asset available, when the app is installed, under the path **django_comments_xtd/css/bootstrap.min.css**).
  * The **tutorial** directory containing the **settings** and **urls** modules.
  * And a **fixtures** directory with data files to create the *admin* superuser (with *admin* password), the default site and some blog posts.
@@ -55,7 +55,7 @@ Let's finish the initial setup, load the fixtures and run the development server
        (venv)$ python manage.py loaddata fixtures/*.json
        (venv)$ python manage.py runserver
 
-Head to http://localhost:8000 and visit the tutorial site. In the following section we will make changes to enable django-comments-xtd.
+Head to http://localhost:8000 and visit the tutorial site.
 
 
 .. _configuration:
@@ -63,7 +63,7 @@ Head to http://localhost:8000 and visit the tutorial site. In the following sect
 Configuration
 =============
 
-Now that the project is up and running we are ready to add comments. Edit the settings module, ``tutorial/settings.py``, and make the following changes:
+Now that the project is running we are ready to add comments. Edit the settings module, ``tutorial/settings.py``, and make the following changes:
 
    .. code-block:: python
 
@@ -88,7 +88,7 @@ Now that the project is up and running we are ready to add comments. Edit the se
        DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
 
 
-Edit the urls module of the project, ``democx/democx/urls.py``, to mount the URL patterns of django_comments_xtd to the path ``/comments/``. The urls installed with django_comments_xtd include those required by django_comments too:
+Edit the urls module of the project, ``tutorial/tutorial/urls.py`` and mount the URL patterns of django_comments_xtd in the path ``/comments/``. The urls installed with django_comments_xtd include django_comments' urls too:
 
    .. code-block:: python
 
@@ -116,37 +116,44 @@ After these simple changes the project is ready to use comments, we just need to
 Comment confirmation
 ====================
 
-In order to make django-comments-xtd request comment confirmation by mail we need to set the :setting:`COMMENTS_XTD_SALT` setting. This setting helps obfuscating the comment before the user has approved its publication.
+Before we go any further we need to set up the :setting:`COMMENTS_XTD_SALT` setting. This setting plays an important role during the comment confirmation by mail. It helps obfuscating the comment before the user has approved its publication.
 
-This is so because django-comments-xtd does not store comments in the server before they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
+It is so because django-comments-xtd does not store comments in the server before they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
 
 This behaviour is disabled for authenticated users, and can be disabled for anonymous users too by simply setting :setting:`COMMENTS_XTD_CONFIRM_MAIL` to ``False``. 
 
-Now let's append the following entry to the settings module to help obfuscating the comment before it is sent for confirmation:
+Now let's append the following entries to the tutorial settings module:
 
    .. code-block:: python
 
+       #  To help obfuscating comments before they are sent for confirmation.
        COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
                             b"Aequam memento rebus in arduis servare mentem.")
-                   
+
+       # Source mail address used for notifications.
+       COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
+
+       # Contact mail address to show in messages.
+       COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
 
 
 Comments tags
 =============
 
-In order to be able to post comments to blog stories we need to edit the template file ``blog/post_detail.html`` and load the ``comments`` templatetag module, which is provided by the `Django Comments Framework <https://github.com/django/django-contrib-comments>`_:
+Next step consist of editing ``blog/post_detail.html`` and loading the ``comments`` templatetag module after the ``extends`` tag:
 
    .. code-block:: html+django
 
+       {% extends "base.html" %}
        {% load comments %}
 
-We will apply changes in the the blog post detail template:
+Now we will change the blog post detail template to:
 
- #. To show the number of comments posted to the blog story,
- #. To list the comments already posted, and
- #. To show the comment form, so that people can post comments.
+ #. Show the number of comments posted to the blog story,
+ #. List the comments already posted, and
+ #. Show the comment form, so that comments can be sent.
 
-By using the :ttag:`get_comment_count` tag we will show the number of comments posted. Change the code around the link element so that it looks like:
+By using the :ttag:`get_comment_count` tag we will show the number of comments posted. Change the code around the link element so that it looks like following:
 
    .. code-block:: html+django
 
@@ -167,22 +174,25 @@ When using the first, :ttag:`render_comment_list`, with a ``blog.post`` object, 
        comments/blog/list.html
        comments/list.html
 
-Both, django-contrib-comments and django-comments-xtd, provide the last of the list. The one in django-comments-xtd includes twitter-bootstrap_ styling. Django will use the first template found, which depends on what application is listed first in :setting:`INSTALLED_APPS`, django-comments-xtd in this case.
+Both, django-contrib-comments and django-comments-xtd, provide the last template of the list, ``comments/list.html``. The one provided within django-comments-xtd comes with styling based on twitter-bootstrap_.
 
-Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`render_comment_list` tag to add the list of comments. Add the following code at the end of the page, before the ``endblock`` tag:
+Django will use the first template found depending on the order in which applications are listed in :setting:`INSTALLED_APPS`. In this tutorial django-comments-xtd is listed first and therefore its ``comment/list.html`` template will be found first.
+
+Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`render_comment_list`. Add the following code at the end of the page, before the ``endblock`` tag:
 
    .. code-block:: html+django
 
        {% if comment_count %}
+       <hr/>
        <div class="comments">
          {% render_comment_list for object %}
        </div>
        {% endif %}
  
 
-Below the list of comments we want to display the comment form, so that users can send their own comments. There are two tags available for the purpose, the :ttag:`render_comment_form` and the :ttag:`get_comment_form`. The former renders a template with the comment form while the latter puts the form in the context of the template giving more control over the fields.
+Below the list of comments we want to display the comment form. There are two template tags available for that purpose, the :ttag:`render_comment_form` and the :ttag:`get_comment_form`. The former renders a template with the comment form while the latter puts the form in the context of the template giving more control over the fields.
 
-At the moment we will use the first tag, :ttag:`render_comment_form`. Again, add the following code before the ``endblock`` tag:
+We will use the first tag, :ttag:`render_comment_form`. Again, add the following code before the ``endblock`` tag:
 
    .. code-block:: html+django
 
@@ -196,7 +206,7 @@ At the moment we will use the first tag, :ttag:`render_comment_form`. Again, add
        {% endif %}
        
 
-Finally, before completing this first set of changes, we could show the number of comments along with post titles in the blog's home page. Let's edit ``blog/post_list.html`` and make the following changes:
+Finally, before completing this first set of changes, we could show the number of comments along with post titles in the blog's home page. For this we have to edit ``blog/post_list.html`` and make the following changes:
 
    .. code-block:: html+django
 
@@ -215,6 +225,8 @@ Finally, before completing this first set of changes, we could show the number o
 
 Now we are ready to send comments. If you are logged in the admin site, your comments won't need to be confirmed by mail. To test the confirmation URL do logout of the admin interface. Bear in mind that :setting:`EMAIL_BACKEND` is set up to send mail messages to the console, so look in the console after you post the comment and find the first long URL in the message. To confirm the comment copy the link and paste it in the location bar of the browser.
 
+.. image:: images/comments-enabled.png
+
 The setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0`` by default, which means comments can not be nested. Later in the threads section we will enable nested comments. Now we will set up comment moderation.
 
 
@@ -226,7 +238,7 @@ The setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0`` by default, which 
 Moderation
 ==========
 
-One of the differences between django-comments-xtd and other commenting applications is the fact that by default it requires comment confirmation by email when users are not logged in, a very effective feature to discard unwanted comments. However there might be cases in which we would prefer to follow a different approach. The Django Comments Framework has the `moderation capabilities <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_ upon which we can build our own comment filtering.
+One of the differences between django-comments-xtd and other commenting applications is the fact that by default it requires comment confirmation by email when users are not logged in, a very effective feature to discard unwanted comments. However there might be cases in which you would prefer a different approach. Django Comments Framework comes with `moderation capabilities <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_ included upon which we can build our own comment filtering.
 
 Comment moderation is often established to fight spam, but may be used for other purposes, like triggering actions based on comment content, rejecting comments based on how old is the subject being commented and whatnot.
 
@@ -270,21 +282,23 @@ That makes it, moderation is ready. Visit any of the blog posts with a ``publish
 
 If on the other hand you send a comment to a blog post created within the last year your comment will not be put in moderation. Give it a try as a logged in user and as an anonymous user.
 
-When sending a comment to a blog post with a user logged in the comment doesn't have to be confirmed. However, when you send it logged out the comment has to be confirmed by clicking on the confirmation link. Right after clicking on the confirmation link the comment will be put on hold, pending for approval.
+When sending a comment as a logged-in user the comment won't have to be confirmed and will be put in moderation immediately. However, when you send it as an anonymous user the comment will have to be confirmed by clicking on the confirmation link, immediately after that the comment will be put on hold pending for approval.
 
-In both cases all mail addresses listed in the :setting:`MANAGERS` setting will receive a notification about the reception of a new comment. If you did not received such message, you might need to review your email settings, or the console output. Read about the mail settings above in the :ref:`configuration` section.
+In both cases, due to the attribute ``email_notification = True`` above, all mail addresses listed in the :setting:`MANAGERS` setting will receive a notification about the reception of a new comment. If you did not received such message, you might need to review your email settings, or the console output. Read about the mail settings above in the :ref:`configuration` section. The mail message received is based on the ``comments/comment_notification_email.txt`` template provided with django-comments-xtd.
 
-A last note on comment moderation: comments pending for moderation have to be reviewed and eventually approved. Don't forget to visit the comments-xtd app in the admin_ interface. Tick the box to select those you want to approve, choose **Approve selected comments** in the **action** dropdown at the top left of the comment list and click on the **Go** button.
+A last note on comment moderation: comments pending for moderation have to be reviewed and eventually approved. Don't forget to visit the comments-xtd app in the admin_ interface. Filter comments by `is public: No` and `is removed: No`. Tick the box of those you want to approve, choose **Approve selected comments** in the **action** dropdown, at the top left of the comment list, and click on the **Go** button.
 
+
+.. _disallow:
 
 Disallow black listed domains
 -----------------------------
 
-In the remote case you wanted to disable comment confirmation by mail you might want to set up some sort of control to reject spam.
+In case you wanted to disable comment confirmation by mail you might want to set up some sort of control to reject spam.
 
 In this section we will go through the steps to disable comment confirmation while enabling a comment filtering solution based on Joe Wein's blacklist_ of spamming domains. We will also add a moderation function that will put in moderation comments containing badwords_.
 
-Let us first disable comment confirmation, edit the ``tutorial/settings.py`` file and add:
+Let us first disable comment confirmation. Edit the ``tutorial/settings.py`` file and add:
 
    .. code-block:: python
 
@@ -355,7 +369,7 @@ Now edit ``blog/models.py`` and add the code corresponding to our new ``PostComm
                            for i, w in enumerate(lowcase_comment.split())])
                for badword in badwords:
                    if isinstance(badword, str):
-                       if locase_comment.find(badword) > -1:
+                       if lowcase_comment.find(badword) > -1:
                            return True
                    else:
                        lastindex = -1
@@ -396,7 +410,7 @@ Threads
 
 Up until this point in the tutorial django-comments-xtd has been configured to disallow nested comments. Every comment is at thread level 0. It is so because by default the setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is set to 0.
 
-When the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is greater than 0, comments below the maximum thread level may receive replies that will be nested up to the maximum thread level. A comment in a the thread level below the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` can show a **Reply** link that allows users to send nested comments.
+When the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is greater than 0, comments below the maximum thread level may receive replies that will nest inside each other up to the maximum thread level. A comment in a the thread level below the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` can show a **Reply** link that allows users to send nested comments.
 
 In this section we will enable nested comments by modifying :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` and apply some changes to our ``blog_detail.html`` template.
 
@@ -404,13 +418,12 @@ We can make use of two template tags, :ttag:`render_xtdcomment_tree` and :ttag:`
 
 We will also introduce the setting :setting:`COMMENTS_XTD_LIST_ORDER`, that allows altering the default order in which we get the list of comments. By default comments are ordered by thread and their position inside the thread, which turns out to be in ascending datetime of arrival. In this example we would like to list newer comments first.
 
-Let's start by editing ``tutorial/settings.py`` to set up a maximum thread level of 1 and a comment ordering to retrieve newer comments first:
+Let's start by editing ``tutorial/settings.py`` to set up the maximum thread level to 1 and a comment ordering such that newer comments are retrieve first:
 
    .. code-block:: python
 
        COMMENTS_XTD_MAX_THREAD_LEVEL = 1  # default is 0
        COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')  # default is ('thread_id', 'order')
-
 
 Now we have to modify the blog post detail template to load the ``comments_xtd`` templatetag and make use of :ttag:`render_xtdcomment_tree`. We also want to move the comment form from the bottom of the page to a more visible position right below the blog post, followed by the list of comments.
 
@@ -458,15 +471,19 @@ Edit ``blog/post_detail.html`` to make it look like follows:
 
 The tag :ttag:`render_xtdcomment_tree` renders the template ``django_comments_xtd/comment_tree.html``.
 
+Now visit any of the blog posts to which you have already sent comments and see that a new `Reply` link shows up below each comment. Click on the link and post a new comment. It will appear nested inside the parent comment. The new comment will not show a `Reply` link because :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` has been set to 1. Raise it to 2 and reload the page to offer the chance to nest comments inside one level deeper.
+
+.. image:: images/reply-link.png
+
        
 Different max thread levels
 ---------------------------
 
-There might be cases in which nested comments have a lot of sense and others in which we would prefer a plain comment sequence. We can handle both scenarios under the same Django project with django-comments-xtd.
+There might be cases in which nested comments have a lot of sense and others in which we would prefer a plain comment sequence. We can handle both scenarios under the same Django project.
 
-We just have to use both settings, the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` and :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL`. The former would be set to the default wide site thread level while the latter would be a dictionary of app.model keys and maximum thread level values.
+We just have to use both settings, :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` and :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL`. The former establishes the default maximum thread level site wide, while the latter sets the maximum thread level on `app.model` basis.
 
-If we wanted to disable nested comments site wide, and enable nested comments up to level one for blog posts, we would need to set it up as follows in our ``settings.py`` module:
+If we wanted to disable nested comments site wide, and enable nested comments up to level one for blog posts, we would set it up as follows in our ``settings.py`` module:
 
    .. code-block:: python
 
@@ -481,7 +498,7 @@ If we wanted to disable nested comments site wide, and enable nested comments up
 Flags
 =====
 
-The Django Comments Framework supports `flagging <https://django-contrib-comments.readthedocs.io/en/latest/example.html#flagging>`_ comments, so comments can be flagged for:
+The Django Comments Framework supports `comment flagging <https://django-contrib-comments.readthedocs.io/en/latest/example.html#flagging>`_, so comments can be flagged for:
 
  * **Removal suggestion**, when a registered user suggests the removal of a comment.
  * **Moderator deletion**, when a comment moderator marks the comment as deleted.
@@ -493,15 +510,35 @@ django-comments-xtd expands flagging with two more flags:
  * **Disliked it**, when a registered user dislikes the comment.
 
 
-In this section we will see how to enable a user with the capacity to flag a comment for removal with the **Removal suggestion** flag, how to express likeability, conformity, acceptance or acknowledgement with the **Liked it** flag, and how to express the opposite with the **Disliked it** flag.  
+In this section we will see how to enable a user with the capacity to flag a comment for removal with the **Removal suggestion** flag, how to express likeability, conformity, acceptance or acknowledgement with the **Liked it** flag and the opposite with the **Disliked it** flag.
 
-One important requirement to flag a comment is that the user setting the flag must be authenticated. In other words, comments can not be flagged by anonymous users.
+One important requirement to mark comments is that the user flagging must be authenticated. In other words, comments can not be flagged by anonymous users.
+
+
+Commenting options
+------------------
+
+As of version 2.0 of django-comments-xtd there is a new setting, :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS`, that must be correctly setup to allow flagging. The purpose is to give an additional level of control about whether users can flag inappropriate comments, like/dislike them, and retrieve the list of users who liked/disliked them.
+
+It defaults to:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_APP_MODEL_OPTIONS = {
+           'default': {
+               'allow_flagging': False,
+               'allow_feedback': False,
+               'show_feedback': False,
+           }
+       }
+
+We will enable each option alongside the following sections. 
 
 
 Removal suggestion
 ------------------
 
-Let us enable the comment removal flag. Edit the ``blog/post_detail.html`` template, and at the bottom of the file change the ``render_xtdcomment_tree`` templatetag by adding the argument **allow_flagging**:
+Enabling the comment removal flag is about including the **allow_flagging** argument in the ``render_xtdcomment_tree`` template tag. Edit the ``blog/post_detail.html`` template and append the argument:
 
    .. code-block:: html+django
 
@@ -511,23 +548,37 @@ Let us enable the comment removal flag. Edit the ``blog/post_detail.html`` templ
        </ul>
 
 
-The **allow_flagging** argument makes the templatetag populate a variable ``allow_flagging = True`` in the context in which ``django_comments_xtd/comment_tree.html`` is rendered.
+The **allow_flagging** argument makes the templatetag populate a variable ``allow_flagging = True`` in the context in which ``django_comments_xtd/comment_tree.html`` is rendered. Edit now the settings module and enable the ``allow_flagging`` option for the ``blog.post`` **app.label** pair:
 
-Now let's suggest a removal. First we need to login in the admin_ interface so that we are not an anonymous user. Then we can visit any of the blog posts we sent comments to. When hovering the comments we must see a flag at the right side of the comment's header. After we click on it we land in a page in which we are requested to confirm our removal suggestion. Finally, click on the red **Flag** button to confirm the request.
+   .. code-block:: python
 
-Once we have flagged a comment we can find the flag entry in the admin_ interface, in the **Comment flags** model, under the Django Comments application. 
+       COMMENTS_XTD_APP_MODEL_OPTIONS = {
+           'blog.post': {
+               'allow_flagging': True,
+               'allow_feedback': False,
+               'show_feedback': False,
+           }
+       }
+
+Now let's suggest a removal. First we need to login in the admin_ interface so that we are not an anonymous user. Then we can visit any of the blog posts we sent comments to. There is a flag at the right side of every comment's header. Clicking on it bring the user to a page in which she is requested to confirm the removal suggestion. Finally, clicking on the red **Flag** button confirms the request.
+
+Users with the ``django_comments.can_moderate`` permission will see a yellow labelled counter near the flag button in each flagged comment, representing how many times comments have been flagged. Also notice that when a user flags a comment for removal the icon turns red for that user.
+
+.. image:: images/flag-counter.png
+
+Administrators/moderators can find flagged comment entries in the admin_ interface, under the **Comment flags** model, within the Django Comments application. 
 
 
 Getting notifications
 *********************
 
-A user might want to flag a comment on the basis of a violation of our site's terms of use, maybe on hate speech content, racism or the like. To prevent a comment from staying published long after it has been flagged we might want to receive notifications on flagging events.
+A user might want to flag a comment on the basis of a violation of the site's terms of use, hate speech, racism or the like. To prevent a comment from staying published long after it has been flagged we might want to receive notifications on flagging events.
 
-For such purpose django-comments-xtd provides the class :pclass:`XtdCommentModerator`, which extends django-contrib-comments' :pclass:`CommentModerator`.
+For such purpose django-comments-xtd provides the class **XtdCommentModerator**, which extends django-contrib-comments' **CommentModerator**.
 
-In addition to all the `options <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html#moderation-options>`_ of its parent class, :pclass:`XtdCommentModerator` offers the ``removal_suggestion_notification`` attribute, that when set to ``True`` makes Django send a mail to all the :setting:`MANAGERS` on every **Removal suggestion** flag created.
+In addition to all the `options <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html#moderation-options>`_ of its parent class, **XtdCommentModerator** offers the ``removal_suggestion_notification`` attribute, that when set to ``True`` makes Django send a mail to all the :setting:`MANAGERS` on every **Removal suggestion** flag created.
 
-Let's use :pclass:`XtdCommentModerator`, edit ``blog/models.py`` and if you are already using the class ``SpamModerator``, which alreadt inherits from :pclass:`XtdCommentModerator`, just add ``removal_suggestion_notification = True`` to your ``PostCommentModeration`` class. Otherwise add the following code:
+To see an example let's edit ``blog/models.py``. If you are already using the class **SpamModerator**, which inherits from **XtdCommentModerator**, just add ``removal_suggestion_notification = True`` to your ``PostCommentModeration`` class. Otherwise add the following code:
 
    .. code-block:: python
 
@@ -547,9 +598,9 @@ Liked it, Disliked it
 
 Django-comments-xtd adds two new flags: the **Liked it** and the **Disliked it** flags.
 
-Unlike the **Removal suggestion** flag, the **Liked it** and **Disliked it** flags are mutually exclusive. So that a user can't like and dislike a comment at the same time, only the last action counts. Users can like/dislike at any time and only the last action will prevail.
+Unlike the **Removal suggestion** flag, the **Liked it** and **Disliked it** flags are mutually exclusive. A user can not like and dislike a comment at the same time. Users can like/dislike at any time and only the last action will prevail.
 
-In this section we will make changes in the tutorial project to give our users the capacity to like or dislike comments. We will make changes in the ``blog/post_detail.html`` template to introduce a new argument in the **render_xtdcomment_tree** tag:
+In this section we make changes to give our users the capacity to like or dislike comments. Following the same pattern as with the removal flag, enabling like/dislike buttons is about adding an argument to the ``render_xtdcomment_tree``, the argument ``allow_feedback``. Edit the ``blog/post_detail.html`` template and add the new argument:
 
    .. code-block:: html+django
 
@@ -558,7 +609,21 @@ In this section we will make changes in the tutorial project to give our users t
        </ul>
 
 
-The **allow_feedback** argument makes the templatetag populate a variable ``allow_feedback = True`` in the context in which ``django_comments_xtd/comment_tree.html`` is rendered.
+The **allow_feedback** argument makes the templatetag populate a variable ``allow_feedback = True`` in the context in which ``django_comments_xtd/comment_tree.html`` is rendered. Edit the settings module and enable the ``allow_feedback`` option for the ``blog.post`` **app.label** pair:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_APP_MODEL_OPTIONS = {
+           'blog.post': {
+               'allow_flagging': True,
+               'allow_feedback': True,
+               'show_feedback': False,
+           }
+       }
+
+The blog post detail template is ready to show the like/dislike buttons, refresh your browser.
+
+.. image:: images/feedback-buttons.png
 
 Having the new like/dislike links in place, if we click on any of them we will end up in either the ``django_comments_xtd/like.html`` or the ``django_comments_xtd/dislike.html`` templates, which are meant to request the user a confirmation for the operation.
 
@@ -568,11 +633,7 @@ Having the new like/dislike links in place, if we click on any of them we will e
 Show the list of users
 **********************
 
-Once the like/dislike flagging is enabled we might want to display the users who actually liked/disliked comments.
-
-Again, by addind an argument to the ``render_xtdcomment_tree`` templatetag we can get rendered the ``includes/django_comments_xtd/user_feedback.html`` with the list of participants.
-
-Change the ``blog/post_detail.html`` to add the argument ``show_feedback``. For this functionality to work we have to add a bit of JavaScript code. As django-comments-xtd templates use twitter-bootstrap_ we will load jQuery and twitter-bootstrap JavaScript libraries from their respective default CDNs too:
+With the like/dislike buttons enabled we might as well consider to display the users who actually liked/disliked comments. Again addind an argument to the ``render_xtdcomment_tree`` will enable the feature. Change the ``blog/post_detail.html`` and add the argument ``show_feedback`` to the template tag:
 
    .. code-block:: html+django
 
@@ -581,29 +642,216 @@ Change the ``blog/post_detail.html`` to add the argument ``show_feedback``. For 
        </ul>
 
        {% block extra-js %}
-       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-           integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+       <script
+           src="https://code.jquery.com/jquery-2.2.4.min.js"
+           integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
            crossorigin="anonymous"></script>
        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
            crossorigin="anonymous"></script>
        <script>
        $(function () {
-         $('[data-toggle="popover"]').popover({'html':true})
+         $('[data-toggle="tooltip"]').tooltip({html: true})
        })</script>
        {% endblock %}
 
+Also change the settings and enable the ``show_feedback`` option for ``blog.post``:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_APP_MODEL_OPTIONS = {
+           'blog.post': {
+               'allow_flagging': True,
+               'allow_feedback': True,
+               'show_feedback': True,
+           }
+       }
+
+We loaded jQuery and twitter-bootstrap_ libraries from their respective default CDNs as the code above uses bootstrap's tooltip functionality to show the list of users when the mouse hovers the numbers near the buttons, as shows the image: 
+
 .. _twitter-bootstrap: http://getbootstrap.com
+
+.. image:: images/feedback-users.png
+
+Put the mouse over the counters near the like/dislike buttons to display the list of users.
+
+
+Markdown
+========
+
+In versions prior to 2.0 django-comments-xtd required the installation of django-markup as a dependency. There was also a specific template filter called ``render_markup_comment`` to help rendering comment's content in the markup language of choice.
+
+As of version 2.0 the backend side of the application does not require the installation of any additional package to parser comments' content, and therefore does not provide the ``render_markup_comment`` filter anymore. However, in the client side the JavaScript plugin uses Markdown by default to render comments' content.
+
+As for the backend side, comment's content is presented by default in plain text, but it is easily customizable by overriding the template ``includes/django_comments_xtd/render_comment.html``.
+
+In this section we will send a Markdown formatted comment, and once published we will install support for Markdown, with `django-markdown2 <https://pypi.python.org/pypi/django-markdown2>`_. We'll then override the template mentioned above so that comments are interpreted as Markdown.
+
+Send a comment formatted in Markdown, as the one in the following image.
+
+.. image:: images/markdown-input.png
+
+Now we will install `django-markdown2 <https://pypi.python.org/pypi/django-markdown2>`_, and create the template directory and the template file:
+
+   .. code-block:: bash
+
+       (venv)$ pip install django-markdown2
+       (venv)$ mkdir -p templates/includes/django_comments_xtd/
+       (venv)$ touch templates/includes/django_comments_xtd/comment_content.html
+
+We have to add ``django_markdown2`` to our :setting:`INSTALLED_APPS`, and add the following template code to the file ``comment_content.html`` we just created:
+
+   .. code-block:: html+django
+
+       {% load md2 %}
+       {{ content|markdown:"safe, code-friendly, code-color" }}
+
+Now our project is ready to show comments posted in Markdown. After reloading, the comment's page will look like this:
+
+.. image:: images/markdown-comment.png
+
+
+
+JavaScript plugin
+=================
+
+Up until now we have used django-comments-xtd as a backend application. As of version 2.0 it includes a JavaScript plugin that helps moving part of the logic to the browser improving the overall usability. By making use of the JavaScript plugin users don't have to leave the blog post page to preview, submit or reply comments, or to like/dislike them. But it comes at the cost of assuming our project will use:
+
+ * ReactJS
+ * jQuery (to handle Ajax calls).
+ * Twitter-Bootstrap (for the UI).
+ * Remarkable (for Markdown support).
+
+To know more about the client side of the application and the build process read the specific page on the :doc:`javascript`.
+   
+In this section of the tutorial we go through the steps to make use of the JavaScript plugin.
+
+Enable Web API
+--------------
+
+The JavaScript plugin uses the Web API provided by within the app. In order to enable it install the `django-rest-framework <http://www.django-rest-framework.org/>`_:
+
+   .. code-block:: bash
+
+       (venv)$ pip install djangorestframework
+
+Once installed, add it to our tutorial :setting:`INSTALLED_APPS` setting:
+
+   .. code-block:: python
+
+       INSTALLED_APPS = [
+           ...
+           'rest_framework',
+           ...
+       ]
+
+To know more about the Web API provided by django-comments-xtd read on the :doc:`webapi` page.
+
+Enable app.model options
+------------------------
+
+Be sure :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS` includes the options we want to enable for comments sent to Blog posts. In this case we will allow users to flag comments for removal (allow_flagging option), to like/dislike comments (allow_feedback), and we want users to see the list of people who liked/disliked comments:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_APP_MODEL_OPTIONS = {
+           'blog.post': {
+               'allow_flagging': True,
+               'allow_feedback': True,
+               'show_feedback': True,
+           }
+       }
+
+The i18n JavaScript Catalog
+---------------------------
+
+Internationalization support (see :ref:`i18n`) has been included within the plugin by making use of the `Django's JavaScript i18n catalog <https://docs.djangoproject.com/en/1.11/topics/i18n/translation/#using-the-javascript-translation-catalog>`_. If your project doesn't need i18n you can easily remove every mention to these functions (namespaced under the `django` object) from the source and change the ``webpack.config.js`` file to build the plugin without it.
+
+Our tutorial doesn't have i18n enabled (the `comp example project <https://github.com/danirus/django-comments-xtd/tree/master/example/comp>`_ has it), but we will not remove its support from the plugin, we will simply enable the JavaScript Catalog URL, so that the plugin can access its functions. Edit ``tutorial/urls.py`` and add the following url:
+
+   .. code-block:: python
+
+       from django.views.i18n import JavaScriptCatalog
        
+       urlpatterns = [
+           ...
+           url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+       ]
+
+In the next section we will use the new URL to load the i18n JavaScript catalog.
+       
+Load the plugin
+---------------
+
+Now let's edit ``blog/post_detail.html`` and make it look like it follows:
+
+   .. code-block:: html+django
+
+       {% extends "base.html" %}
+       {% load static %}
+       {% load comments %}
+       {% load comments_xtd %}
+
+       {% block title %}{{ object.title }}{% endblock %}
+
+       {% block content %}
+       <h3 class="page-header text-center">{{ object.title }}</h3>
+       <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
+       <p>
+         {{ object.body|linebreaks }}
+       </p>
+
+       <div class="text-center" style="padding-top:20px">
+         <a href="{% url 'blog:post-list' %}">Back to the post list</a>
+       </div>
+
+       <div id="comments"></div>
+       {% endblock %}
+
+       {% block extra-js %}
+       <script>
+         window.comments_props = {% get_commentbox_props for object %};
+         window.comments_props_override = {
+           allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+           allow_feedback: true,
+           show_feedback: true,
+           allow_flagging: true,
+           poll_interval: 5000, // In milliseconds.
+         };
+       </script>
+       <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+               integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+               crossorigin="anonymous"></script>
+       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+               integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+               crossorigin="anonymous"></script>
+       <script type="text/javascript"
+               src="{% url 'javascript-catalog' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/vendor-2.0.0.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-2.0.0.js' %}"></script>
+       {% endblock %}
+
+
+The blog post page is now ready to handle comments through the JavaScript plugin, including the following features:
+
+ #. Post comments.
+ #. Preview comments, with instant preview update while typing.
+ #. Reply comment in the same page, with instant preview while typing.
+ #. Notifications of new incoming comments using active polling (override *poll_interval* parameter, see the content of first *<script>* tag in the code above).
+ #. Button to reload the tree of comments, highlighting new comments (see image below).
+ #. Immediate like/dislike actions.
+
+.. image:: images/update-comment-tree.png
+    
 
 Final notes
 ===========
 
 We have reached the end of the tutorial. I hope you got enough to start using django-comments-xtd in your own project.
 
-The following page introduces the **Demo projects**. The **simple** demo is a straightforward project to provide comment confirmation by mail, with follow-up notifications and mute links. The **custom** demo is an example about how to extend django-comments-xtd Comment model with new attributes. The **comp** demo shows a project using the complete set of features provided by both django-contrib-comments and django-comments-xtd.
+The following page introduces the **Demo projects**. The **simple** demo is a straightforward backend handled project that uses comment confirmation by mail, with follow-up notifications and mute links. The **custom** demo is an example about how to extend django-comments-xtd **Comment** model with new attributes. The **comp** demo shows a project using the complete set of features provided by both django-contrib-comments and django-comments-xtd.
 
-Checkout the **Control Logic** page to understand how django-comments-xtd works along with django-contrib-comments. Read on **Filters and Template Tags** to see in detail the list of template tags and filters offered. The page on **Customizing django-comments-xtd** goes through the steps to extend the app with a quick example and little prose. Read the **Settings** page and the **Templates** page to get to know how you can customize the default behaviour and default look and feel.
+Checkout the **Control Logic** page to understand how django-comments-xtd works along with django-contrib-comments. The **Web API** page details the API provided. The **JavaScript Plugin** covers every aspect regarding the frontend code. Read on **Filters and Template Tags** to see in detail the list of template tags and filters offered. The page on **Customizing django-comments-xtd** goes through the steps to extend the app with a quick example and little prose. Read the **Settings** page and the **Templates** page to get to know how you can customize the default behaviour and default look and feel.
 
 If you want to help, please, report any bug or enhancement directly to the github_ page of the project. Your contributions are welcome.
 

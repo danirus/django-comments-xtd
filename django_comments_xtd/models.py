@@ -1,20 +1,13 @@
-import django
 from django.db import models
-from django.db.models import F, Max, Min
+from django.db.models import F, Max, Min, Q
+from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
+from django.dispatch import receiver
 from django.utils.translation import ugettext, ugettext_lazy as _
 
-try:
-    from django.db.transaction import atomic
-except ImportError:
-    from django.db.transaction import commit_on_success as atomic
-
-try:
-    from django_comments.managers import CommentManager
-    from django_comments.models import Comment
-except ImportError:
-    from django.contrib.comments.managers import CommentManager
-    from django.contrib.comments.models import Comment
+from django_comments.managers import CommentManager
+from django_comments.models import Comment, CommentFlag
+from django_comments.signals import comment_was_flagged
 
 from django_comments_xtd.conf import settings
 
@@ -37,13 +30,10 @@ class MaxThreadLevelExceededException(Exception):
         # self.max_by_app = max_thread_level_for_content_type(content_type)
 
     def __str__(self):
-        return (ugettext("Max thread level reached for comment %d") %
-                self.comment.id)
+        return ("Max thread level reached for comment %d" % self.comment.id)
 
 
 class XtdCommentManager(CommentManager):
-    if django.VERSION[:2] < (1, 6):
-        get_queryset = models.Manager.get_query_set
 
     def for_app_models(self, *args):
         """Return XtdComments for pairs "app.model" given in args"""
@@ -72,8 +62,7 @@ class XtdComment(Comment):
     level = models.SmallIntegerField(default=0)
     order = models.IntegerField(default=1, db_index=True)
     followup = models.BooleanField(blank=True, default=False,
-                                   help_text=_("Receive by email further "
-                                               "comments in this conversation"))
+                                   help_text=_("Notify follow-up comments"))
     objects = XtdCommentManager()
 
     def save(self, *args, **kwargs):
@@ -125,7 +114,8 @@ class XtdComment(Comment):
             return False
 
     @classmethod
-    def tree_from_queryset(cls, queryset, with_feedback=False):
+    def tree_from_queryset(cls, queryset, with_flagging=False,
+                           with_feedback=False, user=None):
         """Converts a XtdComment queryset into a list of nested dictionaries.
         The queryset has to be ordered by thread_id, order.
         Each dictionary contains two attributes::
@@ -134,23 +124,40 @@ class XtdComment(Comment):
                 'children': [list of child comment dictionaries]
             }
         """
-        def get_user_feedback(comment):
-            return {'likedit': comment.users_who_liked_it(),
-                    'dislikedit': comment.users_who_disliked_it()}
+        def get_user_feedback(comment, user):
+            d = {'likedit_users': comment.users_flagging(LIKEDIT_FLAG),
+                 'dislikedit_users': comment.users_flagging(DISLIKEDIT_FLAG)}
+            if user is not None:
+                if user in d['likedit_users']:
+                    d['likedit'] = True
+                if user in d['dislikedit_users']:
+                    d['dislikedit'] = True
+            return d
 
-        def add_children(children, obj):
+        def add_children(children, obj, user):
             for item in children:
                 if item['comment'].pk == obj.parent_id:
                     child_dict = {'comment': obj, 'children': []}
                     if with_feedback:
-                        child_dict.update(get_user_feedback(obj))
+                        child_dict.update(get_user_feedback(obj, user))
                     item['children'].append(child_dict)
                     return True
                 elif item['children']:
-                    if add_children(item['children'], obj):
+                    if add_children(item['children'], obj, user):
                         return True
             return False
 
+        def get_new_dict(obj):
+            new_dict = {'comment': obj, 'children': []}
+            if with_feedback:
+                new_dict.update(get_user_feedback(obj, user))
+            if with_flagging:
+                users_flagging = obj.users_flagging(CommentFlag.SUGGEST_REMOVAL)
+                if user.has_perm('django_comments.can_moderate'):
+                    new_dict.update({'flagged_count': len(users_flagging)})
+                new_dict.update({'flagged': user in users_flagging})
+            return new_dict
+                
         dic_list = []
         cur_dict = None
         for obj in queryset:
@@ -158,26 +165,26 @@ class XtdComment(Comment):
                 dic_list.append(cur_dict)
                 cur_dict = None
             if not cur_dict:
-                cur_dict = {'comment': obj, 'children': []}
-                if with_feedback:
-                    cur_dict.update(get_user_feedback(obj))
+                cur_dict = get_new_dict(obj)
                 continue
             if obj.parent_id == cur_dict['comment'].pk:
-                child_dict = {'comment': obj, 'children': []}
-                if with_feedback:
-                    child_dict.update(get_user_feedback(obj))
+                child_dict = get_new_dict(obj)
                 cur_dict['children'].append(child_dict)
             else:
-                add_children(cur_dict['children'], obj)
+                add_children(cur_dict['children'], obj, user)
         if cur_dict:
             dic_list.append(cur_dict)
         return dic_list
 
-    def users_who_liked_it(self):
-        return [flag.user for flag in self.flags.filter(flag=LIKEDIT_FLAG)]
+    def users_flagging(self, flag):
+        return [obj.user for obj in self.flags.filter(flag=flag)]
 
-    def users_who_disliked_it(self):
-        return [flag.user for flag in self.flags.filter(flag=DISLIKEDIT_FLAG)]
+
+@receiver(comment_was_flagged)
+def unpublish_nested_comments_on_removal_flag(sender, comment, flag, **kwargs):
+    if flag.flag == CommentFlag.MODERATOR_DELETION:
+        XtdComment.objects.filter(~(Q(pk=comment.id)), parent_id=comment.id)\
+                          .update(is_public=False)
 
 
 class DummyDefaultManager:
@@ -213,7 +220,8 @@ class TmpXtdComment(dict):
         if self.xtd_comment:
             return self.xtd_comment._get_pk_val()
         else:
-            return ""
+            content_type = "%s.%s" % self.content_type.natural_key()
+            return "%s:%s" % (content_type, self.object_pk)
 
     def __setstate__(self, state):
         ct_key = state.pop('content_type_key')

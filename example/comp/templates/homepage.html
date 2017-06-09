@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load markup_tags %}
+{% load md2 %}
 {% load comments_xtd %}
 
 {% block menu-class-homepage %}active{% endblock %}
@@ -7,7 +7,7 @@
 {% block content %}
 <hr/>
 <div class="col-lg-8">
-  <p>{{ readme_text|apply_markup:"markdown" }}</p>
+  <p>{{ readme_text|markdown }}</p>
 </div>
 <div class="col-lg-4">
   <div class="panel panel-default">

@@ -41,6 +41,13 @@
         <p>{{ comment.comment }}</p>
       </div>
     </div>
+    {% with object_absolute_url=comment.content_object.get_absolute_url %}
+    {% if object_absolute_url %}
+    <p class="text-center">
+      Posted to <a href="{{ object_absolute_url }}">{{ comment.content_object }}</a>
+    </p>
+    {% endif %}
+    {% endwith %}
     <div class="visible-lg-block visible-md-block">
       <hr/>
     </div>

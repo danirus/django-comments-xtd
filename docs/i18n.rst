@@ -1,0 +1,73 @@
+.. _ref-i18n:
+
+====================
+Internationalization
+====================
+
+django-comments-xtd is i18n ready. Please, consider extending support for your language if it's not listed below. At the moment it's available only in:
+
+ * English, **en** (default language)
+ * Spanish, **es**
+
+
+Contributions
+=============
+
+This is a step by step guide to help extending the internationalization of django-comments-xtd. Install the **comp** example site. It will be used along with `django-rosetta <https://github.com/mbi/django-rosetta>`_ to help with translations.
+
+   .. code-block:: bash
+
+    $ virtualenv venv
+    $ source venv/bin/activate
+    (venv)$ git clone git://github.com/danirus/django-comments-xtd.git
+    (venv)$ cd django-comments-xtd/example/comp
+    (venv)$ pip install django-rosetta django-markdown2
+    (venv)$ python manage.py migrate
+    (venv)$ python manage.py loaddata ../fixtures/auth.json
+    (venv)$ python manage.py loaddata ../fixtures/sites.json
+    (venv)$ python manage.py loaddata ../fixtures/articles.json
+    (venv)$ python manage.py loaddata ../fixtures/quotes.json
+    (venv)$ python manage.py runserver
+
+Edit the **comp/settings.py** module. Add the `ISO-639-1 <https://en.wikipedia.org/wiki/ISO_639-1>`_ code of the language you want to support to :setting:`LANGUAGES` and add ``'rosetta'`` to your :setting:`INSTALLED_APPS`.
+
+   .. code-block:: python
+
+       LANGUAGES = (
+           ('en', 'English'),
+           ('es', 'Spanish'),
+           ...
+       )
+                   
+       INSTALLED_APPS = [
+           ...
+           'rosetta',
+           ...
+       ]
+
+.. note::
+   
+   When django-rosetta is enabled in the **comp** project, the homepage shows a selector to help switch languages. It uses the ``language_tuple`` filter, located in the **comp_filters.py** module, to show the language name in both, the translated form and the original language.
+       
+We have to create the translation catalog for the new language. Use the `ISO-639-1 <https://en.wikipedia.org/wiki/ISO_639-1>`_ code to indicate the language. There are two catalogs to translate, one for the backend and one for the frontend.
+
+The frontend catalog is produced out of the **plugin-X.Y.Z.js** file. It's a good idea to run the ``webpack --watch`` command if you change the messages in the sources of the plugin (placed in the **js/src/** directory). This way the plugin is built automatically and the Django ``makemessages`` command will fetch the new messages accordingly.
+
+Keep the runserver command launched above running in one terminal and open another terminal to run the **makemessages** and **compilemessages** commands:
+
+   .. code-block:: bash
+
+    $ source venv/bin/activate
+    (venv)$ cd django-comments-xtd/django_comments_xtd
+    (venv)$ django-admin makemessages -l de
+    (venv)$ django-admin makemessages -d djangojs -l de
+
+Now head to the rosetta page, under http://localhost:8000/rosetta/, do login with user ``admin`` and password ``admin``, and proceed to translate the messages. Find the two catalogs for django-comments-xtd under the **Third Party** filter, at the top-right side of the page.
+
+Django must have the catalogs compiled before the messages show up in the comp site. Run the compile message for that purpose:
+
+   .. code-block:: bash
+
+    (venv)$ django-admin compilemessages
+
+The **comp** example site is now ready to show the messages in the new language. It's time to verify that the translation fits the UI. If everything looks good, please, make a Pull Request to add the new .po files to the upstream repository.

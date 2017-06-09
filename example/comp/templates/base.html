@@ -1,5 +1,8 @@
 {% load i18n %}
 {% load staticfiles %}
+{% load comp_filters %}
+{% get_available_languages as LANGUAGES %}
+{% get_current_language as current_language %}
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
   <head>
@@ -40,6 +43,21 @@
             <li class="{% block menu-class-comments %}{% endblock %}" role="group">
               <a href="{% url 'comments-xtd-list' %}">{% trans "comments" %}</a>
             </li>
+            {% if 'rosetta' in settings.INSTALLED_APPS %}
+            <li class="dropdown">
+              <form id="langform" action="{% url 'set_language' %}" class="hidden">{% csrf_token %}<input type="text" id="language" name="language" /><input type="text" name="next" /></form>
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">{{ current_language|language_name }} <b class="caret"></b></a>
+              <ul class="dropdown-menu languages" id="selectlanguage">
+                {% for language in LANGUAGES %}
+                {% ifnotequal current_language language.0 %}
+                <li><a href="#" data-name="language" data-code="{{ language.0 }}">{{ language.0|language_tuple }}</a></li>
+                {% else %}
+                <li class="disabled"><a href="#">{{ language.0|language_name }}</a></li>
+                {% endifnotequal %}
+                {% endfor %}
+              </ul>
+            </li>
+            {% endif %}
           </ul>
         </nav>
 	    <h3>comp demo</h3>
@@ -63,6 +81,34 @@
         </div>
       </div>
     </div>
-    {% block extra_js %}{% endblock %}
+
+    <script
+      src="https://code.jquery.com/jquery-2.2.4.min.js"
+      integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+      crossorigin="anonymous"></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+      crossorigin="anonymous"></script>
+    <script
+      type="text/javascript"
+      src="{% url 'javascript-catalog' %}"></script>
+    <script>
+      function set_language(event) {
+        event.preventDefault();
+        var $link = event.target;
+        $form = $('#langform');
+        $form.find('input[name=language]').val($link.dataset.code);
+        $.post('/i18n/setlang/', $form.serialize(), function(d) {
+          window.location.reload();
+        });
+      }
+      $(function() {
+        $('.dropdown-toggle').dropdown();
+        $("UL#selectlanguage A[data-name=language]").click(set_language);
+      });
+    </script>
+    {% block extra_js %}
+    {% endblock %}
   </body>
 </html>

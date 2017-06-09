@@ -1,3 +1,4 @@
+{% load l10n %}
 {% load i18n %}
 {% load comments %}
 {% load comments_xtd %}
@@ -10,31 +11,36 @@
   <div class="media-body">
     <div class="comment">
       <h6 class="media-heading">
-        {{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink item.comment %}">¶</a>
-        {% if allow_flagging %}
+        {{ item.comment.submit_date|localize }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="label label-default">{% trans "moderator" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="{% trans 'comment permalink' %}" href="{% get_comment_permalink item.comment %}">¶</a>
+        {% if not item.comment.is_removed %}
         <div class="pull-right">
+          {% if allow_flagging and item.flagged %}
+          <span class="glyphicon glyphicon-flag text-danger" title="{% trans 'comment flagged' %}"></span>
+          {% elif allow_flagging %}
           <a class="mutedlink" href="{% url 'comments-flag' item.comment.pk %}">
-            <span class="glyphicon glyphicon-flag" title="flag comment"></span>
-          </a>
+            <span class="glyphicon glyphicon-flag" title="{% trans 'flag comment' %}"></span></a>          
+          {% endif %}
+          {% if perms.comments.can_moderate %}
+          <a class="mutedlink" href="{% url 'comments-delete' item.comment.pk %}"><span class="glyphicon glyphicon-trash" title="{% trans 'remove comment' %}"></span></a>
+          {% if item.flagged_count %}
+          <span class="label label-warning" title="{% blocktrans count counter=item.flagged_count %}A user has flagged this comment as inappropriate.{% plural %}{{ counter }} users have flagged this comment as inappropriate.{% endblocktrans %}">{{ item.flagged_count }}</span>
+          {% endif %}
+          {% endif %}
         </div>
         {% endif %}
       </h6>
       {% if item.comment.is_removed %}
-      <p>{% trans "This comment has been removed." %}</p>
-      {% else %}
-      <p>
-        {{ item.comment.comment|render_markup_comment }}
-        <br/>
+        <p class="text-muted"><em>{% trans "This comment has been removed." %}</em></p>
+        {% else %}
+        <div class="content">
+          {% include "includes/django_comments_xtd/comment_content.html" with content=item.comment.comment %}
+        </div>
         {% if allow_feedback %}
         {% include "includes/django_comments_xtd/user_feedback.html" %}
         {% endif %}
         {% if item.comment.allow_thread and not item.comment.is_removed %}
-        {% if allow_feedback %}<span class="text-muted">&sdot;</span>{% endif %}
-        <a class="small mutedlink" href="{{ item.comment.get_reply_url }}">
-          {% trans "Reply" %}
-        </a>
+        {% if allow_feedback %}&nbsp;&nbsp;<span class="text-muted">&bull;</span>&nbsp;&nbsp;{% endif %}<a class="small mutedlink" href="{{ item.comment.get_reply_url }}">{% trans "Reply" %}</a>
         {% endif %}
-      </p>
       {% endif %}
     </div>
     {% if not item.comment.is_removed and item.children %}

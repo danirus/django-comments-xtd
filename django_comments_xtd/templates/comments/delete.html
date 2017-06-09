@@ -1,0 +1,58 @@
+{% extends "django_comments_xtd/base.html" %}
+{% load i18n %}
+{% load comments_xtd %}
+
+{% block title %}{% trans "Remove comment" %}{% endblock %}
+
+{% block header %}
+<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">
+    <h4 class="text-center">{% trans "Remove this comment?" %}</h4>
+    <p>{% trans "As a moderator you can delete comments. Deleting a comment does not remove it from the site, only prevents your website from showing the text. Click on the remove button to delete the following comment:" %}</p>
+    <div class="well well-lg">
+      <div class="media">
+        <div class="media-left">
+          {% if comment.user_url %}
+          <a href="{{ comment.user_url }}">
+            {{ comment.user_email|xtd_comment_gravatar }}
+          </a>
+          {% else %}
+          {{ comment.user_email|xtd_comment_gravatar }}
+          {% endif %}
+        </div>
+        <div class="media-body">
+          <h6 class="media-heading">
+            {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+            {% if comment.user_url %}
+            <a href="{{ comment.user_url }}" target="_new">{% endif %}
+              {{ comment.user_name }}
+              {% if comment.user_url %}
+            </a>{% endif %}
+          </h6>
+          <p>{{ comment.comment }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="visible-lg-block visible-md-block">
+      <hr/>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
+    <form action="." method="post" class="form-horizontal">{% csrf_token %}
+      <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
+      <div class="form-group">
+        <div class="text-center">
+          <input type="submit" name="submit" class="btn btn-danger" value="{% trans "Remove" %}"/>
+          <a class="btn btn-default" href="{{ comment.get_absolute_url }}">cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

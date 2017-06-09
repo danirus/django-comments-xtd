@@ -1,24 +1,29 @@
+import json
 import hashlib
+import re
+
 try:
     from urllib.parse import urlencode
 except ImportError:
     from urllib import urlencode
-import re
 
 from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader)
 from django.utils.safestring import mark_safe
 
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
+
+from django_comments.forms import CommentSecurityForm
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
-
-from ..utils import import_formatter
 
 
 XtdComment = get_comment_model()
 
-formatter = import_formatter()
 
 register = Library()
 
@@ -91,7 +96,7 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
             self.count = int(self.count.resolve(context))
 
         self.qs = XtdComment.objects.for_content_types(
-            self.content_types)[:self.count]
+            self.content_types).order_by('submit_date')[:self.count]
 
         strlist = []
         context_dict = context.flatten()
@@ -246,11 +251,16 @@ class RenderXtdCommentTreeNode(Node):
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
-            qs = XtdComment.objects.filter(content_type=ctype,
-                                           object_pk=obj.pk,
-                                           site__pk=settings.SITE_ID,
-                                           is_public=True)
-            comments = XtdComment.tree_from_queryset(qs, self.allow_feedback)
+            queryset = XtdComment.objects.filter(content_type=ctype,
+                                                 object_pk=obj.pk,
+                                                 site__pk=settings.SITE_ID,
+                                                 is_public=True)
+            comments = XtdComment.tree_from_queryset(
+                queryset,
+                with_flagging=self.allow_flagging,
+                with_feedback=self.allow_feedback,
+                user=context['user']
+            )
             context_dict['comments'] = comments
         if self.cvars:
             for vname, vobj in self.cvars:
@@ -287,12 +297,16 @@ class GetXtdCommentTreeNode(Node):
     def render(self, context):
         obj = self.obj.resolve(context)
         ctype = ContentType.objects.get_for_model(obj)
-        qs = XtdComment.objects.filter(content_type=ctype,
-                                       object_pk=obj.pk,
-                                       site__pk=settings.SITE_ID,
-                                       is_public=True)
-        diclist = XtdComment.tree_from_queryset(qs, self.with_feedback)
-        context[self.var_name] = diclist
+        queryset = XtdComment.objects.filter(content_type=ctype,
+                                             object_pk=obj.pk,
+                                             site__pk=settings.SITE_ID,
+                                             is_public=True)
+        dic_list = XtdComment.tree_from_queryset(
+            queryset,
+            with_feedback=self.with_feedback,
+            user=context['user']
+        )
+        context[self.var_name] = di_clist
         return ''
 
 
@@ -416,55 +430,105 @@ def get_xtdcomment_tree(parser, token):
 
 
 # ----------------------------------------------------------------------
-def render_with_filter(markup_filter, lines):
-    try:
-        if formatter:
-            return mark_safe(formatter("\n".join(lines),
-                                       filter_name=markup_filter))
+class GetCommentBoxPropsNode(Node):
+    def __init__(self, obj):
+        self.obj = Variable(obj)
+
+    def render(self, context):        
+        obj = self.obj.resolve(context)
+        form = CommentSecurityForm(obj)
+        ctype = ContentType.objects.get_for_model(obj)
+        queryset = XtdComment.objects.filter(content_type=ctype,
+                                             object_pk=obj.pk,
+                                             site__pk=settings.SITE_ID,
+                                             is_public=True)
+        ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
+        d = {
+            "comment_count": queryset.count(),
+            "allow_comments": True,
+            "current_user": "0:Anonymous",
+            "is_authenticated": False,
+            "allow_flagging": False,
+            "allow_feedback": False,
+            "show_feedback": False,
+            "can_moderate": False,
+            "poll_interval": 2000,
+            "feedback_url": reverse("comments-xtd-api-feedback"),
+            "delete_url": reverse("comments-delete", args=(0,)),
+            "reply_url": reverse("comments-xtd-reply", kwargs={'cid': 0}),
+            "flag_url": reverse("comments-flag", args=(0,)),
+            "list_url": reverse('comments-xtd-api-list',
+                                kwargs={'content_type': ctype_slug,
+                                        'object_pk': obj.id}),
+            "count_url": reverse('comments-xtd-api-count',
+                                 kwargs={'content_type': ctype_slug,
+                                         'object_pk': obj.id}),
+            "send_url": reverse("comments-xtd-api-create"),
+            "form": {
+                "content_type": form['content_type'].value(),
+                "object_pk": form['object_pk'].value(),
+                "timestamp": form['timestamp'].value(),
+                "security_hash": form['security_hash'].value()
+            }
+        }
+        user = context.get('user', None)
+        if user and user.is_authenticated():
+            d['current_user'] = "%d:%s" % (
+                user.pk, settings.COMMENTS_XTD_API_USER_REPR(user))
+            d['is_authenticated'] = True
+            d['can_moderate'] = user.has_perm("django_comments.can_moderate")
         else:
-            raise TemplateSyntaxError("In order to use this templatetag you "
-                                      "need django-markup, docutils and "
-                                      "markdown installed")
-    except ValueError as exc:
-        output = "<p>Warning: %s</p>" % exc
-        return output
+            d['login_url'] = "/admin/login/"
+            d['like_url'] = reverse("comments-xtd-like", args=(0,))
+            d['dislike_url'] = reverse("comments-xtd-dislike", args=(0,))
+        return json.dumps(d)
 
 
-@register.filter
-def render_markup_comment(value):
+@register.tag
+def get_commentbox_props(parser, token):
     """
-    Renders a comment using a markup language specified in the first line of
-    the comment.
+    Returns a JSON object with the initial props for the CommentBox component.
 
-    Template Syntax::
-
-        {{ comment.comment|render_markup_comment }}
-
-    The first line of the comment field must start with the name of the markup
-    language unless the COMMENTS_XTD_MARKUP_FALLBACK_FILTER setting is not None.
-
-    A comment like::
-
-        comment = r'''#!markdown\n\rAn [example](http://url.com/ "Title")'''
-
-    Would be rendered as a markdown text, producing the output::
-
-        <p><a href="http://url.com/" title="Title">example</a></p>
-
-    A default markup language can be specified with the
-    COMMENTS_XTD_MARKUP_FALLBACK_FILTER setting to force a default filter.
+    The returned JSON object contains the following attributes::
+        {
+            comment_count: <int>,  // Count of comments posted to the object.
+            allow_comments: <bool>,  // Whether to allow comments to this post.
+            current_user: <str as "user_id:user_name">,
+            is_authenticated: <bool>,  // Whether current_user is authenticated.
+            allow_flagging: false,
+            allow_feedback: false,
+            show_feedback: false,
+            can_moderate: <bool>,  // Whether current_user can moderate.
+            poll_interval: 2000, // Check for new comments every 2 seconds.
+            feedback_url: <api-url-to-send-like/dislike-feedback>,
+            delete_url: <api-url-for-moderators-to-remove-comment>,
+            login_url: settings.LOGIN_URL,
+            reply_url: <api-url-to-reply-comments>,
+            flag_url: <api-url-to-suggest-comment-removal>,
+            list_url: <api-url-to-list-comments>,
+            count_url: <api-url-to-count-comments>,
+            send_url: <api-irl-to-send-a-comment>,
+            form: {
+                content_type: <value>,
+                object_pk: <value>,
+                timestamp: <value>,
+                security_hash: <value>
+            },
+            login_url: <only_when_user_is_not_authenticated>,
+            like_url: <only_when_user_is_not_authenticated>,
+            dislike_url: <only_when_user_is_not_authenticated>
+        }
     """
-    lines = value.splitlines()
-    rawstr = r"""^#!(?P<markup_filter>\w+)$"""
-    match_obj = re.search(rawstr, lines[0])
-    if match_obj:
-        markup_filter = match_obj.group('markup_filter')
-        return render_with_filter(markup_filter, lines[1:])
-    elif settings.COMMENTS_XTD_MARKUP_FALLBACK_FILTER:
-        markup_filter = settings.COMMENTS_XTD_MARKUP_FALLBACK_FILTER
-        return render_with_filter(markup_filter, lines)
-    else:
-        return value
+    try:
+        tag_name, args = token.contents.split(None, 1)
+    except ValueError:
+        raise TemplateSyntaxError("%s tag requires arguments" %
+                                  token.contents.split()[0])
+    match = re.search(r'for (\w+)', args)
+    if not match:
+        raise TemplateSyntaxError("%s tag had invalid arguments" % tag_name)
+    obj = match.groups()[0]
+    return GetCommentBoxPropsNode(obj)
 
 
 # ----------------------------------------------------------------------
@@ -481,3 +545,21 @@ def xtd_comment_gravatar(email, size=48):
     url = xtd_comment_gravatar_url(email, size)
     return mark_safe('<img src="%s" height="%d" width="%d">' %
                      (url, size, size))
+
+
+# ----------------------------------------------------------------------
+@register.filter
+def comments_xtd_api_list_url(obj):
+    ctype = ContentType.objects.get_for_model(obj)
+    ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
+    return reverse('comments-xtd-api-list', kwargs={'content_type': ctype_slug,
+                                                    'object_pk': obj.id})
+
+
+# ----------------------------------------------------------------------
+@register.filter
+def has_permission(user_obj, str_permission):
+    try:
+        return user_obj.has_perm(str_permission)
+    except Exception as exc:
+        raise exc

@@ -12,6 +12,9 @@ COMMENTS_XTD_CONFIRM_EMAIL = True
 # From email address.
 COMMENTS_XTD_FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
 
+# Contact email address.
+COMMENTS_XTD_CONTACT_EMAIL = settings.DEFAULT_FROM_EMAIL
+
 # Maximum Thread Level.
 COMMENTS_XTD_MAX_THREAD_LEVEL = 0
 
@@ -27,9 +30,6 @@ COMMENTS_XTD_FORM_CLASS = "django_comments_xtd.forms.XtdCommentForm"
 # Model to use.
 COMMENTS_XTD_MODEL = "django_comments_xtd.models.XtdComment"
 
-# Default markup filter to use.
-COMMENTS_XTD_MARKUP_FALLBACK_FILTER = None
-
 # Send HTML emails.
 COMMENTS_XTD_SEND_HTML_EMAIL = True
 
@@ -37,3 +37,18 @@ COMMENTS_XTD_SEND_HTML_EMAIL = True
 # Set it to False to use a third-party app like django-celery-email or
 # your own celery app.
 COMMENTS_XTD_THREADED_EMAILS = True
+
+# Define what commenting features a pair app_label.model can have.
+# TODO: Put django-comments-xtd settings under a dictionary, and merge
+#       COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL with this one.
+COMMENTS_XTD_APP_MODEL_OPTIONS = {
+    'default': {
+        'allow_flagging': False,
+        'allow_feedback': False,
+        'show_feedback': False,
+    }
+}
+
+# Define a lambda function to return the user representation. Used by
+# the web API to represent user strings in response objects.
+COMMENTS_XTD_API_USER_REPR = lambda u: u.username

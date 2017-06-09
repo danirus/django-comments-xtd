@@ -1,24 +1,24 @@
 [
-    {
-        "pk": 2, 
-        "model": "articles.article", 
-        "fields": {
-            "body": "While free software by any other name would give you the same freedom, it makes a big difference which name we use: different words convey different ideas.\r\n\r\nIn 1998, some of the people in the free software community began using the term \u201copen source software\u201d instead of \u201cfree software\u201d to describe what they do. The term \u201copen source\u201d quickly became associated with a different approach, a different philosophy, different values, and even a different criterion for which licenses are acceptable. The Free Software movement and the Open Source movement are today separate movements with different views and goals, although we can and do work together on some practical projects.\r\n\r\nThe fundamental difference between the two movements is in their values, their ways of looking at the world. For the Open Source movement, the issue of whether software should be open source is a practical question, not an ethical one. As one person put it, \u201cOpen source is a development methodology; free software is a social movement.\u201d For the Open Source movement, non-free software is a suboptimal solution. For the Free Software movement, non-free software is a social problem and free software is the solution.", 
-            "allow_comments": true, 
-            "slug": "free-vs-open-source-software", 
-            "publish": "2012-01-11T11:20:59", 
-            "title": "Free vs Open Source Software"
-        }
-    }, 
-    {
-        "pk": 1, 
-        "model": "articles.article", 
-        "fields": {
-            "body": "The battle over the future of the Internet is a power grab that pits well-heeled lobbyists, corrupt legislators, phony front groups and the world\u2019s most powerful telecommunications companies against the rest of us \u2014 the millions of Americans who use the Internet every day, in increasingly inventive ways.\r\n\r\nPolicymakers are public officials, and it\u2019s their job to serve the public interest. You can play an important role by helping spread the word about Net Neutrality, meeting face to face with elected officials and urging them to protect the open Internet.\r\n\r\nYou can start by urging the Senate to stand up for Net Neutrality. ", 
-            "allow_comments": true, 
-            "slug": "net-neutrality-jeopardy", 
-            "publish": "2012-01-10T15:53:23", 
-            "title": "Net Neutrality in Jeopardy"
-        }
+{
+    "model": "articles.article",
+    "pk": 1,
+    "fields": {
+        "title": "Net Neutrality in Jeopardy",
+        "slug": "net-neutrality-jeopardy",
+        "body": "The battle over the future of the Internet is a power grab that pits well-heeled lobbyists, corrupt legislators, phony front groups and the world\u2019s most powerful telecommunications companies against the rest of us \u2014 the millions of Americans who use the Internet every day, in increasingly inventive ways.\r\n\r\nPolicymakers are public officials, and it\u2019s their job to serve the public interest. You can play an important role by helping spread the word about Net Neutrality, meeting face to face with elected officials and urging them to protect the open Internet.\r\n\r\nYou can start by urging the Senate to stand up for Net Neutrality. ",
+        "allow_comments": true,
+        "publish": "2012-01-10T14:53:23Z"
     }
+},
+{
+    "model": "articles.article",
+    "pk": 2,
+    "fields": {
+        "title": "Colonies in space may be only hope, says Hawking",
+        "slug": "colonies-space-only-hope",
+        "body": "The human race is likely to be wiped out by a doomsday virus before the Millennium is out, unless we set up colonies in space, Prof Stephen Hawking warns today.\r\n\r\nIn an interview with The Telegraph, Prof Hawking, the world's best known cosmologist, says that biology, rather than physics, presents the biggest challenge to human survival.\r\n\r\n\"Although September 11 was horrible, it didn't threaten the survival of the human race, like nuclear weapons do,\" said the Cambridge University scientist.\r\n\r\n\"In the long term, I am more worried about biology. Nuclear weapons need large facilities, but genetic engineering can be done in a small lab. You can't regulate every lab in the world. The danger is that either by accident or design, we create a virus that destroys us.\r\n\r\n\"I don't think the human race will survive the next thousand years, unless we spread into space. There are too many accidents that can befall life on a single planet. But I'm an optimist. We will reach out to the stars.\"",
+        "allow_comments": true,
+        "publish": "2001-11-16T10:20:59Z"
+    }
+}
 ]

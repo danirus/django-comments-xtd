@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load markup_tags %}
+{% load md2 %}
 
 {% block header %}Homepage{% endblock %}
 
 {% block content %}
 <div class="row">
-  <p>{{ readme_text|apply_markup:"markdown" }}</p>
+  <p>{{ readme_text|markdown }}</p>
 </div>
 <div class="row">
   <p class="text-center">

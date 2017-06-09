@@ -28,13 +28,13 @@ class XtdCommentForm(CommentForm):
             widget=forms.TextInput(attrs={'placeholder': _('name'),
                                           'class': 'form-control'}))
         self.fields['email'] = forms.EmailField(
-            label=_("Email"), help_text=_("Required for comment verification"),
-            widget=forms.TextInput(attrs={'placeholder': _('email'),
+            label=_("Mail"), help_text=_("Required for comment verification"),
+            widget=forms.TextInput(attrs={'placeholder': _('mail address'),
                                           'class': 'form-control'}))
         self.fields['url'] = forms.URLField(
-            required=False,
+            label=_("Link"), required=False,
             widget=forms.TextInput(attrs={
-                'placeholder': _('Your name links to'),
+                'placeholder': _('url your name links to (optional)'),
                 'class': 'form-control'}))
         self.fields['comment'] = forms.CharField(
             widget=forms.Textarea(attrs={'placeholder': _('Your comment'),

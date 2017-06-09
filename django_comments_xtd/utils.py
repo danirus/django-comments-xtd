@@ -7,7 +7,10 @@ except ImportError:
     import queue as queue  # python3
 
 import threading
+
 from django.core.mail import EmailMultiAlternatives
+from django.contrib.contenttypes.models import ContentType
+
 from django_comments_xtd.conf import settings
 
 
@@ -49,11 +52,16 @@ def send_mail(subject, body, from_email, recipient_list,
                    fail_silently, html)
 
 
-def import_formatter():
+def has_app_model_option(comment):
+    _default = {
+        'allow_flagging': False,
+        'allow_feedback': False,
+        'show_feedback': False
+    }
+    content_type = ContentType.objects.get_for_model(comment.content_object)
+    key = "%s.%s" % (content_type.app_label, content_type.model)
     try:
-        from django_markup.markup import formatter
-        # from markdown import markdown
-        # from docutils import core
-        return formatter
-    except ImportError:
-        return False
+        return settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key]
+    except KeyError:
+        return settings.COMMENTS_XTD_APP_MODEL_OPTIONS.setdefault(
+            'default', _default)

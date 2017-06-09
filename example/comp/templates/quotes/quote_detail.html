@@ -22,15 +22,15 @@
 </div>
 
 <div class="row">
-  <div class="col-lg-offset-3 col-md-offset-3 col-lg-6 col-md-6">  
+  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">  
     <div id="comments">
       {% get_comment_count for object as comment_count %}
       {% if comment_count %}
       <H5 class="text-center">
         {% blocktrans count comment_count=comment_count %}
-        There is {{ comment_count }} comment below.
+        {{ comment_count }} comment.
         {% plural %}
-        There are {{ comment_count }} comments below.
+        {{ comment_count }} comments.
         {% endblocktrans %}
       </H5>
       <hr/>
@@ -49,11 +49,21 @@
       
       {% if comment_count %}
       <hr/>
-      <div id="comment-list">
-        {% render_comment_list for object %}
-      </div>
+      <ul class="media-list" id="comment-tree">
+        {% render_xtdcomment_tree for object allow_feedback show_feedback allow_flagging %}
+      </ul>
       {% endif %}
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script>
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip({'html':true});
+})
+</script>
 {% endblock %}

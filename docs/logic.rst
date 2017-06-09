@@ -1,7 +1,7 @@
 .. _ref-logic:
 
 =============
-Control Logic
+Control logic
 =============
 
 Following is the application control logic described in 4 actions:

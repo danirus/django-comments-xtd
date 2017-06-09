@@ -15,6 +15,7 @@ from django.views.generic import ListView
 
 
 from django_comments.models import CommentFlag
+from django_comments.views.moderation import perform_flag
 from django_comments.views.utils import next_redirect, confirmation_view
 
 from django_comments_xtd import (get_form, comment_was_posted, signals, signed,
@@ -23,7 +24,7 @@ from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment,
                                         MaxThreadLevelExceededException,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
-from django_comments_xtd.utils import send_mail
+from django_comments_xtd.utils import send_mail, has_app_model_option
 
 
 XtdComment = get_comment_model()
@@ -47,7 +48,7 @@ def send_email_confirmation_request(
     confirmation_url = reverse("comments-xtd-confirm", args=[key])
     message_context = {'comment': comment,
                        'confirmation_url': confirmation_url,
-                       'contact': settings.COMMENTS_XTD_FROM_EMAIL,
+                       'contact': settings.COMMENTS_XTD_CONTACT_EMAIL,
                        'site': site}
     # prepare text message
     text_message_template = loader.get_template(text_template)
@@ -118,16 +119,19 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
 comment_was_posted.connect(on_comment_was_posted, sender=TmpXtdComment)
 
 
-def sent(request):
+def sent(request, using=None):
     comment_pk = request.GET.get("c", None)
     # req_ctx = RequestContext(request)
     try:
         comment_pk = int(comment_pk)
         comment = XtdComment.objects.get(pk=comment_pk)
     except (TypeError, ValueError, XtdComment.DoesNotExist):
+        ctype, object_pk = comment_pk.split(":")
+        model = apps.get_model(*ctype.split(".", 1))
+        target = model._default_manager.using(using).get(pk=object_pk)
         template_arg = ["django_comments_xtd/posted.html",
                         "comments/posted.html"]
-        return render(request, template_arg)
+        return render(request, template_arg, {'target': target})
     else:
         if (
                 request.is_ajax() and comment.user and
@@ -286,6 +290,39 @@ def mute(request, key):
 
 @csrf_protect
 @login_required
+def flag(request, comment_id, next=None):
+    """
+    Flags a comment. Confirmation on GET, action on POST.
+
+    Templates: :template:`comments/flag.html`,
+    Context:
+        comment
+            the flagged `comments.comment` object
+    """
+    comment = get_object_or_404(get_comment_model(),
+                                pk=comment_id,
+                                site__pk=get_current_site(request).pk)
+    if not has_app_model_option(comment)['allow_flagging']:
+        ctype = ContentType.objects.get_for_model(comment.content_object)
+        raise Http404("Comments posted to instances of '%s.%s' are not "
+                      "explicitly allowed to receive 'removal suggestion' "
+                      "flags. Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
+                      "setting." % (ctype.app_label, ctype.model))
+    # Flag on POST
+    if request.method == 'POST':
+        perform_flag(request, comment)
+        return next_redirect(request, fallback=next or 'comments-flag-done',
+                             c=comment.pk)
+
+    # Render a form on GET
+    else:
+        return render(request, 'comments/flag.html',
+                      {'comment': comment,
+                       'next': next})
+
+
+@csrf_protect
+@login_required
 def like(request, comment_id, next=None):
     """
     Like a comment. Confirmation on GET, action on POST.
@@ -297,6 +334,12 @@ def like(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=settings.SITE_ID)
+    if not has_app_model_option(comment)['allow_feedback']:
+        ctype = ContentType.objects.get_for_model(comment.content_object)
+        raise Http404("Comments posted to instances of '%s.%s' are not "
+                      "explicitly allowed to receive 'liked it' flags. "
+                      "Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
+                      "setting." % (ctype.app_label, ctype.model))
     # Flag on POST
     if request.method == 'POST':
         perform_like(request, comment)
@@ -305,10 +348,10 @@ def like(request, comment_id, next=None):
                              c=comment.pk)
     # Render a form on GET
     else:
-        already_liked_it = request.user in comment.users_who_liked_it()
+        liked_it = request.user in comment.users_flagging(LIKEDIT_FLAG)
         return render(request, 'django_comments_xtd/like.html',
                       {'comment': comment,
-                       'already_liked_it': already_liked_it,
+                       'already_liked_it': liked_it,
                        'next': next})
 
 
@@ -325,6 +368,12 @@ def dislike(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=settings.SITE_ID)
+    if not has_app_model_option(comment)['allow_feedback']:
+        ctype = ContentType.objects.get_for_model(comment.content_object)
+        raise Http404("Comments posted to instances of '%s.%s' are not "
+                      "explicitly allowed to receive 'disliked it' flags. "
+                      "Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
+                      "setting." % (ctype.app_label, ctype.model))
     # Flag on POST
     if request.method == 'POST':
         perform_dislike(request, comment)
@@ -333,10 +382,10 @@ def dislike(request, comment_id, next=None):
                              c=comment.pk)
     # Render a form on GET
     else:
-        already_disliked_it = request.user in comment.users_who_disliked_it()
+        disliked_it = request.user in comment.users_flagging(DISLIKEDIT_FLAG)
         return render(request, 'django_comments_xtd/dislike.html',
                       {'comment': comment,
-                       'already_disliked_it': already_disliked_it,
+                       'already_disliked_it': disliked_it,
                        'next': next})
 
 
@@ -351,7 +400,8 @@ def perform_like(request, comment):
                                    flag=DISLIKEDIT_FLAG).delete()
     else:
         flag.delete()
-
+    return created
+        
 
 def perform_dislike(request, comment):
     """Actually set the 'Dislikedit' flag on a comment from a request."""
@@ -364,6 +414,7 @@ def perform_dislike(request, comment):
                                    flag=LIKEDIT_FLAG).delete()
     else:
         flag.delete()
+    return created
 
 
 like_done = confirmation_view(
@@ -397,7 +448,9 @@ class XtdCommentListView(ListView):
         content_types = self.get_content_types()
         if content_types is None:
             return None
-        return XtdComment.objects.for_content_types(content_types)
+        return XtdComment.objects.for_content_types(content_types)\
+                                 .filter(is_removed=False)\
+                                 .order_by('submit_date')
 
     def get_context_data(self, **kwargs):
         context = super(XtdCommentListView, self).get_context_data(**kwargs)

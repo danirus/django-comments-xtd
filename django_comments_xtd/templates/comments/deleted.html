@@ -1,0 +1,14 @@
+{% extends "django_comments_xtd/base.html" %}
+{% load i18n %}
+{% load comments_xtd %}
+
+{% block title %}{% trans "Comment removed" %}.{% endblock %}
+
+{% block header %}
+<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+{% endblock %}
+
+{% block content %}
+<h4 class="text-center">{% trans "The comment has been removed." %}</h4>
+<p class="text-center">{% trans "Thank you for taking the time to improve the quality of discussion in our site." %}<p>
+{% endblock %}

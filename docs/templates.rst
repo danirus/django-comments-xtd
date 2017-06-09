@@ -100,7 +100,7 @@ This template is rendered when the user click on the submit button of the form p
    pair: template; liked
 
 ``dislike.html``
---------------
+----------------
 
 This template is rendered when the user clicks on the **dislike** button of a comment.
 
@@ -115,7 +115,7 @@ The context of the template expects:
    pair: template; liked
 
 ``disliked.html``
---------------
+-----------------
 
 This template is rendered when the user click on the submit button of the form presented in the ``dislike.html`` template. The template is meant to thank the user for the feedback. The context for the template doesn't expect any specific object.
 

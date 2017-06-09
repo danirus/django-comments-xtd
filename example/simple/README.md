@@ -1,4 +1,4 @@
-## Simple Demo ##
+## Simple example project ##
 
 The Simple Demo features:
   

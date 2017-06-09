@@ -54,4 +54,6 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 # Define a function to return the user representation. Used by
 # the web API to represent user strings in response objects.
 def username(u): return u.username
+
+
 COMMENTS_XTD_API_USER_REPR = username

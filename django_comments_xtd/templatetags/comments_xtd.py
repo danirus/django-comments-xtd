@@ -306,7 +306,7 @@ class GetXtdCommentTreeNode(Node):
             with_feedback=self.with_feedback,
             user=context['user']
         )
-        context[self.var_name] = di_clist
+        context[self.var_name] = dic_list
         return ''
 
 
@@ -434,7 +434,7 @@ class GetCommentBoxPropsNode(Node):
     def __init__(self, obj):
         self.obj = Variable(obj)
 
-    def render(self, context):        
+    def render(self, context):
         obj = self.obj.resolve(context)
         form = CommentSecurityForm(obj)
         ctype = ContentType.objects.get_for_model(obj)

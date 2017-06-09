@@ -1,13 +1,8 @@
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.http import Http404
-from django.utils.translation import ugettext_lazy as _
 
-from django_comments.models import CommentFlag
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
-from rest_framework.utils.serializer_helpers import ReturnDict
 
 from django_comments_xtd import views
 from django_comments_xtd.api import serializers
@@ -24,7 +19,7 @@ class CommentCreate(generics.CreateAPIView):
             return response
         elif self.resp_dict['code'] in [202, 204, 403]:
             return Response(status=self.resp_dict['code'])
-        
+
     def perform_create(self, serializer):
         self.resp_dict = serializer.save()
 

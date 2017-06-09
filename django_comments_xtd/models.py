@@ -3,7 +3,7 @@ from django.db.models import F, Max, Min, Q
 from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from django_comments.managers import CommentManager
 from django_comments.models import Comment, CommentFlag
@@ -157,7 +157,7 @@ class XtdComment(Comment):
                     new_dict.update({'flagged_count': len(users_flagging)})
                 new_dict.update({'flagged': user in users_flagging})
             return new_dict
-                
+
         dic_list = []
         cur_dict = None
         for obj in queryset:

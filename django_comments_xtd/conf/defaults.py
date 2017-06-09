@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.conf import settings
 
+
 COMMENT_MAX_LENGTH = 3000
 
 # Extra key to salt the XtdCommentForm.
@@ -49,6 +50,8 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
     }
 }
 
-# Define a lambda function to return the user representation. Used by
+
+# Define a function to return the user representation. Used by
 # the web API to represent user strings in response objects.
-COMMENTS_XTD_API_USER_REPR = lambda u: u.username
+def username(u): return u.username
+COMMENTS_XTD_API_USER_REPR = username

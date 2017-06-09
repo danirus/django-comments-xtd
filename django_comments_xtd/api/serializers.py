@@ -4,11 +4,6 @@ try:
 except ImportError:
     from urllib import urlencode
 
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
-
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
@@ -16,7 +11,7 @@ from django.utils import formats
 from django.utils.html import escape
 from django.utils.translation import ugettext as _, activate, get_language
 
-from django_comments import  get_form
+from django_comments import get_form
 from django_comments.models import CommentFlag
 from django_comments.signals import comment_will_be_posted, comment_was_posted
 from rest_framework import serializers
@@ -55,7 +50,7 @@ class WriteCommentSerializer(serializers.Serializer):
                 raise serializers.ValidationError("This field is required")
             else:
                 return (self.request.user.get_full_name() or
-                        request.user.get_username())
+                        self.request.user.get_username())
         return value
 
     def validate_email(self, value):
@@ -86,7 +81,7 @@ class WriteCommentSerializer(serializers.Serializer):
             return serializers.ValidationError(
                 "No object matching content-type %r and object PK %r exists."
                 % (escape(ctype), escape(object_pk)))
-        except (ValueError, ValidationError) as e:
+        except (ValueError, serializers.ValidationError) as e:
             return serializers.ValidationError(
                 "Attempting go get content-type %r and object PK %r exists "
                 "raised %s" % (escape(ctype), escape(object_pk),
@@ -155,7 +150,7 @@ class WriteCommentSerializer(serializers.Serializer):
                                extra_key=settings.COMMENTS_XTD_SALT)
             views.send_email_confirmation_request(resp['comment'], key, site)
             resp['code'] = 204  # Confirmation sent by mail.
-                    
+
         return resp
 
 
@@ -165,9 +160,6 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     user_moderator = serializers.SerializerMethodField()
     user_avatar = serializers.SerializerMethodField()
     submit_date = serializers.SerializerMethodField()
-    # submit_date = serializers.DateTimeField(read_only=True,
-    #                                         format=settings.DATETIME_FORMAT)
-    #                                         # format="%B %-d, %Y, %-I:%M %p")
     parent_id = serializers.IntegerField(default=0, read_only=True)
     level = serializers.IntegerField(read_only=True)
     is_removed = serializers.BooleanField(read_only=True)
@@ -175,13 +167,12 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     allow_reply = serializers.SerializerMethodField()
     permalink = serializers.SerializerMethodField()
     flags = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = XtdComment
         fields = ('id', 'user_name', 'user_url', 'user_moderator',
                   'user_avatar', 'permalink', 'comment', 'submit_date',
-                  'parent_id', 'level', 'is_removed', 'allow_reply', 'flags'
-        )
+                  'parent_id', 'level', 'is_removed', 'allow_reply', 'flags')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs['context']['request']
@@ -192,7 +183,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         print("Language: ", get_language())
         return formats.date_format(obj.submit_date, 'DATETIME_FORMAT',
                                    use_l10n=True)
-        
+
     def get_comment(self, obj):
         if obj.is_removed:
             return _("This comment has been removed.")
@@ -215,21 +206,21 @@ class ReadCommentSerializer(serializers.ModelSerializer):
             'removal': {'active': False, 'count': None},
         }
         users_likedit, users_dislikedit = None, None
-        
+
         if has_app_model_option(obj)['allow_flagging']:
             users_flagging = obj.users_flagging(CommentFlag.SUGGEST_REMOVAL)
             if self.request.user in users_flagging:
                 flags['removal']['active'] = True
             if self.request.user.has_perm("django_comments.can_moderate"):
                 flags['removal']['count'] = len(users_flagging)
- 
+
         if (
                 has_app_model_option(obj)['allow_feedback'] or
                 has_app_model_option(obj)['show_feedback']
         ):
             users_likedit = obj.users_flagging(LIKEDIT_FLAG)
             users_dislikedit = obj.users_flagging(DISLIKEDIT_FLAG)
-            
+
         if has_app_model_option(obj)['allow_feedback']:
             if self.request.user in users_likedit:
                 flags['like']['active'] = True
@@ -243,7 +234,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
                 "%d:%s" % (user.id, settings.COMMENTS_XTD_API_USER_REPR(user))
                 for user in users_dislikedit]
         return flags
-                
+
     def get_allow_reply(self, obj):
         return obj.allow_thread()
 
@@ -254,7 +245,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     def get_permalink(self, obj):
         return obj.get_absolute_url()
-            
+
 
 class FlagSerializer(serializers.ModelSerializer):
     flag_choices = {'like': LIKEDIT_FLAG,

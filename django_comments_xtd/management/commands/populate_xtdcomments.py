@@ -26,7 +26,7 @@ class Command(BaseCommand):
                    "VALUES (%(id)d, %(id)d, %(id)d, 0, 1, 0)")
             cursor.execute(sql % {'table': XtdComment._meta.db_table,
                                   'id': comment.id})
-        
+
     def handle(self, *args, **options):
         total = 0
         using = options['using'] or ['default']

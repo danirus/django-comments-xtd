@@ -401,7 +401,7 @@ def perform_like(request, comment):
     else:
         flag.delete()
     return created
-        
+
 
 def perform_dislike(request, comment):
     """Actually set the 'Dislikedit' flag on a comment from a request."""

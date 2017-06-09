@@ -21,9 +21,9 @@ It extends the once official `django-contrib-comments <https://pypi.python.org/p
 #. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
 #. Fully functional JavaScript plugin using ReactJS, jQuery, Bootstrap, Remarkable and MD5.
 
-Demo site and tests working under officially Django `supported versions <https://www.djangoproject.com/download/#supported-versions>`_:
+Example sites and tests work under officially Django `supported versions <https://www.djangoproject.com/download/#supported-versions>`_:
 
 * Django 1.8, 1.9, 1.10 and 1.11
 * Python 2.7, 3.2, 3.4, 3.5, 3.6
    
-`Read The Docs <http://readthedocs.org/docs/django-comments-xtd/>`_.
+`Read The Docs <http://readthedocs.org/docs/django-comments-xtd/>`_ and enjoy it.

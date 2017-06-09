@@ -82,6 +82,20 @@ It defaults to ``True``.
 
 An example::
 
+     COMMENTS_XTD_FROM_EMAIL = "noreply@yoursite.com"
+
+It defaults to ``settings.DEFAULT_FROM_EMAIL``.
+
+
+.. settings:: COMMENTS_XTD_CONTACT_EMAIL
+
+``COMMENTS_XTD_CONTACT_EMAIL``
+==============================
+
+**Optional. It specifies a **contact mail address** the user could use to get in touch with a helpdesk or support personnel. It's used in both templates, **email_confirmation_request.txt** and **email_confirmation_request.html**, from the **templates/django_comments_xtd** directory.
+
+An example::
+
      COMMENTS_XTD_FROM_EMAIL = "helpdesk@yoursite.com"
 
 It defaults to ``settings.DEFAULT_FROM_EMAIL``.
@@ -181,3 +195,57 @@ An example::
     COMMENTS_XTD_THREADED_EMAILS = False
 
 Defaults to ``True``.
+
+
+.. setting:: COMMENTS_XTD_APP_MODEL_OPTIONS
+
+``COMMENTS_XTD_APP_MODEL_OPTIONS``
+==================================
+
+**Optional**. Allow enabling/disabling commenting options on per **app_label.model** basis. The options available are the following:
+
+ * ``allow_flagging``: Allow registered users to flag comments as inappropriate.
+ * ``allow_feedback``: Allow registered users to like/dislike comments.
+ * ``show_feedback``: Allow django-comments-xtd to report the list of users who liked/disliked the comment. The representation of each user in the list depends on the next setting :setting::`COMMENTS_XTD_API_USER_REPR`.
+
+An example use:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_APP_MODEL_OPTIONS = {
+           'blog.post': {
+               'allow_flagging': True,
+               'allow_feedback': True,
+               'show_feedback': True,
+           }
+       }
+
+Defaults to:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_APP_MODEL_OPTIONS = {
+           'default': {
+               'allow_flagging': False,
+               'allow_feedback': False,
+               'show_feedback': False,
+           }
+       }
+
+       
+.. setting:: COMMENTS_XTD_API_USER_REPR
+
+``COMMENTS_XTD_API_USER_REPR``
+==============================
+
+**Optional**. Function that receives a user object and returns its string representation. It's used to produced the list of users who liked/disliked comments. By default it outputs the username, but it could perfectly return the full name:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
+
+Defaults to:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_API_USER_REPR = lambda u: u.username

@@ -48,7 +48,7 @@ def send_email_confirmation_request(
     confirmation_url = reverse("comments-xtd-confirm", args=[key])
     message_context = {'comment': comment,
                        'confirmation_url': confirmation_url,
-                       'contact': settings.COMMENTS_XTD_FROM_EMAIL,
+                       'contact': settings.COMMENTS_XTD_CONTACT_EMAIL,
                        'site': site}
     # prepare text message
     text_message_template = loader.get_template(text_template)
@@ -302,7 +302,7 @@ def flag(request, comment_id, next=None):
     comment = get_object_or_404(get_comment_model(),
                                 pk=comment_id,
                                 site__pk=get_current_site(request).pk)
-    if not has_app_model_option(comment)['allow_feedback']:
+    if not has_app_model_option(comment)['allow_flagging']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
                       "explicitly allowed to receive 'removal suggestion' "

@@ -12,6 +12,9 @@ COMMENTS_XTD_CONFIRM_EMAIL = True
 # From email address.
 COMMENTS_XTD_FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
 
+# Contact email address.
+COMMENTS_XTD_CONTACT_EMAIL = settings.DEFAULT_FROM_EMAIL
+
 # Maximum Thread Level.
 COMMENTS_XTD_MAX_THREAD_LEVEL = 0
 

@@ -35,7 +35,7 @@ class CommentList(generics.ListAPIView):
         try:
             content_type = ContentType.objects.get_by_natural_key(app_label,
                                                                   model)
-        except ContentType.DoesNotExist as exc:
+        except ContentType.DoesNotExist:
             qs = XtdComment.objects.none()
         else:
             qs = XtdComment.objects.filter(content_type=content_type,

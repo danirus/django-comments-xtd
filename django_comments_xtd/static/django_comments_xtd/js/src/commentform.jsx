@@ -108,7 +108,7 @@ export class CommentForm extends React.Component {
     return (
       <div className={div_cssc}>
         <label htmlFor="id_name" className="control-label col-lg-3 col-md-3">
-          Name
+          {django.gettext("Name")}
         </label>
         <div className="col-lg-7 col-md-7">
           <input type="text" name="name" required id="id_name"
@@ -137,7 +137,7 @@ export class CommentForm extends React.Component {
     return (
       <div className={div_cssc}>
         <label htmlFor="id_email" className="control-label col-lg-3 col-md-3">
-          Mail
+          {django.gettext("Mail")}
         </label>
         <div className="col-lg-7 col-md-7">
           <input type="text" name="email" required id="id_email"
@@ -165,7 +165,7 @@ export class CommentForm extends React.Component {
     return (
       <div className={div_cssc}>
         <label htmlFor="id_url" className="control-label col-lg-3 col-md-3">
-          Link
+          {django.gettext("Link")}
         </label>
         <div className="col-lg-7 col-md-7">
           <input type="text" name="url" id="id_url" value={this.state.url}

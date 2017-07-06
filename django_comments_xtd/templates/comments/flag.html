@@ -40,7 +40,7 @@
     {% with object_absolute_url=comment.content_object.get_absolute_url %}
     {% if object_absolute_url %}
     <p class="text-center">
-      Posted to <a href="{{ object_absolute_url }}">{{ comment.content_object }}</a>
+      {% trans "Posted to "%}&nbsp;<a href="{{ object_absolute_url }}">{{ comment.content_object }}</a>
     </p>
     {% endif %}
     {% endwith %}

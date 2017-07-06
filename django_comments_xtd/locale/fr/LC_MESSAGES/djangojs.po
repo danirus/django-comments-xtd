@@ -1,0 +1,138 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-06 17:59+0200\n"
+"PO-Revision-Date: 2017-07-06 15:15+0053\n"
+"Last-Translator: b'Administrator  <admin@example.com>'\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.7.13\n"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:86
+msgid "moderator"
+msgstr "modérateur"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:117
+msgid "I flagged it as inappropriate"
+msgstr "Je l'ai signalé comme inapproprié"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:126
+msgid "flag comment as inappropriate"
+msgstr "Signaler le commentaire comme inapproprié"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:137
+msgid "remove comment"
+msgstr "Supprimer le commentaire"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:145
+#, javascript-format
+msgid "A user has flagged this comment as inappropriate."
+msgid_plural "%s users have flagged this comment as inappropriate."
+msgstr[0] "Un utilisateur a signalé ce commentaire comme inapproprié."
+msgstr[1] "%s utilisateurs ont signalé ce commentaire comme inapproprié"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:221
+msgid "I like it"
+msgstr "J'aime"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:221
+msgid "I dislike it"
+msgstr "Je n'aime pas"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:284
+msgid "Reply"
+msgstr "Répondre"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:651
+msgid "Your comment"
+msgstr "Votre commentaire"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:682
+msgid "name"
+msgstr "nom"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:689
+msgid "Name"
+msgstr "Nom"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:714
+msgid "mail address"
+msgstr "adresse email"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:715
+msgid "Required for comment verification."
+msgstr "Requis pour la vérification des commentaires."
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:722
+msgid "Mail"
+msgstr "Email"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:751
+msgid "url your name links to (optional)"
+msgstr "Lien à afficher sur votre nom (optionnel)"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:758
+msgid "Link"
+msgstr "Lien"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:775
+msgid "Notify me about follow-up comments"
+msgstr "Avertissez-moi des commentaires suivants"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:827
+msgid "Your comment will be reviewed. Thank your for your patience."
+msgstr "Votre commentaire va être revu. Merci pour votre patience."
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:828
+msgid "Thank you, a comment confirmation request has been sent by mail."
+msgstr ""
+"Merci, une demande de confirmation du commentaire a été envoyé par email."
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:829
+msgid "Sorry, your comment has been rejected."
+msgstr "Désolé, votre commentaire a été rejeté."
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:903
+msgid "Your comment in preview"
+msgstr "Votre commentaire en  aperçu"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:920
+msgid "Now"
+msgstr "Maintenant"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:968
+msgid "preview"
+msgstr "aperçu"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:969
+msgid "send"
+msgstr "envoyer"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:1025
+msgid "Post your comment"
+msgstr "Laissez votre commentaire"
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:1215
+#, javascript-format
+msgid "One comment."
+msgid_plural "%s comments."
+msgstr[0] "Un commentaire."
+msgstr[1] "%s commentaires."
+
+#: static/django_comments_xtd/js/plugin-2.0.0.js:1251
+#, javascript-format
+msgid "There is a new comment."
+msgid_plural "There are %s new comments."
+msgstr[0] "Un nouveau commentaire est disponible."
+msgstr[1] "%s nouveaux commentaires sont disponibles."

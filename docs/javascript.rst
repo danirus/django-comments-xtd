@@ -93,8 +93,8 @@ Webpack will put the bundles in the static directory of django-comments-xtd and 
  
        {% block extra-js %}
        [...]
-       <script src="{% static 'django_comments_xtd/js/vendor-2.0.0.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.0.0.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/vendor-2.0.3.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-2.0.3.js' %}"></script>
        {% endblock extra-js %}
        
 
@@ -115,8 +115,8 @@ Plugin sources live inside the **static** directory of django-comments-xtd:
        │   ├── commentform.jsx
        │   ├── index.js
        │   └── lib.js
-       ├── plugin-1.8.0.js
-       └── vendor-1.8.0.js
+       ├── plugin-2.0.3.js
+       └── vendor-2.0.3.js
        
        1 directory, 7 files
        

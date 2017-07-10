@@ -827,8 +827,8 @@ Now let's edit ``blog/post_detail.html`` and make it look like it follows:
                crossorigin="anonymous"></script>
        <script type="text/javascript"
                src="{% url 'javascript-catalog' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/vendor-2.0.0.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.0.0.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/vendor-2.0.3.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-2.0.3.js' %}"></script>
        {% endblock %}
 
 

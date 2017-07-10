@@ -2,8 +2,15 @@
 
 As of version 1.8.0 of django-comments-xtd, all notable changes to this project will be documented in this file.
 
+## [2.0.3] - 2017-07-10
 
-## [2.0.0] - YYYY-MM-DD
+### Added
+
+* App translation to French.
+* Fixed MANIFEST.in file, so that files with translations are distributed.
+
+
+## [2.0.0] - 2017-06-04
 
 ### Added
 

@@ -37,6 +37,7 @@ LANGUAGE_CODE = 'en'
 LANGUAGES = (
     ('en', 'English'),
     ('es', 'Spanish'),
+    ('fr', 'French'),
 )
 
 SITE_ID = 1

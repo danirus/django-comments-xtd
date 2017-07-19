@@ -110,13 +110,11 @@ Now let Django create the tables for the two new applications:
 
 Be sure that the domain field of the ``Site`` instance points to the correct domain, which for the development server is expected to be  ``localhost:8000``. The value is used to create comment verifications, follow-up cancellations, etc. Edit the site instance in the admin interface in case you were using a different value.
 
-After these simple changes the project is ready to use comments, we just need to modify the blog templates.
-
 
 Comment confirmation
-====================
+--------------------
 
-Before we go any further we need to set up the :setting:`COMMENTS_XTD_SALT` setting. This setting plays an important role during the comment confirmation by mail. It helps obfuscating the comment before the user has approved its publication.
+Before we go any further we need to set up the :setting:`COMMENTS_XTD_SALT` setting. This setting plays an important role during the comment confirmation by mail. It helps obfuscating the comment before the user approves its publication.
 
 It is so because django-comments-xtd does not store comments in the server before they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
 
@@ -153,7 +151,7 @@ Now we will change the blog post detail template to:
  #. List the comments already posted, and
  #. Show the comment form, so that comments can be sent.
 
-By using the :ttag:`get_comment_count` tag we will show the number of comments posted. Change the code around the link element so that it looks like following:
+By using the :ttag:`get_comment_count` tag we will show the number of comments posted. Change the code around the link element to make it look as follows:
 
    .. code-block:: html+django
 
@@ -238,7 +236,7 @@ The setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0`` by default, which 
 Moderation
 ==========
 
-One of the differences between django-comments-xtd and other commenting applications is the fact that by default it requires comment confirmation by email when users are not logged in, a very effective feature to discard unwanted comments. However there might be cases in which you would prefer a different approach. Django Comments Framework comes with `moderation capabilities <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_ included upon which we can build our own comment filtering.
+One of the differences between django-comments-xtd and other commenting applications is the fact that by default it requires comment confirmation by email when users are not logged in, a very effective feature to discard unwanted comments. However there might be cases in which you would prefer a different approach. Django Comments Framework comes with `moderation capabilities <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_ included upon which you can build your own comment filtering.
 
 Comment moderation is often established to fight spam, but may be used for other purposes, like triggering actions based on comment content, rejecting comments based on how old is the subject being commented and whatnot.
 
@@ -321,7 +319,7 @@ django-comments-xtd comes with a **Moderator** class that inherits from ``Commen
 
 Now we can add a domain to the ``BlackListed`` model in the admin_ interface. Or we could download a blacklist_ from Joe Wein's website and load the table with actual spamming domains.
 
-Once we have a ``BlackListed`` domain, try to send a new comment and use an email address with such a domain. Be sure to log out before trying, otherwise django-comments-xtd will use the logged in user credentials and ignore the email given in the comment form. Also be sure to post the comment to a story with a publishing date within the last 365 days, otherwise it will enter in moderation regardless of the mail address domain.
+Once we have a ``BlackListed`` domain, try to send a new comment and use an email address with such a domain. Be sure to log out before trying, otherwise django-comments-xtd will use the logged in user credentials and ignore the email given in the comment form.
 
 Sending a comment with an email address of the blacklisted domain triggers a **Comment post not allowed** response, which would have been a HTTP 400 Bad Request response with ``DEBUG = False`` in production.
 
@@ -416,7 +414,7 @@ In this section we will enable nested comments by modifying :setting:`COMMENTS_X
 
 We can make use of two template tags, :ttag:`render_xtdcomment_tree` and :ttag:`get_xtdcomment_tree`. The former renders a template with the comments while the latter put the comments in a nested data structure in the context of the template.
 
-We will also introduce the setting :setting:`COMMENTS_XTD_LIST_ORDER`, that allows altering the default order in which we get the list of comments. By default comments are ordered by thread and their position inside the thread, which turns out to be in ascending datetime of arrival. In this example we would like to list newer comments first.
+We will also introduce the setting :setting:`COMMENTS_XTD_LIST_ORDER`, that allows altering the default order in which the comments are sorted in the list. By default comments are sorted by thread and their position inside the thread, which turns out to be in ascending datetime of arrival. In this example we will list newer comments first.
 
 Let's start by editing ``tutorial/settings.py`` to set up the maximum thread level to 1 and a comment ordering such that newer comments are retrieve first:
 
@@ -518,7 +516,7 @@ One important requirement to mark comments is that the user flagging must be aut
 Commenting options
 ------------------
 
-As of version 2.0 of django-comments-xtd there is a new setting, :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS`, that must be correctly setup to allow flagging. The purpose is to give an additional level of control about whether users can flag inappropriate comments, like/dislike them, and retrieve the list of users who liked/disliked them.
+As of version 2.0 of django-comments-xtd there is a new setting, :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS`, that must be correctly setup to allow flagging. The purpose is to give an additional level of control about what action users can do on comments: flag them as inappropriate, like/dislike them, and retrieve the list of users who liked/disliked them.
 
 It defaults to:
 
@@ -783,7 +781,7 @@ In the next section we will use the new URL to load the i18n JavaScript catalog.
 Load the plugin
 ---------------
 
-Now let's edit ``blog/post_detail.html`` and make it look like it follows:
+Now let's edit ``blog/post_detail.html`` and make it look as follows:
 
    .. code-block:: html+django
 
@@ -816,7 +814,7 @@ Now let's edit ``blog/post_detail.html`` and make it look like it follows:
            allow_feedback: true,
            show_feedback: true,
            allow_flagging: true,
-           poll_interval: 5000, // In milliseconds.
+           polling_interval: 5000  // In milliseconds.
          };
        </script>
        <script src="https://code.jquery.com/jquery-2.2.4.min.js"
@@ -837,7 +835,7 @@ The blog post page is now ready to handle comments through the JavaScript plugin
  #. Post comments.
  #. Preview comments, with instant preview update while typing.
  #. Reply comment in the same page, with instant preview while typing.
- #. Notifications of new incoming comments using active polling (override *poll_interval* parameter, see the content of first *<script>* tag in the code above).
+ #. Notifications of new incoming comments using active polling (override *polling_interval* parameter, see the content of first *<script>* tag in the code above).
  #. Button to reload the tree of comments, highlighting new comments (see image below).
  #. Immediate like/dislike actions.
 

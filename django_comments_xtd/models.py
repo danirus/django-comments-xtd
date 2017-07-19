@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import F, Max, Min, Q
 from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
+from django.core import signing
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
@@ -221,7 +222,7 @@ class TmpXtdComment(dict):
             return self.xtd_comment._get_pk_val()
         else:
             content_type = "%s.%s" % self.content_type.natural_key()
-            return "%s:%s" % (content_type, self.object_pk)
+            return signing.dumps("%s:%s" % (content_type, self.object_pk))
 
     def __setstate__(self, state):
         ct_key = state.pop('content_type_key')

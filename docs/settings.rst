@@ -87,7 +87,7 @@ An example::
 It defaults to ``settings.DEFAULT_FROM_EMAIL``.
 
 
-.. settings:: COMMENTS_XTD_CONTACT_EMAIL
+.. setting:: COMMENTS_XTD_CONTACT_EMAIL
 
 ``COMMENTS_XTD_CONTACT_EMAIL``
 ==============================

@@ -2,6 +2,15 @@
 
 As of version 1.8.0 of django-comments-xtd, all notable changes to this project will be documented in this file.
 
+
+## [2.0.4] - 2017-07-19
+
+### Changed
+
+* Use `django.core.signing` with temporary comment passed in URL redirection.
+* Fix mistakes in documentation.
+
+
 ## [2.0.3] - 2017-07-10
 
 ### Added

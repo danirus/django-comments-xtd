@@ -5,6 +5,7 @@ from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
+from django.core import signing
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
@@ -121,12 +122,12 @@ comment_was_posted.connect(on_comment_was_posted, sender=TmpXtdComment)
 
 def sent(request, using=None):
     comment_pk = request.GET.get("c", None)
-    # req_ctx = RequestContext(request)
     try:
         comment_pk = int(comment_pk)
         comment = XtdComment.objects.get(pk=comment_pk)
     except (TypeError, ValueError, XtdComment.DoesNotExist):
-        ctype, object_pk = comment_pk.split(":")
+        value = signing.loads(comment_pk)
+        ctype, object_pk = value.split(":")
         model = apps.get_model(*ctype.split(".", 1))
         target = model._default_manager.using(using).get(pk=object_pk)
         template_arg = ["django_comments_xtd/posted.html",

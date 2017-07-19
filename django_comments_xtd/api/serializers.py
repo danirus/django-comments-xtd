@@ -180,7 +180,6 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     def get_submit_date(self, obj):
         activate(get_language())
-        print("Language: ", get_language())
         return formats.date_format(obj.submit_date, 'DATETIME_FORMAT',
                                    use_l10n=True)
 

@@ -53,5 +53,6 @@ setup(
         'Natural Language :: English',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: News/Diary',
     ],
-    test_suite="dummy"
+    test_suite="dummy",
+    zip_safe=False
 )

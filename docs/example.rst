@@ -29,14 +29,21 @@ The recommended way to run the demo sites is in its own `virtualenv <http://www.
     $ virtualenv venv
     $ source venv/bin/activate
     (venv)$ git clone git://github.com/danirus/django-comments-xtd.git
-    (venv)$ cd django-comments-xtd/example/[simple|custom|comp]
-    (venv)$ pip install django-markdown2
+    (venv)$ cd django-comments-xtd/
+    (venv)$ python setup.py install
+    (venv)$ npm install
+    (venv)$ webpack -p
+    (venv)$ cd django_comments_xtd
+    (venv)$ django-admin compilemessages -l fr
+    (venv)$ django-admin compilemessages -l es
+    (venv)$ cd ../example/[simple|custom|comp]
+    (venv)$ pip install -r requirements.txt
     (venv)$ python manage.py migrate
     (venv)$ python manage.py loaddata ../fixtures/auth.json
     (venv)$ python manage.py loaddata ../fixtures/sites.json
     (venv)$ python manage.py loaddata ../fixtures/articles.json
     (venv)$ # The **comp** example project needs quotes.json too:
-    (venv)$ python manage.py loaddata ../fixtures/quotes.json    
+    (venv)$ python manage.py loaddata ../fixtures/quotes.json
     (venv)$ python manage.py runserver
 
 Example projects make use of the package `django-markdown2 <https://github.com/svetlyak40wt/django-markdown2>`_, which in turn depends on `Markdown2 <https://github.com/trentm/python-markdown2>`_, to render comments using `Markdown <https://en.wikipedia.org/wiki/Markdown>`_ syntax.

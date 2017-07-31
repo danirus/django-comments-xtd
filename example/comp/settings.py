@@ -163,6 +163,11 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
         'allow_flagging': True,
         'allow_feedback': True,
         'show_feedback': True,
+    },
+    'quotes.quote': {
+        'allow_flagging': True,
+        'allow_feedback': True,
+        'show_feedback': True,
     }
 }
 # COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()

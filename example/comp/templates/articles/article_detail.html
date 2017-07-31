@@ -4,7 +4,9 @@
 {% load comments %}
 {% load comments_xtd %}
 
-{% block title %}{{ block.super }}&nbsp;&raquo;&nbsp;joder ostias{% endblock %}
+{% block title %}
+{{ block.super }}&nbsp;&raquo;&nbsp;{{ object.title}}
+{% endblock %}
 
 {% block menu-class-articles %}active{% endblock %}
 
@@ -38,9 +40,9 @@
     allow_feedback: true,
     show_feedback: true,
     allow_flagging: true,
-    poll_interval: 0,
+    polling_interval: 5000,
   };
 </script>
-<script src="{% static 'django_comments_xtd/js/vendor-2.0.0.js' %}"></script>
-<script src="{% static 'django_comments_xtd/js/plugin-2.0.0.js' %}"></script>
+<script src="{% static 'django_comments_xtd/js/vendor-2.0.5.js' %}"></script>
+<script src="{% static 'django_comments_xtd/js/plugin-2.0.5.js' %}"></script>
 {% endblock %}

@@ -1,0 +1,2 @@
+django-markdown2
+django-rosetta

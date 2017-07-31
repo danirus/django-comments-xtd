@@ -1,6 +1,6 @@
 include AUTHORS
 include LICENSE
-include CHANGELOG
+include CHANGELOG.md
 include tox.ini
 include package.json
 include webpack.config.js

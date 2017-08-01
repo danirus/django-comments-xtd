@@ -32,7 +32,7 @@ The recommended way to run the demo sites is in its own `virtualenv <http://www.
     (venv)$ cd django-comments-xtd/
     (venv)$ python setup.py install
     (venv)$ npm install
-    (venv)$ webpack -p
+    (venv)$ node_modules/webpack/bin/webpack.js -p
     (venv)$ cd django_comments_xtd
     (venv)$ django-admin compilemessages -l fr
     (venv)$ django-admin compilemessages -l es

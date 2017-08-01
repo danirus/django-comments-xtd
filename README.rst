@@ -25,5 +25,7 @@ Example sites and tests work under officially Django `supported versions <https:
 
 * Django 1.8, 1.9, 1.10 and 1.11
 * Python 2.7, 3.2, 3.4, 3.5, 3.6
-   
+
+Checkout the Docker image `danirus/django-comments-xtd-demo <https://hub.docker.com/r/danirus/django-comments-xtd-demo/>`_.
+  
 `Read The Docs <http://readthedocs.org/docs/django-comments-xtd/>`_ and enjoy it.

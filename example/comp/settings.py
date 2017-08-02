@@ -13,6 +13,8 @@ ADMINS = (
     ('Alice Bloggs', 'alice@example.com'),
 )
 
+ALLOWED_HOSTS = ['*']
+
 MANAGERS = ADMINS
 
 DATABASES = {

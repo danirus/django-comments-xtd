@@ -20,7 +20,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'comp', 'db.sqlite3'),
     }
 }
 
@@ -63,6 +63,8 @@ USE_I18N = True
 # ADMIN_MEDIA_PREFIX = '/media/'
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -108,7 +110,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'comp.urls'
 
 
 INSTALLED_APPS = (

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.template import Library, TemplateSyntaxError
 from django.utils.translation import ugettext_lazy as _
 

@@ -101,7 +101,7 @@ class XtdComment(Comment):
             min_order = qc_ge_level.aggregate(Min('order'))['order__min']
             XtdComment.objects.filter(thread_id=parent.thread_id,
                                       order__gte=min_order)\
-                              .update(order=F('order')+1)
+                              .update(order=F('order') + 1)
             self.order = min_order
         else:
             max_order = qc_eq_thread.aggregate(Max('order'))['order__max']

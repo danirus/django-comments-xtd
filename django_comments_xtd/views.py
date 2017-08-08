@@ -461,7 +461,7 @@ class XtdCommentListView(ListView):
             prange = [n for n in context['paginator'].page_range]
             if len(prange) > self.page_range:
                 if len(prange[index:]) >= self.page_range:
-                    prange = prange[index:(index+self.page_range)]
+                    prange = prange[index:(index + self.page_range)]
                 else:
                     prange = prange[-(self.page_range):]
             context['page_range'] = prange

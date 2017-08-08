@@ -184,7 +184,7 @@ def render_last_xtdcomments(parser, token):
         token_using = tokens.index("using")
         content_types = _get_content_types(tokens[0], tokens[3:token_using])
         try:
-            template = tokens[token_using+1].strip('" ')
+            template = tokens[token_using + 1].strip('" ')
         except IndexError:
             raise TemplateSyntaxError("Last argument in %r tag must be a "
                                       "relative template path" % tokens[0])

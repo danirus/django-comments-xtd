@@ -15,9 +15,9 @@ class XtdCommentsAdmin(CommentsAdmin):
     list_display_links = ('cid',)
     list_filter = ('content_type', 'is_public', 'is_removed', 'followup')
     fieldsets = (
-        (None,       {'fields': ('content_type', 'object_pk', 'site')}),
-        ('Content',  {'fields': ('user', 'user_name', 'user_email',
-                                 'user_url', 'comment', 'followup')}),
+        (None, {'fields': ('content_type', 'object_pk', 'site')}),
+        ('Content', {'fields': ('user', 'user_name', 'user_email',
+                                'user_url', 'comment', 'followup')}),
         ('Metadata', {'fields': ('submit_date', 'ip_address',
                                  'is_public', 'is_removed')}),
     )

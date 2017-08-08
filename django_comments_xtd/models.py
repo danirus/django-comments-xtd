@@ -36,7 +36,7 @@ class MaxThreadLevelExceededException(Exception):
 
 class XtdCommentManager(CommentManager):
 
-    def for_app_models(self, *args, site=None):
+    def for_app_models(self, *args, site=None):  # NOQA
         """Return XtdComments for pairs "app.model" given in args"""
         content_types = []
         for app_model in args:

@@ -35,7 +35,8 @@ class XtdCommentCountNode(Node):
     def __init__(self, as_varname, content_types):
         """Class method to parse get_xtdcomment_list and return a Node."""
         self.as_varname = as_varname
-        self.qs = XtdComment.objects.for_content_types(content_types)
+        self.qs = XtdComment.objects.for_content_types(content_types,
+                                                       site=settings.SITE_ID)
 
     def render(self, context):
         context[self.as_varname] = self.qs.count()
@@ -95,8 +96,10 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
         if not isinstance(self.count, int):
             self.count = int(self.count.resolve(context))
 
-        self.qs = XtdComment.objects.for_content_types(
-            self.content_types).order_by('submit_date')[:self.count]
+        self.qs = XtdComment.objects\
+                            .for_content_types(self.content_types,
+                                               site=settings.SITE_ID)\
+                            .order_by('submit_date')[:self.count]
 
         strlist = []
         context_dict = context.flatten()
@@ -126,8 +129,10 @@ class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
     def render(self, context):
         if not isinstance(self.count, int):
             self.count = int(self.count.resolve(context))
-        self.qs = XtdComment.objects.for_content_types(
-            self.content_types)[:self.count]
+        self.qs = XtdComment.objects\
+                            .for_content_types(self.content_types,
+                                               site=settings.SITE_ID)\
+                            .order_by('submit_date')[:self.count]
         context[self.as_varname] = self.qs
         return ''
 

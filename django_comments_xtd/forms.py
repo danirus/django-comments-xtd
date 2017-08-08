@@ -49,7 +49,7 @@ class XtdCommentForm(CommentForm):
         return TmpXtdComment
 
     def get_comment_create_data(self, site_id=None):
-        data = super(CommentForm, self).get_comment_create_data()
+        data = super(CommentForm, self).get_comment_create_data(site_id=site_id)
         ctype = data.get('content_type')
         object_pk = data.get('object_pk')
         model = apps.get_model(ctype.app_label, ctype.model)

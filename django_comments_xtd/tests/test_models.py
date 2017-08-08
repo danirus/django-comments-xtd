@@ -18,46 +18,72 @@ class ArticleBaseTestCase(DjangoTestCase):
 
 
 class XtdCommentManagerTestCase(ArticleBaseTestCase):
-    def test_for_app_models(self):
-        # there is no comment posted yet to article_1 nor article_2
-        count = XtdComment.objects.for_app_models("tests.article").count()
-        self.assert_(count == 0)
+    def setUp(self):
+        super(XtdCommentManagerTestCase, self).setUp()
+        self.article_ct = ContentType.objects.get(app_label="tests",
+                                                  model="article")
+        self.site1 = Site.objects.get(pk=1)
+        self.site2 = Site.objects.create(domain='site2.com', name='site2.com')
 
-        article_ct = ContentType.objects.get(app_label="tests", model="article")
-        site = Site.objects.get(pk=1)
-
-        # post one comment to article_1
-        XtdComment.objects.create(content_type=article_ct,
+    def post_comment_1(self):
+        XtdComment.objects.create(content_type=self.article_ct,
                                   object_pk=self.article_1.id,
                                   content_object=self.article_1,
-                                  site=site,
+                                  site=self.site1,
                                   comment="just a testing comment",
                                   submit_date=datetime.now())
 
-        count = XtdComment.objects.for_app_models("tests.article").count()
-        self.assert_(count == 1)
-
-        # post one comment to article_2
-        XtdComment.objects.create(content_type=article_ct,
+    def post_comment_2(self):
+        XtdComment.objects.create(content_type=self.article_ct,
                                   object_pk=self.article_2.id,
                                   content_object=self.article_2,
-                                  site=site,
+                                  site=self.site1,
                                   comment="yet another comment",
                                   submit_date=datetime.now())
 
-        count = XtdComment.objects.for_app_models("tests.article").count()
-        self.assert_(count == 2)
-
-        # post a second comment to article_2
-        XtdComment.objects.create(content_type=article_ct,
+    def post_comment_3(self):
+        XtdComment.objects.create(content_type=self.article_ct,
                                   object_pk=self.article_2.id,
                                   content_object=self.article_2,
-                                  site=site,
+                                  site=self.site1,
                                   comment="and another one",
                                   submit_date=datetime.now())
 
+    def post_comment_4(self):
+        XtdComment.objects.create(content_type=self.article_ct,
+                                  object_pk=self.article_1.id,
+                                  content_object=self.article_1,
+                                  site=self.site2,
+                                  comment="just a testing comment in site2",
+                                  submit_date=datetime.now())
+
+    def test_for_app_models(self):
+        # there is no comment posted yet to article_1 nor article_2
         count = XtdComment.objects.for_app_models("tests.article").count()
-        self.assert_(count == 3)
+        self.assertEqual(count, 0)
+        self.post_comment_1()
+        count = XtdComment.objects.for_app_models("tests.article").count()
+        self.assertEqual(count, 1)
+        self.post_comment_2()
+        count = XtdComment.objects.for_app_models("tests.article").count()
+        self.assertEqual(count, 2)
+        self.post_comment_3()
+        count = XtdComment.objects.for_app_models("tests.article").count()
+        self.assertEqual(count, 3)
+        self.post_comment_4()
+        count = XtdComment.objects.for_app_models("tests.article").count()
+        self.assertEqual(count, 4)
+
+    def test_multi_site_for_app_models(self):
+        self.post_comment_1()  # To site1.
+        self.post_comment_4()  # To site2.
+        count_site1 = XtdComment.objects.for_app_models("tests.article",
+                                                        site=self.site1).count()
+        self.assertEqual(count_site1, 1)
+        count_site2 = XtdComment.objects.for_app_models("tests.article",
+                                                        site=self.site2).count()
+        self.assertEqual(count_site2, 1)
+
 
 # In order to test methods 'save' and '_calculate_thread_data', simulate the
 # following threads, in order of arrival:

@@ -301,8 +301,7 @@ def flag(request, comment_id, next=None):
             the flagged `comments.comment` object
     """
     comment = get_object_or_404(get_comment_model(),
-                                pk=comment_id,
-                                site__pk=get_current_site(request).pk)
+                                pk=comment_id, site__pk=settings.SITE_ID)
     if not has_app_model_option(comment)['allow_flagging']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
@@ -449,9 +448,11 @@ class XtdCommentListView(ListView):
         content_types = self.get_content_types()
         if content_types is None:
             return None
-        return XtdComment.objects.for_content_types(content_types)\
-                                 .filter(is_removed=False)\
-                                 .order_by('submit_date')
+        return XtdComment.objects\
+                         .for_content_types(content_types,
+                                            site=settings.SITE_ID)\
+                         .filter(is_removed=False)\
+                         .order_by('submit_date')
 
     def get_context_data(self, **kwargs):
         context = super(XtdCommentListView, self).get_context_data(**kwargs)

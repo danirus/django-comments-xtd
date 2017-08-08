@@ -36,17 +36,20 @@ class MaxThreadLevelExceededException(Exception):
 
 class XtdCommentManager(CommentManager):
 
-    def for_app_models(self, *args):
+    def for_app_models(self, *args, site=None):
         """Return XtdComments for pairs "app.model" given in args"""
         content_types = []
         for app_model in args:
             app, model = app_model.split(".")
             content_types.append(ContentType.objects.get(app_label=app,
                                                          model=model))
-        return self.for_content_types(content_types)
+        return self.for_content_types(content_types, site=site)
 
-    def for_content_types(self, content_types):
-        qs = self.get_queryset().filter(content_type__in=content_types)\
+    def for_content_types(self, content_types, site=None):
+        filter_fields = {'content_type__in': content_types}
+        if site is not None:
+            filter_fields['site'] = site
+        qs = self.get_queryset().filter(**filter_fields)\
                                 .reverse()
         return qs
 

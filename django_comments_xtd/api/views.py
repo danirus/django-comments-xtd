@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from django_comments_xtd import views
 from django_comments_xtd.api import serializers
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import XtdComment
 
 
@@ -40,6 +41,7 @@ class CommentList(generics.ListAPIView):
         else:
             qs = XtdComment.objects.filter(content_type=content_type,
                                            object_pk=int(object_pk_arg),
+                                           site__pk=settings.SITE_ID,
                                            is_public=True)
         return qs
 

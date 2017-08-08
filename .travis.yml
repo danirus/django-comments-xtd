@@ -36,4 +36,4 @@ install:
 script:
  - env | sort
  - tox -e $TOX_ENV
- - flake8 --show-source --max-line-length=80 --exclude=.tox,docs,django_comments_xtd/tests,django_comments_xtd/__init__.py,django_comments_xtd/migrations django_comments_xtd/
+ - flake8 --show-source --max-line-length=80 --ignore=E999 --exclude=.tox,docs,django_comments_xtd/tests,django_comments_xtd/__init__.py,django_comments_xtd/migrations django_comments_xtd/

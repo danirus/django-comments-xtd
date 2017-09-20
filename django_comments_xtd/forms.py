@@ -25,6 +25,7 @@ class XtdCommentForm(CommentForm):
             followup_suffix = ''
         super(CommentForm, self).__init__(*args, **kwargs)
         self.fields['name'] = forms.CharField(
+            label=_("Name"),
             widget=forms.TextInput(attrs={'placeholder': _('name'),
                                           'class': 'form-control'}))
         self.fields['email'] = forms.EmailField(

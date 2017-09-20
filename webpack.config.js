@@ -12,7 +12,7 @@ module.exports = {
     plugin: path.resolve(SOURCE_DIR, 'index.js')
   },
   output: {
-    filename: '[name]-2.0.6.js',
+    filename: '[name]-2.0.7.js',
     path: STATIC_DIR
   },
   plugins: [

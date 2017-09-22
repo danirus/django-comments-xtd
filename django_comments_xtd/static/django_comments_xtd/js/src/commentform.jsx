@@ -25,7 +25,7 @@ export class CommentForm extends React.Component {
     this.handle_submit = this.handle_submit.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
     this.reset_form = this.reset_form.bind(this);
-    this.fhelp = <span className="help-block">This field is required.</span>;
+    this.fhelp = <span className="help-block">{django.gettext("This field is required.")}</span>;
   }
 
   handle_input_change(event) {

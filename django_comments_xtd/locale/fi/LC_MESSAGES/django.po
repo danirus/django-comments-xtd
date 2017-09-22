@@ -1,0 +1,348 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-09-22 16:28+0300\n"
+"PO-Revision-Date: 2017-09-22 15:12+0053\n"
+"Last-Translator: b'Administrator  <admin@example.com>'\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.7.13\n"
+
+#: api/serializers.py:188 templates/comments/list.html:16
+#: templates/django_comments_xtd/comment.html:15
+#: templates/django_comments_xtd/comment_tree.html:33
+msgid "This comment has been removed."
+msgstr "Tämä kommentti on poistettu"
+
+#: forms.py:13
+msgid "Notify me about follow-up comments"
+msgstr "Ilmoita minulle uusista kommenteista"
+
+#: forms.py:28
+msgid "Name"
+msgstr ""
+
+#: forms.py:29
+msgid "name"
+msgstr "nimi"
+
+#: forms.py:32
+msgid "Mail"
+msgstr "Sähköposti"
+
+#: forms.py:32
+msgid "Required for comment verification"
+msgstr "Tarvitaan kommentin vahvistukseen"
+
+#: forms.py:33
+msgid "mail address"
+msgstr "sähköpostiosoite"
+
+#: forms.py:36
+msgid "Link"
+msgstr "Linkki"
+
+#: forms.py:38
+msgid "url your name links to (optional)"
+msgstr "verkko-osoite johon nimimerkkisi linkitetään (vapaaehtoinen)"
+
+#: forms.py:41
+msgid "Your comment"
+msgstr "Kommenttisi"
+
+#: models.py:69
+msgid "Notify follow-up comments"
+msgstr "Ilmoita jatkokommenteista"
+
+#: templates/comments/delete.html:5
+msgid "Remove comment"
+msgstr "Poista kommentti"
+
+#: templates/comments/delete.html:14
+msgid "Remove this comment?"
+msgstr "Poistetaanko tämä kommentti?"
+
+#: templates/comments/delete.html:15
+msgid ""
+"As a moderator you can delete comments. Deleting a comment does not remove "
+"it from the site, only prevents your website from showing the text. Click on "
+"the remove button to delete the following comment:"
+msgstr ""
+"Moderaattorina voit poistaa kommentteja. Kommentin poistaminen ei poista "
+"sitä muistista, sitä ei vain näytetä käyttäjille. Klikkaa poistopainiketta "
+"piilottaaksesi tämän kommentin:"
+
+#: templates/comments/delete.html:51
+msgid "Remove"
+msgstr "Poista"
+
+#: templates/comments/deleted.html:5
+msgid "Comment removed"
+msgstr "Kommentti poistettu"
+
+#: templates/comments/deleted.html:12
+msgid "The comment has been removed."
+msgstr "Tämä kommentti on poistettu"
+
+#: templates/comments/deleted.html:13 templates/comments/flagged.html:13
+msgid ""
+"Thank you for taking the time to improve the quality of discussion in our "
+"site."
+msgstr "Kiitos että käytit aikaasi keskustelun tason parantamiseen."
+
+#: templates/comments/flag.html:5
+msgid "Flag comment"
+msgstr "Merkkaa kommentti"
+
+#: templates/comments/flag.html:12
+msgid "Flag this comment?"
+msgstr "Merkataanko tämä kommentti?"
+
+#: templates/comments/flag.html:13
+msgid ""
+"Click on the flag button to mark the following comment as inappropriate."
+msgstr ""
+"Merkkauspainikkeella voit ilmoittaa seuraavan kommentin sopimattomaksi."
+
+#: templates/comments/flag.html:43
+#: templates/django_comments_xtd/comment.html:11
+#: templates/django_comments_xtd/dislike.html:47
+#: templates/django_comments_xtd/like.html:47
+msgid "Posted to "
+msgstr "Kommentin kohde"
+
+#: templates/comments/flag.html:58
+msgid "Flag"
+msgstr "Merkkaa"
+
+#: templates/comments/flag.html:59
+#: templates/django_comments_xtd/dislike.html:73
+#: templates/django_comments_xtd/like.html:73
+msgid "cancel"
+msgstr "peruuta"
+
+#: templates/comments/flagged.html:5
+msgid "Comment flagged"
+msgstr "Merkattu kommentti"
+
+#: templates/comments/flagged.html:12
+msgid "The comment has been flagged."
+msgstr "Kommentti on merkattu"
+
+#: templates/comments/list.html:23
+#: templates/django_comments_xtd/comment_tree.html:42
+msgid "Reply"
+msgstr "Vastaa"
+
+#: templates/comments/posted.html:5
+msgid "Comment confirmation requested."
+msgstr "Kommentin vahvistusta pyydetty"
+
+#: templates/comments/posted.html:7
+msgid ""
+"A confirmation message has been sent to your\n"
+"  email address. Please, click on the link in the message to confirm\n"
+"  your comment."
+msgstr ""
+"Vahvistusviesti on lähetetty sähköpostiosoitteeseesi. Ole hyvä ja klikkaa "
+"sähköpostissa olevaa linkkiä kommentin julkaisua varten."
+
+#: templates/comments/preview.html:5 templates/comments/preview.html:9
+msgid "Preview your comment"
+msgstr "Esikatsele kommenttiasi"
+
+#: templates/comments/preview.html:11
+msgid "Preview your comment for:"
+msgstr "Esikatsele vastaustasi:"
+
+#: templates/comments/preview.html:22
+msgid "Empty comment."
+msgstr "Tyhjä kommentti."
+
+#: templates/django_comments_xtd/comment_list.html:8
+msgid "List of comments"
+msgstr "Kommenttilista"
+
+#: templates/django_comments_xtd/comment_tree.html:14
+msgid "moderator"
+msgstr "moderaattori"
+
+#: templates/django_comments_xtd/comment_tree.html:14
+msgid "comment permalink"
+msgstr "kommentin linkki"
+
+#: templates/django_comments_xtd/comment_tree.html:18
+msgid "comment flagged"
+msgstr "kommentti merkattu"
+
+#: templates/django_comments_xtd/comment_tree.html:21
+msgid "flag comment"
+msgstr "merkkaa kommentti"
+
+#: templates/django_comments_xtd/comment_tree.html:24
+msgid "remove comment"
+msgstr "poista kommentti"
+
+#: templates/django_comments_xtd/comment_tree.html:26
+#, python-format
+msgid "A user has flagged this comment as inappropriate."
+msgid_plural "%(counter)s users have flagged this comment as inappropriate."
+msgstr[0] "Yksi käyttäjä on merkannut tämän kommentin sopimattomaksi"
+msgstr[1] "%(counter)s käyttäjää on merkannut tämän kommentin sopimattomaksi"
+
+#: templates/django_comments_xtd/discarded.html:4
+msgid "Comment discarded"
+msgstr "Kommentti peruutettu"
+
+#: templates/django_comments_xtd/discarded.html:7
+msgid "Comment automatically discarded"
+msgstr "Kommentti automaattisesti peruutettu"
+
+#: templates/django_comments_xtd/discarded.html:8
+msgid "Sorry, your comment has been automatically discarded"
+msgstr "Kommenttisi on automaattisesti hylätty"
+
+#: templates/django_comments_xtd/dislike.html:5
+#: templates/django_comments_xtd/like.html:5
+msgid "Confirm your opinion"
+msgstr "Vahvista kantasi"
+
+#: templates/django_comments_xtd/dislike.html:14
+msgid "You didn't like this comment, do you want to change it?"
+msgstr "Et tykännyt tästä kommentista, haluatko vaihtaa kantaasi?"
+
+#: templates/django_comments_xtd/dislike.html:16
+msgid "Do you dislike this comment?"
+msgstr "Etkö tykkää tästä kommentista?"
+
+#: templates/django_comments_xtd/dislike.html:19
+#: templates/django_comments_xtd/like.html:19
+msgid "Please, confirm your opinion about the comment."
+msgstr "Ole hyvä, vahvista kantasi tästä kommentista."
+
+#: templates/django_comments_xtd/dislike.html:60
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your negative "
+"opinion on this comment."
+msgstr ""
+"Paina peru-painiketta jos haluat peruuttaa negatiivisen kantasi tästä "
+"kommentista."
+
+#: templates/django_comments_xtd/dislike.html:69
+#: templates/django_comments_xtd/like.html:69
+msgid "Withdraw"
+msgstr "Peru"
+
+#: templates/django_comments_xtd/dislike.html:71
+msgid "I dislike it"
+msgstr "En pidä"
+
+#: templates/django_comments_xtd/disliked.html:4
+msgid "You disliked the comment"
+msgstr "Et pitänyt tästä kommentista"
+
+#: templates/django_comments_xtd/disliked.html:7
+#: templates/django_comments_xtd/liked.html:7
+msgid "Thanks for taking the time to participate."
+msgstr "Kiitos osallistumisestasi"
+
+#: templates/django_comments_xtd/email_followup_comment.txt:4
+msgid "There is a new comment following up yours."
+msgstr "Kommenttisi jälkeen on tullut uusi kommentti."
+
+#: templates/django_comments_xtd/email_followup_comment.txt:20
+msgid "Kind regards"
+msgstr "Parhain terveisin"
+
+#: templates/django_comments_xtd/like.html:14
+msgid "You liked this comment, do you want to change it?"
+msgstr "Tykkäsit tästä kommentista, haluatko perua tykkäyksen?"
+
+#: templates/django_comments_xtd/like.html:16
+msgid "Do you like this comment?"
+msgstr "Tykkäsitkö tästä kommentista?"
+
+#: templates/django_comments_xtd/like.html:60
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your positive "
+"opinion on this comment."
+msgstr ""
+"Paina peru-painiketta jos haluat peruuttaa positiivisen kantasi tästä "
+"kommentista."
+
+#: templates/django_comments_xtd/like.html:71
+msgid "I like it"
+msgstr "Tykkään"
+
+#: templates/django_comments_xtd/liked.html:4
+msgid "Your opinion is appreciated"
+msgstr "Kiitos kannanotostasi"
+
+#: templates/django_comments_xtd/moderated.html:4
+msgid "Comment requires approval"
+msgstr "Kommentti pitää hyväksyä"
+
+#: templates/django_comments_xtd/moderated.html:7
+msgid "Comment in moderation"
+msgstr "Kommentti on hyväksyttävänä"
+
+#: templates/django_comments_xtd/moderated.html:9
+msgid ""
+"\n"
+"  Your comment is in moderation.<br/>\n"
+"  It has to be reviewed before being published.<br/>\n"
+"  Thank you for your patience and understanding.\n"
+"  "
+msgstr ""
+"\n"
+"Kommenttisi on hyväksyttävänä. <br/>Se pitää tarkistaa ennen julkaisua"
+
+#: templates/django_comments_xtd/moderated.html:17
+#, python-format
+msgid ""
+"\n"
+"  Go back to <a href=\"%(content_object_url)s\">%(content_object_str)s</a>\n"
+"  "
+msgstr ""
+"\n"
+"Palaa takaisin <a href=\"%(content_object_url)s\">%(content_object_str)s</a>"
+
+#: templates/django_comments_xtd/muted.html:4
+msgid "Comment thread muted"
+msgstr "Hiljennetty kommenttiketju"
+
+#: templates/django_comments_xtd/muted.html:7
+msgid "Comment thread has been muted"
+msgstr "Kommenttiketju on hiljennetty"
+
+#: templates/django_comments_xtd/muted.html:9
+msgid "You will no longer receive email notifications for comments sent to"
+msgstr ""
+"Sinulle ei enää lähetetä sähköpostiherätteitä kommenteista jotka on lähetetty"
+
+#: templates/django_comments_xtd/reply.html:6
+msgid "Comment reply"
+msgstr "Vastaus kommenttiin"
+
+#: templates/django_comments_xtd/reply.html:13
+msgid "Reply to comment"
+msgstr "Vastaa kommenttiin"
+
+#: views.py:48
+msgid "comment confirmation request"
+msgstr "kommentin vahvistuspyyntö"
+
+#: views.py:209
+msgid "new comment posted"
+msgstr "uusi kommentti julkaistu"

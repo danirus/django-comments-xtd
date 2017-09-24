@@ -1,8 +1,8 @@
 from django.conf.urls import url
 from django.views.generic import ListView, DateDetailView
 
-from comp.quotes.models import Quote
-from comp.quotes.views import QuoteDetailView
+from comp.extra.quotes.models import Quote
+from comp.extra.quotes.views import QuoteDetailView
 
 
 urlpatterns = [

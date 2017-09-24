@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^articles/', include('comp.articles.urls')),
-    url(r'^quotes/', include('comp.quotes.urls')),
+    url(r'^quotes/', include('comp.extra.quotes.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),
     url(r'^comments/$', XtdCommentListView.as_view(
         content_types=["articles.article", "quotes.quote"],

@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.views.generic import DetailView
 
-from comp.quotes.models import Quote
+from comp.extra.quotes.models import Quote
 
 
 class QuoteDetailView(DetailView):

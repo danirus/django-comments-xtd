@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from comp.quotes.models import Quote
+from comp.extra.quotes.models import Quote
 
 class QuoteAdmin(admin.ModelAdmin):
     list_display  = ('title', 'author', 'publish', 'allow_comments')

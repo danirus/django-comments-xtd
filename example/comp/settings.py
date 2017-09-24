@@ -132,7 +132,7 @@ INSTALLED_APPS = (
 
     'comp',
     'comp.articles',
-    'comp.quotes',
+    'comp.extra.quotes',
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'

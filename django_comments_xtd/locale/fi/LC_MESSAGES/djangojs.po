@@ -1,0 +1,137 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-09-22 16:28+0300\n"
+"PO-Revision-Date: 2017-09-22 15:27+0053\n"
+"Last-Translator: b'Administrator  <admin@example.com>'\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.7.13\n"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:144
+msgid "Your comment"
+msgstr "Kommenttisi"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:175
+msgid "name"
+msgstr "nimi"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:182
+msgid "Name"
+msgstr "Nimi"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:207
+msgid "mail address"
+msgstr "sähköposti"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:208
+msgid "Required for comment verification."
+msgstr "Tarvitaan kommentin vahvistukseen"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:215
+msgid "Mail"
+msgstr "Sähköposti"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:244
+msgid "url your name links to (optional)"
+msgstr "verkko-osoite johon nimimerkkisi linkataan (vapaaehtoinen)"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:251
+msgid "Link"
+msgstr "Linkki"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:268
+msgid "Notify me about follow-up comments"
+msgstr "Ilmoita uusista kommenteista"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:320
+msgid "Your comment will be reviewed. Thank your for your patience."
+msgstr "Kommenttisi on tarkistettavana."
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:321
+msgid "Thank you, a comment confirmation request has been sent by mail."
+msgstr "Kiitos, kommentin vahvistusviesti on lähetetty sähköpostiisi."
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:322
+msgid "Sorry, your comment has been rejected."
+msgstr "Ikävä kyllä kommenttisi on hylätty."
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:396
+msgid "Your comment in preview"
+msgstr "Kommenttisi esikatselu"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:413
+msgid "Now"
+msgstr "Nyt"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:461
+msgid "preview"
+msgstr "esikatselu"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:462
+msgid "send"
+msgstr "lähetä"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:518
+msgid "Post your comment"
+msgstr "Lähetä kommentti"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:708
+#, javascript-format
+msgid "One comment."
+msgid_plural "%s comments."
+msgstr[0] "Yksi kommentti."
+msgstr[1] "%s kommenttia."
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:744
+#, javascript-format
+msgid "There is a new comment."
+msgid_plural "There are %s new comments."
+msgstr[0] "Uusi kommentti."
+msgstr[1] "%s uutta kommenttia."
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:1045
+msgid "moderator"
+msgstr "ylläpitäjä"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:1076
+msgid "I flagged it as inappropriate"
+msgstr "Merkkasin kommentin asiattomaksi"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:1085
+msgid "flag comment as inappropriate"
+msgstr "merkkaa kommentti asiattomaksi"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:1096
+msgid "remove comment"
+msgstr "poista kommentti"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:1104
+#, javascript-format
+msgid "A user has flagged this comment as inappropriate."
+msgid_plural "%s users have flagged this comment as inappropriate."
+msgstr[0] "Yksi käyttäjä on merkannut tämän kommentin asiattomaksi"
+msgstr[1] "%s käyttäjää on merkannut tämän kommentin asiattomaksi"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:1180
+msgid "I like it"
+msgstr "Tykkään"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:1180
+msgid "I dislike it"
+msgstr "En tykkää"
+
+#: static/django_comments_xtd/js/plugin-2.0.7.js:1243
+msgid "Reply"
+msgstr "Vastaa"

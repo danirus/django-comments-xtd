@@ -2,6 +2,7 @@ language: python
 
 python:
   - 2.7
+  - 3.6
 
 cache:
   pip:
@@ -10,14 +11,10 @@ cache:
     - .tox
 
 env:
- - TOX_ENV=py27-django18
- - TOX_ENV=py27-django19
- - TOX_ENV=py27-django110
- - TOX_ENV=py27-django111
- - TOX_ENV=py35-django18
- - TOX_ENV=py35-django19
- - TOX_ENV=py35-django110
- - TOX_ENV=py35-django111
+ - DJANGO="1.8"
+ - DJANGO="1.9"
+ - DJANGO="1.10"
+ - DJANGO="1.11"
 
 before_install:
  - sudo apt-get update -qq
@@ -31,6 +28,7 @@ after_success:
 
 install:
  - pip install pip wheel
+ - pip install tox-travis
  - pip install -q coveralls flake8 tox
 
 script:

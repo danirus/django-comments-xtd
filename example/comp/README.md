@@ -3,8 +3,7 @@
 The Comp Demo implements two apps, each of which contains a model whose instances can received comments:
 
  1. App `articles` with the model `Article`
- 1. App `quotes` with the model `Quote`
-    
+ 1. App `quotes` with the model `Quote` contained inside the `extra` directory.
 ### Features
 
  1. Comments can be nested, and the maximum thread level is established to 2.

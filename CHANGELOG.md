@@ -1,7 +1,35 @@
 # Change Log
 
-As of version 1.8.0 of django-comments-xtd, all notable changes to this project will be documented in this file.
+## [2.0.8] - 2017-09-24
 
+### Added
+
+* App translation to Finnish, thanks to Tero Tikkanen (@terotic).
+
+
+## [2.0.7] - 2017-09-20
+
+### Changed
+
+* Adds missing migration for a field's label (issue 71).
+* Makes the form label for field 'name' translatable (issue 73). 
+
+
+## [2.0.6] - 2017-08-08
+
+### Changed
+
+* Code fixes to enable proper support for the Django Sites Framework. 
+* Code fixes for the `comp` demo site.
+* Makes demo site dates in initial data files timezone aware.
+* Improves documentation on setting up demo sites.
+* Style changes in CSS wells.
+
+
+## [2.0.5] - 2017-07-20
+
+* Surpass version number to fix problem with package upload in PyPI. 
+* No changes applied to this version.
 
 ## [2.0.4] - 2017-07-19
 
@@ -15,7 +43,7 @@ As of version 1.8.0 of django-comments-xtd, all notable changes to this project 
 
 ### Added
 
-* App translation to French.
+* App translation to French thanks to Brice Gelineau.
 * Fixed MANIFEST.in file, so that files with translations are distributed.
 
 

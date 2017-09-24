@@ -39,6 +39,7 @@ LANGUAGE_CODE = 'en'
 LANGUAGES = (
     ('en', 'English'),
     ('es', 'Spanish'),
+    ('fi', 'Finnish'),
     ('fr', 'French'),
 )
 

@@ -1,5 +1,13 @@
 # Change Log
 
+## [2.0.9] - 2017-11-09
+
+### Added
+
+* Fix issue 77. Template filter xtd_comment_gravatar_url must not
+  hard-code http schema in URL (reported by @pamost).
+
+
 ## [2.0.8] - 2017-09-24
 
 ### Added

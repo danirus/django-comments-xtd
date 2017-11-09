@@ -539,7 +539,7 @@ def get_commentbox_props(parser, token):
 # ----------------------------------------------------------------------
 @register.filter
 def xtd_comment_gravatar_url(email, size=48):
-    return ("http://www.gravatar.com/avatar/%s?%s&d=mm" %
+    return ("//www.gravatar.com/avatar/%s?%s&d=mm" %
             (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
              urlencode({'s': str(size)})))
 

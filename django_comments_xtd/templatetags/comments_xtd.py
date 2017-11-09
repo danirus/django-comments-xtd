@@ -83,7 +83,7 @@ class BaseLastXtdCommentsNode(Node):
         """Class method to parse get_xtdcomment_list and return a Node."""
         try:
             self.count = int(count)
-        except Exception as exc:
+        except Exception:
             self.count = Variable(count)
 
         self.content_types = content_types
@@ -274,7 +274,7 @@ class RenderXtdCommentTreeNode(Node):
             # Then presume 'comments' exists in the context.
             try:
                 ctype = context['comments'][0]['comment'].content_type
-            except Exception as exc:
+            except Exception:
                 raise TemplateSyntaxError("'render_xtdcomment_tree' doesn't "
                                           "have 'comments' in the context and "
                                           "neither have been provided with the "

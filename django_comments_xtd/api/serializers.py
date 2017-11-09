@@ -195,7 +195,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
                 return True
             else:
                 return False
-        except:
+        except Exception:
             return None
 
     def get_flags(self, obj):

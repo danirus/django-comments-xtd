@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='XtdComment',
             fields=[
-                ('comment_ptr', models.OneToOneField(auto_created=True, primary_key=True, parent_link=True, serialize=False, to='django_comments.Comment')),
+                ('comment_ptr', models.OneToOneField(auto_created=True, primary_key=True, parent_link=True, serialize=False, to='django_comments.Comment', on_delete=models.CASCADE)),
                 ('thread_id', models.IntegerField(default=0, db_index=True)),
                 ('parent_id', models.IntegerField(default=0)),
                 ('level', models.SmallIntegerField(default=0)),

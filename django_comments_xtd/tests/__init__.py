@@ -18,7 +18,8 @@ def run_tests():
     from django.conf import settings
     from django.test.utils import get_runner
 
-    if django.VERSION[1] >= 7:  # Django 1.7.x or above
+    # Django 1.7.x or above.
+    if django.VERSION[0] >=1 or django.VERSION[1] >= 7:
         django.setup()
         runner = get_runner(settings,
                             "django.test.runner.DiscoverRunner")
@@ -26,5 +27,6 @@ def run_tests():
         runner = get_runner(settings,
                             "django.test.simple.DjangoTestSuiteRunner")
     test_suite = runner(verbosity=2, interactive=True, failfast=False)
+    # results = test_suite.run_tests(["django_comments_xtd.tests.test_views.OnCommentWasPostedTestCase.test_confirmation_email_is_sent"])
     results = test_suite.run_tests(["django_comments_xtd"])
     return results

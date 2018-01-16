@@ -12,11 +12,15 @@ from datetime import datetime
 # from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.test import TestCase
-# from django.test.utils import override_settings
+from django.contrib.auth.models import AnonymousUser, User
+from django.test import TestCase, RequestFactory
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
+from django_comments.views import comments
+    
 from django_comments_xtd import django_comments, signals, signed
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import XtdComment
@@ -30,20 +34,32 @@ class OnCommentWasPostedTestCase(TestCase):
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October...")
         self.form = django_comments.get_form()(self.article)
+        self.factory = RequestFactory()
+        self.user = AnonymousUser()
 
-    def post_valid_data(self, wait_mail=True):
+    def post_valid_data(self):
         data = {"name": "Bob", "email": "bob@example.com", "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
-        self.response = self.client.post(reverse("comments-post-comment"),
-                                         data=data, follow=True)
+        request = self.factory.post(
+            reverse('articles-article-detail',
+                    kwargs={'year': self.article.publish.year,
+                            'month': self.article.publish.month,
+                            'day': self.article.publish.day,
+                            'slug': self.article.slug}),
+            data=data, follow=True)
+        request.user = self.user
+        # self.response = self.client.post(reverse("comments-post-comment"),
+        #                                  data=data, follow=True)
+        request._dont_enforce_csrf_checks = True
+        self.response = comments.post_comment(request)
 
     def test_post_as_authenticated_user(self):
-        User.objects.create_user("bob", "bob@example.com", "pwd")
+        self.user = User.objects.create_user("bob", "bob@example.com", "pwd")
         self.client.login(username="bob", password="pwd")
         self.assert_(self.mock_mailer.call_count == 0)
-        self.post_valid_data(wait_mail=False)
+        self.post_valid_data()
         # no confirmation email sent as user is authenticated
         self.assert_(self.mock_mailer.call_count == 0)
 
@@ -51,7 +67,8 @@ class OnCommentWasPostedTestCase(TestCase):
         self.assert_(self.mock_mailer.call_count == 0)
         self.post_valid_data()
         self.assert_(self.mock_mailer.call_count == 1)
-        self.assertTemplateUsed(self.response, "comments/posted.html")
+        self.assertEqual(self.response.status_code, 302)
+        self.assertTrue(self.response.url.startswith('/comments/posted/?c='))
 
 
 class ConfirmCommentTestCase(TestCase):

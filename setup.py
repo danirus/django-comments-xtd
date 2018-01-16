@@ -36,8 +36,8 @@ setup(
     url="http://pypi.python.org/pypi/django-comments-xtd",
     install_requires=[
         'Django>=1.8',
-        'django-contrib-comments>=1.8,<1.9',
-        'djangorestframework>=3.6,<3.7',
+        'django-contrib-comments>=1.8',
+        'djangorestframework>=3.6',
         'docutils',
         'six',
     ],

@@ -6,10 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
-from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView
@@ -98,10 +101,15 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
     """
     if settings.COMMENTS_APP != "django_comments_xtd":
         return False
-    if (
-            not settings.COMMENTS_XTD_CONFIRM_EMAIL or
-            (comment.user and comment.user.is_authenticated())
-    ):
+    if comment.user:
+        try:
+            user_is_authenticated = comment.user.is_authenticated()
+        except TypeError:  # Django >= 1.11
+            user_is_authenticated = comment.user.is_authenticated
+    else:
+        user_is_authenticated = False
+        
+    if (not settings.COMMENTS_XTD_CONFIRM_EMAIL or user_is_authenticated):
         if not _comment_exists(comment):
             new_comment = _create_comment(comment)
             comment.xtd_comment = new_comment

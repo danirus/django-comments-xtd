@@ -10,8 +10,11 @@ from datetime import datetime, timedelta
 
 import django
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.test import TestCase
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 try:
     from django_comments.models import CommentFlag

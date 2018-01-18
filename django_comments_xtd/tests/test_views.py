@@ -60,10 +60,10 @@ def post_diary_comment(data, diary_entry, auth_user=None):
     return comments.post_comment(request)
 
 
-def confirm_comment_url(key):
+def confirm_comment_url(key, follow=True):
     request = request_factory.get(reverse("comments-xtd-confirm",
                                           kwargs={'key': key}),
-                                  follow=True)
+                                  follow=follow)
     request.user = AnonymousUser()
     return views.confirm(request, key)
 
@@ -89,7 +89,6 @@ class OnCommentWasPostedTestCase(TestCase):
 
     def test_post_as_authenticated_user(self):
         self.user = User.objects.create_user("bob", "bob@example.com", "pwd")
-        self.client.login(username="bob", password="pwd")
         self.assert_(self.mock_mailer.call_count == 0)
         self.post_valid_data(self.user)
         # no confirmation email sent as user is authenticated
@@ -115,18 +114,11 @@ class ConfirmCommentTestCase(TestCase):
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal iene kleine..."}
         data.update(self.form.initial)
-        # self.response = self.client.post(reverse("comments-post-comment"),
-        #                                  data=data)
         response = post_article_comment(data, self.article)
         self.assert_(self.mock_mailer.call_count == 1)
         self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         self.addCleanup(patcher.stop)
-
-    def get_confirm_comment_url(self, key):
-        self.response = self.client.get(reverse("comments-xtd-confirm",
-                                                kwargs={'key': key}),
-                                        follow=True)
 
     def test_confirm_url_is_short_enough(self):
         # Tests that the length of the confirm url's length isn't
@@ -138,15 +130,15 @@ class ConfirmCommentTestCase(TestCase):
 
     def test_404_on_bad_signature(self):
         with self.assertRaises(Http404):
-            response = confirm_comment_url(self.key[:-1])
+            confirm_comment_url(self.key[:-1])
 
     def test_consecutive_confirmation_url_visits_fail(self):
         # test that consecutives visits to the same confirmation URL produce
         # an Http 404 code, as the comment has already been verified in the
         # first visit
-        self.get_confirm_comment_url(self.key)
-        self.get_confirm_comment_url(self.key)
-        self.assertContains(self.response, "404", status_code=404)
+        confirm_comment_url(self.key)
+        with self.assertRaises(Http404):
+            confirm_comment_url(self.key)
 
     def test_signal_receiver_may_discard_the_comment(self):
         # test that receivers of signal confirmation_received may return False
@@ -156,17 +148,16 @@ class ConfirmCommentTestCase(TestCase):
 
         self.assertEqual(self.mock_mailer.call_count, 1)  # sent during setUp
         signals.confirmation_received.connect(on_signal)
-        self.get_confirm_comment_url(self.key)
+        response = confirm_comment_url(self.key)
         # mailing avoided by on_signal:
         self.assertEqual(self.mock_mailer.call_count, 1)
-        self.assertTemplateUsed(self.response,
-                                "django_comments_xtd/discarded.html")
+        self.assertTrue(response.content.find(b'Comment discarded') > -1)
 
     def test_comment_is_created_and_view_redirect(self):
         # testing that visiting a correct confirmation URL creates a XtdComment
         # and redirects to the article detail page
         Site.objects.get_current().domain = "testserver"  # django bug #7743
-        self.get_confirm_comment_url(self.key)
+        response = confirm_comment_url(self.key, follow=False)
         data = signed.loads(self.key, extra_key=settings.COMMENTS_XTD_SALT)
         try:
             comment = XtdComment.objects.get(
@@ -177,15 +168,14 @@ class ConfirmCommentTestCase(TestCase):
         except:
             comment = None
         self.assert_(comment is not None)
-        redirected_to = 'http://testserver%s' % self.article.get_absolute_url()
-        self.assertRedirects(self.response, redirected_to)
+        self.assertEqual(response.url, comment.get_absolute_url())
 
     def test_notify_comment_followers(self):
         # send a couple of comments to the article with followup=True and check
         # that when the second comment is confirmed a followup notification
         # email is sent to the user who sent the first comment
         self.assertEqual(self.mock_mailer.call_count, 1)
-        self.get_confirm_comment_url(self.key)
+        confirm_comment_url(self.key)
         # no comment followers yet:
         self.assertEqual(self.mock_mailer.call_count, 1)
         # send 2nd comment
@@ -200,7 +190,7 @@ class ConfirmCommentTestCase(TestCase):
         self.assertEqual(self.mock_mailer.call_count, 2)
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
-        self.get_confirm_comment_url(self.key)
+        confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 3)
         self.assert_(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
         self.assert_(self.mock_mailer.call_args[0][1].find(
@@ -208,7 +198,7 @@ class ConfirmCommentTestCase(TestCase):
 
     def test_notify_followers_dupes(self):
         # first of all confirm Bob's comment otherwise it doesn't reach DB
-        self.get_confirm_comment_url(self.key)
+        confirm_comment_url(self.key)
         # then put in play pull-request-15's assert...
         # https://github.com/danirus/django-comments-xtd/pull/15
         diary = Diary.objects.create(
@@ -246,7 +236,7 @@ class ConfirmCommentTestCase(TestCase):
         self.assertEqual(self.mock_mailer.call_count, 3)
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
-        self.get_confirm_comment_url(self.key)
+        confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 4)
         self.assert_(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
         self.assert_(self.mock_mailer.call_args[0][1].find(
@@ -256,7 +246,7 @@ class ConfirmCommentTestCase(TestCase):
         # test that a follow-up user_email don't get a notification when
         # sending another email to the thread
         self.assertEqual(self.mock_mailer.call_count, 1)
-        self.get_confirm_comment_url(self.key)  # confirm Bob's comment
+        confirm_comment_url(self.key)  # confirm Bob's comment
         # no comment followers yet:
         self.assertEqual(self.mock_mailer.call_count, 1)
         # send Bob's 2nd comment
@@ -265,12 +255,11 @@ class ConfirmCommentTestCase(TestCase):
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Bob's comment he shouldn't get notified about"}
         data.update(self.form.initial)
-        self.response = self.client.post(reverse("comments-post-comment"),
-                                         data=data)
+        response = post_article_comment(data, self.article)
         self.assertEqual(self.mock_mailer.call_count, 2)
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
-        self.get_confirm_comment_url(self.key)
+        confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 2)
 
 
@@ -345,7 +334,7 @@ class MuteFollowUpsTestCase(TestCase):
         self.assert_(self.mock_mailer.call_count == 1)
         bobkey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                self.mock_mailer.call_args[0][1]).group("key"))
-        self.get_confirm_comment_url(bobkey)  # confirm Bob's comment
+        confirm_comment_url(bobkey)  # confirm Bob's comment
 
         # Alice sends 2nd comment to the article with follow-up
         data = {"name": "Alice", "email": "alice@example.com",
@@ -358,7 +347,7 @@ class MuteFollowUpsTestCase(TestCase):
         self.assert_(self.mock_mailer.call_count == 2)
         alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
-        self.get_confirm_comment_url(alicekey)  # confirm Alice's comment
+        confirm_comment_url(alicekey)  # confirm Alice's comment
 
         # Bob receives a follow-up notification
         self.assert_(self.mock_mailer.call_count == 3)
@@ -366,16 +355,6 @@ class MuteFollowUpsTestCase(TestCase):
             r'http://.+/mute/(?P<key>[\S]+)/',
             self.mock_mailer.call_args[0][1]).group("key"))
         self.addCleanup(patcher.stop)
-
-    def get_confirm_comment_url(self, key):
-        request = self.factory.get(reverse("comments-xtd-confirm",
-                                           kwargs={'key': key}),
-                                   follow=True)
-        request.user = AnonymousUser()
-        response = views.confirm(request, key)
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith('/comments/cr/'))
-        return response
 
     def get_mute_followup_url(self, key):
         request = self.factory.get(reverse("comments-xtd-mute",
@@ -396,7 +375,6 @@ class MuteFollowUpsTestCase(TestCase):
                 "followup": True, "reply_to": 2, "level": 1, "order": 1,
                 "comment": "And look at this and that..."}
         data.update(self.form.initial)
-        # self.client.post(reverse("comments-post-comment"), data=data)
         response = post_article_comment(data, self.article)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
@@ -404,7 +382,7 @@ class MuteFollowUpsTestCase(TestCase):
         self.assert_(self.mock_mailer.call_count == 4)
         alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
-        self.get_confirm_comment_url(alicekey)  # confirm Alice's comment
+        confirm_comment_url(alicekey)  # confirm Alice's comment
         # Alice confirmed her comment, but this time Bob won't receive any
         # notification, neither do Alice being the sender
         self.assert_(self.mock_mailer.call_count == 4)

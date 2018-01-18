@@ -30,7 +30,7 @@ class Article(models.Model):
 
     @permalink
     def get_absolute_url(self):
-        return ('articles-article-detail', None,
+        return ('article-detail', None,
                 {'year': self.publish.year,
                  'month': int(self.publish.strftime('%m').lower()),
                  'day': self.publish.day,

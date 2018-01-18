@@ -13,6 +13,7 @@ from datetime import datetime
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import AnonymousUser, User
+from django.http.response import Http404
 from django.test import TestCase, RequestFactory
 try:
     from django.urls import reverse
@@ -30,13 +31,12 @@ from django_comments_xtd.tests.models import Article, Diary
 request_factory = RequestFactory()
 
 
-def post_comment(data, article, auth_user=None):
+def post_article_comment(data, article, auth_user=None):
     request = request_factory.post(
-        reverse('articles-article-detail',
-                kwargs={'year': article.publish.year,
-                        'month': article.publish.month,
-                        'day': article.publish.day,
-                        'slug': article.slug}),
+        reverse('article-detail', kwargs={'year': article.publish.year,
+                                          'month': article.publish.month,
+                                          'day': article.publish.day,
+                                          'slug': article.slug}),
         data=data, follow=True)
     if auth_user:
         request.user = auth_user
@@ -44,6 +44,28 @@ def post_comment(data, article, auth_user=None):
         request.user = AnonymousUser()
     request._dont_enforce_csrf_checks = True
     return comments.post_comment(request)
+
+
+def post_diary_comment(data, diary_entry, auth_user=None):
+    request = request_factory.post(
+        reverse('diary-detail', kwargs={'year': diary_entry.publish.year,
+                                        'month': diary_entry.publish.month,
+                                        'day': diary_entry.publish.day}),
+        data=data, follow=True)
+    if auth_user:
+        request.user = auth_user
+    else:
+        request.user = AnonymousUser()
+    request._dont_enforce_csrf_checks = True
+    return comments.post_comment(request)
+
+
+def confirm_comment_url(key):
+    request = request_factory.get(reverse("comments-xtd-confirm",
+                                          kwargs={'key': key}),
+                                  follow=True)
+    request.user = AnonymousUser()
+    return views.confirm(request, key)
 
 
 class OnCommentWasPostedTestCase(TestCase):
@@ -61,9 +83,9 @@ class OnCommentWasPostedTestCase(TestCase):
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
-        self.response = post_comment(data, self.article, auth_user)
-        self.assertEqual(self.response.status_code, 302)
-        self.assertTrue(self.response.url.startswith('/comments/posted/?c='))
+        response = post_article_comment(data, self.article, auth_user)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith('/comments/posted/?c='))
 
     def test_post_as_authenticated_user(self):
         self.user = User.objects.create_user("bob", "bob@example.com", "pwd")
@@ -77,8 +99,6 @@ class OnCommentWasPostedTestCase(TestCase):
         self.assert_(self.mock_mailer.call_count == 0)
         self.post_valid_data()
         self.assert_(self.mock_mailer.call_count == 1)
-        self.assertEqual(self.response.status_code, 302)
-        self.assertTrue(self.response.url.startswith('/comments/posted/?c='))
 
 
 class ConfirmCommentTestCase(TestCase):
@@ -95,8 +115,9 @@ class ConfirmCommentTestCase(TestCase):
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal iene kleine..."}
         data.update(self.form.initial)
-        self.response = self.client.post(reverse("comments-post-comment"),
-                                         data=data)
+        # self.response = self.client.post(reverse("comments-post-comment"),
+        #                                  data=data)
+        response = post_article_comment(data, self.article)
         self.assert_(self.mock_mailer.call_count == 1)
         self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
@@ -116,8 +137,8 @@ class ConfirmCommentTestCase(TestCase):
         self.assertLessEqual(l, 4096, "Urls can only be a max of 4096")
 
     def test_404_on_bad_signature(self):
-        self.get_confirm_comment_url(self.key[:-1])
-        self.assertContains(self.response, "404", status_code=404)
+        with self.assertRaises(Http404):
+            response = confirm_comment_url(self.key[:-1])
 
     def test_consecutive_confirmation_url_visits_fail(self):
         # test that consecutives visits to the same confirmation URL produce
@@ -173,8 +194,9 @@ class ConfirmCommentTestCase(TestCase):
                 "followup": True, "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
-        self.response = self.client.post(reverse("comments-post-comment"),
-                                         data=data)
+        response = post_article_comment(data, article=self.article)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.assertEqual(self.mock_mailer.call_count, 2)
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
@@ -200,15 +222,17 @@ class ConfirmCommentTestCase(TestCase):
                 "followup": True, "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
-
-        self.response = self.client.post(reverse("comments-post-comment"),
-                                         data=data)
+        response = post_diary_comment(data, diary_entry=diary)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         # 1) confirmation for Bob (sent in `setUp()`)
         # 2) confirmation for Charlie
         self.assertEqual(self.mock_mailer.call_count, 2)
-        self.get_confirm_comment_url(self.key)
+        response = confirm_comment_url(self.key)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith('/comments/cr/'))
         self.assertEqual(self.mock_mailer.call_count, 2)
 
         self.form = django_comments.get_form()(self.article)
@@ -216,8 +240,9 @@ class ConfirmCommentTestCase(TestCase):
                 "followup": True, "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal iene kleine..."}
         data.update(self.form.initial)
-        self.response = self.client.post(reverse("comments-post-comment"),
-                                         data=data)
+        response = post_article_comment(data, article=self.article)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.assertEqual(self.mock_mailer.call_count, 3)
         self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
@@ -314,7 +339,7 @@ class MuteFollowUpsTestCase(TestCase):
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Nice September you had..."}
         data.update(self.form.initial)
-        response = post_comment(data, self.article)
+        response = post_article_comment(data, self.article)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.assert_(self.mock_mailer.call_count == 1)
@@ -327,7 +352,7 @@ class MuteFollowUpsTestCase(TestCase):
                 "followup": True, "reply_to": 1, "level": 1, "order": 1,
                 "comment": "Yeah, great photos"}
         data.update(self.form.initial)
-        response = post_comment(data, self.article)
+        response = post_article_comment(data, self.article)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.assert_(self.mock_mailer.call_count == 2)
@@ -372,7 +397,7 @@ class MuteFollowUpsTestCase(TestCase):
                 "comment": "And look at this and that..."}
         data.update(self.form.initial)
         # self.client.post(reverse("comments-post-comment"), data=data)
-        response = post_comment(data, self.article)
+        response = post_article_comment(data, self.article)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         # Alice confirms her comment...
@@ -406,14 +431,14 @@ class HTMLDisabledMailTestCase(TestCase):
     def test_mail_does_not_contain_html_part(self):
         with patch.multiple('django_comments_xtd.conf.settings',
                             COMMENTS_XTD_SEND_HTML_EMAIL=False):
-            response = post_comment(self.data, self.article)
+            response = post_article_comment(self.data, self.article)
             self.assertEqual(response.status_code, 302)
             self.assertTrue(response.url.startswith('/comments/posted/?c='))
             self.assert_(self.mock_mailer.call_count == 1)
             self.assert_(self.mock_mailer.call_args[1]['html'] is None)
 
     def test_mail_does_contain_html_part(self):
-        response = post_comment(self.data, self.article)
+        response = post_article_comment(self.data, self.article)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.assert_(self.mock_mailer.call_count == 1)

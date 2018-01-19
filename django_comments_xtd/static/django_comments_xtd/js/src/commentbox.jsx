@@ -48,7 +48,7 @@ export class CommentBox extends React.Component {
 
   render_comment_counter() {
     if (this.state.counter > 0) {
-      var fmts = django.ngettext("One comment.", "%s comments.",
+      var fmts = django.ngettext("%s comment.", "%s comments.",
                                  this.state.cids.length);
       var text = django.interpolate(fmts, [this.state.cids.length]);
       return (
@@ -80,7 +80,7 @@ export class CommentBox extends React.Component {
   render_update_alert() {
     var diff = this.state.counter - this.state.cids.length;
     if (diff > 0) {
-      var fmts = django.ngettext("There is a new comment.",
+      var fmts = django.ngettext("There is %s new comment.",
                                  "There are %s new comments.", diff);
       var message = django.interpolate(fmts, [diff]);
       return (

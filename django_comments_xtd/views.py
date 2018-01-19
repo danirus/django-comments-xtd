@@ -6,10 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
-from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView
@@ -46,7 +49,8 @@ def send_email_confirmation_request(
         html_template="django_comments_xtd/email_confirmation_request.html"):
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
-    confirmation_url = reverse("comments-xtd-confirm", args=[key])
+    confirmation_url = reverse("comments-xtd-confirm",
+                               args=[key.decode('utf-8')])
     message_context = {'comment': comment,
                        'confirmation_url': confirmation_url,
                        'contact': settings.COMMENTS_XTD_CONTACT_EMAIL,
@@ -98,10 +102,15 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
     """
     if settings.COMMENTS_APP != "django_comments_xtd":
         return False
-    if (
-            not settings.COMMENTS_XTD_CONFIRM_EMAIL or
-            (comment.user and comment.user.is_authenticated())
-    ):
+    if comment.user:
+        try:
+            user_is_authenticated = comment.user.is_authenticated()
+        except TypeError:  # Django >= 1.11
+            user_is_authenticated = comment.user.is_authenticated
+    else:
+        user_is_authenticated = False
+
+    if (not settings.COMMENTS_XTD_CONFIRM_EMAIL or user_is_authenticated):
         if not _comment_exists(comment):
             new_comment = _create_comment(comment)
             comment.xtd_comment = new_comment
@@ -188,7 +197,6 @@ def confirm(request, key,
 
 def notify_comment_followers(comment):
     followers = {}
-
     kwargs = {'content_type': comment.content_type,
               'object_pk': comment.object_pk,
               'is_public': True,
@@ -214,7 +222,7 @@ def notify_comment_followers(comment):
             "django_comments_xtd/email_followup_comment.html")
 
     for email, (name, key) in six.iteritems(followers):
-        mute_url = reverse('comments-xtd-mute', args=[key])
+        mute_url = reverse('comments-xtd-mute', args=[key.decode('utf-8')])
         message_context = {'user_name': name,
                            'comment': comment,
                            # 'content_object': target,

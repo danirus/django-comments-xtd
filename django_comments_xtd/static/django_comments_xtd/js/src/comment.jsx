@@ -88,7 +88,7 @@ export class Comment extends React.Component {
         </a>);
       if(this.state.removal_count>0) {
         var fmts = django.ngettext(
-          "A user has flagged this comment as inappropriate.",
+          "%s user has flagged this comment as inappropriate.",
           "%s users have flagged this comment as inappropriate.",
           this.state.removal_count);
         var text = django.interpolate(fmts, [this.state.removal_count]);

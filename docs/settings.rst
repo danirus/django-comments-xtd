@@ -18,7 +18,7 @@ A number of additional settings are available to customize django-comments-xtd b
 .. setting:: COMMENTS_XTD_MAX_THREAD_LEVEL
    
 ``COMMENTS_XTD_MAX_THREAD_LEVEL``
-=====================================
+=================================
 
 **Optional**. Indicates the **Maximum thread level** for comments. In other words, whether comments can be nested. This setting established the default value for comments posted to instances of every model instance in Django. It can be overriden on per app.model basis using the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL`, introduced right after this section.
 
@@ -32,7 +32,7 @@ It defaults to ``0``. What means nested comments are not permitted.
 .. setting:: COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
 
 ``COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL``
-==================================================
+==============================================
 
 **Optional**. The **Maximum thread level on per app.model basis** is a dictionary with pairs `app_label.model` as keys and the maximum thread level for comments posted to instances of those models as values. It allows definition of max comment thread level on a per `app_label.model` basis.
 
@@ -57,8 +57,8 @@ It defaults to ``{}``. What means the maximum thread level is setup with :settin
 
 .. setting:: COMMENTS_XTD_CONFIRM_EMAIL
 
-``COMMENTS_XTD_CONFIRM_MAIL``
-=============================
+``COMMENTS_XTD_CONFIRM_EMAIL``
+==============================
 
 **Optional**. It specifies the **confirm comment post by mail** setting, establishing whether a comment confirmation should be sent by mail. If set to ``True`` a confirmation message is sent to the user with a link on which she has to click to confirm the comment. If the user is already authenticated the confirmation is not sent and the comment is accepted, if no moderation has been setup up,  with no further confirmation needed.
 

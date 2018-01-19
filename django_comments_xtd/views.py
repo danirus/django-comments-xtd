@@ -49,7 +49,8 @@ def send_email_confirmation_request(
         html_template="django_comments_xtd/email_confirmation_request.html"):
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
-    confirmation_url = reverse("comments-xtd-confirm", args=[key.decode('utf-8')])
+    confirmation_url = reverse("comments-xtd-confirm",
+                               args=[key.decode('utf-8')])
     message_context = {'comment': comment,
                        'confirmation_url': confirmation_url,
                        'contact': settings.COMMENTS_XTD_CONTACT_EMAIL,
@@ -108,7 +109,7 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
             user_is_authenticated = comment.user.is_authenticated
     else:
         user_is_authenticated = False
-        
+
     if (not settings.COMMENTS_XTD_CONFIRM_EMAIL or user_is_authenticated):
         if not _comment_exists(comment):
             new_comment = _create_comment(comment)

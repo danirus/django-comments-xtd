@@ -30,8 +30,9 @@ Additional Dependencies:
 
 * django-contrib-comments >=1.8, <1.9
 * djangorestframework:
+
   * v3.6 for Django 1.9 and 1.8
- *  v3.7 for Django 2.0, 1.11 and 1.10
+  * v3.7 for Django 2.0, 1.11 and 1.10
 
 Checkout the Docker image `danirus/django-comments-xtd-demo <https://hub.docker.com/r/danirus/django-comments-xtd-demo/>`_.
   

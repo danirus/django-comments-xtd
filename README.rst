@@ -23,14 +23,16 @@ It extends the once official `django-contrib-comments <https://pypi.python.org/p
 
 Example sites and tests work under officially Django `supported versions <https://www.djangoproject.com/download/#supported-versions>`_:
 
-* Django 1.8, 1.9, 1.10 and 1.11
-* Python 2.7, 3.2, 3.4, 3.5, 3.6
+* Django 2.0, 1.11, 1.10, 1.9 and 1.8
+* Python 3.6, 3.5, 3.4, 3.2 and 2.7
 
 Additional Dependencies:
 
 * django-contrib-comments >=1.8, <1.9
-* djangorestframework >=3.6, <3.7
+* djangorestframework:
+  * v3.6 for Django 1.9 and 1.8
+ *  v3.7 for Django 2.0, 1.11 and 1.10
 
 Checkout the Docker image `danirus/django-comments-xtd-demo <https://hub.docker.com/r/danirus/django-comments-xtd-demo/>`_.
   
-`Read The Docs <http://readthedocs.org/docs/django-comments-xtd/>`_ and enjoy it.
+`Read The Docs <http://readthedocs.org/docs/django-comments-xtd/>`_.

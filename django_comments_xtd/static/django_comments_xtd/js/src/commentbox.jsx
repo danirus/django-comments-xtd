@@ -67,6 +67,7 @@ export class CommentBox extends React.Component {
         <CommentForm form={this.props.form}
                      send_url={this.props.send_url}
                      current_user={this.props.current_user}
+		     request_email={this.props.request_email}
                      is_authenticated={this.props.is_authenticated}
                      on_comment_created={this.handle_comment_created} />
       );

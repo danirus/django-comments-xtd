@@ -46,7 +46,11 @@ class WriteCommentSerializer(serializers.Serializer):
 
     def validate_name(self, value):
         if not len(value):
-            if not self.request.user.is_authenticated():
+            try:
+                user_is_authenticated = self.request.user.is_authenticated()
+            except TypeError:
+                user_is_authenticated = self.request.user.is_authenticated
+            if not user_is_authenticated:
                 raise serializers.ValidationError("This field is required")
             else:
                 return (self.request.user.get_full_name() or
@@ -55,7 +59,11 @@ class WriteCommentSerializer(serializers.Serializer):
 
     def validate_email(self, value):
         if not len(value):
-            if not self.request.user.is_authenticated():
+            try:
+                user_is_authenticated = self.request.user.is_authenticated()
+            except TypeError:
+                user_is_authenticated = self.request.user.is_authenticated
+            if not len(self.request.user.email) or not user_is_authenticated:
                 raise serializers.ValidationError("This field is required")
             else:
                 return self.request.user.email

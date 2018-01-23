@@ -123,7 +123,7 @@ export class CommentForm extends React.Component {
   }
 
   render_field_email() {
-    if(this.props.is_authenticated)
+    if(this.props.is_authenticated && !this.props.request_email)
       return "";
     let div_cssc = "form-group", input_cssc = "form-control";
     if (this.state.reply_to > 0) {
@@ -246,11 +246,15 @@ export class CommentForm extends React.Component {
           if(xhr.status == 403)
             css_class = cssc + "danger";
           else css_class = cssc + "info";
-          this.setState({alert: {message: message[xhr.status],
-                                 cssc: css_class},
-                         previewing: false});
-          this.reset_form();
-          this.props.on_comment_created();
+	  if(xhr.status == 400) {
+            debugger;
+	  } else {
+            this.setState({alert: {message: message[xhr.status],
+                                   cssc: css_class},
+                           previewing: false});
+            this.reset_form();
+            this.props.on_comment_created();
+	  }
         }
       }.bind(this),
       error: function(xhr, status, err) {

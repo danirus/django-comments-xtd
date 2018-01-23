@@ -21,7 +21,6 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^$', views.HomepageView.as_view(), name='homepage'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^admin/', include(admin.site.urls)),
     url(r'^articles/', include('comp.articles.urls')),
     url(r'^quotes/', include('comp.extra.quotes.urls')),
     url(r'^comments/', include('django_comments_xtd.urls')),
@@ -35,18 +34,20 @@ urlpatterns = [
 ]
 
 if django.VERSION[:2] > (1, 9):
-    urlpatterns.append(
+    urlpatterns.extend([
         url(r'^jsi18n/$', JavaScriptCatalog.as_view(),
-            name='javascript-catalog')
-    )
+            name='javascript-catalog'),
+        url(r'admin/', admin.site.urls),
+    ])
 else:
     js_info_dict = {
         'packages': ('django_comments_xtd',)
     }
-    urlpatterns.append(
+    urlpatterns.extend([
         url(r'^jsi18n/$', javascript_catalog, js_info_dict,
-            name='javascript-catalog')
-    )
+            name='javascript-catalog'),
+        url(r'^admin/', include(admin.site.urls)),
+    ])
 
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()

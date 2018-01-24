@@ -205,6 +205,27 @@ export class CommentForm extends React.Component {
       errors: {name: false, email: false, comment: false}
     });
   }
+
+  handle_submit_response(status) {
+    let css_class = "",
+	msg_202 = django.gettext("Your comment will be reviewed. Thank your for your patience."),
+	msg_204 = django.gettext("Thank you, a comment confirmation request has been sent by mail."),
+	msg_403 = django.gettext("Sorry, your comment has been rejected.");
+
+    const message = {202: msg_202,
+		     204: msg_204,
+		     403: msg_403},
+	  cssc = "alert alert-";
+
+    if(status == 403)
+      css_class = cssc + "danger";
+    else css_class = cssc + "info";
+
+    this.setState({alert: {message: message[status], cssc: css_class},
+                   previewing: false});
+    this.reset_form();
+    this.props.on_comment_created();
+  }
   
   handle_submit(event) {
     event.preventDefault();
@@ -224,15 +245,6 @@ export class CommentForm extends React.Component {
       followup: this.state.followup,
       reply_to: this.state.reply_to
     };
-    const cssc = "alert alert-";
-    var msg_202 = django.gettext("Your comment will be reviewed. Thank your for your patience.");
-    var msg_204 = django.gettext("Thank you, a comment confirmation request has been sent by mail.");
-    var msg_403 = django.gettext("Sorry, your comment has been rejected.");
-    const message = {
-      202: msg_202,
-      204: msg_204,
-      403: msg_403
-    };
     
     $.ajax({
       method: 'POST',
@@ -241,24 +253,22 @@ export class CommentForm extends React.Component {
       dataType: 'json',
       cache: false,
       success: function(data, textStatus, xhr) {
-        if([201, 202, 204, 403].indexOf(xhr.status) > -1) {
-          var css_class = "";
-          if(xhr.status == 403)
-            css_class = cssc + "danger";
-          else css_class = cssc + "info";
-	  if(xhr.status == 400) {
-            debugger;
-	  } else {
-            this.setState({alert: {message: message[xhr.status],
-                                   cssc: css_class},
-                           previewing: false});
-            this.reset_form();
-            this.props.on_comment_created();
-	  }
+        if([201, 202, 204].indexOf(xhr.status) > -1) {
+	  this.handle_submit_response(xhr.status);
         }
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error(this.props.send_url, status, err.toString());
+	if(xhr.status == 400) {
+	  let errors = this.state.errors;
+	  xhr.responseJSON.forEach(function(item, idx, array) {
+	    errors[item] = true;
+	  });
+	  this.setState({errors: errors});
+	} else if (xhr.status == 403) {
+	  this.handle_submit_response(xhr.status);
+	} else {
+          console.error(this.props.send_url, status, err.toString());
+	}
       }.bind(this)
     });
   }

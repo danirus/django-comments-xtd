@@ -47,20 +47,21 @@ export class CommentForm extends React.Component {
 
   validate() {
     var errors = this.state.errors;
+    errors.name = false;
+    errors.email = false;
 
     if(!this.state.comment.length)
       errors.comment = true;
     else errors.comment = false;
-    if(!this.props.is_authenticated) {
-      if(!this.state.name.length)
+    if(!this.props.is_authenticated || this.props.request_name) {
+      if(/^\s*$/.test(this.state.name))
         errors.name = true;
       else errors.name = false;
+    }
+    if(!this.props.is_authenticated || this.props.request_email_address) {
       if(/\S+@\S+\.\S+/.test(this.state.email))
         errors.email = false;
       else errors.email = true;
-    } else {
-      errors.name = false;
-      errors.email = false;
     }
     this.setState({errors: errors});
 
@@ -93,7 +94,7 @@ export class CommentForm extends React.Component {
   }
 
   render_field_name() {
-    if(this.props.is_authenticated)
+    if(this.props.is_authenticated && !this.props.request_name)
       return "";
     let div_cssc = "form-group", input_cssc = "form-control", help = "";
     if (this.state.reply_to > 0) {
@@ -123,7 +124,7 @@ export class CommentForm extends React.Component {
   }
 
   render_field_email() {
-    if(this.props.is_authenticated && !this.props.request_email)
+    if(this.props.is_authenticated && !this.props.request_email_address)
       return "";
     let div_cssc = "form-group", input_cssc = "form-control";
     if (this.state.reply_to > 0) {

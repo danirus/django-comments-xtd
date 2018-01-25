@@ -50,7 +50,10 @@ class WriteCommentSerializer(serializers.Serializer):
                 user_is_authenticated = self.request.user.is_authenticated()
             except TypeError:
                 user_is_authenticated = self.request.user.is_authenticated
-            if not user_is_authenticated:
+            if (
+                    not len(self.request.user.get_full_name())
+                    or not user_is_authenticated
+            ):
                 raise serializers.ValidationError("This field is required")
             else:
                 return (self.request.user.get_full_name() or

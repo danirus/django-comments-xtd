@@ -1,8 +1,9 @@
+import six
+
 from django.contrib.contenttypes.models import ContentType
 
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from django_comments_xtd import views
@@ -16,10 +17,12 @@ class CommentCreate(generics.CreateAPIView):
     serializer_class = serializers.WriteCommentSerializer
 
     def post(self, request, *args, **kwargs):
-        try:
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
             response = super(CommentCreate, self).post(request, *args, **kwargs)
-        except ValidationError as exc:
-            return Response([k for k in exc.args[0].keys()], status=400)
+        else:
+            return Response([k for k in six.iterkeys(serializer.errors)],
+                            status=400)
         if self.resp_dict['code'] == 201:  # The comment has been created.
             return response
         elif self.resp_dict['code'] in [202, 204, 403]:

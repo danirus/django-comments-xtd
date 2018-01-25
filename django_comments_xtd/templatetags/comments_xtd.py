@@ -508,8 +508,8 @@ def get_commentbox_props(parser, token):
             allow_comments: <bool>,  // Whether to allow comments to this post.
             current_user: <str as "user_id:user_name">,
             is_authenticated: <bool>,  // Whether current_user is authenticated.
-            request_name: <bool>,  // True when authenticated user has no actual name.
-            request_email_address: <bool>,  // True when auth user has no email addr.
+            request_name: <bool>,  // True when auth user has no actual name.
+            request_email_address: <bool>,  // True when auth user has no email.
             allow_flagging: false,
             allow_feedback: false,
             show_feedback: false,

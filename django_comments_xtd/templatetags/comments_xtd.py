@@ -452,6 +452,8 @@ class GetCommentBoxPropsNode(Node):
             "comment_count": queryset.count(),
             "allow_comments": True,
             "current_user": "0:Anonymous",
+            "request_name": False,
+            "request_email_address": False,
             "is_authenticated": False,
             "allow_flagging": False,
             "allow_feedback": False,
@@ -477,11 +479,17 @@ class GetCommentBoxPropsNode(Node):
             }
         }
         user = context.get('user', None)
-        if user and user.is_authenticated():
+        try:
+            user_is_authenticated = user.is_authenticated()
+        except TypeError:  # Django >= 1.11
+            user_is_authenticated = user.is_authenticated
+        if user and user_is_authenticated:
             d['current_user'] = "%d:%s" % (
                 user.pk, settings.COMMENTS_XTD_API_USER_REPR(user))
             d['is_authenticated'] = True
             d['can_moderate'] = user.has_perm("django_comments.can_moderate")
+            d['request_name'] = True if not len(user.get_full_name()) else False
+            d['request_email_address'] = True if not user.email else False
         else:
             d['login_url'] = "/admin/login/"
             d['like_url'] = reverse("comments-xtd-like", args=(0,))
@@ -500,6 +508,8 @@ def get_commentbox_props(parser, token):
             allow_comments: <bool>,  // Whether to allow comments to this post.
             current_user: <str as "user_id:user_name">,
             is_authenticated: <bool>,  // Whether current_user is authenticated.
+            request_name: <bool>,  // True when auth user has no actual name.
+            request_email_address: <bool>,  // True when auth user has no email.
             allow_flagging: false,
             allow_feedback: false,
             show_feedback: false,

@@ -93,8 +93,8 @@ Webpack will put the bundles in the static directory of django-comments-xtd and 
  
        {% block extra-js %}
        [...]
-       <script src="{% static 'django_comments_xtd/js/vendor-2.0.3.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.0.3.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/vendor-2.0.10.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-2.0.10.js' %}"></script>
        {% endblock extra-js %}
        
 

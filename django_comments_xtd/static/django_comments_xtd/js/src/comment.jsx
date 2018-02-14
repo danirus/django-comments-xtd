@@ -199,6 +199,8 @@ export class Comment extends React.Component {
                      send_url={this.props.settings.send_url}
                      current_user={this.props.settings.current_user}
                      is_authenticated={this.props.settings.is_authenticated}
+                     request_name={this.props.settings.request_name}
+                     request_email_address={this.props.settings.request_email_address}
                      on_comment_created={this.props.on_comment_created} />
       );
     this.setState({reply_form: {component: component,

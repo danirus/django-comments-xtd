@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.1.0] - 2018-02-13
+
+    * Fixes issues #76, #86 and #87.
+    * Request user name and/or email address in case the user is logged
+      in but the user's email attribute is empty and/or the user's
+      get_full_name() method returns an empty string.
+
 ## [2.0.10] - 2018-01-19
 
 	* Adds Django 2.0 compatibility.

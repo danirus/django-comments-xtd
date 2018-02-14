@@ -17,3 +17,4 @@ node_modules/
 .tox
 .cache
 .eggs
+package-lock.json

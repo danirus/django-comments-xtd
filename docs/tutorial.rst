@@ -92,11 +92,11 @@ Edit the urls module of the project, ``tutorial/tutorial/urls.py`` and mount the
 
    .. code-block:: python
 
-       from django.conf.urls import include, url
+       from django.urls import include, path
 
        urlpatterns = [
            ...
-           url(r'^comments/', include('django_comments_xtd.urls')),
+           path(r'comments/', include('django_comments_xtd.urls')),
            ...
        ]
 
@@ -176,7 +176,7 @@ Both, django-contrib-comments and django-comments-xtd, provide the last template
 
 Django will use the first template found depending on the order in which applications are listed in :setting:`INSTALLED_APPS`. In this tutorial django-comments-xtd is listed first and therefore its ``comment/list.html`` template will be found first.
 
-Let's modify the ``blog/blog_detail.html`` template to make use of the :ttag:`render_comment_list`. Add the following code at the end of the page, before the ``endblock`` tag:
+Let's modify the ``blog/post_detail.html`` template to make use of the :ttag:`render_comment_list`. Add the following code at the end of the page, before the ``endblock`` tag:
 
    .. code-block:: html+django
 
@@ -221,7 +221,7 @@ Finally, before completing this first set of changes, we could show the number o
        </p>
 
 
-Now we are ready to send comments. If you are logged in the admin site, your comments won't need to be confirmed by mail. To test the confirmation URL do logout of the admin interface. Bear in mind that :setting:`EMAIL_BACKEND` is set up to send mail messages to the console, so look in the console after you post the comment and find the first long URL in the message. To confirm the comment copy the link and paste it in the location bar of the browser.
+Now we are ready to send comments. If you are logged in in the admin site, your comments won't need to be confirmed by mail. To test the confirmation URL do logout of the admin interface. Bear in mind that :setting:`EMAIL_BACKEND` is set up to send mail messages to the console, so look in the console after you post the comment and find the first long URL in the message. To confirm the comment copy the link and paste it in the location bar of the browser.
 
 .. image:: images/comments-enabled.png
 
@@ -486,7 +486,7 @@ If we wanted to disable nested comments site wide, and enable nested comments up
    .. code-block:: python
 
        COMMENTS_XTD_MAX_THREAD_LEVEL = 0  # site wide default
-       COMMENTS_XTD_MAX_THREAD_LEVEL_BY_MODEL = {
+       COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
            # Objects of the app blog, model post, can be nested
            # up to thread level 1.
    	       'blog.post': 1,
@@ -596,7 +596,7 @@ Liked it, Disliked it
 
 Django-comments-xtd adds two new flags: the **Liked it** and the **Disliked it** flags.
 
-Unlike the **Removal suggestion** flag, the **Liked it** and **Disliked it** flags are mutually exclusive. A user can not like and dislike a comment at the same time. Users can like/dislike at any time and only the last action will prevail.
+Unlike the **Removal suggestion** flag, the **Liked it** and **Disliked it** flags are mutually exclusive. A user can not like and dislike a comment at the same time. Users can like/dislike at any time but only the last action will prevail.
 
 In this section we make changes to give our users the capacity to like or dislike comments. Following the same pattern as with the removal flag, enabling like/dislike buttons is about adding an argument to the ``render_xtdcomment_tree``, the argument ``allow_feedback``. Edit the ``blog/post_detail.html`` template and add the new argument:
 
@@ -713,7 +713,7 @@ Now our project is ready to show comments posted in Markdown. After reloading, t
 JavaScript plugin
 =================
 
-Up until now we have used django-comments-xtd as a backend application. As of version 2.0 it includes a JavaScript plugin that helps moving part of the logic to the browser improving the overall usability. By making use of the JavaScript plugin users don't have to leave the blog post page to preview, submit or reply comments, or to like/dislike them. But it comes at the cost of assuming our project will use:
+Up until now we have used django-comments-xtd as a backend application. As of version 2.0 it includes a JavaScript plugin that helps moving part of the logic to the browser improving the overall usability. By making use of the JavaScript plugin users don't have to leave the blog post page to preview, submit or reply comments, or to like/dislike them. But it comes at the cost of using:
 
  * ReactJS
  * jQuery (to handle Ajax calls).
@@ -773,7 +773,7 @@ Our tutorial doesn't have i18n enabled (the `comp example project <https://githu
        
        urlpatterns = [
            ...
-           url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+           path(r'jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
        ]
 
 In the next section we will use the new URL to load the i18n JavaScript catalog.
@@ -825,8 +825,12 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
                crossorigin="anonymous"></script>
        <script type="text/javascript"
                src="{% url 'javascript-catalog' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/vendor-2.0.3.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.0.3.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/vendor-2.0.10.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-2.0.10.js' %}"></script>
+       <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip({html: true})
+        })</script>
        {% endblock %}
 
 

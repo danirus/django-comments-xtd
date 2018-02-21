@@ -122,11 +122,9 @@ Here's an example of how to access the underlying model storing your comments
     from django_comments_xtd.models import XtdComment
     from django.contrib.contenttypes.models import ContentType
     
-    def make_comments_nonpublic(model_instance):
+    def unbsubscribe_everyone(model_instance):
         content_type = ContentType.objects.get_for_model(model_instance)
-        excluded = ["joe.bloggs@example.com", "bla@bla.com"]
 
         XtdComment.objects\
-            .filter(content_type=content_type, object_pk=job.pk)\
-            .exclude(user_email__in=excluded)\
+            .filter(content_type=content_type, object_pk=model_instance.pk)\
             .update(followup=False)

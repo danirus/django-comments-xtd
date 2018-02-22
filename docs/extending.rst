@@ -116,8 +116,9 @@ You will need to customize the following templates:
 
 
 Modifying comments with code
-====================
-Here's an example of how to access the underlying model storing your comments
+============================
+
+Here's an example of how to access the underlying model storing your comments::
 
     from django_comments_xtd.models import XtdComment
     from django.contrib.contenttypes.models import ContentType

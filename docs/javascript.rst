@@ -62,6 +62,7 @@ As the sample Django project you can use the **comp** example site. Install firs
 
        (django-comments-xtd)$ cd example/comp
        (django-comments-xtd)$ pip install django-markdown2
+       (django-comments-xtd)$ pip install django-rosetta
        (django-comments-xtd)$ python manage.py migrate
        (django-comments-xtd)$ python manage.py loaddata ../fixtures/auth.json
        (django-comments-xtd)$ python manage.py loaddata ../fixtures/sites.json

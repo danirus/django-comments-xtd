@@ -548,7 +548,7 @@ def get_commentbox_props(parser, token):
 
 # ----------------------------------------------------------------------
 @register.filter
-def xtd_comment_gravatar_url(email, config='mm,48'):
+def xtd_comment_gravatar_url(email, config='48,mm'):
     """
     @param email 
     @param config 
@@ -565,7 +565,7 @@ def xtd_comment_gravatar_url(email, config='mm,48'):
 
 # ----------------------------------------------------------------------
 @register.filter
-def xtd_comment_gravatar(email, config='mm,48'):
+def xtd_comment_gravatar(email, config='48,mm'):
     size, avatar = config.split(',')
     url = xtd_comment_gravatar_url(email, config)
     return mark_safe('<img src="%s" height="%s" width="%s">' %

@@ -214,7 +214,7 @@ This filter has been named ``xtd_comment_gravatar`` as oposed to simply ``gravat
 
 You can custom the way of generating the avatar, like this:
 
-   {{ comment.email|xtd_comment_gravatar:'mm,48' }}
+   {{ comment.email|xtd_comment_gravatar:'48,mm' }}
 
 .. index::
    single: xtd_comment_gravatar_url

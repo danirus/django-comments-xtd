@@ -568,7 +568,7 @@ def xtd_comment_gravatar_url(email, config='mm,48'):
 def xtd_comment_gravatar(email, config='mm,48'):
     size, avatar = config.split(',')
     url = xtd_comment_gravatar_url(email, config)
-    return mark_safe('<img src="%s" height="%d" width="%d">' %
+    return mark_safe('<img src="%s" height="%s" width="%s">' %
                      (url, size, size))
 
 

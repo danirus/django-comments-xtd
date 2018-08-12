@@ -1,7 +1,10 @@
 from datetime import datetime
 
 from django.db import models
-from django.db.models import permalink
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 from django_comments_xtd.moderation import moderator, XtdCommentModerator
 
@@ -28,13 +31,13 @@ class Article(models.Model):
         db_table = 'demo_articles'
         ordering = ('-publish',)
 
-    @permalink
     def get_absolute_url(self):
-        return ('article-detail', None,
-                {'year': self.publish.year,
-                 'month': int(self.publish.strftime('%m').lower()),
-                 'day': self.publish.day,
-                 'slug': self.slug})
+        return reverse(
+            'article-detail',
+            kwargs={'year': self.publish.year,
+                    'month': int(self.publish.strftime('%m').lower()),
+                    'day': self.publish.day,
+                    'slug': self.slug})
 
 
 class Diary(models.Model):

@@ -2,7 +2,10 @@ from __future__ import unicode_literals
 
 import django
 from django.db import models
-from django.db.models import permalink
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse  # Django 1.8
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -33,10 +36,10 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
-    @permalink
     def get_absolute_url(self):
-        return ('articles-article-detail', (),
-                {'year': self.publish.year,
-                 'month': int(self.publish.strftime('%m').lower()),
-                 'day': self.publish.day,
-                 'slug': self.slug})
+        return reverse(
+            'articles-article-detail',
+            kwargs={'year': self.publish.year,
+                    'month': int(self.publish.strftime('%m').lower()),
+                    'day': self.publish.day,
+                    'slug': self.slug})

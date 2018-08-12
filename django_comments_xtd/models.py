@@ -4,10 +4,7 @@ from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
 from django.core import signing
 from django.dispatch import receiver
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse  # Django 1.8
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from django_comments.managers import CommentManager

@@ -1,10 +1,7 @@
 from datetime import datetime
 
 from django.db import models
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django_comments_xtd.moderation import moderator, XtdCommentModerator
 

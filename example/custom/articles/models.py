@@ -5,10 +5,7 @@ from datetime import datetime
 
 import django
 from django.db import models
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse  # Django 1.8
+from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 
 

@@ -8,10 +8,7 @@ except ImportError:
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from rest_framework.test import APIRequestFactory, force_authenticate
 

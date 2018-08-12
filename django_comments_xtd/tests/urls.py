@@ -5,7 +5,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django_comments_xtd.tests import views
 
 urlpatterns = [
-    url(r'^accounts/login/$', auth_views.login),
+    url(r'^accounts/login/$', auth_views.LoginView),
     url(r'^articles/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/'
         r'(?P<slug>[-\w]+)/$',
         views.dummy_view,

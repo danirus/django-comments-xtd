@@ -18,3 +18,4 @@ node_modules/
 .cache
 .eggs
 package-lock.json
+.pytest_cache/

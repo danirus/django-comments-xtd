@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.2.0] - 2018-08-12
+
+    * Adds support for Django 2.1.
+    * Drops support for Django < 1.11 as it depends on django-contrib-comments
+      which dropped support too.
+    * Fixes issue 104 (on lack of Django 2.1 support).
+
 ## [2.1.0] - 2018-02-13
 
     * Fixes issues #76, #86 and #87.

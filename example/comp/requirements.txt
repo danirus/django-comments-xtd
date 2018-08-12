@@ -1,2 +1,2 @@
 django-markdown2
-django-rosetta
+-e git+ssh://git@github.com/mbi/django-rosetta.git#egg=django-rosetta

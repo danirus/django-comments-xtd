@@ -21,3 +21,4 @@ package-lock.json
 .idea
 example/.idea
 example/env
+.pytest_cache/

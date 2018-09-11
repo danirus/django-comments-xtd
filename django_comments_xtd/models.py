@@ -4,6 +4,7 @@ from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
 from django.core import signing
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from django_comments.managers import CommentManager
@@ -107,9 +108,8 @@ class XtdComment(Comment):
             max_order = qc_eq_thread.aggregate(Max('order'))['order__max']
             self.order = max_order + 1
 
-    @models.permalink
     def get_reply_url(self):
-        return ("comments-xtd-reply", None, {"cid": self.pk})
+        return reverse("comments-xtd-reply", kwargs={"cid": self.pk})
 
     def allow_thread(self):
         if self.level < max_thread_level_for_content_type(self.content_type):

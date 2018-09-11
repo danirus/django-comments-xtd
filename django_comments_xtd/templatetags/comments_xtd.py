@@ -10,12 +10,8 @@ except ImportError:
 from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader)
+from django.urls import reverse
 from django.utils.safestring import mark_safe
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
 
 from django_comments.forms import CommentSecurityForm
 from django_comments_xtd import get_model as get_comment_model

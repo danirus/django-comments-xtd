@@ -11,10 +11,7 @@ from datetime import datetime, timedelta
 import django
 from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase, RequestFactory
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 try:
     from django_comments.models import CommentFlag

@@ -15,10 +15,7 @@ from django.contrib.sites.models import Site
 from django.contrib.auth.models import AnonymousUser, User
 from django.http.response import Http404
 from django.test import TestCase, RequestFactory
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django_comments.views import comments
     

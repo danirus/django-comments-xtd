@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.2.1] - 2018-10-06
+
+    * Resolves deprecation warnings and adopt recommendations in unit tests.
+    * Fixes demo sites so that they work with Django 1.11, Django 2.0 and
+      Django 2.1.
+
 ## [2.2.0] - 2018-08-12
 
     * Adds support for Django 2.1.

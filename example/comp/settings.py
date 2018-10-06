@@ -104,7 +104,7 @@ TEMPLATES = [
     },
 ]
 
-_middleware = [
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -113,11 +113,6 @@ _middleware = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
-
-if django.VERSION[:2] > (1, 9):
-    MIDDLEWARE = _middleware
-else:
-    MIDDLEWARE_CLASSES = _middleware
 
 
 ROOT_URLCONF = 'comp.urls'

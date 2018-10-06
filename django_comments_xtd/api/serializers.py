@@ -46,14 +46,9 @@ class WriteCommentSerializer(serializers.Serializer):
 
     def validate_name(self, value):
         if not len(value):
-            # try:
-            #     user_is_authenticated = self.request.user.is_authenticated()
-            # except TypeError:
-            # user_is_authenticated = self.request.user.is_authenticated
             if (
                     not len(self.request.user.get_full_name())
                     or not self.request.user.is_authenticated
-                    # or not user_is_authenticated
             ):
                 raise serializers.ValidationError("This field is required")
             else:
@@ -63,10 +58,6 @@ class WriteCommentSerializer(serializers.Serializer):
 
     def validate_email(self, value):
         if not len(value):
-            # try:
-            #     user_is_authenticated = self.request.user.is_authenticated()
-            # except TypeError:
-            #     user_is_authenticated = self.request.user.is_authenticated
             if (
                     not len(self.request.user.email) or
                     not self.request.user.is_authenticated
@@ -126,11 +117,6 @@ class WriteCommentSerializer(serializers.Serializer):
             'comment': self.form.get_comment_object(site_id=site.id)
         }
         resp['comment'].ip_address = self.request.META.get("REMOTE_ADDR", None)
-
-        # try:
-        #     user_is_authenticated = self.request.user.is_authenticated()
-        # except TypeError:  # Django >= 1.11
-        #     user_is_authenticated = self.request.user.is_authenticated
 
         if self.request.user.is_authenticated:
             resp['comment'].user = self.request.user

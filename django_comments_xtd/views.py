@@ -100,9 +100,6 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
     if settings.COMMENTS_APP != "django_comments_xtd":
         return False
     if comment.user:
-        # try:
-        #     user_is_authenticated = comment.user.is_authenticated()
-        # except TypeError:  # Django >= 1.11
         user_is_authenticated = comment.user.is_authenticated
     else:
         user_is_authenticated = False
@@ -143,7 +140,6 @@ def sent(request, using=None):
         if (
                 request.is_ajax() and comment.user and
                 comment.user.is_authenticated
-                # comment.user.is_authenticated()
         ):
             if comment.is_public:
                 template_arg = [

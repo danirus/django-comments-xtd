@@ -61,29 +61,29 @@ class ModeratorApprovesComment(TestCase):
 
     def test_moderation_with_registered_user(self):
         user = User.objects.create_user("bob", "bob@example.com", "pwd")
-        self.assert_(self.mailer_app1.call_count == 0)
+        self.assertTrue(self.mailer_app1.call_count == 0)
         self.post_valid_data(user)
         # Moderation class:
         # django_comments_xtd.tests.models.DiaryCommentModerator
         # must trigger an email once comment has passed moderation.
-        self.assert_(self.mailer_app1.call_count == 1)
+        self.assertTrue(self.mailer_app1.call_count == 1)
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
-        self.assert_(comment.is_public is True)
+        self.assertTrue(comment.is_public is True)
 
     def test_moderation_with_unregistered_user(self):
         self.post_valid_data()
-        self.assert_(self.mailer_app1.call_count == 0)
-        self.assert_(self.mailer_app2.call_count == 1)
+        self.assertTrue(self.mailer_app1.call_count == 0)
+        self.assertTrue(self.mailer_app2.call_count == 1)
         mail_msg = self.mailer_app2.call_args[0][1]
         key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                             mail_msg).group("key"))
         confirm_comment_url(key)
-        self.assert_(self.mailer_app1.call_count == 1)
-        self.assert_(self.mailer_app2.call_count == 1)
+        self.assertTrue(self.mailer_app1.call_count == 1)
+        self.assertTrue(self.mailer_app2.call_count == 1)
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
-        self.assert_(comment.is_public is True)
+        self.assertTrue(comment.is_public is True)
 
 
 class ModeratorHoldsComment(TestCase):
@@ -109,29 +109,29 @@ class ModeratorHoldsComment(TestCase):
 
     def test_moderation_with_registered_user(self):
         user = User.objects.create_user("bob", "bob@example.com", "pwd")
-        self.assert_(self.mailer_app1.call_count == 0)
+        self.assertTrue(self.mailer_app1.call_count == 0)
         self.post_valid_data(user)
         # Moderation class:
         # django_comments_xtd.tests.models.DiaryCommentModerator
         # must trigger an email once comment has passed moderation.
-        self.assert_(self.mailer_app1.call_count == 1)
+        self.assertTrue(self.mailer_app1.call_count == 1)
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
-        self.assert_(comment.is_public is False)
+        self.assertTrue(comment.is_public is False)
 
     def test_moderation_with_unregistered_user(self):
         self.post_valid_data()
-        self.assert_(self.mailer_app1.call_count == 0)
-        self.assert_(self.mailer_app2.call_count == 1)
+        self.assertTrue(self.mailer_app1.call_count == 0)
+        self.assertTrue(self.mailer_app2.call_count == 1)
         mail_msg = self.mailer_app2.call_args[0][1]
         key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                             mail_msg).group("key"))
         confirm_comment_url(key)
-        self.assert_(self.mailer_app1.call_count == 1)
-        self.assert_(self.mailer_app2.call_count == 1)
+        self.assertTrue(self.mailer_app1.call_count == 1)
+        self.assertTrue(self.mailer_app2.call_count == 1)
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
-        self.assert_(comment.is_public is False)
+        self.assertTrue(comment.is_public is False)
 
 
 class FlaggingRemovalSuggestion(TestCase):
@@ -181,16 +181,16 @@ class FlaggingRemovalSuggestion(TestCase):
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=CommentFlag.SUGGEST_REMOVAL)
-        self.assert_(flags.count() == 1)
+        self.assertTrue(flags.count() == 1)
 
     def test_email_is_triggered(self):
         flag_url = reverse("comments-flag", args=[1])
-        self.assert_(self.mailer.call_count == 0)
+        self.assertTrue(self.mailer.call_count == 0)
         request = request_factory.post(flag_url)
         request.user = self.user
         request._dont_enforce_csrf_checks = True
         views.flag(request, 1)
-        self.assert_(self.mailer.call_count == 1)
+        self.assertTrue(self.mailer.call_count == 1)
 
 
 class FlaggingLikedItAndDislikedIt(TestCase):
@@ -249,7 +249,7 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)
-        self.assert_(flags.count() == 1)
+        self.assertTrue(flags.count() == 1)
 
     def test_loggedin_user_can_dislike(self):
         if django.VERSION < (1, 5):
@@ -272,7 +272,7 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
-        self.assert_(flags.count() == 1)
+        self.assertTrue(flags.count() == 1)
 
     def test_likedit_can_be_cancelled(self):
         if django.VERSION < (1, 5):
@@ -287,13 +287,13 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)
-        self.assert_(flags.count() == 1)
+        self.assertTrue(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
         response = views.like(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)
-        self.assert_(flags.count() == 0)
+        self.assertTrue(flags.count() == 0)
 
     def test_dislikedit_can_be_cancelled(self):
         if django.VERSION < (1, 5):
@@ -308,13 +308,13 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
-        self.assert_(flags.count() == 1)
+        self.assertTrue(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
         response = views.dislike(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
-        self.assert_(flags.count() == 0)
+        self.assertTrue(flags.count() == 0)
 
     def test_likedit_cancels_dislikedit(self):
         if django.VERSION < (1, 5):
@@ -329,7 +329,7 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
-        self.assert_(flags.count() == 1)
+        self.assertTrue(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
         like_url = reverse("comments-xtd-like", args=[comment.id])
         request = request_factory.post(like_url)
@@ -339,11 +339,11 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
-        self.assert_(flags.count() == 0)
+        self.assertTrue(flags.count() == 0)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)
-        self.assert_(flags.count() == 1)
+        self.assertTrue(flags.count() == 1)
 
     def test_dislikedit_cancels_likedit(self):
         if django.VERSION < (1, 5):
@@ -358,7 +358,7 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)
-        self.assert_(flags.count() == 1)
+        self.assertTrue(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
         request = request_factory.post(dislike_url)
@@ -368,8 +368,8 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)
-        self.assert_(flags.count() == 0)
+        self.assertTrue(flags.count() == 0)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
-        self.assert_(flags.count() == 1)
+        self.assertTrue(flags.count() == 1)

@@ -10,7 +10,7 @@ class GetFormTestCase(TestCase):
 
     def test_get_form(self):
         # check function django_comments_xtd.get_form retrieves the due class
-        self.assert_(django_comments.get_form() == XtdCommentForm)
+        self.assertTrue(django_comments.get_form() == XtdCommentForm)
 
 
 class XtdCommentFormTestCase(TestCase):
@@ -23,7 +23,7 @@ class XtdCommentFormTestCase(TestCase):
 
     def test_get_comment_model(self):
         # check get_comment_model retrieves the due model class
-        self.assert_(self.form.get_comment_model() == TmpXtdComment)
+        self.assertTrue(self.form.get_comment_model() == TmpXtdComment)
 
     def test_get_comment_create_data(self):
         # as it's used in django_comments.views.comments
@@ -34,9 +34,9 @@ class XtdCommentFormTestCase(TestCase):
                 "comment": "Es war einmal iene kleine..."}
         data.update(self.form.initial)
         form = django_comments.get_form()(self.article, data)
-        self.assert_(self.form.security_errors() == {})
-        self.assert_(self.form.errors == {})
+        self.assertTrue(self.form.security_errors() == {})
+        self.assertTrue(self.form.errors == {})
         comment = form.get_comment_object()
 
         # it does have the new field 'followup'
-        self.assert_("followup" in comment)
+        self.assertTrue("followup" in comment)

@@ -86,15 +86,15 @@ class OnCommentWasPostedTestCase(TestCase):
 
     def test_post_as_authenticated_user(self):
         self.user = User.objects.create_user("bob", "bob@example.com", "pwd")
-        self.assert_(self.mock_mailer.call_count == 0)
+        self.assertTrue(self.mock_mailer.call_count == 0)
         self.post_valid_data(self.user)
         # no confirmation email sent as user is authenticated
-        self.assert_(self.mock_mailer.call_count == 0)
+        self.assertTrue(self.mock_mailer.call_count == 0)
 
     def test_confirmation_email_is_sent(self):
-        self.assert_(self.mock_mailer.call_count == 0)
+        self.assertTrue(self.mock_mailer.call_count == 0)
         self.post_valid_data()
-        self.assert_(self.mock_mailer.call_count == 1)
+        self.assertTrue(self.mock_mailer.call_count == 1)
 
 
 class ConfirmCommentTestCase(TestCase):
@@ -112,7 +112,7 @@ class ConfirmCommentTestCase(TestCase):
                 "comment": "Es war einmal iene kleine..."}
         data.update(self.form.initial)
         response = post_article_comment(data, self.article)
-        self.assert_(self.mock_mailer.call_count == 1)
+        self.assertTrue(self.mock_mailer.call_count == 1)
         self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         self.addCleanup(patcher.stop)
@@ -164,7 +164,7 @@ class ConfirmCommentTestCase(TestCase):
                 submit_date=data["submit_date"])
         except:
             comment = None
-        self.assert_(comment is not None)
+        self.assertTrue(comment is not None)
         self.assertEqual(response.url, comment.get_absolute_url())
 
     def test_notify_comment_followers(self):
@@ -189,8 +189,8 @@ class ConfirmCommentTestCase(TestCase):
                              self.mock_mailer.call_args[0][1]).group("key")
         confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 3)
-        self.assert_(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
-        self.assert_(self.mock_mailer.call_args[0][1].find(
+        self.assertTrue(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
+        self.assertTrue(self.mock_mailer.call_args[0][1].find(
             "There is a new comment following up yours.") > -1)
 
     def test_notify_followers_dupes(self):
@@ -235,8 +235,8 @@ class ConfirmCommentTestCase(TestCase):
                              self.mock_mailer.call_args[0][1]).group("key")
         confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 4)
-        self.assert_(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
-        self.assert_(self.mock_mailer.call_args[0][1].find(
+        self.assertTrue(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
+        self.assertTrue(self.mock_mailer.call_args[0][1].find(
             "There is a new comment following up yours.") > -1)
 
     def test_no_notification_for_same_user_email(self):
@@ -328,7 +328,7 @@ class MuteFollowUpsTestCase(TestCase):
         response = post_article_comment(data, self.article)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
-        self.assert_(self.mock_mailer.call_count == 1)
+        self.assertTrue(self.mock_mailer.call_count == 1)
         bobkey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                self.mock_mailer.call_args[0][1]).group("key"))
         confirm_comment_url(bobkey)  # confirm Bob's comment
@@ -341,13 +341,13 @@ class MuteFollowUpsTestCase(TestCase):
         response = post_article_comment(data, self.article)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
-        self.assert_(self.mock_mailer.call_count == 2)
+        self.assertTrue(self.mock_mailer.call_count == 2)
         alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         confirm_comment_url(alicekey)  # confirm Alice's comment
 
         # Bob receives a follow-up notification
-        self.assert_(self.mock_mailer.call_count == 3)
+        self.assertTrue(self.mock_mailer.call_count == 3)
         self.bobs_mutekey = str(re.search(
             r'http://.+/mute/(?P<key>[\S]+)/',
             self.mock_mailer.call_args[0][1]).group("key"))
@@ -376,13 +376,13 @@ class MuteFollowUpsTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         # Alice confirms her comment...
-        self.assert_(self.mock_mailer.call_count == 4)
+        self.assertTrue(self.mock_mailer.call_count == 4)
         alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         confirm_comment_url(alicekey)  # confirm Alice's comment
         # Alice confirmed her comment, but this time Bob won't receive any
         # notification, neither do Alice being the sender
-        self.assert_(self.mock_mailer.call_count == 4)
+        self.assertTrue(self.mock_mailer.call_count == 4)
 
 
 class HTMLDisabledMailTestCase(TestCase):
@@ -409,12 +409,12 @@ class HTMLDisabledMailTestCase(TestCase):
             response = post_article_comment(self.data, self.article)
             self.assertEqual(response.status_code, 302)
             self.assertTrue(response.url.startswith('/comments/posted/?c='))
-            self.assert_(self.mock_mailer.call_count == 1)
-            self.assert_(self.mock_mailer.call_args[1]['html'] is None)
+            self.assertTrue(self.mock_mailer.call_count == 1)
+            self.assertTrue(self.mock_mailer.call_args[1]['html'] is None)
 
     def test_mail_does_contain_html_part(self):
         response = post_article_comment(self.data, self.article)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
-        self.assert_(self.mock_mailer.call_count == 1)
-        self.assert_(self.mock_mailer.call_args[1]['html'] is not None)
+        self.assertTrue(self.mock_mailer.call_count == 1)
+        self.assertTrue(self.mock_mailer.call_args[1]['html'] is not None)

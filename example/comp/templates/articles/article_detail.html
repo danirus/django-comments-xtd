@@ -11,24 +11,35 @@
 {% block menu-class-articles %}active{% endblock %}
 
 {% block content %}
-<div class="text-center">
-  <H3>{{ object.title }}</H3>
-  <div class="small">{{ object.publish }}</div>
-</div>
-<hr/>
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-12 text-center">
+            <h2>{{ object.title }}</h2>
+            <div class="small">{{ object.publish }}</div>
+            <hr/>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <article>
+                {{ object.body|linebreaks }}
+            </article>
+        </div>
+    </div>
 
-<div class="row">
-  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">  
-    <article>
-      {{ object.body|linebreaks }}
-    </article>
-  </div>
-</div>
+    <div class="row justify-content-center">
+        <div class="col-md-7 pt-3">
+            <p class="text-center">
+                <a href="django_comments_xtd_article_list.html">Back to the articles list</a>
+            </p>
+        </div>
+    </div>
 
-<div class="row">
-  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">  
-    <div id="comments"></div>
-  </div>
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div id="comments"></div>
+        </div>
+    </div>
 </div>
 {% endblock content %}
 

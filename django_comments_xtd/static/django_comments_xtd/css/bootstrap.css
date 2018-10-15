@@ -9909,6 +9909,18 @@ a.text-dark:hover, a.text-dark:focus {
   color: #333;
 }
 
+.badge {
+  padding: .2em .6em;
+  font-size: 75%;
+  font-weight: bold;
+  line-height: 1;
+  border-radius: .20em;
+}
+
+.badge-pill {
+  border-radius: 1em;
+}
+
 .badge-warning, .badge-info {
   color: #fff;
 }

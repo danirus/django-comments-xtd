@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 const STATIC_DIR = path.resolve(__dirname,
                                 'django_comments_xtd', 'static',
-                                'django_comments_xtd', 'js')
+                                'django_comments_xtd', 'js');
 const SOURCE_DIR = path.resolve(STATIC_DIR, 'src');
 
 module.exports = {

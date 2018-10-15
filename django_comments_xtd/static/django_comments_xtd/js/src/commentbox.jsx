@@ -51,12 +51,7 @@ export class CommentBox extends React.Component {
       var fmts = django.ngettext("%s comment.", "%s comments.",
                                  this.state.cids.length);
       var text = django.interpolate(fmts, [this.state.cids.length]);
-      return (
-        <div>
-          <h5 className="text-center">{text}</h5>
-          <hr/>
-        </div>
-      );
+      return <h5 className="text-center">{text}</h5>;
     } else
       return "";
   }
@@ -207,7 +202,6 @@ export class CommentBox extends React.Component {
       <div>
         {comment_counter}
         {comment_form}
-        <hr/>
         {update_alert}
         <div className="comment-tree">
           <div className="media-list">

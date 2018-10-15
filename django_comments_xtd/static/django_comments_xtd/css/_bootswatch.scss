@@ -476,10 +476,20 @@ $web-font-path: "https://fonts.googleapis.com/css?family=Oxygen" !default;
 }
 
 .badge {
-  &-warning,
-  &-info {
-    color: $white;
-  }
+    padding: .2em .6em;
+    font-size: 75%;
+    font-weight: bold;
+    line-height: 1;
+    border-radius: .20em;
+
+    &-pill {
+        border-radius: 1em;
+    }
+
+    &-warning,
+    &-info {
+        color: $white;
+    }
 }
 
 // Progress bars ===============================================================

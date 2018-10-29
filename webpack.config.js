@@ -7,39 +7,42 @@ const STATIC_DIR = path.resolve(__dirname,
 const SOURCE_DIR = path.resolve(STATIC_DIR, 'src');
 
 module.exports = {
-  entry: {
-    vendor: ['md5', 'react', 'react-dom', 'remarkable'],
-    plugin: path.resolve(SOURCE_DIR, 'index.js')
-  },
-  output: {
-    filename: '[name]-2.2.1.js',
-    path: STATIC_DIR
-  },
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: Infinity
-    })
-  ],
-  module: {
-    rules: [
-      {
-        test: /\.jsx?/,
-        include: SOURCE_DIR,
-        use: [
-          { loader: 'babel-loader',
-            options: {
-              compact: false,
-              presets: ["es2015", "react"]
+    mode: "none",
+    devtool: 'source-map',
+    entry: {
+        plugin: path.resolve(SOURCE_DIR, 'index.js')
+    },
+    output: {
+        filename: '[name]-2.2.1.js',
+        path: STATIC_DIR
+    },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                default: false,
+                vendors: false,
+
+                vendor: {
+                    chunks: 'all',
+                    test: /node_modules/
+                }
             }
-          }
+        }
+    },
+    module: {
+        rules: [
+            {
+                test: /\.jsx?/,
+                include: SOURCE_DIR,
+                use: {
+                    loader: 'babel-loader'
+                }
+            }
         ]
-      }
-    ]
-  },
-  externals: {
-    jquery: 'jQuery',
-    bootstrap: 'bootstrap',
-    django: 'django'
-  }
+    },
+    externals: {
+        jquery: 'jQuery',
+        bootstrap: 'bootstrap',
+        django: 'django'
+    }
 };

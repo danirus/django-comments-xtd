@@ -30,7 +30,7 @@
     <div class="row justify-content-center">
         <div class="col-md-7 pt-3">
             <p class="text-center">
-                <a href="django_comments_xtd_article_list.html">Back to the articles list</a>
+                <a href="{% url 'articles-index' %}">Back to the articles list</a>
             </p>
         </div>
     </div>
@@ -45,15 +45,15 @@
 
 {% block extra_js %}
 <script>
-  window.comments_props = {% get_commentbox_props for object %};
-  window.comments_props_override = {
-    allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
-    allow_feedback: true,
-    show_feedback: true,
-    allow_flagging: true,
-    polling_interval: 0
-  };
+ window.comments_props = {% get_commentbox_props for object %};
+ window.comments_props_override = {
+     allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+     allow_feedback: true,
+     show_feedback: true,
+     allow_flagging: true,
+     polling_interval: 0
+ };
 </script>
-<script src="{% static 'django_comments_xtd/js/vendor-2.2.1.js' %}"></script>
+<script src="{% static 'django_comments_xtd/js/vendor~plugin-2.2.1.js' %}"></script>
 <script src="{% static 'django_comments_xtd/js/plugin-2.2.1.js' %}"></script>
 {% endblock %}

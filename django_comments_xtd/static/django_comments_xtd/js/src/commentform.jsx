@@ -25,7 +25,7 @@ export class CommentForm extends React.Component {
     this.handle_submit = this.handle_submit.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
     this.reset_form = this.reset_form.bind(this);
-    this.fhelp = <span className="form-text small">
+    this.fhelp = <span className="form-text small invalid-feedback">
                    {django.gettext("This field is required.")}
                  </span>;
   }
@@ -76,13 +76,14 @@ export class CommentForm extends React.Component {
 
   render_field_comment() {
     let div_cssc = "form-group row",
-        input_cssc = "",
+        input_cssc = "form-control",
         help = "";
     if (this.state.reply_to > 0) {
       input_cssc += " form-control-sm";
     }
     if (this.state.errors.comment) {
       div_cssc += (this.state.errors.comment ? " has-danger" : "");
+      input_cssc += " is-invalid";
       help = this.fhelp;
     }
     var placeholder = django.gettext("Your comment");
@@ -91,7 +92,7 @@ export class CommentForm extends React.Component {
         <div className="offset-md-1 col-md-10">
           <textarea required name="comment" id="id_comment"
                     placeholder={placeholder} maxLength="3000"
-                    className="form-control" value={this.state.comment}
+                    className={input_cssc} defaultValue={this.state.comment}
                     onChange={this.handle_input_change}
                     onBlur={this.handle_blur('comment')} />
           {help}
@@ -106,14 +107,15 @@ export class CommentForm extends React.Component {
     let div_cssc = "form-group row",
         input_cssc = "form-control",
         help = "";
+    const placeholder = django.gettext('name');
     if (this.state.reply_to > 0) {
       input_cssc += " form-control-sm";
     }
     if (this.state.errors.name) {
       div_cssc += " has-danger";
+      input_cssc += " is-invalid";
       help = this.fhelp;
     }
-    var placeholder = django.gettext('name');
     return (
       <div className={div_cssc}>
         <label htmlFor="id_name" className="col-form-label col-md-3 text-right">
@@ -121,7 +123,7 @@ export class CommentForm extends React.Component {
         </label>
         <div className="col-md-7">
           <input type="text" name="name" required id="id_name"
-                 value={this.state.name} placeholder={placeholder}
+                 defaultValue={this.state.name} placeholder={placeholder}
                  onChange={this.handle_input_change}
                  onBlur={this.handle_blur('name')}
                  className={input_cssc} />
@@ -134,28 +136,34 @@ export class CommentForm extends React.Component {
   render_field_email() {
     if(this.props.is_authenticated && !this.props.request_email_address)
       return "";
-    let input_cssc = "form-control",
+    let div_cssc = "form-group row",
+        input_cssc = "form-control",
+        help_cssc = "form-text small",
         helptext_style = {};
+    const placeholder = django.gettext('mail address'),
+          helptext = django.gettext('Required for comment verification.');
     if (this.state.reply_to > 0) {
       input_cssc += " form-control-sm";
-      helptext_style = {fontSize: "0.700rem"};
+      helptext_style = {fontSize: "0.710rem"};
     }
-    if (this.state.errors.email)
-    var placeholder = django.gettext('mail address');
-    var helptext = django.gettext('Required for comment verification.');
+    if (this.state.errors.email) {
+      div_cssc += " has-danger";
+      input_cssc += " is-invalid";
+      help_cssc += " invalid-feedback";
+    }
     return (
-      <div className="form-group row">
+      <div className={div_cssc}>
         <label htmlFor="id_email" className="col-form-label col-md-3 text-right">
           {django.gettext("Mail")}
         </label>
         <div className="col-md-7">
           <input type="text" name="email" required id="id_email"
-                 value={this.state.email} placeholder={placeholder}
+                 defaultValue={this.state.email} placeholder={placeholder}
                  onChange={this.handle_input_change}
                  onBlur={this.handle_blur('email')}
                  className={input_cssc} />
-          <span className="form-text small"
-                style={{helptext_style}}>{helptext}</span>
+          <span className={help_cssc}
+                style={helptext_style}>{helptext}</span>
         </div>
       </div>
     );
@@ -176,7 +184,8 @@ export class CommentForm extends React.Component {
           {django.gettext("Link")}
         </label>
         <div className="col-md-7">
-          <input type="text" name="url" id="id_url" value={this.state.url}
+          <input type="text" name="url" id="id_url"
+                 defaultValue={this.state.url}
                  placeholder={placeholder}
                  onChange={this.handle_input_change}
                  className={input_cssc} />
@@ -297,7 +306,7 @@ export class CommentForm extends React.Component {
   render_preview() {
     if(!this.state.previewing)
       return "";
-    var heading_name = "";
+    let heading_name = "";
 
     // Build Gravatar.
     const hash = md5(this.state.email.toLowerCase());
@@ -332,7 +341,7 @@ export class CommentForm extends React.Component {
           {avatar_img}
           <div className="media-body">
             <div className="comment pb-3">
-              <h6 className="comment pb-3">
+              <h6 className="mb-1 small">
                 {nowtext}&nbsp;-&nbsp;{heading_name}&nbsp;&nbsp;{label}
               </h6>
               <div className="preview"
@@ -364,29 +373,28 @@ export class CommentForm extends React.Component {
     return (
       <form method="POST" onSubmit={this.handle_submit}>
         <input type="hidden" name="content_type"
-               value={this.props.form.content_type}/>
+               defaultValue={this.props.form.content_type}/>
         <input type="hidden" name="object_pk"
-               value={this.props.form.object_pk}/>
+               defaultValue={this.props.form.object_pk}/>
         <input type="hidden" name="timestamp"
-               value={this.props.form.timestamp}/>
+               defaultValue={this.props.form.timestamp}/>
         <input type="hidden" name="security_hash"
-               value={this.props.form.security_hash}/>
+               defaultValue={this.props.form.security_hash}/>
         <input type="hidden" name="reply_to"
-               value={this.state.reply_to}/>
+               defaultValue={this.state.reply_to}/>
         <fieldset>
           <div style={{display:'none'}}>
-            <input type="text" name="honeypot" value=""/>
+            <input type="text" name="honeypot" defaultValue=""/>
           </div>
           {comment} {name} {mail} {url} {followup}
         </fieldset>
         
         <div className={btns_row_class}>
           <div className="offset-md-3 col-md-7">
-            <input type="submit" name="post" value={btn_label_send}
-                   className={btn_submit_class} />&nbsp;
-            <input type="button" name="preview" value={btn_label_preview}
-                   className={btn_preview_class}
-                   onClick={this.handle_preview} />
+            <button type="submit" name="post"
+                    className={btn_submit_class}>{btn_label_send}</button>&nbsp;
+            <button name="preview" className={btn_preview_class}
+                   onClick={this.handle_preview}>{btn_label_preview}</button>
           </div>
         </div>
       </form>

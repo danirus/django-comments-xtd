@@ -92,7 +92,7 @@ export class CommentForm extends React.Component {
         <div className="offset-md-1 col-md-10">
           <textarea required name="comment" id="id_comment"
                     placeholder={placeholder} maxLength="3000"
-                    className={input_cssc} defaultValue={this.state.comment}
+                    className={input_cssc} value={this.state.comment}
                     onChange={this.handle_input_change}
                     onBlur={this.handle_blur('comment')} />
           {help}
@@ -105,10 +105,12 @@ export class CommentForm extends React.Component {
     if(this.props.is_authenticated && !this.props.request_name)
       return "";
     let div_cssc = "form-group row",
+        label_cssc = "col-form-label col-md-3 text-right",
         input_cssc = "form-control",
         help = "";
     const placeholder = django.gettext('name');
     if (this.state.reply_to > 0) {
+      label_cssc += " form-control-sm";
       input_cssc += " form-control-sm";
     }
     if (this.state.errors.name) {
@@ -118,12 +120,12 @@ export class CommentForm extends React.Component {
     }
     return (
       <div className={div_cssc}>
-        <label htmlFor="id_name" className="col-form-label col-md-3 text-right">
+        <label htmlFor="id_name" className={label_cssc}>
           {django.gettext("Name")}
         </label>
         <div className="col-md-7">
           <input type="text" name="name" required id="id_name"
-                 defaultValue={this.state.name} placeholder={placeholder}
+                 value={this.state.name} placeholder={placeholder}
                  onChange={this.handle_input_change}
                  onBlur={this.handle_blur('name')}
                  className={input_cssc} />
@@ -137,12 +139,14 @@ export class CommentForm extends React.Component {
     if(this.props.is_authenticated && !this.props.request_email_address)
       return "";
     let div_cssc = "form-group row",
+        label_cssc = "col-form-label col-md-3 text-right",
         input_cssc = "form-control",
         help_cssc = "form-text small",
         helptext_style = {};
     const placeholder = django.gettext('mail address'),
           helptext = django.gettext('Required for comment verification.');
     if (this.state.reply_to > 0) {
+      label_cssc += " form-control-sm";
       input_cssc += " form-control-sm";
       helptext_style = {fontSize: "0.710rem"};
     }
@@ -153,12 +157,12 @@ export class CommentForm extends React.Component {
     }
     return (
       <div className={div_cssc}>
-        <label htmlFor="id_email" className="col-form-label col-md-3 text-right">
+        <label htmlFor="id_email" className={label_cssc}>
           {django.gettext("Mail")}
         </label>
         <div className="col-md-7">
           <input type="text" name="email" required id="id_email"
-                 defaultValue={this.state.email} placeholder={placeholder}
+                 value={this.state.email} placeholder={placeholder}
                  onChange={this.handle_input_change}
                  onBlur={this.handle_blur('email')}
                  className={input_cssc} />
@@ -172,20 +176,22 @@ export class CommentForm extends React.Component {
   render_field_url() {
     if(this.props.is_authenticated)
       return "";
-    let input_cssc = "form-control";
+    let label_cssc = "col-form-label col-md-3 text-right",
+        input_cssc = "form-control";
     if(this.state.reply_to > 0) {
+      label_cssc += " form-control-sm";
       input_cssc += " form-control-sm";
     }
     if(this.state.errors.url)
     var placeholder = django.gettext("url your name links to (optional)");
     return (
       <div className="form-group row">
-        <label htmlFor="id_url" className="col-form-label col-md-3 text-right">
+        <label htmlFor="id_url" className={label_cssc}>
           {django.gettext("Link")}
         </label>
         <div className="col-md-7">
           <input type="text" name="url" id="id_url"
-                 defaultValue={this.state.url}
+                 value={this.state.url}
                  placeholder={placeholder}
                  onChange={this.handle_input_change}
                  className={input_cssc} />
@@ -225,15 +231,15 @@ export class CommentForm extends React.Component {
   }
 
   handle_submit_response(status) {
-    let css_class = "",
-	msg_202 = django.gettext("Your comment will be reviewed. Thank your for your patience."),
-	msg_204 = django.gettext("Thank you, a comment confirmation request has been sent by mail."),
-	msg_403 = django.gettext("Sorry, your comment has been rejected.");
+    let css_class = "";
+    const msg_202 = django.gettext("Your comment will be reviewed. Thank your for your patience."),
+	      msg_204 = django.gettext("Thank you, a comment confirmation request has been sent by mail."),
+	      msg_403 = django.gettext("Sorry, your comment has been rejected.");
 
     const message = {202: msg_202,
-		     204: msg_204,
-		     403: msg_403},
-	  cssc = "alert alert-";
+		             204: msg_204,
+		             403: msg_403},
+	      cssc = "alert alert-";
 
     if(status == 403)
       css_class = cssc + "danger";
@@ -272,21 +278,21 @@ export class CommentForm extends React.Component {
       cache: false,
       success: function(data, textStatus, xhr) {
         if([201, 202, 204].indexOf(xhr.status) > -1) {
-	  this.handle_submit_response(xhr.status);
+	      this.handle_submit_response(xhr.status);
         }
       }.bind(this),
       error: function(xhr, status, err) {
-	if(xhr.status == 400) {
-	  let errors = this.state.errors;
-	  xhr.responseJSON.forEach(function(item, idx, array) {
-	    errors[item] = true;
-	  });
-	  this.setState({errors: errors});
-	} else if (xhr.status == 403) {
-	  this.handle_submit_response(xhr.status);
-	} else {
+	    if(xhr.status == 400) {
+	      let errors = this.state.errors;
+	      xhr.responseJSON.forEach(function(item, idx, array) {
+	        errors[item] = true;
+	      });
+	      this.setState({errors: errors});
+	    } else if (xhr.status == 403) {
+	      this.handle_submit_response(xhr.status);
+	    } else {
           console.error(this.props.send_url, status, err.toString());
-	}
+	    }
       }.bind(this)
     });
   }

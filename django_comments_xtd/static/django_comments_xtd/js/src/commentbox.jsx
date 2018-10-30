@@ -59,12 +59,7 @@ export class CommentBox extends React.Component {
   render_comment_form() {
     if(this.props.allow_comments) {
       return (
-        <CommentForm form={this.props.form}
-                     send_url={this.props.send_url}
-                     current_user={this.props.current_user}
-                     is_authenticated={this.props.is_authenticated}
-		             request_name={this.props.request_name}
-		             request_email_address={this.props.request_email_address}
+        <CommentForm {...this.props}
                      on_comment_created={this.handle_comment_created} />
       );
     } else {

@@ -11,6 +11,17 @@ import {CommentForm} from './commentform.jsx';
 export class Comment extends React.Component {
   constructor(props) {
     super(props);
+    this._initialize_state(props);
+    this.action_like = this.action_like.bind(this);
+    this.action_dislike = this.action_dislike.bind(this);
+    this.handle_reply_click = this.handle_reply_click.bind(this);
+  }
+
+  componentWillReceiveProps(props) {
+    this._initialize_state(props);
+  }
+
+  _initialize_state(props) {
     this.state = {
       current_user: props.settings.current_user,
       removal: props.data.flags.removal.active,
@@ -21,12 +32,9 @@ export class Comment extends React.Component {
       dislike_users: props.data.flags.dislike.users || [],
       reply_form: {
         component: null,
-        show: false
+        is_visible: false
       }
     };
-    this.action_like = this.action_like.bind(this);
-    this.action_dislike = this.action_dislike.bind(this);
-    this.handle_reply_click = this.handle_reply_click.bind(this);
   }
 
   _get_username_chunk() {
@@ -95,7 +103,7 @@ export class Comment extends React.Component {
       }
     }
 
-    return (<p className="pull-right">{flagging_html} {moderate_html}</p>);
+    return (<div>{flagging_html} {moderate_html}</div>);
   }
 
   _get_feedback_chunk(dir) {
@@ -130,7 +138,7 @@ export class Comment extends React.Component {
         });
         users = users.join("<br/>");
         show_users_chunk = (
-          <span>&nbsp;<a className="badge badge-primary text-white"
+          <span>&nbsp;<a className="badge badge-primary text-white cfb-counter"
                          data-toggle="tooltip" title={users}>
                         {this.state[attr_list].length}
                       </a></span>
@@ -159,7 +167,7 @@ export class Comment extends React.Component {
     {
       let feedback_id = "feedback-"+this.props.data.id;
       if(this.props.settings.show_feedback)
-        this.destroyTooltips(feedback_id);
+        this.disposeTooltips(feedback_id);
       let like_feedback = this._get_feedback_chunk("like");
       let dislike_feedback = this._get_feedback_chunk("dislike");
       return (<span id={feedback_id} className="small">{like_feedback}
@@ -170,21 +178,15 @@ export class Comment extends React.Component {
   
   handle_reply_click(event) {
     event.preventDefault();
-    var component = this.state.reply_form.component;
-    var visible = !this.state.reply_form.show;
-    if(component==null) 
+    let component = this.state.reply_form.component;
+    let visible = !this.state.reply_form.is_visible;
+    if(component == null)
       component = (
-        <CommentForm
-          form={this.props.settings.form}
-          reply_to={this.props.data.id}
-          send_url={this.props.settings.send_url}
-          current_user={this.props.settings.current_user}
-          is_authenticated={this.props.settings.is_authenticated}
-          request_name={this.props.settings.request_name}
-          request_email_address={this.props.settings.request_email_address}
-          on_comment_created={this.props.on_comment_created} />
+        <CommentForm {...this.props.settings}
+                     reply_to={this.props.data.id}
+                     on_comment_created={this.props.on_comment_created} />
       );
-    this.setState({reply_form: {component: component, show: visible}});
+    this.setState({reply_form: {component: component, is_visible: visible}});
   }
 
   _get_reply_link_chunk() {
@@ -223,7 +225,7 @@ export class Comment extends React.Component {
   }
 
   render_reply_form() {
-    if(!this.state.reply_form.show)
+    if(!this.state.reply_form.is_visible)
       return "";
     return (
       <div>{this.state.reply_form.component}</div>
@@ -288,12 +290,12 @@ export class Comment extends React.Component {
     return (elem.parentElement.querySelector(':hover') === elem);
   }
 
-  destroyTooltips(feedback_id) {
+  disposeTooltips(feedback_id) {
     // console.log("feedback_id = "+feedback_id);
     var elem = document.getElementById(feedback_id);
     var is_hover = elem && this.is_hover(elem);
     if(elem && !is_hover) {
-      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
+      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('dispose');
     }
   }
   
@@ -314,7 +316,7 @@ export class Comment extends React.Component {
     var elem = document.getElementById(feedback_id);
     var is_hover = elem && this.is_hover(elem);
     if(elem && !is_hover) {
-      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
+      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('dispose');
     }
   }
   
@@ -356,6 +358,7 @@ export class Comment extends React.Component {
              className="mr-3" height="48" width="48" />
         <div className="media-body">
           <div className="comment pb-3">
+            <a name={comment_id}></a>
             <h6 className="mb-1 small d-flex">
               <div className="mr-auto">
                 {new_label}{this.props.data.submit_date}&nbsp;-&nbsp;{user_name}
@@ -364,7 +367,6 @@ export class Comment extends React.Component {
               </div>
               {right_div}
             </h6>
-            <a name={comment_id}></a>
             {comment_body}{feedback_btns}{reply_link}
             {reply_form}
           </div>

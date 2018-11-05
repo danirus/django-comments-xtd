@@ -19,7 +19,7 @@
             <hr/>
         </div>
     </div>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center flex-fill">
         <div class="col-md-7">
             <article>
                 {{ object.body|linebreaks }}
@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div class="row justify-content-center">
+    <div class="row justify-content-center flex-fill">
         <div class="col-md-7 pt-3">
             <p class="text-center">
                 <a href="{% url 'articles-index' %}">Back to the articles list</a>
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <div class="row justify-content-center">
+    <div class="row justify-content-center flex-fill">
         <div class="col-md-7">
             <div id="comments"></div>
         </div>

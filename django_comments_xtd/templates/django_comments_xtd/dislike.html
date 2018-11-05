@@ -19,22 +19,26 @@
     </h3>
     <hr/>
 </div>
-<p class="alert alert-info text-center">{% trans "Please, confirm your opinion about the comment." %}</p>
+<p class="lead text-center">{% trans "Please, confirm your opinion about the comment." %}</p>
 <div class="row">
     <div class="offset-lg-1 col-lg-10">
-        <div class="media pb-2">
-            {{ comment.user_email|xtd_comment_gravatar }}
-            <div class="media-body">
-                <div class="comment">
-                    <h6 class="mb-1 small">
-                        {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-                        {% if comment.user_url %}
-                        <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                            {{ comment.user_name }}
-                            {% if comment.user_url %}
-                        </a>{% endif %}
-                    </h6>
-                    <p>{{ comment.comment }}</p>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="media pb-2">
+                    {{ comment.user_email|xtd_comment_gravatar }}
+                    <div class="media-body">
+                        <div class="comment">
+                            <h6 class="mb-1 small">
+                                {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+                                {% if comment.user_url %}
+                                <a href="{{ comment.user_url }}" target="_new">{% endif %}
+                                    {{ comment.user_name }}
+                                    {% if comment.user_url %}
+                                </a>{% endif %}
+                            </h6>
+                            <p>{{ comment.comment }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -57,20 +61,18 @@
             {% trans 'Click on the "withdraw" button if you want to withdraw your negative opinion on this comment.' %}
         </div>
         {% endif %}
-        <div class="well well-lg">
-            <form action="." method="post" class="form-horizontal">{% csrf_token %}
-                <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
-                <div class="form-group">
-                    <div class="text-center">
-                        {% if already_disliked_it %}
-                        <input type="submit" name="submit" class="btn btn-warning" value="{% trans 'Withdraw' %}"/>
-                        {% else %}
-                        <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'I dislike it' %}"/>
-                        {% endif %}
-                        <a class="btn btn-secondary" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
-                    </div>
+        <form action="." method="post" class="form-horizontal">{% csrf_token %}
+            <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
+            <div class="form-group">
+                <div class="text-center">
+                    {% if already_disliked_it %}
+                    <input type="submit" name="submit" class="btn btn-warning" value="{% trans 'Withdraw' %}"/>
+                    {% else %}
+                    <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'I dislike it' %}"/>
+                    {% endif %}
+                    <a class="btn btn-secondary" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

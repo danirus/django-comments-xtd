@@ -55,18 +55,38 @@ export class Comment extends React.Component {
   }
 
   _get_right_div_chunk() {
-    let flagging_html = "", moderate_html = "", url = "";
+      let flagging_count = "",
+          flagging_html = "",
+          moderate_html = "",
+          url = "";
 
     if(this.props.data.is_removed)
       return "";
+
+    if(this.props.settings.is_authenticated &&
+       this.props.settings.can_moderate &&
+       this.state.removal_count > 0)
+    {
+      let fmts = django.ngettext(
+        "%s user has flagged this comment as inappropriate.",
+        "%s users have flagged this comment as inappropriate.",
+        this.state.removal_count);
+      let text = django.interpolate(fmts, [this.state.removal_count]);
+      flagging_count = (<span className="badge badge-danger" title={text}>
+                        {this.state.removal_count}</span>);
+    }
 
     if (this.props.settings.allow_flagging)
     {
       let inapp_msg = "";
       if(this.state.removal) {
         inapp_msg = django.gettext("I flagged it as inappropriate");
-        flagging_html = (<i className="fas fa-flag text-danger"
-                            title={inapp_msg}></i>);
+        flagging_html = (
+          <span>
+            {flagging_count}
+            <i className="fas fa-flag text-danger" title={inapp_msg}></i>
+          </span>
+        );
       } else {
         if (this.props.settings.is_authenticated) {
           url = this.props.settings.flag_url.replace('0', this.props.data.id);
@@ -75,9 +95,10 @@ export class Comment extends React.Component {
                  this.props.settings.flag_url.replace('0', this.props.data.id));
         }
         inapp_msg = django.gettext("flag comment as inappropriate");
-        flagging_html = (<a className="mutedlink" href={url}>
-                           <i className="fas fa-flag" title={inapp_msg}></i>
-                         </a>);
+        flagging_html = (
+          <a className="mutedlink" href={url}>
+            <i className="fas fa-flag" title={inapp_msg}></i></a>
+        );
       }
     }
 
@@ -89,18 +110,6 @@ export class Comment extends React.Component {
       moderate_html = (<a className="mutedlink" href={url}>
                          <i className="fas fa-trash-alt" title={remove_msg}></i>
                        </a>);
-      if(this.state.removal_count>0) {
-        let fmts = django.ngettext(
-          "%s user has flagged this comment as inappropriate.",
-          "%s users have flagged this comment as inappropriate.",
-          this.state.removal_count);
-        let text = django.interpolate(fmts, [this.state.removal_count]);
-        moderate_html = (<span>
-                           {moderate_html}&nbsp;
-                           <span className="badge badge-warning" title={text}>
-                             {this.state.removal_count}</span>
-                         </span>);
-      }
     }
 
     return (<div>{flagging_html} {moderate_html}</div>);
@@ -321,13 +330,18 @@ export class Comment extends React.Component {
   }
   
   render() {
-    var user_name = this._get_username_chunk();  // Plain name or link.
-    var right_div = this._get_right_div_chunk();  // Flagging & moderation.
-    var comment_body = this.render_comment_body();
-    var feedback_btns = this.render_feedback_btns();
-    var reply_link = this._get_reply_link_chunk();
-    var comment_id = "c" + this.props.data.id;
-    var reply_form = this.render_reply_form();
+    let comment_id = "c" + this.props.data.id;
+    let user_name = this._get_username_chunk();  // Plain name or link.
+    let right_div = this._get_right_div_chunk();  // Flagging & moderation.
+    let comment_body = this.render_comment_body();
+    let feedback_btns = "",
+        reply_link = "",
+        reply_form = "";
+    if (!this.props.data.is_removed) {
+      feedback_btns = this.render_feedback_btns();
+      reply_link = this._get_reply_link_chunk();
+      reply_form = this.render_reply_form();
+    }
 
     var new_label = "";
     if (this.props.newcids.indexOf(this.props.data.id) > -1) {

@@ -329,18 +329,16 @@ export class CommentForm extends React.Component {
       else heading_name = this.state.name;
     }
 
-    let div_cssc = "py2";
     let label = "";
     var header_text = django.gettext("Your comment in preview");
     let header = <h5 className="text-center">{header_text}</h5>;
     if(this.state.reply_to > 0) {
-      div_cssc = "";
       header = "";
       label = <div className="badge badge-info">preview</div>;
     }
     var nowtext = django.gettext("Now");
     return (
-      <div className={div_cssc}>
+      <div>
         <hr/>
         {header}
         <div className="media">

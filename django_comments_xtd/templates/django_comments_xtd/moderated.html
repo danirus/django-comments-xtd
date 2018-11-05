@@ -4,19 +4,26 @@
 {% block title %}{% trans "Comment requires approval" %}.{% endblock %}
 
 {% block content %}
-<h4 class="text-center">{% trans "Comment in moderation" %}</h4>
-<p class="text-center">
-  {% blocktrans %}
-  Your comment is in moderation.<br/>
-  It has to be reviewed before being published.<br/>
-  Thank you for your patience and understanding.
-  {% endblocktrans %}
-</p>
-<p class="text-center">
-  {% with content_object_url=comment.content_object.get_absolute_url content_object_str=comment.content_object %}
-  {% blocktrans %}
-  Go back to <a href="{{ content_object_url }}">{{ content_object_str }}</a>
-  {% endblocktrans %}
-  {% endwith %}
-</p>
+<div class="mb-4">
+    <h3 class="text-center">{% trans "Comment in moderation" %}</h3>
+    <hr/>
+</div>
+<div class="row justify-content-center flex-fill">
+    <div class="col-md-7">
+        <p class="lead text-center">
+            {% blocktrans %}
+            Your comment is in moderation.<br/>
+            It has to be reviewed before being published.<br/>
+            Thank you for your patience and understanding.
+            {% endblocktrans %}
+        </p>
+        <p class="pt-5 text-center">
+            {% with content_object_url=comment.content_object.get_absolute_url content_object_str=comment.content_object %}
+            {% blocktrans %}
+            Go back to: <a href="{{ content_object_url }}">{{ content_object_str }}</a>
+            {% endblocktrans %}
+            {% endwith %}
+        </p>
+    </div>
+</div>
 {% endblock %}

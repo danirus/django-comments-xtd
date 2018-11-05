@@ -45,6 +45,7 @@ class XtdCommentForm(CommentForm):
         self.fields['comment'].widget.attrs.pop('rows')
         self.fields['followup'].widget.attrs['id'] = (
             'id_followup%s' % followup_suffix)
+        self.fields['followup'].widget.attrs['class'] = "custom-control-input"
 
     def get_comment_model(self):
         return TmpXtdComment

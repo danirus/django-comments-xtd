@@ -116,7 +116,7 @@ Comment confirmation
 
 Before we go any further we need to set up the :setting:`COMMENTS_XTD_SALT` setting. This setting plays an important role during the comment confirmation by mail. It helps obfuscating the comment before the user approves its publication.
 
-It is so because django-comments-xtd does not store comments in the server before they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
+It is so because django-comments-xtd does not store comments in the server until they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
 
 This behaviour is disabled for authenticated users, and can be disabled for anonymous users too by simply setting :setting:`COMMENTS_XTD_CONFIRM_MAIL` to ``False``. 
 
@@ -156,10 +156,11 @@ By using the :ttag:`get_comment_count` tag we will show the number of comments p
    .. code-block:: html+django
 
        {% get_comment_count for object as comment_count %}
-       <div class="text-center" style="padding-top:20px">
+       <div class="pt-4 text-center">
          <a href="{% url 'blog:post-list' %}">Back to the post list</a>
          &nbsp;&sdot;&nbsp;
-         {{ comment_count }} comments have been posted.
+         {{ comment_count }} comment{{ comment_count|pluralize }}
+         ha{{ comment_count|pluralize:"s,ve" }} been posted.
        </div>
 
 Now let's add the code to list the comments posted to the story. We can make use of two template tags, :ttag:`render_comment_list` and :ttag:`get_comment_list`. The former renders a template with the comments while the latter put the comment list in a variable in the context of the template.
@@ -195,10 +196,10 @@ We will use the first tag, :ttag:`render_comment_form`. Again, add the following
    .. code-block:: html+django
 
        {% if object.allow_comments %}
-       <div class="comment">
-         <h4 class="text-center">Your comment</h4>
-         <div class="well">
-           {% render_comment_form for object %}
+       <div class="card card-block mt-4 mb-5">
+         <div class="card-body">
+           <h4 class="card-title text-center pb-3">Post your comment</h4>
+             {% render_comment_form for object %}
          </div>
        </div>
        {% endif %}

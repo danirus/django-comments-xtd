@@ -59,7 +59,7 @@ To get started using django-comments-xtd follow these steps:
        EMAIL_HOST_PASSWORD = "yourpassword"
        DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
 
-#. As of version 1.7.1 django-comments-xtd comes with templates styled with `twitter-bootstrap`_ v3 to allow a quick start. If you want to build your own templates, use the `comments <https://django-contrib-comments.readthedocs.io/en/latest/quickstart.html#comment-template-tags>`_ templatetag module, provided by the `django-comments <https://django-contrib-comments.readthedocs.io/en/latest/index.html>`_ app. Create a ``comments`` directory in your templates directory and copy the templates you want to customise from the Django Comments Framework. The following are the most important:
+#. To allow a quick start django-comments-xtd makes use of `twitter-bootstrap`_. From django-comments-xtd v2.3 on it uses Twitter-Bootstrap v4. From django-comments-xtd v1.7.1 to v2.2 it uses Twitter-Bootstrap v3. If you want to build your own templates, use the `comments <https://django-contrib-comments.readthedocs.io/en/latest/quickstart.html#comment-template-tags>`_ templatetag module, provided by the `django-comments <https://django-contrib-comments.readthedocs.io/en/latest/index.html>`_ app. Create a ``comments`` directory in your templates directory and copy the templates you want to customise from the Django Comments Framework. The following are the most important:
 
    * ``comments/list.html``, used by the ``render_comments_list`` templatetag.
 

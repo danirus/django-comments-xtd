@@ -202,18 +202,20 @@ export class Comment extends React.Component {
     if(!this.props.data.allow_reply)
       return "";
     
-    let separator = "";
-    if(this.props.settings.allow_feedback)
-      separator = <span className="text-muted">&bull;</span>;
-    let url = this.props.settings.reply_url.replace('0', this.props.data.id);
-    let reply_label = django.gettext("Reply");
+    let url = this.props.settings.reply_url.replace('0', this.props.data.id),
+        reply_label = django.gettext("Reply");
     
-    return (
-      <span>&nbsp;&nbsp;{separator}&nbsp;&nbsp;
-        <a className="small mutedlink" href={url}
-           onClick={this.handle_reply_click}>{reply_label}</a>
-      </span>
-    );
+    if(this.props.settings.allow_feedback) {
+      return (
+        <span>&nbsp;&nbsp;<span className="text-muted">&bull;</span>&nbsp;&nbsp;
+          <a className="small mutedlink" href={url}
+             onClick={this.handle_reply_click}>{reply_label}</a>
+        </span>
+      );
+    } else {
+      return (<a className="small mutedlink" href={url}
+              onClick={this.handle_reply_click}>{reply_label}</a>);
+    }
   }
 
   rawMarkup() {
@@ -222,15 +224,24 @@ export class Comment extends React.Component {
     return { __html: rawMarkup };
   }
   
-  render_comment_body() {  
-    if(this.props.data.is_removed)
+  render_comment_body() {
+    let extra_space = "";
+    if(!this.props.data.allow_reply &&
+       !this.props.settings.allow_feedback)
+    {
+      extra_space = "pb-3";
+    }
+    if(this.props.data.is_removed) {
+      let cls = `text-muted ${extra_space}`;
       return (
-        <p className="text-muted"><em>{this.props.data.comment}</em></p>
+        <p className={cls}><em>{this.props.data.comment}</em></p>
       );
-    else
+    } else {
+      let cls = `content ${extra_space}`;
       return (
-        <div className="content" dangerouslySetInnerHTML={this.rawMarkup()}/>
+        <div className={cls} dangerouslySetInnerHTML={this.rawMarkup()}/>
       );
+    }
   }
 
   render_reply_form() {
@@ -365,7 +376,7 @@ export class Comment extends React.Component {
         );
       }.bind(this));
     }
-    
+
     return (
       <div className="media" id={comment_id}>
         <img src={this.props.data.user_avatar}

@@ -10,7 +10,7 @@
     <div class="media-body">
         <div class="comment pb-3">
             <h6 class="mb-1 small d-flex">
-                <div class="mr-auto">{{ item.comment.submit_date|localize }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="label label-default">{% trans "moderator" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="{% trans 'comment permalink' %}" href="{% get_comment_permalink item.comment %}">¶</a></div>
+                <div class="mr-auto">{{ item.comment.submit_date|localize }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="badge badge-secondary">{% trans "moderator" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="{% trans 'comment permalink' %}" href="{% get_comment_permalink item.comment %}">¶</a></div>
                 <span>
                     {% if not item.comment.is_removed %}
                         {% if perms.comments.can_moderate %}
@@ -19,22 +19,21 @@
                             {% endif %}
                         {% endif %}
                         {% if allow_flagging and item.flagged %}
-                            <span class="fas fa-flag text-danger" title="{% trans 'comment flagged' %}"></span>
+                            <i class="fas fa-flag text-danger" title="{% trans 'comment flagged' %}"></i>
                         {% elif allow_flagging %}
                             <a class="mutedlink" href="{% url 'comments-flag' item.comment.pk %}">
-                                <span class="fas fa-flag" title="{% trans 'flag comment' %}"></span>
-                            </a>
+                                <i class="fas fa-flag" title="{% trans 'flag comment' %}"></i></a>
                         {% endif %}
                         {% if perms.comments.can_moderate %}
-                            <a class="mutedlink" href="{% url 'comments-delete' item.comment.pk %}"><span class="fas fa-trash-alt" title="{% trans 'remove comment' %}"></span></a>
+                            <a class="mutedlink" href="{% url 'comments-delete' item.comment.pk %}"><i class="fas fa-trash-alt" title="{% trans 'remove comment' %}"></i></a>
                         {% endif %}
                     {% endif %}
                 </span>
             </h6>
             {% if item.comment.is_removed %}
-                <p class="text-muted"><em>{% trans "This comment has been removed." %}</em></p>
+                <p class="text-muted{% if not allow_feedback and not item.comment.allow_thread %} pb-3{% endif %}"><em>{% trans "This comment has been removed." %}</em></p>
             {% else %}
-                <div class="content">
+                <div class="content{% if not allow_feedback and not item.comment.allow_thread %} pb-3{% endif %}">
                     {% include "includes/django_comments_xtd/comment_content.html" with content=item.comment.comment %}
                 </div>
             {% if allow_feedback %}

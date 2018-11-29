@@ -1,5 +1,18 @@
 # Change Log
 
+## [2.3.0] - 2018-11-29
+
+    * Upgrades Twitter-Bootstrap from v3 to v4.
+    * Fixes issue with tutorial fixtures (bug #114).
+    * Upgrade all JavaScript dependencies. Check packages.json for details.
+      The major changes are:
+       * ReactJS updates from 15.5 to 16.5.
+       * Babel updates from 6 to 7.
+       * Webpack from 2.4.1 to 4.21.0.
+       * Bootstrap from 3.3.7 to 4.1.3.
+    * Updates webpack.config.js.
+    * Demo sites and tutorial have been adapted to Twitter Bootstrap v4.
+
 ## [2.2.1] - 2018-10-06
 
     * Resolves deprecation warnings and adopt recommendations in unit tests.

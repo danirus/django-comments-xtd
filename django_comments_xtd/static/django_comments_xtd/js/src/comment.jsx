@@ -11,17 +11,6 @@ import {CommentForm} from './commentform.jsx';
 export class Comment extends React.Component {
   constructor(props) {
     super(props);
-    this._initialize_state(props);
-    this.action_like = this.action_like.bind(this);
-    this.action_dislike = this.action_dislike.bind(this);
-    this.handle_reply_click = this.handle_reply_click.bind(this);
-  }
-
-  componentWillReceiveProps(props) {
-    this._initialize_state(props);
-  }
-
-  _initialize_state(props) {
     this.state = {
       current_user: props.settings.current_user,
       removal: props.data.flags.removal.active,
@@ -35,6 +24,10 @@ export class Comment extends React.Component {
         is_visible: false
       }
     };
+    this.action_like = this.action_like.bind(this);
+    this.action_dislike = this.action_dislike.bind(this);
+    this.handle_reply_click = this.handle_reply_click.bind(this);
+    console.log("Creating Comment");
   }
 
   _get_username_chunk() {
@@ -184,6 +177,12 @@ export class Comment extends React.Component {
     } else
       return "";
   }
+
+  make_form_invisible(submit_status) {
+    // this.setState({reply_form: {component: this.state.reply_form.component,
+    //                             is_visible: false}});
+    this.props.on_comment_created();
+  }
   
   handle_reply_click(event) {
     event.preventDefault();
@@ -193,7 +192,7 @@ export class Comment extends React.Component {
       component = (
         <CommentForm {...this.props.settings}
                      reply_to={this.props.data.id}
-                     on_comment_created={this.props.on_comment_created} />
+                     on_comment_created={this.make_form_invisible.bind(this)} />
       );
     this.setState({reply_form: {component: component, is_visible: visible}});
   }

@@ -76,12 +76,10 @@ export class CommentBox extends React.Component {
                                  "There are %s new comments.", diff);
       var message = django.interpolate(fmts, [diff]);
       return (
-        <div className="alert alert-info">
-          {message}
-          <div className="pull-right">
-            <button type="button" className="btn btn-default btn-xs"
-                    onClick={this.handle_update}>update</button>
-          </div>
+        <div className="alert alert-info d-flex align-items-center">
+          <p className="mr-auto">{message}</p>
+          <button type="button" className="btn btn-secondary btn-xs"
+                  onClick={this.handle_update}>update</button>
         </div>
       );
     } else

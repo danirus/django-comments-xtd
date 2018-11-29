@@ -57,7 +57,9 @@ Let's finish the initial setup, load the fixtures and run the development server
 
 Head to http://localhost:8000 and visit the tutorial site.
 
+.. note:: Remember to implement the `get_absolute_url` in the model class whose objects you want to receive comments, like the class `Post` in this tutorial. It is so because the permanent URL of each comment uses the `shortcut` view of `django.contrib.contenttypes` which in turn uses the `get_absolute_url` method.
 
+          
 .. _configuration:
 
 Configuration
@@ -204,6 +206,9 @@ We will use the first tag, :ttag:`render_comment_form`. Again, add the following
        </div>
        {% endif %}
        
+
+.. note:: The ``{% if object.allow_comments %}`` and corresponding ``{% endif %}`` are not necessary in your code. I use it in this tutorial (and in the demo sites) as a way to disable comments whenever the author of a blog post decides so. It has been mentioned `here <https://github.com/danirus/django-comments-xtd/issues/108>`_ too.
+
 
 Finally, before completing this first set of changes, we could show the number of comments along with post titles in the blog's home page. For this we have to edit ``blog/post_list.html`` and make the following changes:
 

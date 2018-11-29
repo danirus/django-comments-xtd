@@ -12,6 +12,7 @@
        * Bootstrap from 3.3.7 to 4.1.3.
     * Updates webpack.config.js.
     * Demo sites and tutorial have been adapted to Twitter Bootstrap v4.
+    * Fixes issues #94, #108, #111.
 
 ## [2.2.1] - 2018-10-06
 

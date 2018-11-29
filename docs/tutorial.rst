@@ -796,53 +796,62 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
 
    .. code-block:: html+django
 
-       {% extends "base.html" %}
-       {% load static %}
-       {% load comments %}
-       {% load comments_xtd %}
-
-       {% block title %}{{ object.title }}{% endblock %}
-
-       {% block content %}
-       <h3 class="page-header text-center">{{ object.title }}</h3>
-       <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
-       <p>
-         {{ object.body|linebreaks }}
-       </p>
-
-       <div class="text-center" style="padding-top:20px">
-         <a href="{% url 'blog:post-list' %}">Back to the post list</a>
-       </div>
-
-       <div id="comments"></div>
-       {% endblock %}
-
-       {% block extra-js %}
-       <script>
-         window.comments_props = {% get_commentbox_props for object %};
-         window.comments_props_override = {
-           allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
-           allow_feedback: true,
-           show_feedback: true,
-           allow_flagging: true,
-           polling_interval: 5000  // In milliseconds.
-         };
-       </script>
-       <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-               integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-               crossorigin="anonymous"></script>
-       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-               integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-               crossorigin="anonymous"></script>
-       <script type="text/javascript"
-               src="{% url 'javascript-catalog' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/vendor-2.2.1.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.2.1.js' %}"></script>
-       <script>
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip({html: true})
-        })</script>
-       {% endblock %}
+    {% extends "base.html" %}
+    {% load static %}
+    {% load comments %}
+    {% load comments_xtd %}
+    
+    {% block title %}{{ object.title }}{% endblock %}
+    
+    {% block content %}
+    <div class="pb-3">
+      <h1 class="text-center">{{ object.title }}</h1>
+      <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
+    </div>
+    <div>
+      {{ object.body|linebreaks }}
+    </div>
+    
+    <div class="py-4 text-center">
+      <a href="{% url 'blog:post-list' %}">Back to the post list</a>
+    </div>
+    
+    <div id="comments"></div>
+    {% endblock %}
+    
+    {% block extra-js %}
+    <script>
+     window.comments_props = {% get_commentbox_props for object %};
+     window.comments_props_override = {
+         allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+         allow_feedback: true,
+         show_feedback: true,
+         allow_flagging: true,
+         polling_interval: 5000  // In milliseconds.
+     };
+    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+      integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+      crossorigin="anonymous"></script>
+    <script
+      type="text/javascript"
+      src="{% url 'javascript-catalog' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.2.1.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/plugin-2.2.1.js' %}"></script>
+    <script>
+    $(function() {
+      $('[data-toggle="tooltip"]').tooltip({html: true});
+    });
+    </script>
+    {% endblock %}
 
 
 The blog post page is now ready to handle comments through the JavaScript plugin, including the following features:

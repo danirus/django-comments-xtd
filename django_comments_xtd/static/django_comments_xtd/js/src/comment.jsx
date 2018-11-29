@@ -21,14 +21,15 @@ export class Comment extends React.Component {
       dislike_users: props.data.flags.dislike.users || [],
       reply_form: {
         component: null,
-        show: false
+        is_visible: false
       }
     };
     this.action_like = this.action_like.bind(this);
     this.action_dislike = this.action_dislike.bind(this);
     this.handle_reply_click = this.handle_reply_click.bind(this);
+    console.log("Creating Comment");
   }
-  
+
   _get_username_chunk() {
     let username = this.props.data.user_name, moderator = "";
 
@@ -37,27 +38,46 @@ export class Comment extends React.Component {
 
     if(this.props.data.user_moderator) {
       var label = django.gettext("moderator");
-      moderator = (<span>
-                   &nbsp;<span className="label label-default">{label}</span>
-                   </span>);
+      moderator = (
+        <span>&nbsp;
+         <span className="badge badge-secondary">{label}</span>
+        </span>
+         );
     }
     return <span>{username}{moderator}</span>;
   }
 
   _get_right_div_chunk() {
-    let flagging_html = "", moderate_html = "", url = "";
+      let flagging_count = "",
+          flagging_html = "",
+          moderate_html = "",
+          url = "";
 
     if(this.props.data.is_removed)
       return "";
-    
+
+    if(this.props.settings.is_authenticated &&
+       this.props.settings.can_moderate &&
+       this.state.removal_count > 0)
+    {
+      let fmts = django.ngettext(
+        "%s user has flagged this comment as inappropriate.",
+        "%s users have flagged this comment as inappropriate.",
+        this.state.removal_count);
+      let text = django.interpolate(fmts, [this.state.removal_count]);
+      flagging_count = (<span className="badge badge-danger" title={text}>
+                        {this.state.removal_count}</span>);
+    }
+
     if (this.props.settings.allow_flagging)
     {
-      var inappropriate_msg = "";
+      let inapp_msg = "";
       if(this.state.removal) {
-        inappropriate_msg = django.gettext("I flagged it as inappropriate");
+        inapp_msg = django.gettext("I flagged it as inappropriate");
         flagging_html = (
-          <span className="glyphicon glyphicon-flag text-danger"
-                title={inappropriate_msg}>
+          <span>
+            {flagging_count}
+            <i className="fas fa-flag text-danger" title={inapp_msg}></i>
           </span>
         );
       } else {
@@ -67,106 +87,81 @@ export class Comment extends React.Component {
           url = (this.props.settings.login_url + "?next=" +
                  this.props.settings.flag_url.replace('0', this.props.data.id));
         }
-        inappropriate_msg = django.gettext("flag comment as inappropriate");
+        inapp_msg = django.gettext("flag comment as inappropriate");
         flagging_html = (
           <a className="mutedlink" href={url}>
-            <span className="glyphicon glyphicon-flag"
-                  title={inappropriate_msg}></span>
-          </a>);
-      }
-    }
-    
-    if(this.props.settings.is_authenticated &&
-       this.props.settings.can_moderate)
-    {
-      var remove_msg = django.gettext("remove comment");
-      url = this.props.settings.delete_url.replace('0', this.props.data.id);
-      moderate_html = (
-        <a className="mutedlink" href={url}>
-          <span className="glyphicon glyphicon-trash" title={remove_msg}>
-          </span>
-        </a>);
-      if(this.state.removal_count>0) {
-        var fmts = django.ngettext(
-          "%s user has flagged this comment as inappropriate.",
-          "%s users have flagged this comment as inappropriate.",
-          this.state.removal_count);
-        var text = django.interpolate(fmts, [this.state.removal_count]);
-        moderate_html = (
-          <span>
-            {moderate_html}&nbsp;
-            <span className="label label-warning" title={text}>
-              {this.state.removal_count}</span>
-          </span>
+            <i className="fas fa-flag" title={inapp_msg}></i></a>
         );
       }
     }
-    
-    return (
-      <p className="pull-right">
-        {flagging_html} {moderate_html}
-      </p>
-    );
+
+    if(this.props.settings.is_authenticated &&
+       this.props.settings.can_moderate)
+    {
+      let remove_msg = django.gettext("remove comment");
+      url = this.props.settings.delete_url.replace('0', this.props.data.id);
+      moderate_html = (<a className="mutedlink" href={url}>
+                         <i className="fas fa-trash-alt" title={remove_msg}></i>
+                       </a>);
+    }
+
+    return (<div>{flagging_html} {moderate_html}</div>);
   }
 
   _get_feedback_chunk(dir) {
     if(!this.props.settings.allow_feedback)
       return "";
     let attr_list = dir + "_users";  // Produce (dis)like_users
-
     let show_users_chunk = "";
-    if(this.props.settings.show_feedback) {
 
-      // Check whether the user is no longer liking/disliking the comment,
-      // and be sure the list list of users who liked/disliked the comment
-      // is up-to-date likewise.
+    if(this.props.settings.show_feedback) {
+      /* Check whether the user is no longer liking/disliking the comment,
+       * and be sure the list list of users who liked/disliked the comment
+       * is up-to-date likewise.
+       */
       let current_user_id = this.state.current_user.split(":")[0];
       let user_ids = this.state[attr_list].map(function(item) {
         return item.split(":")[0];
       });
-      if(this.state[dir] &&       // If user expressed opinion, and
-         (user_ids.indexOf(current_user_id) == -1)) // user is not included.
-      { // Append user to the list.
+      if(this.state[dir] &&            // If user expressed opinion, and
+         (user_ids.indexOf(current_user_id) == -1)) // user not included.
+      {                                       // Append user to the list.
         this.state[attr_list].push(this.state.current_user);
-      } else if(!this.state[dir] && // If user doesn't have an opinion
-                (user_ids.indexOf(current_user_id) > -1)) // user is included.
-      { // Remove the user from the list.
+      } else if(!this.state[dir] &&     // If user has no opinion, and
+                (user_ids.indexOf(current_user_id) > -1)) // user included.
+      {                                   // Remove the user from the list.
         var pos = user_ids.indexOf(current_user_id);
         this.state[attr_list].splice(pos, 1);
       }
-      
+
       if(this.state[attr_list].length) {
         let users = this.state[attr_list].map(function(item) {
           return item.split(":")[1];
         });
         users = users.join("<br/>");
         show_users_chunk = (
-          <a className="cfb-counter" data-toggle="tooltip" title={users}>
-            <span className="small">
-              {this.state[attr_list].length}
-            </span>
-          </a>
+          <span>&nbsp;<a className="badge badge-primary text-white cfb-counter"
+                         data-toggle="tooltip" title={users}>
+                        {this.state[attr_list].length}
+                      </a></span>
         );
       }
     }
 
-    var css_class = this.state[dir] ? '' : 'mutedlink';
-    var icon = dir == 'like' ? 'thumbs-up' : 'thumbs-down';
-    var class_icon = "small glyphicon glyphicon-"+icon;
-    var click_hdl = dir == 'like' ? this.action_like : this.action_dislike;
-    var opinion="", link="#";
+    let css_class = this.state[dir] ? '' : 'mutedlink';
+    let icon = dir == 'like' ? 'thumbs-up' : 'thumbs-down';
+    let class_icon = "fas fa-"+icon;
+    let click_hdl = dir == 'like' ? this.action_like : this.action_dislike;
+    let opinion="", link="#";
     if (dir == 'like')
       opinion = django.gettext('I like it');
     else opinion = django.gettext('I dislike it');
 
     return (
-      <span>
-        {show_users_chunk}  <a href="#" onClick={click_hdl}
-                               className={css_class}>
-          <span className={class_icon} title={opinion}></span>
-        </a>
-      </span>
-    );
+      <span>{show_users_chunk}&nbsp;<a href="#" onClick={click_hdl}
+                                       className={css_class}>
+                                      <i className={class_icon} title={opinion}>
+                                      </i></a>&nbsp;</span>);
   }
 
   render_feedback_btns() {
@@ -174,55 +169,52 @@ export class Comment extends React.Component {
     {
       let feedback_id = "feedback-"+this.props.data.id;
       if(this.props.settings.show_feedback)
-        this.destroyTooltips(feedback_id);
+        this.disposeTooltips(feedback_id);
       let like_feedback = this._get_feedback_chunk("like");
       let dislike_feedback = this._get_feedback_chunk("dislike");
-      return (
-        <span id={feedback_id} className="small">
-          {like_feedback}
-          <span className="text-muted"> | </span>
-          {dislike_feedback}
-        </span>
-      );
+      return (<span id={feedback_id} className="small">{like_feedback}
+                <span className="text-muted">|</span>{dislike_feedback}</span>);
     } else
       return "";
+  }
+
+  make_form_invisible(submit_status) {
+    // this.setState({reply_form: {component: this.state.reply_form.component,
+    //                             is_visible: false}});
+    this.props.on_comment_created();
   }
   
   handle_reply_click(event) {
     event.preventDefault();
-    var component = this.state.reply_form.component;
-    var visible = !this.state.reply_form.show;
-    if(component==null) 
+    let component = this.state.reply_form.component;
+    let visible = !this.state.reply_form.is_visible;
+    if(component == null)
       component = (
-        <CommentForm form={this.props.settings.form}
+        <CommentForm {...this.props.settings}
                      reply_to={this.props.data.id}
-                     send_url={this.props.settings.send_url}
-                     current_user={this.props.settings.current_user}
-                     is_authenticated={this.props.settings.is_authenticated}
-                     request_name={this.props.settings.request_name}
-                     request_email_address={this.props.settings.request_email_address}
-                     on_comment_created={this.props.on_comment_created} />
+                     on_comment_created={this.make_form_invisible.bind(this)} />
       );
-    this.setState({reply_form: {component: component,
-                                show: visible}});
+    this.setState({reply_form: {component: component, is_visible: visible}});
   }
 
   _get_reply_link_chunk() {
     if(!this.props.data.allow_reply)
       return "";
     
-    let separator = "";
-    if(this.props.settings.allow_feedback)
-      separator = <span className="text-muted">&bull;</span>;
-    let url = this.props.settings.reply_url.replace('0', this.props.data.id);
-    let reply_label = django.gettext("Reply");
+    let url = this.props.settings.reply_url.replace('0', this.props.data.id),
+        reply_label = django.gettext("Reply");
     
-    return (
-      <span>&nbsp;&nbsp;{separator}&nbsp;&nbsp;
-        <a className="small mutedlink" href={url}
-           onClick={this.handle_reply_click}>{reply_label}</a>
-      </span>
-    );
+    if(this.props.settings.allow_feedback) {
+      return (
+        <span>&nbsp;&nbsp;<span className="text-muted">&bull;</span>&nbsp;&nbsp;
+          <a className="small mutedlink" href={url}
+             onClick={this.handle_reply_click}>{reply_label}</a>
+        </span>
+      );
+    } else {
+      return (<a className="small mutedlink" href={url}
+              onClick={this.handle_reply_click}>{reply_label}</a>);
+    }
   }
 
   rawMarkup() {
@@ -231,19 +223,28 @@ export class Comment extends React.Component {
     return { __html: rawMarkup };
   }
   
-  render_comment_body() {  
-    if(this.props.data.is_removed)
+  render_comment_body() {
+    let extra_space = "";
+    if(!this.props.data.allow_reply &&
+       !this.props.settings.allow_feedback)
+    {
+      extra_space = "pb-3";
+    }
+    if(this.props.data.is_removed) {
+      let cls = `text-muted ${extra_space}`;
       return (
-        <p className="text-muted"><em>{this.props.data.comment}</em></p>
+        <p className={cls}><em>{this.props.data.comment}</em></p>
       );
-    else
+    } else {
+      let cls = `content ${extra_space}`;
       return (
-        <div className="content" dangerouslySetInnerHTML={this.rawMarkup()}/>
+        <div className={cls} dangerouslySetInnerHTML={this.rawMarkup()}/>
       );
+    }
   }
 
   render_reply_form() {
-    if(!this.state.reply_form.show)
+    if(!this.state.reply_form.is_visible)
       return "";
     return (
       <div>{this.state.reply_form.component}</div>
@@ -273,7 +274,6 @@ export class Comment extends React.Component {
         }.bind(this)
       },
       error: function(xhr, status, err) {
-        debugger;
         if(xhr.status==400 && xhr.responseJSON.non_field_errors.length)
           alert(xhr.responseJSON.non_field_errors[0]);
         else
@@ -301,7 +301,7 @@ export class Comment extends React.Component {
     else
       return window.location.href = (
         this.props.settings.login_url + "?next=" +
-        this.props.settings.dislike_url.replace('0', this.props.id)
+        this.props.settings.dislike_url.replace('0', this.props.data.id)
       );
   }
 
@@ -309,12 +309,12 @@ export class Comment extends React.Component {
     return (elem.parentElement.querySelector(':hover') === elem);
   }
 
-  destroyTooltips(feedback_id) {
+  disposeTooltips(feedback_id) {
     // console.log("feedback_id = "+feedback_id);
     var elem = document.getElementById(feedback_id);
     var is_hover = elem && this.is_hover(elem);
     if(elem && !is_hover) {
-      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
+      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('dispose');
     }
   }
   
@@ -335,24 +335,29 @@ export class Comment extends React.Component {
     var elem = document.getElementById(feedback_id);
     var is_hover = elem && this.is_hover(elem);
     if(elem && !is_hover) {
-      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('destroy');
+      $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('dispose');
     }
   }
   
   render() {
-    var user_name = this._get_username_chunk();  // Plain name or link.
-    var right_div = this._get_right_div_chunk();  // Flagging & moderation.
-    var comment_body = this.render_comment_body();
-    var feedback_btns = this.render_feedback_btns();
-    var reply_link = this._get_reply_link_chunk();
-    var comment_id = "c" + this.props.data.id;
-    var reply_form = this.render_reply_form();
+    let comment_id = "c" + this.props.data.id;
+    let user_name = this._get_username_chunk();  // Plain name or link.
+    let right_div = this._get_right_div_chunk();  // Flagging & moderation.
+    let comment_body = this.render_comment_body();
+    let feedback_btns = "",
+        reply_link = "",
+        reply_form = "";
+    if (!this.props.data.is_removed) {
+      feedback_btns = this.render_feedback_btns();
+      reply_link = this._get_reply_link_chunk();
+      reply_form = this.render_reply_form();
+    }
 
     var new_label = "";
     if (this.props.newcids.indexOf(this.props.data.id) > -1) {
       new_label = (
         <span>
-          <span className="label label-success">new</span>&nbsp;-&nbsp;
+          <span className="badge badge-success">new</span>&nbsp;-&nbsp;
         </span>
       );
     }
@@ -370,21 +375,22 @@ export class Comment extends React.Component {
         );
       }.bind(this));
     }
-    
+
     return (
       <div className="media" id={comment_id}>
-        <div className="media-left">
-          <img src={this.props.data.user_avatar} height="48" width="48" />
-        </div>
+        <img src={this.props.data.user_avatar}
+             className="mr-3" height="48" width="48" />
         <div className="media-body">
-          <div className="comment">
-            <h6 className="media-heading">
-              {new_label}{this.props.data.submit_date} - {user_name}
-              &nbsp;&nbsp;
-              <a className="permalink" href={this.props.data.permalink}>¶</a>
+          <div className="comment pb-3">
+            <a name={comment_id}></a>
+            <h6 className="mb-1 small d-flex">
+              <div className="mr-auto">
+                {new_label}{this.props.data.submit_date}&nbsp;-&nbsp;{user_name}
+                &nbsp;&nbsp;
+                <a className="permalink" href={this.props.data.permalink}>¶</a>
+              </div>
               {right_div}
             </h6>
-            <a name={comment_id}></a>
             {comment_body}{feedback_btns}{reply_link}
             {reply_form}
           </div>

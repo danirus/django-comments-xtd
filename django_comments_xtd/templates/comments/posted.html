@@ -2,13 +2,20 @@
 {% load i18n %}
 
 {% block content %}
-<h4 class="text-center">{% trans "Comment confirmation requested." %}</h4>
-<p class="text-center">
-  {% blocktrans %}A confirmation message has been sent to your
-  email address. Please, click on the link in the message to confirm
-  your comment.{% endblocktrans %}
-</p>
-<p class="text-center">
-  Go back to <a href="{{ target.get_absolute_url }}">{{ target }}</a>
-</p>
+<div class="mb-4">
+    <h3 class="text-center">{% trans "Comment confirmation requested." %}</h3>
+    <hr/>
+</div>
+<div class="row justify-content-center flex-fill">
+    <div class="col-md-7">
+        <p class="lead text-center">
+            {% blocktrans %}A confirmation message has been sent to your
+            email address. Please, click on the link in the message to confirm
+            your comment.{% endblocktrans %}
+        </p>
+        <p class="pt-5 text-center">
+            Go back to: <a href="{{ target.get_absolute_url }}">{{ target }}</a>
+        </p>
+    </div>
+</div>
 {% endblock %}

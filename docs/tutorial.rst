@@ -57,7 +57,9 @@ Let's finish the initial setup, load the fixtures and run the development server
 
 Head to http://localhost:8000 and visit the tutorial site.
 
+.. note:: Remember to implement the `get_absolute_url` in the model class whose objects you want to receive comments, like the class `Post` in this tutorial. It is so because the permanent URL of each comment uses the `shortcut` view of `django.contrib.contenttypes` which in turn uses the `get_absolute_url` method.
 
+          
 .. _configuration:
 
 Configuration
@@ -116,7 +118,7 @@ Comment confirmation
 
 Before we go any further we need to set up the :setting:`COMMENTS_XTD_SALT` setting. This setting plays an important role during the comment confirmation by mail. It helps obfuscating the comment before the user approves its publication.
 
-It is so because django-comments-xtd does not store comments in the server before they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
+It is so because django-comments-xtd does not store comments in the server until they have been confirmed. This way there is little to none possible comment spam flooding in the database. Comments are encoded in URLs and sent for confirmation by mail. Only when the user clicks the confirmation URL the comment lands in the database.
 
 This behaviour is disabled for authenticated users, and can be disabled for anonymous users too by simply setting :setting:`COMMENTS_XTD_CONFIRM_MAIL` to ``False``. 
 
@@ -156,10 +158,11 @@ By using the :ttag:`get_comment_count` tag we will show the number of comments p
    .. code-block:: html+django
 
        {% get_comment_count for object as comment_count %}
-       <div class="text-center" style="padding-top:20px">
+       <div class="py-4 text-center">
          <a href="{% url 'blog:post-list' %}">Back to the post list</a>
          &nbsp;&sdot;&nbsp;
-         {{ comment_count }} comments have been posted.
+         {{ comment_count }} comment{{ comment_count|pluralize }}
+         ha{{ comment_count|pluralize:"s,ve" }} been posted.
        </div>
 
 Now let's add the code to list the comments posted to the story. We can make use of two template tags, :ttag:`render_comment_list` and :ttag:`get_comment_list`. The former renders a template with the comments while the latter put the comment list in a variable in the context of the template.
@@ -195,14 +198,17 @@ We will use the first tag, :ttag:`render_comment_form`. Again, add the following
    .. code-block:: html+django
 
        {% if object.allow_comments %}
-       <div class="comment">
-         <h4 class="text-center">Your comment</h4>
-         <div class="well">
-           {% render_comment_form for object %}
+       <div class="card card-block mb-5">
+         <div class="card-body">
+           <h4 class="card-title text-center pb-3">Post your comment</h4>
+             {% render_comment_form for object %}
          </div>
        </div>
        {% endif %}
        
+
+.. note:: The ``{% if object.allow_comments %}`` and corresponding ``{% endif %}`` are not necessary in your code. I use it in this tutorial (and in the demo sites) as a way to disable comments whenever the author of a blog post decides so. It has been mentioned `here <https://github.com/danirus/django-comments-xtd/issues/108>`_ too.
+
 
 Finally, before completing this first set of changes, we could show the number of comments along with post titles in the blog's home page. For this we have to edit ``blog/post_list.html`` and make the following changes:
 
@@ -212,13 +218,16 @@ Finally, before completing this first set of changes, we could show the number o
        {% load comments %}
 
        ...
-       <p class="date">
-         {% get_comment_count for object as comment_count %}
-         Published {{ object.publish }}
-         {% if comment_count %}
-         &sdot;&nbsp;{{ comment_count }} comments
-         {% endif %}
-       </p>
+           {% for object in object_list %}
+           ...
+           {% get_comment_count for object as comment_count %}
+           <p class="date">Published {{ object.publish }}
+             {% if comment_count %}
+             &sdot;&nbsp;{{ comment_count }} comment{{ comment_count|pluralize }}
+             {% endif %}
+           </p>
+           ...
+           {% endfor %}
 
 
 Now we are ready to send comments. If you are logged in in the admin site, your comments won't need to be confirmed by mail. To test the confirmation URL do logout of the admin interface. Bear in mind that :setting:`EMAIL_BACKEND` is set up to send mail messages to the console, so look in the console after you post the comment and find the first long URL in the message. To confirm the comment copy the link and paste it in the location bar of the browser.
@@ -294,7 +303,7 @@ Disallow black listed domains
 
 In case you wanted to disable comment confirmation by mail you might want to set up some sort of control to reject spam.
 
-In this section we will go through the steps to disable comment confirmation while enabling a comment filtering solution based on Joe Wein's blacklist_ of spamming domains. We will also add a moderation function that will put in moderation comments containing badwords_.
+This section goes through the steps to disable comment confirmation while enabling a comment filtering solution based on Joe Wein's blacklist_ of spamming domains. We will also add a moderation function that will put in moderation comments containing badwords_.
 
 Let us first disable comment confirmation. Edit the ``tutorial/settings.py`` file and add:
 
@@ -436,17 +445,20 @@ Edit ``blog/post_detail.html`` to make it look like follows:
        {% block title %}{{ object.title }}{% endblock %}
 
        {% block content %}
-       <h3 class="page-header text-center">{{ object.title }}</h3>
-       <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
-       <p>
+       <div class="pb-3">
+         <h1 class="page-header text-center">{{ object.title }}</h1>
+         <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
+       </div>
+       <div>
          {{ object.body|linebreaks }}
-       </p>
+       </div>
        
        {% get_comment_count for object as comment_count %}
-       <div class="text-center" style="padding-top:20px">
+       <div class="py-4 text-center>
          <a href="{% url 'blog:post-list' %}">Back to the post list</a>
          &nbsp;&sdot;&nbsp;
-         {{ comment_count }} comments have been posted.  
+         {{ comment_count }} comment{{ comment_count|pluralize }}
+         ha{{ comment_count|pluralize:"s,ve"}} been posted.
        </div>
 
        {% if object.allow_comments %}
@@ -459,7 +471,6 @@ Edit ``blog/post_detail.html`` to make it look like follows:
        {% endif %}
        
        {% if comment_count %}
-       <hr/>
        <ul class="media-list">
          {% render_xtdcomment_tree for object %}
        </ul>
@@ -516,7 +527,7 @@ One important requirement to mark comments is that the user flagging must be aut
 Commenting options
 ------------------
 
-As of version 2.0 of django-comments-xtd there is a new setting, :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS`, that must be correctly setup to allow flagging. The purpose is to give an additional level of control about what action users can do on comments: flag them as inappropriate, like/dislike them, and retrieve the list of users who liked/disliked them.
+As of version 2.0 django-comments-xtd has a new setting :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS` that must be used to allow comment flagging. The purpose of it is to give an additional level of control about what action users can do on comments: flag them as inappropriate, like/dislike them, and retrieve the list of users who liked/disliked them.
 
 It defaults to:
 
@@ -530,7 +541,7 @@ It defaults to:
            }
        }
 
-We will enable each option alongside the following sections. 
+We will enable each option in the next sections.
 
 
 Removal suggestion
@@ -546,7 +557,7 @@ Enabling the comment removal flag is about including the **allow_flagging** argu
        </ul>
 
 
-The **allow_flagging** argument makes the templatetag populate a variable ``allow_flagging = True`` in the context in which ``django_comments_xtd/comment_tree.html`` is rendered. Edit now the settings module and enable the ``allow_flagging`` option for the ``blog.post`` **app.label** pair:
+The **allow_flagging** argument makes the templatetag populate a variable ``allow_flagging = True`` in the context in which ``django_comments_xtd/comment_tree.html`` is rendered. Edit now the settings module and enable the ``allow_flagging`` option for the ``blog.post``:
 
    .. code-block:: python
 
@@ -558,7 +569,7 @@ The **allow_flagging** argument makes the templatetag populate a variable ``allo
            }
        }
 
-Now let's suggest a removal. First we need to login in the admin_ interface so that we are not an anonymous user. Then we can visit any of the blog posts we sent comments to. There is a flag at the right side of every comment's header. Clicking on it bring the user to a page in which she is requested to confirm the removal suggestion. Finally, clicking on the red **Flag** button confirms the request.
+Now let's suggest a removal. First we need to login in the admin_ interface so that we are not an anonymous user. Then we can visit any of the blog posts we sent comments to. There is a flag at the right side of every comment's header. Clicking on it takes the user to a page in which she is requested to confirm the removal suggestion. Finally, clicking on the red **Flag** button confirms the request.
 
 Users with the ``django_comments.can_moderate`` permission will see a yellow labelled counter near the flag button in each flagged comment, representing how many times comments have been flagged. Also notice that when a user flags a comment for removal the icon turns red for that user.
 
@@ -641,16 +652,21 @@ With the like/dislike buttons enabled we might as well consider to display the u
 
        {% block extra-js %}
        <script
-           src="https://code.jquery.com/jquery-2.2.4.min.js"
-           integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-           crossorigin="anonymous"></script>
-       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-           integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-           crossorigin="anonymous"></script>
+         src="https://code.jquery.com/jquery-3.3.1.min.js"
+         crossorigin="anonymous"></script>
+       <script
+         src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+         crossorigin="anonymous"></script>
+       <script
+         src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+         crossorigin="anonymous"></script>
        <script>
-       $(function () {
-         $('[data-toggle="tooltip"]').tooltip({html: true})
-       })</script>
+         $(function() {
+           $('[data-toggle="tooltip"]').tooltip({html: true});
+         });
+       </script>
        {% endblock %}
 
 Also change the settings and enable the ``show_feedback`` option for ``blog.post``:
@@ -665,7 +681,7 @@ Also change the settings and enable the ``show_feedback`` option for ``blog.post
            }
        }
 
-We loaded jQuery and twitter-bootstrap_ libraries from their respective default CDNs as the code above uses bootstrap's tooltip functionality to show the list of users when the mouse hovers the numbers near the buttons, as shows the image: 
+We loaded jQuery and twitter-bootstrap_ libraries from their respective default CDNs as the code above uses bootstrap's tooltip functionality to show the list of users when the mouse hovers the numbers near the buttons, as the following image shows: 
 
 .. _twitter-bootstrap: http://getbootstrap.com
 
@@ -727,7 +743,7 @@ In this section of the tutorial we go through the steps to make use of the JavaS
 Enable Web API
 --------------
 
-The JavaScript plugin uses the Web API provided by within the app. In order to enable it install the `django-rest-framework <http://www.django-rest-framework.org/>`_:
+The JavaScript plugin uses the Web API provided within the app. In order to enable it install the `django-rest-framework <http://www.django-rest-framework.org/>`_:
 
    .. code-block:: bash
 
@@ -785,53 +801,62 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
 
    .. code-block:: html+django
 
-       {% extends "base.html" %}
-       {% load static %}
-       {% load comments %}
-       {% load comments_xtd %}
-
-       {% block title %}{{ object.title }}{% endblock %}
-
-       {% block content %}
-       <h3 class="page-header text-center">{{ object.title }}</h3>
-       <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
-       <p>
-         {{ object.body|linebreaks }}
-       </p>
-
-       <div class="text-center" style="padding-top:20px">
-         <a href="{% url 'blog:post-list' %}">Back to the post list</a>
-       </div>
-
-       <div id="comments"></div>
-       {% endblock %}
-
-       {% block extra-js %}
-       <script>
-         window.comments_props = {% get_commentbox_props for object %};
-         window.comments_props_override = {
-           allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
-           allow_feedback: true,
-           show_feedback: true,
-           allow_flagging: true,
-           polling_interval: 5000  // In milliseconds.
-         };
-       </script>
-       <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-               integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-               crossorigin="anonymous"></script>
-       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-               integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-               crossorigin="anonymous"></script>
-       <script type="text/javascript"
-               src="{% url 'javascript-catalog' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/vendor-2.2.1.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.2.1.js' %}"></script>
-       <script>
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip({html: true})
-        })</script>
-       {% endblock %}
+    {% extends "base.html" %}
+    {% load static %}
+    {% load comments %}
+    {% load comments_xtd %}
+    
+    {% block title %}{{ object.title }}{% endblock %}
+    
+    {% block content %}
+    <div class="pb-3">
+      <h1 class="text-center">{{ object.title }}</h1>
+      <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
+    </div>
+    <div>
+      {{ object.body|linebreaks }}
+    </div>
+    
+    <div class="py-4 text-center">
+      <a href="{% url 'blog:post-list' %}">Back to the post list</a>
+    </div>
+    
+    <div id="comments"></div>
+    {% endblock %}
+    
+    {% block extra-js %}
+    <script>
+     window.comments_props = {% get_commentbox_props for object %};
+     window.comments_props_override = {
+         allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+         allow_feedback: true,
+         show_feedback: true,
+         allow_flagging: true,
+         polling_interval: 5000  // In milliseconds.
+     };
+    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+      integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+      crossorigin="anonymous"></script>
+    <script
+      type="text/javascript"
+      src="{% url 'javascript-catalog' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.3.0.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/plugin-2.3.0.js' %}"></script>
+    <script>
+    $(function() {
+      $('[data-toggle="tooltip"]').tooltip({html: true});
+    });
+    </script>
+    {% endblock %}
 
 
 The blog post page is now ready to handle comments through the JavaScript plugin, including the following features:

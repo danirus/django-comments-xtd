@@ -5,41 +5,35 @@
 
 {% block title %}{% trans "Comment reply" %}{% endblock %}
 
-{% block header %}
-<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
-{% endblock %}
-
 {% block content %}
-<h5 class="text-center">{% trans "Reply to comment" %}</h5>
-<hr/>
-<div class="row">
-  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
-    <div class="media">
-      <div class="media-left">
-        {% if comment.user_url %}
-        <a href="{{ comment.user_url }}">
-          {{ comment.user_email|xtd_comment_gravatar }}
-        </a>
-        {% else %}
-        {{ comment.user_email|xtd_comment_gravatar }}
-        {% endif %}
-      </div>
-      <div class="media-body">
-        <h6 class="media-heading">
-          {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-          {% if comment.user_url %}
-          <a href="{{ comment.user_url }}" target="_new">{% endif %}
-          {{ comment.user_name }}{% if comment.user_url %}</a>{% endif %}
-        </h6>
-        <p>{{ comment.comment }}</p>
-      </div>
+<div class="container">
+    <div class="mb-4">
+        <h3 class="text-center">{% trans "Reply to comment" %}</h3>
+        <hr/>
     </div>
-    <div class="visible-lg-block visible-md-block">
-      <hr/>
+    <div class="row">
+        <div class="offset-md-1 col-md-10">
+            <div class="media">
+                {{ comment.user_email|xtd_comment_gravatar }}
+                <div class="media-body">
+                    <div class="comment pb-3">
+                        <h6 class="mb-1 small">
+                            {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+                            {% if comment.user_url %}
+                            <a href="{{ comment.user_url }}" target="_new">{% endif %}
+                                {{ comment.user_name }}{% if comment.user_url %}</a>{% endif %}
+                        </h6>
+                        <p>{{ comment.comment }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-4 mb-5">
+                <div class="card-body">
+                    <h4 class="card-title text-center pb-3">{% trans "Post your comment" %}</h4>
+                    {% include "comments/form.html" %}
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-<div class="well well-lg">
-  {% include "comments/form.html" %}
 </div>
 {% endblock %}

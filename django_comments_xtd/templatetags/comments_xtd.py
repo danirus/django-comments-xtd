@@ -554,7 +554,7 @@ def xtd_comment_gravatar_url(email, size=48):
 @register.filter
 def xtd_comment_gravatar(email, size=48):
     url = xtd_comment_gravatar_url(email, size)
-    return mark_safe('<img src="%s" height="%d" width="%d">' %
+    return mark_safe('<img src="%s" class="mr-3" height="%d" width="%d">' %
                      (url, size, size))
 
 

@@ -5,49 +5,44 @@
 {% block title %}{% trans "Preview your comment" %}{% endblock %}
 
 {% block content %}
-<div class="row">
-  <h4 class="text-center">{% trans "Preview your comment" %}</h4>
-  <p class="text-center">
-    {% trans "Preview your comment for:" %}<br/>
-    <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
-  </p>
-</div>
-<div class="row">
-  <!--div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8"-->
-    <div class="visible-lg-block visible-md-block">
-      <hr/>
+<div class="container">
+    <div class="mb-4">
+        <h3 class="text-center">{% trans "Preview your comment" %}</h3>
+        <hr/>
     </div>
-    <div class="media">
-      {% if not comment %}
-      <em>{% trans "Empty comment." %}</em>
-      {% else %}
-      <div class="media-left">
-        <a href="{{ form.cleaned_data.url }}">
-          {{ form.cleaned_data.email|xtd_comment_gravatar }}
-        </a>
-      </div>
-      <div class="media-body">
-        <h6 class="media-heading">
-          {% now "N j, Y, P" %}&nbsp;-&nbsp;
-          {% if form.cleaned_data.url %}
-          <a href="{{ form.cleaned_data.url }}" target="_new">{% endif %}
-            {{ form.cleaned_data.name }}
-            {% if form.cleaned_data.url %}</a>{% endif %}
-        </h6>
-        <p>{{ comment }}</p>
-      </div>
-      {% endif %}
+    <p class="lead text-center">
+        {% trans "Preview of your comment for:" %}<br/>
+        <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+    </p>
+    <div class="row">
+        <div class="col-md-12">
+            <hr/>
+            {% if not comment %}
+            <em>{% trans "Empty comment." %}</em>
+            {% else %}
+            <div class="media">
+                {{ form.cleaned_data.email|xtd_comment_gravatar }}
+                <div class="media-body">
+                    <div class="comment pb-3">
+                        <h6 class="mb-1 small">
+                            {% now "N j, Y, P" %}&nbsp;-&nbsp;
+                            {% if form.cleaned_data.url %}
+                            <a href="{{ form.cleaned_data.url }}" target="_new">{% endif %}
+                                {{ form.cleaned_data.name }}
+                                {% if form.cleaned_data.url %}</a>{% endif %}
+                        </h6>
+                        <p>{{ comment }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <div class="card mt-4 mb-5">
+                <div class="card-body">
+                    <h4 class="card-title text-center pb-3">{% trans "Post your comment" %}</h4>
+                    {% include "comments/form.html" %}
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="visible-lg-block visible-md-block">
-      <hr/>
-    </div>
-  <!--/div-->
-</div>
-<div class="row">
-  <!--div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8"-->
-    <div class="well well-lg">
-      {% include "comments/form.html" %}
-    </div>
-  <!--/div-->
 </div>
 {% endblock %}

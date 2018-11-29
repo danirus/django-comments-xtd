@@ -245,7 +245,8 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         request._dont_enforce_csrf_checks = True
         response = views.like(request, comment.id)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse("comments-xtd-like-done") + "?c=1")
+        self.assertEqual(response.url,
+                         reverse("comments-xtd-like-done") + "?c=1")
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)

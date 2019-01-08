@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.3.1] - 2019-01-08
+
+    * Fixes issue #116.
+    * Updates package.json JavaScript dependencies:
+       * babel-cli from 6.24.1 to 6.26.0.
+       * jquery from 3.2.1 to 3.3.1.
+
 ## [2.3.0] - 2018-11-29
 
     * Upgrades Twitter-Bootstrap from v3 to v4.

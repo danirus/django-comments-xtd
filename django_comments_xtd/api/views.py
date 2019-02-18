@@ -47,7 +47,7 @@ class CommentList(generics.ListAPIView):
             qs = XtdComment.objects.none()
         else:
             qs = XtdComment.objects.filter(content_type=content_type,
-                                           object_pk=int(object_pk_arg),
+                                           object_pk=object_pk_arg,
                                            site__pk=settings.SITE_ID,
                                            is_public=True)
         return qs
@@ -63,7 +63,7 @@ class CommentCount(generics.GenericAPIView):
         app_label, model = content_type_arg.split("-")
         content_type = ContentType.objects.get_by_natural_key(app_label, model)
         qs = XtdComment.objects.filter(content_type=content_type,
-                                       object_pk=int(object_pk_arg),
+                                       object_pk=object_pk_arg,
                                        is_public=True)
         return qs
 

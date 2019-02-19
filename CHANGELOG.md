@@ -1,5 +1,17 @@
 # Change Log
 
+## [2.4.0] - 2019-02-19
+
+    New minor release thanks to Mandeep Gill with the following changes:
+
+    * Adds support for non-int based object_pk, for instead when using UUIDs or
+      HashIds as the primary key on a model (closes #112).
+    * Refactors the commentbox props generation into a separate function so can
+      be used from the webapi for use with rest_framework/API-only backends that
+      don't make use of server-side templates.
+    * Adds a pyproject.yaml for use with `poetry` (https://poetry.eustace.io)
+      and new pip environments (PEP 518).
+
 ## [2.3.1] - 2019-01-08
 
     * Fixes issue #116.

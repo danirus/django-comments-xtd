@@ -19,3 +19,4 @@ node_modules/
 .eggs
 package-lock.json
 .pytest_cache/
+.venv

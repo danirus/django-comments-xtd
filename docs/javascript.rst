@@ -140,6 +140,7 @@ The application entry point is located inside the ``index.js`` file. The ``props
 
 And are overriden by those declared in the ``var window.comments_props_override``.
 
+To use without the template, you can set up an endpoint to get the props by generating a view action within the :doc:`webapi`.
 
 Improvements and contributions
 ==============================

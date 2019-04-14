@@ -25,7 +25,8 @@ from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment,
                                         MaxThreadLevelExceededException,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
-from django_comments_xtd.utils import send_mail, has_app_model_option
+from django_comments_xtd.utils import (get_current_site_id, send_mail,
+                                       has_app_model_option)
 
 
 XtdComment = get_comment_model()
@@ -302,8 +303,9 @@ def flag(request, comment_id, next=None):
         comment
             the flagged `comments.comment` object
     """
-    comment = get_object_or_404(get_comment_model(),
-                                pk=comment_id, site__pk=settings.SITE_ID)
+    comment = get_object_or_404(
+        get_comment_model(), pk=comment_id,
+        site__pk=get_current_site_id(request))
     if not has_app_model_option(comment)['allow_flagging']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
@@ -335,7 +337,7 @@ def like(request, comment_id, next=None):
             the flagged `comments.comment` object
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
-                                site__pk=settings.SITE_ID)
+                                site__pk=get_current_site_id(request))
     if not has_app_model_option(comment)['allow_feedback']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
@@ -369,7 +371,7 @@ def dislike(request, comment_id, next=None):
             the flagged `comments.comment` object
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
-                                site__pk=settings.SITE_ID)
+                                site__pk=get_current_site_id(request))
     if not has_app_model_option(comment)['allow_feedback']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
@@ -450,11 +452,12 @@ class XtdCommentListView(ListView):
         content_types = self.get_content_types()
         if content_types is None:
             return None
-        return XtdComment.objects\
-                         .for_content_types(content_types,
-                                            site=settings.SITE_ID)\
-                         .filter(is_removed=False)\
-                         .order_by('submit_date')
+        return XtdComment.objects.for_content_types(
+                content_types,
+                site=get_current_site_id(self.request)
+            )\
+            .filter(is_removed=False)\
+            .order_by('submit_date')
 
     def get_context_data(self, **kwargs):
         context = super(XtdCommentListView, self).get_context_data(**kwargs)

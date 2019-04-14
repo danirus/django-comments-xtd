@@ -14,8 +14,9 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from django_comments_xtd import get_model as get_comment_model
-from django_comments_xtd.conf import settings
 from django_comments_xtd.api import frontend
+from django_comments_xtd.utils import get_current_site_id
+
 
 XtdComment = get_comment_model()
 
@@ -30,11 +31,12 @@ class XtdCommentCountNode(Node):
     def __init__(self, as_varname, content_types):
         """Class method to parse get_xtdcomment_list and return a Node."""
         self.as_varname = as_varname
-        self.qs = XtdComment.objects.for_content_types(content_types,
-                                                       site=settings.SITE_ID)
+        self.qs = XtdComment.objects.for_content_types(content_types)
 
     def render(self, context):
-        context[self.as_varname] = self.qs.count()
+        context[self.as_varname] = self.qs.filter(
+                site=get_current_site_id(context.get('request'))
+            ).count()
         return ''
 
 
@@ -91,10 +93,10 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
         if not isinstance(self.count, int):
             self.count = int(self.count.resolve(context))
 
-        self.qs = XtdComment.objects\
-                            .for_content_types(self.content_types,
-                                               site=settings.SITE_ID)\
-                            .order_by('submit_date')[:self.count]
+        self.qs = XtdComment.objects.for_content_types(
+                self.content_types,
+                site=get_current_site_id(context.get('request'))
+            ).order_by('submit_date')[:self.count]
 
         strlist = []
         context_dict = context.flatten()
@@ -124,10 +126,11 @@ class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
     def render(self, context):
         if not isinstance(self.count, int):
             self.count = int(self.count.resolve(context))
-        self.qs = XtdComment.objects\
-                            .for_content_types(self.content_types,
-                                               site=settings.SITE_ID)\
-                            .order_by('submit_date')[:self.count]
+        self.qs = XtdComment.objects.for_content_types(
+                self.content_types,
+                site=get_current_site_id(context.get('request'))
+            )\
+            .order_by('submit_date')[:self.count]
         context[self.as_varname] = self.qs
         return ''
 
@@ -251,10 +254,11 @@ class RenderXtdCommentTreeNode(Node):
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
-            queryset = XtdComment.objects.filter(content_type=ctype,
-                                                 object_pk=obj.pk,
-                                                 site__pk=settings.SITE_ID,
-                                                 is_public=True)
+            queryset = XtdComment.objects.filter(
+                content_type=ctype,
+                object_pk=obj.pk,
+                site__pk=get_current_site_id(context.get('request')),
+                is_public=True)
             comments = XtdComment.tree_from_queryset(
                 queryset,
                 with_flagging=self.allow_flagging,
@@ -297,10 +301,11 @@ class GetXtdCommentTreeNode(Node):
     def render(self, context):
         obj = self.obj.resolve(context)
         ctype = ContentType.objects.get_for_model(obj)
-        queryset = XtdComment.objects.filter(content_type=ctype,
-                                             object_pk=obj.pk,
-                                             site__pk=settings.SITE_ID,
-                                             is_public=True)
+        queryset = XtdComment.objects.filter(
+            content_type=ctype,
+            object_pk=obj.pk,
+            site__pk=get_current_site_id(context.get('request')),
+            is_public=True)
         dic_list = XtdComment.tree_from_queryset(
             queryset,
             with_feedback=self.with_feedback,
@@ -437,7 +442,8 @@ class GetCommentBoxPropsNode(Node):
     def render(self, context):
         obj = self.obj.resolve(context)
         user = context.get('user', None)
-        props = frontend.commentbox_props(obj, user)
+        request = context.get('request', None)
+        props = frontend.commentbox_props(obj, user, request=request)
         return json.dumps(props)
 
 

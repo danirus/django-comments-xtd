@@ -12,7 +12,7 @@ from django_comments_xtd.tests.models import Article, Diary
 from django_comments_xtd.tests.test_models import (
     thread_test_step_1, thread_test_step_2, thread_test_step_3,
     thread_test_step_4, thread_test_step_5, add_comment_to_diary_entry)
-                                                   
+
 
 class GetXtdCommentCountTestCase(DjangoTestCase):
     def setUp(self):
@@ -21,7 +21,7 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
         self.article_2 = Article.objects.create(
             title="October", slug="october", body="What I did on October...")
         self.day_in_diary = Diary.objects.create(body="About Today...")
-        
+
     def test_get_xtdcomment_count_for_one_model(self):
         thread_test_step_1(self.article_1)
         t = ("{% load comments_xtd %}"
@@ -37,7 +37,7 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
              "   for tests.article tests.diary %}"
              "{{ varname }}")
         self.assertEqual(Template(t).render(Context()), '3')
-        
+
 
 class LastXtdCommentsTestCase(DjangoTestCase):
     def setUp(self):
@@ -47,8 +47,8 @@ class LastXtdCommentsTestCase(DjangoTestCase):
         thread_test_step_1(self.article)
         thread_test_step_2(self.article)
         thread_test_step_3(self.article)
-        add_comment_to_diary_entry(self.day_in_diary)        
-        
+        add_comment_to_diary_entry(self.day_in_diary)
+
     def test_render_last_xtdcomments(self):
         t = ("{% load comments_xtd %}"
              "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
@@ -92,7 +92,7 @@ class XtdCommentsTestCase(DjangoTestCase):
         thread_test_step_3(self.article)
         thread_test_step_4(self.article)
         thread_test_step_5(self.article)
-        
+
     def test_render_xtdcomment_tree(self):
         t = ("{% load comments_xtd %}"
              "{% render_xtdcomment_tree for object %}")
@@ -122,4 +122,3 @@ class XtdCommentsTestCase(DjangoTestCase):
         self.assertTrue(pos_c1 < pos_c3 < pos_c8 <
                         pos_c4 < pos_c7 < pos_c2 <
                         pos_c5 < pos_c6 < pos_c9)
-        

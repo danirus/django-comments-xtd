@@ -18,7 +18,7 @@ def get_form():
     return import_string(settings.COMMENTS_XTD_FORM_CLASS)
 
 
-VERSION = (2, 2, 0, 'f', 0) # following PEP 440
+VERSION = (2, 4, 0, 'f', 0) # following PEP 440
 
 
 def get_version():

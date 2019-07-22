@@ -46,13 +46,9 @@ class WriteCommentSerializer(serializers.Serializer):
 
     def validate_name(self, value):
         if not len(value):
-            try:
-                user_is_authenticated = self.request.user.is_authenticated()
-            except TypeError:
-                user_is_authenticated = self.request.user.is_authenticated
             if (
                     not len(self.request.user.get_full_name())
-                    or not user_is_authenticated
+                    or not self.request.user.is_authenticated
             ):
                 raise serializers.ValidationError("This field is required")
             else:
@@ -62,11 +58,10 @@ class WriteCommentSerializer(serializers.Serializer):
 
     def validate_email(self, value):
         if not len(value):
-            try:
-                user_is_authenticated = self.request.user.is_authenticated()
-            except TypeError:
-                user_is_authenticated = self.request.user.is_authenticated
-            if not len(self.request.user.email) or not user_is_authenticated:
+            if (
+                    not len(self.request.user.email) or
+                    not self.request.user.is_authenticated
+            ):
                 raise serializers.ValidationError("This field is required")
             else:
                 return self.request.user.email
@@ -123,12 +118,7 @@ class WriteCommentSerializer(serializers.Serializer):
         }
         resp['comment'].ip_address = self.request.META.get("REMOTE_ADDR", None)
 
-        try:
-            user_is_authenticated = self.request.user.is_authenticated()
-        except TypeError:  # Django >= 1.11
-            user_is_authenticated = self.request.user.is_authenticated
-
-        if user_is_authenticated:
+        if self.request.user.is_authenticated:
             resp['comment'].user = self.request.user
 
         # Signal that the comment is about to be saved
@@ -141,7 +131,10 @@ class WriteCommentSerializer(serializers.Serializer):
                 return resp
 
         # Replicate logic from django_comments_xtd.views.on_comment_was_posted.
-        if not settings.COMMENTS_XTD_CONFIRM_EMAIL or user_is_authenticated:
+        if (
+                not settings.COMMENTS_XTD_CONFIRM_EMAIL or
+                self.request.user.is_authenticated
+        ):
             if not views._comment_exists(resp['comment']):
                 new_comment = views._create_comment(resp['comment'])
                 resp['comment'].xtd_comment = new_comment

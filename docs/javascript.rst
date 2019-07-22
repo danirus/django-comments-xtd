@@ -94,8 +94,8 @@ Webpack will put the bundles in the static directory of django-comments-xtd and 
  
        {% block extra-js %}
        [...]
-       <script src="{% static 'django_comments_xtd/js/vendor-2.0.10.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.0.10.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.3.0.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-2.3.0.js' %}"></script>
        {% endblock extra-js %}
        
 
@@ -116,8 +116,8 @@ Plugin sources live inside the **static** directory of django-comments-xtd:
        │   ├── commentform.jsx
        │   ├── index.js
        │   └── lib.js
-       ├── plugin-2.0.3.js
-       └── vendor-2.0.3.js
+       ├── vendor~plugin-2.3.0.js
+       └── plugin-2.3.0.js
        
        1 directory, 7 files
        
@@ -140,6 +140,7 @@ The application entry point is located inside the ``index.js`` file. The ``props
 
 And are overriden by those declared in the ``var window.comments_props_override``.
 
+To use without the template, you can set up an endpoint to get the props by generating a view action within the :doc:`webapi`.
 
 Improvements and contributions
 ==============================

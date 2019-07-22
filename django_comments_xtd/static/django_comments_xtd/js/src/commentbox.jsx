@@ -51,12 +51,7 @@ export class CommentBox extends React.Component {
       var fmts = django.ngettext("%s comment.", "%s comments.",
                                  this.state.cids.length);
       var text = django.interpolate(fmts, [this.state.cids.length]);
-      return (
-        <div>
-          <h5 className="text-center">{text}</h5>
-          <hr/>
-        </div>
-      );
+      return <h5 className="text-center">{text}</h5>;
     } else
       return "";
   }
@@ -64,12 +59,7 @@ export class CommentBox extends React.Component {
   render_comment_form() {
     if(this.props.allow_comments) {
       return (
-        <CommentForm form={this.props.form}
-                     send_url={this.props.send_url}
-                     current_user={this.props.current_user}
-                     is_authenticated={this.props.is_authenticated}
-		             request_name={this.props.request_name}
-		             request_email_address={this.props.request_email_address}
+        <CommentForm {...this.props}
                      on_comment_created={this.handle_comment_created} />
       );
     } else {
@@ -86,12 +76,10 @@ export class CommentBox extends React.Component {
                                  "There are %s new comments.", diff);
       var message = django.interpolate(fmts, [diff]);
       return (
-        <div className="alert alert-info">
-          {message}
-          <div className="pull-right">
-            <button type="button" className="btn btn-default btn-xs"
-                    onClick={this.handle_update}>update</button>
-          </div>
+        <div className="alert alert-info d-flex align-items-center">
+          <p className="mr-auto">{message}</p>
+          <button type="button" className="btn btn-secondary btn-xs"
+                  onClick={this.handle_update}>update</button>
         </div>
       );
     } else
@@ -207,7 +195,6 @@ export class CommentBox extends React.Component {
       <div>
         {comment_counter}
         {comment_form}
-        <hr/>
         {update_alert}
         <div className="comment-tree">
           <div className="media-list">

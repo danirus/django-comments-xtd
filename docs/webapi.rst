@@ -13,6 +13,8 @@ There are 5 methods available to perform the following actions:
  #. Retrieve the number of comments posted to a given content type and object ID.
  #. Post user's like/dislike feedback.
  #. Post user's removal suggestions.
+ 
+Finally there is the ability to generate a view action in ``django_comments_xtd.api.frontend`` to return the commentbox props as used by the :doc:`javascript` plugin for use with an existing `django-rest-framework <http://www.django-rest-framework.org/>`_ project.
 
 .. contents:: Table of Contents
    :depth: 3

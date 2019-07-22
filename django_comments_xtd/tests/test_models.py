@@ -214,11 +214,11 @@ class BaseThreadStep1TestCase(ArticleBaseTestCase):
 
     def test_threaded_comments_step_1_level_0(self):
         # comment 1
-        self.assert_(self.c1.parent_id == 1 and self.c1.thread_id == 1)
-        self.assert_(self.c1.level == 0 and self.c1.order == 1)
+        self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
+        self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
         # comment 2
-        self.assert_(self.c2.parent_id == 2 and self.c2.thread_id == 2)
-        self.assert_(self.c2.level == 0 and self.c2.order == 1)
+        self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
+        self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
 
 
 class ThreadStep2TestCase(ArticleBaseTestCase):
@@ -235,19 +235,19 @@ class ThreadStep2TestCase(ArticleBaseTestCase):
 
     def test_threaded_comments_step_2_level_0(self):
         # comment 1
-        self.assert_(self.c1.parent_id == 1 and self.c1.thread_id == 1)
-        self.assert_(self.c1.level == 0 and self.c1.order == 1)
+        self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
+        self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
         # comment 2
-        self.assert_(self.c2.parent_id == 2 and self.c2.thread_id == 2)
-        self.assert_(self.c2.level == 0 and self.c2.order == 1)
+        self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
+        self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
 
     def test_threaded_comments_step_2_level_1(self):
         # comment 3
-        self.assert_(self.c3.parent_id == 1 and self.c3.thread_id == 1)
-        self.assert_(self.c3.level == 1 and self.c3.order == 2)
+        self.assertTrue(self.c3.parent_id == 1 and self.c3.thread_id == 1)
+        self.assertTrue(self.c3.level == 1 and self.c3.order == 2)
         # comment 4
-        self.assert_(self.c4.parent_id == 1 and self.c4.thread_id == 1)
-        self.assert_(self.c4.level == 1 and self.c4.order == 3)
+        self.assertTrue(self.c4.parent_id == 1 and self.c4.thread_id == 1)
+        self.assertTrue(self.c4.level == 1 and self.c4.order == 3)
 
 
 class ThreadStep3TestCase(ArticleBaseTestCase):
@@ -267,22 +267,22 @@ class ThreadStep3TestCase(ArticleBaseTestCase):
 
     def test_threaded_comments_step_3_level_0(self):
         # comment 1
-        self.assert_(self.c1.parent_id == 1 and self.c1.thread_id == 1)
-        self.assert_(self.c1.level == 0 and self.c1.order == 1)
+        self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
+        self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
         # comment 2
-        self.assert_(self.c2.parent_id == 2 and self.c2.thread_id == 2)
-        self.assert_(self.c2.level == 0 and self.c2.order == 1)
+        self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
+        self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
 
     def test_threaded_comments_step_3_level_1(self):
         # comment 3
-        self.assert_(self.c3.parent_id == 1 and self.c3.thread_id == 1)
-        self.assert_(self.c3.level == 1 and self.c3.order == 2)
+        self.assertTrue(self.c3.parent_id == 1 and self.c3.thread_id == 1)
+        self.assertTrue(self.c3.level == 1 and self.c3.order == 2)
         # comment 4
-        self.assert_(self.c4.parent_id == 1 and self.c4.thread_id == 1)
-        self.assert_(self.c4.level == 1 and self.c4.order == 3)
+        self.assertTrue(self.c4.parent_id == 1 and self.c4.thread_id == 1)
+        self.assertTrue(self.c4.level == 1 and self.c4.order == 3)
         # comment 5
-        self.assert_(self.c5.parent_id == 2 and self.c5.thread_id == 2)
-        self.assert_(self.c5.level == 1 and self.c5.order == 2)
+        self.assertTrue(self.c5.parent_id == 2 and self.c5.thread_id == 2)
+        self.assertTrue(self.c5.level == 1 and self.c5.order == 2)
 
 
 class ThreadStep4TestCase(ArticleBaseTestCase):
@@ -305,30 +305,30 @@ class ThreadStep4TestCase(ArticleBaseTestCase):
 
     def test_threaded_comments_step_4_level_0(self):
         # comment 1
-        self.assert_(self.c1.parent_id == 1 and self.c1.thread_id == 1)
-        self.assert_(self.c1.level == 0 and self.c1.order == 1)
+        self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
+        self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
         # comment 2
-        self.assert_(self.c2.parent_id == 2 and self.c2.thread_id == 2)
-        self.assert_(self.c2.level == 0 and self.c2.order == 1)
+        self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
+        self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
 
     def test_threaded_comments_step_4_level_1(self):
         # comment 3
-        self.assert_(self.c3.parent_id == 1 and self.c3.thread_id == 1)
-        self.assert_(self.c3.level == 1 and self.c3.order == 2)
+        self.assertTrue(self.c3.parent_id == 1 and self.c3.thread_id == 1)
+        self.assertTrue(self.c3.level == 1 and self.c3.order == 2)
         # comment 4
-        self.assert_(self.c4.parent_id == 1 and self.c4.thread_id == 1)
-        self.assert_(self.c4.level == 1 and self.c4.order == 3)
+        self.assertTrue(self.c4.parent_id == 1 and self.c4.thread_id == 1)
+        self.assertTrue(self.c4.level == 1 and self.c4.order == 3)
         # comment 5
-        self.assert_(self.c5.parent_id == 2 and self.c5.thread_id == 2)
-        self.assert_(self.c5.level == 1 and self.c5.order == 2)
+        self.assertTrue(self.c5.parent_id == 2 and self.c5.thread_id == 2)
+        self.assertTrue(self.c5.level == 1 and self.c5.order == 2)
 
     def test_threaded_comments_step_4_level_2(self):
         # comment 6
-        self.assert_(self.c6.parent_id == 5 and self.c6.thread_id == 2)
-        self.assert_(self.c6.level == 2 and self.c6.order == 3)
+        self.assertTrue(self.c6.parent_id == 5 and self.c6.thread_id == 2)
+        self.assertTrue(self.c6.level == 2 and self.c6.order == 3)
         # comment 7
-        self.assert_(self.c7.parent_id == 4 and self.c7.thread_id == 1)
-        self.assert_(self.c7.level == 2 and self.c7.order == 4)
+        self.assertTrue(self.c7.parent_id == 4 and self.c7.thread_id == 1)
+        self.assertTrue(self.c7.level == 2 and self.c7.order == 4)
 
 
 class ThreadStep5TestCase(ArticleBaseTestCase):
@@ -354,36 +354,36 @@ class ThreadStep5TestCase(ArticleBaseTestCase):
 
     def test_threaded_comments_step_5_level_0(self):
         # comment 1
-        self.assert_(self.c1.parent_id == 1 and self.c1.thread_id == 1)
-        self.assert_(self.c1.level == 0 and self.c1.order == 1)
+        self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
+        self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
         # comment 2
-        self.assert_(self.c2.parent_id == 2 and self.c2.thread_id == 2)
-        self.assert_(self.c2.level == 0 and self.c2.order == 1)
+        self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
+        self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
         # comment 9
-        self.assert_(self.c9.parent_id == 9 and self.c9.thread_id == 9)
-        self.assert_(self.c9.level == 0 and self.c9.order == 1)
+        self.assertTrue(self.c9.parent_id == 9 and self.c9.thread_id == 9)
+        self.assertTrue(self.c9.level == 0 and self.c9.order == 1)
 
     def test_threaded_comments_step_5_level_1(self):
         # comment 3
-        self.assert_(self.c3.parent_id == 1 and self.c3.thread_id == 1)
-        self.assert_(self.c3.level == 1 and self.c3.order == 2)
+        self.assertTrue(self.c3.parent_id == 1 and self.c3.thread_id == 1)
+        self.assertTrue(self.c3.level == 1 and self.c3.order == 2)
         # comment 4
-        self.assert_(self.c4.parent_id == 1 and self.c4.thread_id == 1)
-        self.assert_(self.c4.level == 1 and self.c4.order == 4)  # changed
+        self.assertTrue(self.c4.parent_id == 1 and self.c4.thread_id == 1)
+        self.assertTrue(self.c4.level == 1 and self.c4.order == 4)  # changed
         # comment 5
-        self.assert_(self.c5.parent_id == 2 and self.c5.thread_id == 2)
-        self.assert_(self.c5.level == 1 and self.c5.order == 2)
+        self.assertTrue(self.c5.parent_id == 2 and self.c5.thread_id == 2)
+        self.assertTrue(self.c5.level == 1 and self.c5.order == 2)
 
     def test_threaded_comments_step_5_level_2(self):
         # comment 6
-        self.assert_(self.c6.parent_id == 5 and self.c6.thread_id == 2)
-        self.assert_(self.c6.level == 2 and self.c6.order == 3)
+        self.assertTrue(self.c6.parent_id == 5 and self.c6.thread_id == 2)
+        self.assertTrue(self.c6.level == 2 and self.c6.order == 3)
         # comment 7
-        self.assert_(self.c7.parent_id == 4 and self.c7.thread_id == 1)
-        self.assert_(self.c7.level == 2 and self.c7.order == 5)  # changed
+        self.assertTrue(self.c7.parent_id == 4 and self.c7.thread_id == 1)
+        self.assertTrue(self.c7.level == 2 and self.c7.order == 5)  # changed
         # comment 8
-        self.assert_(self.c8.parent_id == 3 and self.c8.thread_id == 1)
-        self.assert_(self.c8.level == 2 and self.c8.order == 3)
+        self.assertTrue(self.c8.parent_id == 3 and self.c8.thread_id == 1)
+        self.assertTrue(self.c8.level == 2 and self.c8.order == 3)
 
     def test_exceed_max_thread_level_raises_exception(self):
         article_ct = ContentType.objects.get(app_label="tests", model="article")

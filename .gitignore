@@ -4,8 +4,10 @@
 *.zip
 *.egg-info
 *.db
-plugin-*.js
-vendor-*.js
+plugin*.js
+plugin*.js.map
+vendor*.js
+vendor*.js.map
 django*.mo
 db.sqlite3
 docs/_build
@@ -22,3 +24,4 @@ package-lock.json
 example/.idea
 example/env
 .pytest_cache/
+.venv

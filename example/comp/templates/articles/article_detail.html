@@ -11,38 +11,49 @@
 {% block menu-class-articles %}active{% endblock %}
 
 {% block content %}
-<div class="text-center">
-  <H3>{{ object.title }}</H3>
-  <div class="small">{{ object.publish }}</div>
-</div>
-<hr/>
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-12 text-center">
+            <h2>{{ object.title }}</h2>
+            <div class="small">{{ object.publish }}</div>
+            <hr/>
+        </div>
+    </div>
+    <div class="row justify-content-center flex-fill">
+        <div class="col-md-7">
+            <article>
+                {{ object.body|linebreaks }}
+            </article>
+        </div>
+    </div>
 
-<div class="row">
-  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">  
-    <article>
-      {{ object.body|linebreaks }}
-    </article>
-  </div>
-</div>
+    <div class="row justify-content-center flex-fill">
+        <div class="col-md-7 pt-3">
+            <p class="text-center">
+                <a href="{% url 'articles-index' %}">Back to the articles list</a>
+            </p>
+        </div>
+    </div>
 
-<div class="row">
-  <div class="col-lg-offset-2 col-md-offset-2 col-lg-8 col-md-8">  
-    <div id="comments"></div>
-  </div>
+    <div class="row justify-content-center flex-fill">
+        <div class="col-md-7">
+            <div id="comments"></div>
+        </div>
+    </div>
 </div>
 {% endblock content %}
 
 {% block extra_js %}
 <script>
-  window.comments_props = {% get_commentbox_props for object %};
-  window.comments_props_override = {
-    allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
-    allow_feedback: true,
-    show_feedback: true,
-    allow_flagging: true,
-    polling_interval: 0
-  };
+ window.comments_props = {% get_commentbox_props for object %};
+ window.comments_props_override = {
+     allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+     allow_feedback: true,
+     show_feedback: true,
+     allow_flagging: true,
+     polling_interval: 5000
+ };
 </script>
-<script src="{% static 'django_comments_xtd/js/vendor-2.2.0.js' %}"></script>
-<script src="{% static 'django_comments_xtd/js/plugin-2.2.0.js' %}"></script>
+<script src="{% static 'django_comments_xtd/js/vendor~plugin-2.4.0.js' %}"></script>
+<script src="{% static 'django_comments_xtd/js/plugin-2.4.0.js' %}"></script>
 {% endblock %}

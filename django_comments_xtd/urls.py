@@ -22,9 +22,9 @@ urlpatterns = [
     # API handlers.
     url(r'^api/comment/$', api.CommentCreate.as_view(),
         name='comments-xtd-api-create'),
-    url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[0-9]+)/$',
+    url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[-\w]+)/$',
         api.CommentList.as_view(), name='comments-xtd-api-list'),
-    url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[0-9]+)/count/$',
+    url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[-\w]+)/count/$',
         api.CommentCount.as_view(), name='comments-xtd-api-count'),
     url(r'^api/feedback/$', api.ToggleFeedbackFlag.as_view(),
         name='comments-xtd-api-feedback'),

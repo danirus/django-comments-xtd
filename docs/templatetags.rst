@@ -212,6 +212,9 @@ A simple gravatar filter that inserts the `gravatar <http://www.gravatar.com/>`_
 
 This filter has been named ``xtd_comment_gravatar`` as oposed to simply ``gravatar`` to avoid potential name collisions with other gravatar filters the user might have opted to include in the template.
 
+You can custom the way of generating the avatar, like this:
+
+   {{ comment.email|xtd_comment_gravatar:'48,mm' }}
 
 .. index::
    single: xtd_comment_gravatar_url

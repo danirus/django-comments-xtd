@@ -10,6 +10,7 @@ import threading
 
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.shortcuts import get_current_site
 
 from django_comments_xtd.conf import settings
 
@@ -65,3 +66,8 @@ def has_app_model_option(comment):
     except KeyError:
         return settings.COMMENTS_XTD_APP_MODEL_OPTIONS.setdefault(
             'default', _default)
+
+
+def get_current_site_id(request=None):
+    """ it's a shortcut """
+    return getattr(get_current_site(request), 'pk', 1)  # fallback value

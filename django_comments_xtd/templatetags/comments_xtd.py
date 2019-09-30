@@ -468,12 +468,12 @@ def get_commentbox_props(parser, token):
 
 # ----------------------------------------------------------------------
 @register.filter
-def xtd_comment_gravatar_url(email, size=48, avatar='mm'):
+def xtd_comment_gravatar_url(email, size=48, avatar='mp'):
     """
     This is the parameter of the production avatar.
     The first parameter is the way of generating the
     avatar and the second one is the size.
-    The way os generating has mm/identicon/monsterid/wavatar/retro/hide.
+    The way os generating has mp/identicon/monsterid/wavatar/retro/hide.
     """
     return ("//www.gravatar.com/avatar/%s?%s&d=%s" %
             (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
@@ -482,7 +482,7 @@ def xtd_comment_gravatar_url(email, size=48, avatar='mm'):
 
 # ----------------------------------------------------------------------
 @register.filter
-def xtd_comment_gravatar(email, config='48,mm'):
+def xtd_comment_gravatar(email, config='48,mp'):
     size, avatar = config.split(',')
     url = xtd_comment_gravatar_url(email, size, avatar)
     return mark_safe('<img src="%s" height="%s" width="%s">' %

@@ -1,11 +1,10 @@
 #-*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import datetime
-
 import django
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
 
@@ -16,7 +15,7 @@ class PublicManager(models.Manager):
         get_queryset = models.Manager.get_query_set
     
     def published(self):
-        return self.get_queryset().filter(publish__lte=datetime.now())
+        return self.get_queryset().filter(publish__lte=timezone.now())
 
 
 @python_2_unicode_compatible
@@ -27,7 +26,7 @@ class Article(models.Model):
     slug = models.SlugField('slug', unique_for_date='publish')
     body = models.TextField('body')
     allow_comments = models.BooleanField('allow comments', default=True)
-    publish = models.DateTimeField('publish', default=datetime.now)
+    publish = models.DateTimeField('publish', default=timezone.now)
 
     objects = PublicManager()
 

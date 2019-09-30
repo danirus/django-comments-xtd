@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.4.1] - 2019-09-30
+
+    * Allow changing the "d" parameter when requesting a gravatar,
+      thanks to @pylixm (PR: 100).
+    * Avoid requiring the SITE_ID, thanks to @gassan (PR: 125).
+
 ## [2.4.0] - 2019-02-19
 
     New minor release thanks to Mandeep Gill with the following changes:

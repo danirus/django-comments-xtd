@@ -8,8 +8,8 @@ from rest_framework.response import Response
 
 from django_comments_xtd import views
 from django_comments_xtd.api import serializers
-from django_comments_xtd.conf import settings
 from django_comments_xtd.models import XtdComment
+from django_comments_xtd.utils import get_current_site_id
 
 
 class CommentCreate(generics.CreateAPIView):
@@ -46,10 +46,11 @@ class CommentList(generics.ListAPIView):
         except ContentType.DoesNotExist:
             qs = XtdComment.objects.none()
         else:
-            qs = XtdComment.objects.filter(content_type=content_type,
-                                           object_pk=object_pk_arg,
-                                           site__pk=settings.SITE_ID,
-                                           is_public=True)
+            qs = XtdComment.objects.filter(
+                content_type=content_type,
+                object_pk=object_pk_arg,
+                site__pk=get_current_site_id(self.request),
+                is_public=True)
         return qs
 
 

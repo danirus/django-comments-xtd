@@ -43,7 +43,7 @@ import hmac
 import pickle
 import hashlib
 
-from django.utils import six
+import six
 from django_comments_xtd.conf import settings
 
 

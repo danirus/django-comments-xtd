@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load comp_filters %}
 {% get_available_languages as LANGUAGES %}
 {% get_current_language as current_language %}
@@ -63,7 +63,7 @@
                 </div>
             </div>
         </div>
-        
+
         <script
             src="https://code.jquery.com/jquery-3.3.1.min.js"
             crossorigin="anonymous"></script>
@@ -74,7 +74,7 @@
         <script
             src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-            crossorigin="anonymous"></script>        
+            crossorigin="anonymous"></script>
         <script
             type="text/javascript"
             src="{% url 'javascript-catalog' %}"></script>

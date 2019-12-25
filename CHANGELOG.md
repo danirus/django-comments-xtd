@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.4.2] - 2019-12-25
+
+    * Adds Django 3.0 compatibility thanks to Sergey Ivanychev (@ivanychev).
+    * Adds Norwegian translations thanks to Yngve Høiseth (@yhoiseth).
+
+
 ## [2.4.1] - 2019-09-30
 
     * Allow changing the "d" parameter when requesting a gravatar,

@@ -4,7 +4,6 @@ import django
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 
 
 from django_comments_xtd.moderation import moderator, SpamModerator
@@ -17,7 +16,6 @@ class PublicManager(models.Manager):
         return self.get_queryset().filter(publish__lte=timezone.now())
 
 
-@python_2_unicode_compatible
 class Quote(models.Model):
     """Quote, that accepts comments."""
 

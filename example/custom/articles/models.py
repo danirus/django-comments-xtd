@@ -5,7 +5,6 @@ import django
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 
 
 class PublicManager(models.Manager):
@@ -18,7 +17,6 @@ class PublicManager(models.Manager):
         return self.get_queryset().filter(publish__lte=timezone.now())
 
 
-@python_2_unicode_compatible
 class Article(models.Model):
     """Article, that accepts comments."""
 

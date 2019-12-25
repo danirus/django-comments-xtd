@@ -9,6 +9,7 @@ django-comments-xtd is i18n ready. Please, consider extending support for your l
  * English, **en** (default language)
  * Finnish, **fi**
  * French, **fr**
+ * Norwegian, **no**
  * Spanish, **es**
 
 
@@ -39,6 +40,7 @@ Edit the **comp/settings.py** module. Add the `ISO-639-1 <https://en.wikipedia.o
            ('en', 'English'),
            ('fi', 'Finnish'),
            ('fr', 'French'),
+           ('no', 'Norwegian'),
            ('es', 'Spanish'),
            ...
        )

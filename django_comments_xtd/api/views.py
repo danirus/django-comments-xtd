@@ -26,7 +26,7 @@ class CommentCreate(generics.CreateAPIView):
         if self.resp_dict['code'] == 201:  # The comment has been created.
             return response
         elif self.resp_dict['code'] in [202, 204, 403]:
-            return Response(status=self.resp_dict['code'])
+            return Response({}, status=self.resp_dict['code'])
 
     def perform_create(self, serializer):
         self.resp_dict = serializer.save()

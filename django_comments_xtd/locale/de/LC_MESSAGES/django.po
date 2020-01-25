@@ -1,0 +1,362 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-01-25 20:14+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Diedrich Vorberg <diedrich@tux4web.de>\n"
+"Language-Team: German <de@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: api/serializers.py:192 templates/comments/list.html:17
+#: templates/django_comments_xtd/comment.html:14
+#: templates/django_comments_xtd/comment_tree.html:34
+msgid "This comment has been removed."
+msgstr ""
+
+#: forms.py:13
+msgid "Notify me about follow-up comments"
+msgstr "Benachrichtigung bei neuen Nachrichten"
+
+#: forms.py:28
+msgid "Name"
+msgstr "Name"
+
+#: forms.py:29
+msgid "name"
+msgstr "Name"
+
+#: forms.py:32
+msgid "Mail"
+msgstr "e-Mail"
+
+#: forms.py:32
+msgid "Required for comment verification"
+msgstr "Wird für die Bestätigung benötigt"
+
+#: forms.py:33
+msgid "mail address"
+msgstr "e-Mail Adresse"
+
+#: forms.py:36
+msgid "Link"
+msgstr "Link"
+
+#: forms.py:38
+msgid "url your name links to (optional)"
+msgstr "Web-Adresse, auf die dein Name verlinken soll"
+
+#: forms.py:41
+msgid "Your comment"
+msgstr "Kommentar"
+
+#: models.py:70
+msgid "Notify follow-up comments"
+msgstr "Benachrichtigung bei neuen Nachrichten"
+
+#: templates/comments/delete.html:5
+msgid "Remove comment"
+msgstr "Kommentar entfernen"
+
+#: templates/comments/delete.html:9
+msgid "Remove this comment?"
+msgstr "Diesen Kommentar entfernen?"
+
+#: templates/comments/delete.html:12
+msgid ""
+"As a moderator you can delete comments. Deleting a comment does not remove "
+"it from the site, only prevents your website from showing the text. Click on "
+"the remove button to delete the following comment:"
+msgstr ""
+
+#: templates/comments/delete.html:41
+msgid "Remove"
+msgstr "Entfernen"
+
+#: templates/comments/deleted.html:5
+msgid "Comment removed"
+msgstr "Kommentar entfernt."
+
+#: templates/comments/deleted.html:12
+msgid "The comment has been removed."
+msgstr "Der Kommentar wurde entfernt."
+
+#: templates/comments/deleted.html:13 templates/comments/flagged.html:13
+msgid ""
+"Thank you for taking the time to improve the quality of discussion in our "
+"site."
+msgstr "Danke, dass du dich an unserer Unterhaltung beteiligst."
+
+#: templates/comments/flag.html:5
+msgid "Flag comment"
+msgstr "Kommentar als unangemessen markieren"
+
+#: templates/comments/flag.html:13
+msgid "Flag this comment?"
+msgstr "Diesen Kommentar als unangemessen markieren?"
+
+#: templates/comments/flag.html:16
+msgid ""
+"Click on the flag button to mark the following comment as inappropriate."
+msgstr ""
+"Klicke auf die Flagge, um diesen Kommentar als unangemessen zu markieren."
+
+#: templates/comments/flag.html:40
+#: templates/django_comments_xtd/comment.html:10
+#: templates/django_comments_xtd/dislike.html:48
+#: templates/django_comments_xtd/like.html:46
+msgid "Posted to "
+msgstr "Gesendet an "
+
+#: templates/comments/flag.html:55
+msgid "Flag"
+msgstr "Markierung"
+
+#: templates/comments/flag.html:56
+#: templates/django_comments_xtd/dislike.html:73
+#: templates/django_comments_xtd/like.html:72
+msgid "cancel"
+msgstr "Abbrechen"
+
+#: templates/comments/flagged.html:5
+msgid "Comment flagged"
+msgstr "Kommentar markiert"
+
+#: templates/comments/flagged.html:12
+msgid "The comment has been flagged."
+msgstr "Der Kommentar wurde markiert."
+
+#: templates/comments/form.html:70
+msgid "send"
+msgstr "Absenden"
+
+#: templates/comments/form.html:71
+msgid "preview"
+msgstr "Vorschau"
+
+#: templates/comments/list.html:25
+#: templates/django_comments_xtd/comment_tree.html:43
+msgid "Reply"
+msgstr "Antwort"
+
+#: templates/comments/posted.html:6
+msgid "Comment confirmation requested."
+msgstr "Eine Bestätigung für diesen Kommentar wurde abgefragt."
+
+#: templates/comments/posted.html:12
+msgid ""
+"A confirmation message has been sent to your\n"
+"            email address. Please, click on the link in the message to "
+"confirm\n"
+"            your comment."
+msgstr ""
+"Eine Bestätigungs-Mail wurde an deine Adresse gesendet. Bitte klicke auf den "
+"Link in der Mail, damit dein Kommentar hier erscheint."
+
+#: templates/comments/preview.html:5 templates/comments/preview.html:10
+msgid "Preview your comment"
+msgstr "Vorschau für deinen Kommentar"
+
+#: templates/comments/preview.html:14
+msgid "Preview of your comment for:"
+msgstr "Vorschau deines Kommentars für:"
+
+#: templates/comments/preview.html:21
+msgid "Empty comment."
+msgstr "Leerer Kommentar."
+
+#: templates/comments/preview.html:41
+#: templates/django_comments_xtd/reply.html:32
+msgid "Post your comment"
+msgstr "Schicke deinen Kommentar ab"
+
+#: templates/django_comments_xtd/comment_list.html:11
+msgid "List of comments"
+msgstr "Liste der Kommentare"
+
+#: templates/django_comments_xtd/comment_tree.html:13
+msgid "moderator"
+msgstr "Moderator"
+
+#: templates/django_comments_xtd/comment_tree.html:13
+msgid "comment permalink"
+msgstr "Permanenter Link"
+
+#: templates/django_comments_xtd/comment_tree.html:18
+#, python-format
+msgid "A user has flagged this comment as inappropriate."
+msgid_plural "%(counter)s users have flagged this comment as inappropriate."
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/django_comments_xtd/comment_tree.html:22
+msgid "comment flagged"
+msgstr "Kommentar markiert"
+
+#: templates/django_comments_xtd/comment_tree.html:25
+msgid "flag comment"
+msgstr "Kommentar markieren"
+
+#: templates/django_comments_xtd/comment_tree.html:28
+msgid "remove comment"
+msgstr "Kommentar entfernen"
+
+#: templates/django_comments_xtd/discarded.html:4
+msgid "Comment discarded"
+msgstr "Kommentar wurde entfernt"
+
+#: templates/django_comments_xtd/discarded.html:7
+msgid "Comment automatically discarded"
+msgstr "Der Kommentar wurde automatisch entfernt."
+
+#: templates/django_comments_xtd/discarded.html:8
+msgid "Sorry, your comment has been automatically discarded"
+msgstr "Leider wurde dein Kommentar automatisch entfernt."
+
+#: templates/django_comments_xtd/dislike.html:5
+#: templates/django_comments_xtd/like.html:5
+msgid "Confirm your opinion"
+msgstr "Bestätige deine Meinung"
+
+#: templates/django_comments_xtd/dislike.html:15
+msgid "You didn't like this comment, do you want to change it?"
+msgstr "Dir gefällt dieser Kommentar nicht. Würdest du ihn gerne #ändern?"
+
+#: templates/django_comments_xtd/dislike.html:17
+msgid "Do you dislike this comment?"
+msgstr "Magst du diesen Kommentar wirklich nicht?"
+
+#: templates/django_comments_xtd/dislike.html:22
+#: templates/django_comments_xtd/like.html:22
+msgid "Please, confirm your opinion about the comment."
+msgstr "Bestätige bitte deine Meinung zu diesem Kommentar."
+
+#: templates/django_comments_xtd/dislike.html:61
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your negative "
+"opinion on this comment."
+msgstr ""
+"Klick auf den „Zurückziehen“-Button, wenn du deine Mainung zu diesem "
+"Kommentar zurückziehen möchtest."
+
+#: templates/django_comments_xtd/dislike.html:69
+#: templates/django_comments_xtd/like.html:68
+msgid "Withdraw"
+msgstr "Zurückziehen"
+
+#: templates/django_comments_xtd/dislike.html:71
+msgid "I dislike it"
+msgstr "Er gefällt mir nicht"
+
+#: templates/django_comments_xtd/disliked.html:4
+msgid "You disliked the comment"
+msgstr "Der Kommentar gefällt dir nicht."
+
+#: templates/django_comments_xtd/disliked.html:7
+#: templates/django_comments_xtd/liked.html:7
+msgid "Thanks for taking the time to participate."
+msgstr "Danke, dass du mitmachst!"
+
+#: templates/django_comments_xtd/email_followup_comment.txt:4
+msgid "There is a new comment following up yours."
+msgstr "Es gibt einen neuen Folge-Kommentar."
+
+#: templates/django_comments_xtd/email_followup_comment.txt:20
+msgid "Kind regards"
+msgstr "Freundlicher Gruß"
+
+#: templates/django_comments_xtd/like.html:15
+msgid "You liked this comment, do you want to change it?"
+msgstr "Dir gefällt dieser Kommentar. Möchtest du das ändern?"
+
+#: templates/django_comments_xtd/like.html:17
+msgid "Do you like this comment?"
+msgstr "Gefällt dir dieser Kommentar?"
+
+#: templates/django_comments_xtd/like.html:59
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your positive "
+"opinion on this comment."
+msgstr ""
+"Klick auf den „Zurückziehen“-Button, wenn du deine Mainung zu diesem "
+"Kommentar zurückziehen möchtest."
+
+#: templates/django_comments_xtd/like.html:70
+msgid "I like it"
+msgstr "Ich mag ihn."
+
+#: templates/django_comments_xtd/liked.html:4
+msgid "Your opinion is appreciated"
+msgstr "Deine Meinung wird bestimmt gut ankommen!"
+
+#: templates/django_comments_xtd/moderated.html:4
+msgid "Comment requires approval"
+msgstr "Der Kommentar muss erst moderiert werden."
+
+#: templates/django_comments_xtd/moderated.html:8
+msgid "Comment in moderation"
+msgstr "Kommentar wird moderiert."
+
+#: templates/django_comments_xtd/moderated.html:14
+msgid ""
+"\n"
+"            Your comment is in moderation.<br/>\n"
+"            It has to be reviewed before being published.<br/>\n"
+"            Thank you for your patience and understanding.\n"
+"            "
+msgstr ""
+"\n"
+"Dein Kommentar wird moderiert.<br/>\n"
+"Er muss bestätigt werden, bevor er veröffentlicht wird.<br/>\n"
+"Wir bitten um dein Verständnis."
+
+#: templates/django_comments_xtd/moderated.html:22
+#, python-format
+msgid ""
+"\n"
+"            Go back to: <a href=\"%(content_object_url)s\">"
+"%(content_object_str)s</a>\n"
+"            "
+msgstr ""
+"\n"
+"            Zurück zu: <a href=\"%(content_object_url)s\">"
+"%(content_object_str)s</a>\n"
+"            "
+
+#: templates/django_comments_xtd/muted.html:4
+msgid "Comment thread muted"
+msgstr "Kommentar-Reihe leise geschaltet"
+
+#: templates/django_comments_xtd/muted.html:7
+msgid "Comment thread has been muted"
+msgstr "Kommentar-Reihe wurde leise geschaltet"
+
+#: templates/django_comments_xtd/muted.html:9
+msgid "You will no longer receive email notifications for comments sent to"
+msgstr "Du erhältst keine e-Mail Benachrichtigungen mehr für:"
+
+#: templates/django_comments_xtd/reply.html:6
+msgid "Comment reply"
+msgstr "Antwort"
+
+#: templates/django_comments_xtd/reply.html:11
+msgid "Reply to comment"
+msgstr "Kommentar beantworten"
+
+#: views.py:49
+msgid "comment confirmation request"
+msgstr "Anfrage einer Bestätigung"
+
+#: views.py:212
+msgid "new comment posted"
+msgstr "Ein neuer Kommentar wurde gepostet."

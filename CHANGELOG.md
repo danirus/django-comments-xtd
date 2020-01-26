@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.4.3] - 2020-01-26
+
+	* Fixes issue on the ContentType that happens when sending post
+	request with empty data. (PR: #137) (thanks to @dvorberg).
+	* Adds German translations,  (thanks to @dvorberg).
+
 ## [2.4.2] - 2019-12-25
 
     * Adds Django 3.0 compatibility thanks to Sergey Ivanychev (@ivanychev).

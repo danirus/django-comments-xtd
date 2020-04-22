@@ -21,7 +21,7 @@ from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
 from django_comments_xtd.signals import confirmation_received
-from django_comments_xtd.utils import has_app_model_option
+from django_comments_xtd.utils import get_app_model_options
 
 
 COMMENT_MAX_LENGTH = getattr(settings, 'COMMENT_MAX_LENGTH', 3000)
@@ -76,32 +76,36 @@ class WriteCommentSerializer(serializers.Serializer):
         try:
             model = apps.get_model(*ctype.split(".", 1))
             target = model._default_manager.get(pk=object_pk)
+            whocan = get_app_model_options(content_type=ctype)['who_can_post']
         except TypeError:
-            return serializers.ValidationError("Invalid content_type value: %r"
-                                               % escape(ctype))
+            raise serializers.ValidationError("Invalid content_type value: %r"
+                                              % escape(ctype))
         except AttributeError:
-            return serializers.ValidationError("The given content-type %r does "
-                                               "not resolve to a valid model."
-                                               % escape(ctype))
+            raise serializers.ValidationError("The given content-type %r does "
+                                              "not resolve to a valid model."
+                                              % escape(ctype))
         except model.ObjectDoesNotExist:
-            return serializers.ValidationError(
+            raise serializers.ValidationError(
                 "No object matching content-type %r and object PK %r exists."
                 % (escape(ctype), escape(object_pk)))
         except (ValueError, serializers.ValidationError) as e:
-            return serializers.ValidationError(
+            raise serializers.ValidationError(
                 "Attempting go get content-type %r and object PK %r exists "
                 "raised %s" % (escape(ctype), escape(object_pk),
                                e.__class__.__name__))
+        else:
+            if whocan == "users" and not self.request.user.is_authenticated:
+                raise serializers.ValidationError("User not autenticated")
 
         self.form = get_form()(target, data=data)
 
         # Check security information
         if self.form.security_errors():
-            return serializers.ValidationError(
+            raise serializers.ValidationError(
                 "The comment form failed security verification: %s" %
                 escape(str(self.form.security_errors())))
         if self.form.errors:
-            return serializers.ValidationError(self.form.errors)
+            raise serializers.ValidationError(self.form.errors)
         return data
 
     def save(self):
@@ -210,7 +214,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         }
         users_likedit, users_dislikedit = None, None
 
-        if has_app_model_option(obj)['allow_flagging']:
+        if get_app_model_options(comment=obj)['allow_flagging']:
             users_flagging = obj.users_flagging(CommentFlag.SUGGEST_REMOVAL)
             if self.request.user in users_flagging:
                 flags['removal']['active'] = True
@@ -218,18 +222,18 @@ class ReadCommentSerializer(serializers.ModelSerializer):
                 flags['removal']['count'] = len(users_flagging)
 
         if (
-                has_app_model_option(obj)['allow_feedback'] or
-                has_app_model_option(obj)['show_feedback']
+                get_app_model_options(comment=obj)['allow_feedback'] or
+                get_app_model_options(comment=obj)['show_feedback']
         ):
             users_likedit = obj.users_flagging(LIKEDIT_FLAG)
             users_dislikedit = obj.users_flagging(DISLIKEDIT_FLAG)
 
-        if has_app_model_option(obj)['allow_feedback']:
+        if get_app_model_options(comment=obj)['allow_feedback']:
             if self.request.user in users_likedit:
                 flags['like']['active'] = True
             elif self.request.user in users_dislikedit:
                 flags['dislike']['active'] = True
-        if has_app_model_option(obj)['show_feedback']:
+        if get_app_model_options(comment=obj)['show_feedback']:
             flags['like']['users'] = [
                 "%d:%s" % (user.id, settings.COMMENTS_XTD_API_USER_REPR(user))
                 for user in users_likedit]
@@ -270,8 +274,8 @@ class FlagSerializer(serializers.ModelSerializer):
         elif data['flag'] == 'report':
             option = 'allow_flagging'
         comment = data['comment']
-        if not has_app_model_option(comment)[option]:
-            ctype = ContentType.objects.get_for_model(comment.content_object)
+        ctype = ContentType.objects.get_for_model(comment.content_object)
+        if not get_app_model_options(content_type=ctype)[option]:
             raise serializers.ValidationError(
                 "Comments posted to instances of '%s.%s' are not explicitly "
                 "allowed to receive '%s' flags. Check the "

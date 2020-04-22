@@ -47,7 +47,7 @@
 <script>
  window.comments_props = {% get_commentbox_props for object %};
  window.comments_props_override = {
-     allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+     allow_comments: {% if object.allow_comments %}true{% else %}false{% endif %},
      allow_feedback: true,
      show_feedback: true,
      allow_flagging: true,

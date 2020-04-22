@@ -1,11 +1,11 @@
 # Idea borrowed from Selwin Ong post:
 # http://ui.co.id/blog/asynchronous-send_mail-in-django
 
+from copy import copy
 try:
     import Queue as queue  # python2
 except ImportError:
     import queue as queue  # python3
-
 import threading
 
 from django.core.mail import EmailMultiAlternatives
@@ -53,19 +53,44 @@ def send_mail(subject, body, from_email, recipient_list,
                    fail_silently, html)
 
 
-def has_app_model_option(comment):
-    _default = {
+def get_app_model_options(comment=None, content_type=None):
+    """
+    Get the app_model_option from COMMENTS_XTD_APP_MODEL_OPTIONS.
+
+    If a comment is given, the content_type is extracted from it. Otherwise,
+    the content_type kwarg has to be provided. The funcion checks whether there
+    is a matching dictionary for the app_label.model of the content_type, and
+    returns it. It returns the default otherwise: { 'who_can_post': 'all',
+    'allow_flagging': False, 'allow_feedback': False, 'show_feedback': False }.
+    """
+    default = {
+        'who_can_post': 'all',  # Valid values: "users", "all"
         'allow_flagging': False,
         'allow_feedback': False,
-        'show_feedback': False
+        'show_feedback': False,
     }
-    content_type = ContentType.objects.get_for_model(comment.content_object)
-    key = "%s.%s" % (content_type.app_label, content_type.model)
-    try:
-        return settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key]
-    except KeyError:
-        return settings.COMMENTS_XTD_APP_MODEL_OPTIONS.setdefault(
-            'default', _default)
+    if 'default' in settings.COMMENTS_XTD_APP_MODEL_OPTIONS:
+        # The developer overwrite the default settings. Check whether
+        # the developer added all the expected keys in the dictionary.
+        has_missing_key = False
+        for k in default.keys():
+            if not k in settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default']:
+                has_missing_key = True
+        if not has_missing_key:
+            default = copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default'])
+
+    if comment:
+        content_type = ContentType.objects.get_for_model(comment.content_object)
+        key = "%s.%s" % (content_type.app_label, content_type.model)
+    elif content_type:
+        key = content_type
+    else:
+        return default
+    try: 
+        default.update(settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key])
+        return default
+    except:
+        return default
 
 
 def get_current_site_id(request=None):

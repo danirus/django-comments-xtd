@@ -165,16 +165,18 @@ COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
 # Quotes can have 1-level depth nested comments.
 COMMENTS_XTD_MAX_THREAD_LEVEL = 1
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
-    'articles.article': 2,
+    'articles.article': 0,
 }
 COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'articles.article': {
+        'who_can_post': 'all',
         'allow_flagging': True,
         'allow_feedback': True,
         'show_feedback': True,
     },
     'quotes.quote': {
+        'who_can_post': 'all',
         'allow_flagging': True,
         'allow_feedback': True,
         'show_feedback': True,

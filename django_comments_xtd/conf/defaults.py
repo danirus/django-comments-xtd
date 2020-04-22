@@ -40,10 +40,9 @@ COMMENTS_XTD_SEND_HTML_EMAIL = True
 COMMENTS_XTD_THREADED_EMAILS = True
 
 # Define what commenting features a pair app_label.model can have.
-# TODO: Put django-comments-xtd settings under a dictionary, and merge
-#       COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL with this one.
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'default': {
+        'who_can_post': 'all',  # Valid values: "users", "all"
         'allow_flagging': False,
         'allow_feedback': False,
         'show_feedback': False,

@@ -27,8 +27,7 @@
               </a>
             {% endif %}
             {% if perms.comments.can_moderate %}
-              <a class="mutedlink"
-                 href="{% url 'comments-delete' item.comment.pk %}"><i class="fas fa-trash-alt" title="{% trans 'remove comment' %}"></i></a>
+              <a class="mutedlink" href="{% url 'comments-delete' item.comment.pk %}"><i class="fas fa-trash-alt" title="{% trans 'remove comment' %}"></i></a>
             {% endif %}
           {% endif %}
         </span>

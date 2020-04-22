@@ -21,19 +21,26 @@
             <em>{% trans "Empty comment." %}</em>
             {% else %}
             <div class="media">
+              <div class="mr-3">
                 {{ form.cleaned_data.email|xtd_comment_gravatar }}
-                <div class="media-body">
-                    <div class="comment pb-3">
-                        <h6 class="mb-1 small">
-                            {% now "N j, Y, P" %}&nbsp;-&nbsp;
-                            {% if form.cleaned_data.url %}
-                            <a href="{{ form.cleaned_data.url }}" target="_new">{% endif %}
-                                {{ form.cleaned_data.name }}
-                                {% if form.cleaned_data.url %}</a>{% endif %}
-                        </h6>
-                        <p>{{ comment }}</p>
+              </div>
+              <div class="media-body">
+                <div class="comment pb-3">
+                  <h6 class="mb-1 small d-flex">
+                    <div class="mr-auto">
+                      {% now "N j, Y, P" %}&nbsp;-&nbsp;
+                      {% if form.cleaned_data.url %}
+                      <a href="{{ form.cleaned_data.url }}" target="_new">
+                        {{ form.cleaned_data.name }}
+                      </a>
+                      {% else %}
+                      {{ form.cleaned_data.name }}
+                      {% endif %}
                     </div>
+                  </h6>
+                  <div class="content">{{ comment }}</div>
                 </div>
+              </div>
             </div>
             {% endif %}
             <div class="card mt-4 mb-5">

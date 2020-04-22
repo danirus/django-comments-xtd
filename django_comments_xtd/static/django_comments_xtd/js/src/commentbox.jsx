@@ -57,14 +57,29 @@ export class CommentBox extends React.Component {
   }
 
   render_comment_form() {
-    if(this.props.allow_comments) {
-      return (
-        <CommentForm {...this.props}
-                     on_comment_created={this.handle_comment_created} />
-      );
+    const { allow_comments, who_can_post, is_authenticated } = this.props;
+    if(allow_comments) {
+      if (
+        who_can_post === 'all' ||
+        (who_can_post === 'users' && is_authenticated)
+      ) {
+        return (
+          <CommentForm {...this.props}
+                       on_comment_created={this.handle_comment_created} />
+        );
+      }
+      else {
+        return (
+          <h5 className="mt-4 mb-5 text-center text-info">
+            Only registered users can post comments.
+          </h5>
+        );
+      }
     } else {
       return (
-        <h5>Comments are disabled for this article.</h5>
+        <h4 className="mt-4 mb-5 text-center text-secondary">
+          Comments are disabled for this article.
+        </h4>
       );
     }
   }

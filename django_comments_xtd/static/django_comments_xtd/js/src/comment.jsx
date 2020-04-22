@@ -192,22 +192,27 @@ export class Comment extends React.Component {
   }
 
   render_feedback_btns() {
-    if(this.props.settings.allow_feedback)
-      {
-        let feedback_id = "feedback-"+this.props.data.id;
-        if(this.props.settings.show_feedback)
-          this.disposeTooltips(feedback_id);
-        let like_feedback = this._get_feedback_chunk("like");
-        let dislike_feedback = this._get_feedback_chunk("dislike");
-        return (<span id={feedback_id} className="small">{like_feedback}
-          <span className="text-muted">|</span>{dislike_feedback}</span>);
-      } else
-    return "";
+    const {
+      allow_feedback, who_can_post, is_authenticated
+    } = this.props.settings;
+    
+    if(
+      (allow_feedback && who_can_post === 'all') ||
+      (allow_feedback && who_can_post === 'users' && is_authenticated)
+    )
+    {
+      let feedback_id = "feedback-"+this.props.data.id;
+      if(this.props.settings.show_feedback)
+        this.disposeTooltips(feedback_id);
+      let like_feedback = this._get_feedback_chunk("like");
+      let dislike_feedback = this._get_feedback_chunk("dislike");
+      return (<span id={feedback_id} className="small">{like_feedback}
+                <span className="text-muted">|</span>{dislike_feedback}</span>);
+    } else
+      return null;
   }
 
   make_form_invisible(submit_status) {
-    // this.setState({reply_form: {component: this.state.reply_form.component,
-    //                             is_visible: false}});
     this.props.on_comment_created();
   }
   
@@ -225,9 +230,9 @@ export class Comment extends React.Component {
   }
 
   _get_reply_link_chunk() {
-    if(!this.props.data.allow_reply)
-      return "";
-    
+    const { is_authenticated, who_can_post } = this.props.settings;
+    if (!is_authenticated && who_can_post === 'users')
+      return null;
     let url = this.props.settings.reply_url.replace('0', this.props.data.id),
         reply_label = django.gettext("Reply");
     
@@ -251,12 +256,7 @@ export class Comment extends React.Component {
   }
   
   render_comment_body() {
-    let extra_space = "";
-    if(!this.props.data.allow_reply &&
-       !this.props.settings.allow_feedback)
-    {
-      extra_space = "pb-3";
-    }
+    const extra_space = (!this.props.settings.allow_feedback) ? "pb-3" : "";
     if(this.props.data.is_removed) {
       let cls = `text-muted ${extra_space}`;
       return (

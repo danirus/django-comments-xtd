@@ -26,7 +26,7 @@ from django_comments_xtd.models import (TmpXtdComment,
                                         MaxThreadLevelExceededException,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
 from django_comments_xtd.utils import (get_current_site_id, send_mail,
-                                       has_app_model_option)
+                                       get_app_model_options)
 
 
 XtdComment = get_comment_model()
@@ -306,7 +306,7 @@ def flag(request, comment_id, next=None):
     comment = get_object_or_404(
         get_comment_model(), pk=comment_id,
         site__pk=get_current_site_id(request))
-    if not has_app_model_option(comment)['allow_flagging']:
+    if not get_app_model_options(comment=comment)['allow_flagging']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
                       "explicitly allowed to receive 'removal suggestion' "
@@ -338,7 +338,7 @@ def like(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
-    if not has_app_model_option(comment)['allow_feedback']:
+    if not get_app_model_options(comment=comment)['allow_feedback']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
                       "explicitly allowed to receive 'liked it' flags. "
@@ -374,7 +374,7 @@ def dislike(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
-    if not has_app_model_option(comment)['allow_feedback']:
+    if not get_app_model_options(comment=comment)['allow_feedback']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
                       "explicitly allowed to receive 'disliked it' flags. "

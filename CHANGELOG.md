@@ -1,10 +1,17 @@
 # Change Log
 
+## [2.5.0] - 2020-04-22
+
+    * Fixes issue #144 regarding the size of the JavaScript bundle. The
+      new JavaScript plugin does not include React and ReactDOM. The two
+      libraries have to be loaded with an external script.
+    * Update the dependencies of the JavaScript plugin.
+
 ## [2.4.3] - 2020-01-26
 
-	* Fixes issue on the ContentType that happens when sending post
-	request with empty data. (PR: #137) (thanks to @dvorberg).
-	* Adds German translations,  (thanks to @dvorberg).
+    * Fixes issue on the ContentType that happens when sending post
+      request with empty data. (PR: #137) (thanks to @dvorberg).
+    * Adds German translations, (thanks to @dvorberg).
 
 ## [2.4.2] - 2019-12-25
 

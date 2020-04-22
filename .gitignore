@@ -8,6 +8,7 @@ plugin*.js
 plugin*.js.map
 vendor*.js
 vendor*.js.map
+vendor*.LICENSE.txt
 django*.mo
 db.sqlite3
 docs/_build

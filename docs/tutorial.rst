@@ -825,6 +825,8 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
     {% endblock %}
     
     {% block extra-js %}
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
     <script>
      window.comments_props = {% get_commentbox_props for object %};
      window.comments_props_override = {
@@ -832,7 +834,7 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
          allow_feedback: true,
          show_feedback: true,
          allow_flagging: true,
-         polling_interval: 5000  // In milliseconds.
+         poll_interval: 5000  // In milliseconds.
      };
     </script>
     <script
@@ -849,8 +851,8 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
     <script
       type="text/javascript"
       src="{% url 'javascript-catalog' %}"></script>
-    <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.4.3.js' %}"></script>
-    <script src="{% static 'django_comments_xtd/js/plugin-2.4.3.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.5.0.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/plugin-2.5.0.js' %}"></script>
     <script>
     $(function() {
       $('[data-toggle="tooltip"]').tooltip({html: true});

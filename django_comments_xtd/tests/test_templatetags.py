@@ -8,6 +8,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.template import Context, Template, TemplateSyntaxError
 from django.test import TestCase as DjangoTestCase
 
+from django_comments_xtd.models import XtdComment
 from django_comments_xtd.tests.models import Article, Diary
 from django_comments_xtd.tests.test_models import (
     thread_test_step_1, thread_test_step_2, thread_test_step_3,
@@ -93,7 +94,7 @@ class XtdCommentsTestCase(DjangoTestCase):
         thread_test_step_4(self.article)
         thread_test_step_5(self.article)
 
-    def test_render_xtdcomment_tree(self):
+    def _assert_all_comments_are_published(self):
         t = ("{% load comments_xtd %}"
              "{% render_xtdcomment_tree for object %}")
         output = Template(t).render(Context({'object': self.article,
@@ -122,3 +123,48 @@ class XtdCommentsTestCase(DjangoTestCase):
         self.assertTrue(pos_c1 < pos_c3 < pos_c8 <
                         pos_c4 < pos_c7 < pos_c2 <
                         pos_c5 < pos_c6 < pos_c9)
+
+    def test_render_xtdcomment_tree(self):
+        self._assert_all_comments_are_published()
+
+    def _assert_only_comment_2_and_3_and_their_children_are_published(self):
+        t = ("{% load comments_xtd %}"
+             "{% render_xtdcomment_tree for object %}")
+        output = Template(t).render(Context({'object': self.article,
+                                             'user': AnonymousUser()}))
+        self.assertEqual(output.count('<a name='), 4)
+        # Only the following comments must be displayed, the other ones must
+        # have been unpublished when setting the comment 1 is_public to False.
+        pos_c2 = output.index('<a name="c2"></a>')
+        pos_c5 = output.index('<a name="c5"></a>')
+        pos_c6 = output.index('<a name="c6"></a>')
+        pos_c9 = output.index('<a name="c9"></a>')
+        self.assertTrue(pos_c2 > 0)
+        self.assertTrue(pos_c5 > 0)
+        self.assertTrue(pos_c6 > 0)
+        self.assertTrue(pos_c9 > 0)
+        self.assertTrue(pos_c2 < pos_c5 < pos_c6 < pos_c9)
+
+    def test_unpublishing_comment_1(self):
+        # Now set comment 1 is_public to False.
+        c1 = XtdComment.objects.get(pk=1)
+        c1.is_public = False
+        # Saving the instance triggers the pre_save signal in the models.py
+        # module, which in turn unpublish this comment and all its children.
+        c1.save()
+        self._assert_only_comment_2_and_3_and_their_children_are_published()
+
+    def test_unpublishing_comment_1_and_publishing_it_again(self):
+        # Now set comment 1 is_public to False.
+        c1 = XtdComment.objects.get(pk=1)
+        c1.is_public = False
+        # Saving the instance triggers the pre_save signal in the models.py
+        # module, which in turn unpublish this comment and all its children.
+        c1.save()
+        self._assert_only_comment_2_and_3_and_their_children_are_published()
+
+        c1.is_public = True
+        # Saving the instance with is_public = True publish the comment and
+        # all the nested comments.
+        c1.save()
+        self._assert_all_comments_are_published()

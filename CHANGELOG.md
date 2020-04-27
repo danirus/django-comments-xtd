@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.5.1] - 2020-04-27
+
+    * Fixes issue #138, on unpublishing a single comment with public nested
+      comments. The fix consists of a new pre_save receiver that will
+      either publish or unpublish nested comments when a comment changes
+      its is_public attribute. (thanks to @hematinik).
+
 ## [2.5.0] - 2020-04-22
 
     * Fixes issue #144 regarding the size of the JavaScript bundle. The

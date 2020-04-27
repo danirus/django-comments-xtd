@@ -85,7 +85,7 @@ class XtdCommentManagerTestCase(ArticleBaseTestCase):
         self.assertEqual(count_site2, 1)
 
 
-# In order to test methods 'save' and '_calculate_thread_data', simulate the
+# In order to test 'save' and '_calculate_thread_data' methods, simulate the
 # following threads, in order of arrival:
 #
 # testcase cmt.id   parent level-0  level-1  level-2
@@ -153,7 +153,7 @@ def thread_test_step_3(article):
                               object_pk=article.id,
                               content_object=article,
                               site=site,
-                              comment="comment 1 to comment 1",
+                              comment="comment 1 to comment 2",
                               submit_date=datetime.now(),
                               parent_id=2)
 
@@ -199,7 +199,7 @@ def thread_test_step_5(article):
                               object_pk=article.id,
                               content_object=article,
                               site=site,
-                              comment="cmt 1 to cmt 2 to cmt 1",
+                              comment="comment 3 article",
                               submit_date=datetime.now())
 
 

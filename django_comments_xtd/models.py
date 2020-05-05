@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import F, Max, Min, Q
+from django.db.models.signals import pre_save
 from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
 from django.core import signing
@@ -184,12 +185,35 @@ class XtdComment(Comment):
         return [obj.user for obj in self.flags.filter(flag=flag)]
 
 
-@receiver(comment_was_flagged)
-def unpublish_nested_comments_on_removal_flag(sender, comment, flag, **kwargs):
-    if flag.flag == CommentFlag.MODERATOR_DELETION:
-        XtdComment.objects.filter(~(Q(pk=comment.id)), parent_id=comment.id)\
-                          .update(is_public=False)
+def publish_or_unpublish_nested_comments(comment_id, is_public=False):
+    qs = XtdComment.objects.filter(~Q(pk=comment_id), parent_id=comment_id)
+    nested = [ cm.id for cm in qs ]
+    qs.update(is_public=is_public)
+    while len(nested):
+        cm_id = nested.pop()
+        qs = XtdComment.objects.filter(~Q(pk=cm_id), parent_id=cm_id)
+        nested.extend([ cm.id for cm in qs ])
+        qs.update(is_public=is_public)
 
+
+@receiver(pre_save)
+def publish_or_unpublish_on_pre_save(sender, instance, raw, using, **kwargs):
+    if sender is not XtdComment:
+        return
+    if not raw and instance and instance.id:
+        publish_or_unpublish_nested_comments(instance.id,
+                                             is_public=instance.is_public)
+
+
+@receiver(comment_was_flagged)
+def publish_or_unpublish_on_removal_flag(sender, comment, flag, **kwargs):
+    if flag.flag == CommentFlag.MODERATOR_DELETION:
+        publish_or_unpublish_nested_comments(comment.id, is_public=False)
+    elif flag.flag == CommentFlag.MODERATOR_APPROVAL:
+        publish_or_unpublish_nested_comments(comment.id, is_public=True)
+
+
+# ----------------------------------------------------------------------
 
 class DummyDefaultManager:
     """

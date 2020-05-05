@@ -158,6 +158,39 @@ class WriteCommentSerializer(serializers.Serializer):
         return resp
 
 
+class FlagSerializer(serializers.ModelSerializer):
+    flag_choices = {'like': LIKEDIT_FLAG,
+                    'dislike': DISLIKEDIT_FLAG,
+                    'report': CommentFlag.SUGGEST_REMOVAL}
+
+    class Meta:
+        model = CommentFlag
+        fields = ('comment', 'flag',)
+
+    def validate(self, data):
+        # Validate flag.
+        if data['flag'] not in self.flag_choices:
+            raise serializers.ValidationError("Invalid flag.")
+        # Check commenting options on object being commented.
+        option = ''
+        if data['flag'] in ['like', 'dislike']:
+            option = 'allow_feedback'
+        elif data['flag'] == 'report':
+            option = 'allow_flagging'
+        comment = data['comment']
+        if not has_app_model_option(comment)[option]:
+            ctype = ContentType.objects.get_for_model(comment.content_object)
+            raise serializers.ValidationError(
+                "Comments posted to instances of '%s.%s' are not explicitly "
+                "allowed to receive '%s' flags. Check the "
+                "COMMENTS_XTD_APP_MODEL_OPTIONS setting." % (
+                    ctype.app_label, ctype.model, data['flag']
+                )
+            )
+        data['flag'] = self.flag_choices[data['flag']]
+        return data
+
+
 class ReadCommentSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(max_length=50, read_only=True)
     user_url = serializers.CharField(read_only=True)
@@ -250,34 +283,74 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         return obj.get_absolute_url()
 
 
-class FlagSerializer(serializers.ModelSerializer):
-    flag_choices = {'like': LIKEDIT_FLAG,
-                    'dislike': DISLIKEDIT_FLAG,
-                    'report': CommentFlag.SUGGEST_REMOVAL}
+class ReadFlagField(serializers.RelatedField):
+    def to_representation(self, value):
+        if value.flag == CommentFlag.SUGGEST_REMOVAL:
+            flag = "removal"
+        elif value.flag == LIKEDIT_FLAG:
+            flag = "like"
+        elif value.flag == DISLIKEDIT_FLAG:
+            flag = "dislike"
+        else:
+            flag = ""
+        return {
+            "flag": flag,
+            "user": settings.COMMENTS_XTD_API_USER_REPR(value.user),
+            "id": value.user.id
+        }
+
+
+class NextReadCommentSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(max_length=50, read_only=True)
+    user_url = serializers.CharField(read_only=True)
+    user_moderator = serializers.SerializerMethodField()
+    user_avatar = serializers.SerializerMethodField()
+    submit_date = serializers.SerializerMethodField()
+    parent_id = serializers.IntegerField(default=0, read_only=True)
+    level = serializers.IntegerField(read_only=True)
+    is_removed = serializers.BooleanField(read_only=True)
+    comment = serializers.SerializerMethodField()
+    allow_reply = serializers.SerializerMethodField()
+    permalink = serializers.SerializerMethodField()
+    flags = ReadFlagField(many=True, read_only=True)
 
     class Meta:
-        model = CommentFlag
-        fields = ('comment', 'flag',)
+        model = XtdComment
+        fields = ('id', 'user_name', 'user_url', 'user_moderator',
+                  'user_avatar', 'permalink', 'comment', 'submit_date',
+                  'parent_id', 'level', 'is_removed', 'allow_reply', 'flags')
 
-    def validate(self, data):
-        # Validate flag.
-        if data['flag'] not in self.flag_choices:
-            raise serializers.ValidationError("Invalid flag.")
-        # Check commenting options on object being commented.
-        option = ''
-        if data['flag'] in ['like', 'dislike']:
-            option = 'allow_feedback'
-        elif data['flag'] == 'report':
-            option = 'allow_flagging'
-        comment = data['comment']
-        if not has_app_model_option(comment)[option]:
-            ctype = ContentType.objects.get_for_model(comment.content_object)
-            raise serializers.ValidationError(
-                "Comments posted to instances of '%s.%s' are not explicitly "
-                "allowed to receive '%s' flags. Check the "
-                "COMMENTS_XTD_APP_MODEL_OPTIONS setting." % (
-                    ctype.app_label, ctype.model, data['flag']
-                )
-            )
-        data['flag'] = self.flag_choices[data['flag']]
-        return data
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs['context']['request']
+        super(NextReadCommentSerializer, self).__init__(*args, **kwargs)
+
+    def get_submit_date(self, obj):
+        activate(get_language())
+        return formats.date_format(obj.submit_date, 'DATETIME_FORMAT',
+                                   use_l10n=True)
+
+    def get_comment(self, obj):
+        if obj.is_removed:
+            return _("This comment has been removed.")
+        else:
+            return obj.comment
+
+    def get_user_moderator(self, obj):
+        try:
+            if obj.user and obj.user.has_perm('comments.can_moderate'):
+                return True
+            else:
+                return False
+        except Exception:
+            return None
+
+    def get_allow_reply(self, obj):
+        return obj.allow_thread()
+
+    def get_user_avatar(self, obj):
+        path = hashlib.md5(obj.user_email.lower().encode('utf-8')).hexdigest()
+        param = urlencode({'s': 48})
+        return "http://www.gravatar.com/avatar/%s?%s&d=mm" % (path, param)
+
+    def get_permalink(self, obj):
+        return obj.get_absolute_url()

@@ -31,6 +31,10 @@ urlpatterns = [
     url(r'^api/flag/$', api.CreateReportFlag.as_view(),
         name='comments-xtd-api-flag'),
 
+    # New API Handlers.
+    url(r'^napi/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[-\w]+)/$',
+        api.NextCommentList.as_view(), name='comments-xtd-napi-list'),
+
     url(r'', include("django_comments.urls")),
 ]
 

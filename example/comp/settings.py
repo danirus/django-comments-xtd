@@ -11,6 +11,10 @@ PROJECT_DIR = os.path.abspath(os.path.curdir)
 
 DEBUG = True
 
+INTERNAL_IPS = [
+    '127.0.0.1'
+]
+
 ADMINS = (
     ('Alice Bloggs', 'alice@example.com'),
 )
@@ -106,6 +110,7 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -128,6 +133,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'debug_toolbar',
+    'django_extensions',
     'rosetta',
     'rest_framework',
     'django_markdown2',
@@ -184,3 +191,7 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 
 LOGIN_URL = "/admin/login/"
 LOGIN_REDIRECT_URL = LOGIN_URL
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.sql.SQLPanel',
+]

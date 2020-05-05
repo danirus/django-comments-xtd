@@ -50,7 +50,31 @@ class CommentList(generics.ListAPIView):
                 content_type=content_type,
                 object_pk=object_pk_arg,
                 site__pk=get_current_site_id(self.request),
-                is_public=True)
+                is_public=True
+            )
+        return qs
+
+
+class NextCommentList(generics.ListAPIView):
+    """List all comments for a given ContentType and object ID."""
+    serializer_class = serializers.NextReadCommentSerializer
+
+    def get_queryset(self):
+        content_type_arg = self.kwargs.get('content_type', None)
+        object_pk_arg = self.kwargs.get('object_pk', None)
+        app_label, model = content_type_arg.split("-")
+        try:
+            content_type = ContentType.objects.get_by_natural_key(app_label,
+                                                                  model)
+        except ContentType.DoesNotExist:
+            qs = XtdComment.objects.none()
+        else:
+            qs = XtdComment.objects.filter(
+                content_type=content_type,
+                object_pk=object_pk_arg,
+                site__pk=get_current_site_id(self.request),
+                is_public=True
+            ).prefetch_related('flags', 'flags__user')
         return qs
 
 

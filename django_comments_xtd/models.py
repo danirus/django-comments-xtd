@@ -185,32 +185,22 @@ class XtdComment(Comment):
         return [obj.user for obj in self.flags.filter(flag=flag)]
 
 
-def publish_or_unpublish_nested_comments(comment_id, is_public=False):
+def publish_or_unpublish_nested_comments(comment_id, are_public=False):
     qs = XtdComment.objects.filter(~Q(pk=comment_id), parent_id=comment_id)
     nested = [ cm.id for cm in qs ]
-    qs.update(is_public=is_public)
+    qs.update(is_public=are_public)
     while len(nested):
         cm_id = nested.pop()
         qs = XtdComment.objects.filter(~Q(pk=cm_id), parent_id=cm_id)
         nested.extend([ cm.id for cm in qs ])
-        qs.update(is_public=is_public)
+        qs.update(is_public=are_public)
 
 
-@receiver(pre_save)
+@receiver(pre_save, sender=XtdComment)
 def publish_or_unpublish_on_pre_save(sender, instance, raw, using, **kwargs):
-    if sender is not XtdComment:
-        return
     if not raw and instance and instance.id:
-        publish_or_unpublish_nested_comments(instance.id,
-                                             is_public=instance.is_public)
-
-
-@receiver(comment_was_flagged)
-def publish_or_unpublish_on_removal_flag(sender, comment, flag, **kwargs):
-    if flag.flag == CommentFlag.MODERATOR_DELETION:
-        publish_or_unpublish_nested_comments(comment.id, is_public=False)
-    elif flag.flag == CommentFlag.MODERATOR_APPROVAL:
-        publish_or_unpublish_nested_comments(comment.id, is_public=True)
+        are_public = (not instance.is_removed) and instance.is_public
+        publish_or_unpublish_nested_comments(instance.id, are_public=are_public)
 
 
 # ----------------------------------------------------------------------

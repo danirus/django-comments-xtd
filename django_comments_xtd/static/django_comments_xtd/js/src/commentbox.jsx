@@ -132,7 +132,7 @@ export class CommentBox extends React.Component {
       }
     }
 
-    this.setState({tree:tree,
+    this.setState({tree: tree,
                    cids: curcids,
                    newcids: newcids,
                    counter: curcids.length});

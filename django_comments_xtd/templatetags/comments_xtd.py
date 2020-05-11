@@ -7,14 +7,17 @@ try:
 except ImportError:
     from urllib import urlencode
 
+from django.db.models import Prefetch
 from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader)
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from django_comments.models import CommentFlag
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.api import frontend
+from django_comments_xtd.models import XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
 from django_comments_xtd.utils import get_current_site_id
 
 
@@ -254,11 +257,19 @@ class RenderXtdCommentTreeNode(Node):
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
-            queryset = XtdComment.objects.filter(
-                content_type=ctype,
-                object_pk=obj.pk,
-                site__pk=get_current_site_id(context.get('request')),
-                is_public=True)
+            flags_qs = CommentFlag.objects.filter(flag__in=[
+                CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+            ]).prefetch_related('user')
+            prefetch = Prefetch('flags', queryset=flags_qs)
+            queryset = XtdComment\
+                .objects\
+                .prefetch_related(prefetch)\
+                .filter(
+                    content_type=ctype,
+                    object_pk=obj.pk,
+                    site__pk=get_current_site_id(context.get('request')),
+                    is_public=True
+                )
             comments = XtdComment.tree_from_queryset(
                 queryset,
                 with_flagging=self.allow_flagging,

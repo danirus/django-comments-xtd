@@ -129,22 +129,46 @@ class XtdComment(Comment):
                 'children': [list of child comment dictionaries]
             }
         """
-        def get_user_feedback(comment, user):
-            d = {'likedit_users': comment.users_flagging(LIKEDIT_FLAG),
-                 'dislikedit_users': comment.users_flagging(DISLIKEDIT_FLAG)}
-            if user is not None:
-                if user in d['likedit_users']:
-                    d['likedit'] = True
-                if user in d['dislikedit_users']:
-                    d['dislikedit'] = True
-            return d
+        def get_flags(comment, user):
+            flags_dict = {}
+            likedit = False  # Whether given user liked the comment.
+            dislikedit = False  # Whether given user disliked the comment.
+            likedit_users = []
+            dislikedit_users = []
+            flagging_users = []
+
+            for flag in comment.flags.all():
+                user_repr = settings.COMMENTS_XTD_API_USER_REPR(flag.user)
+                if with_feedback:
+                    if flag.flag == LIKEDIT_FLAG:
+                        likedit_users.append(user_repr)
+                        if flag.user == user:
+                            likedit = True
+                    elif flag.flag == DISLIKEDIT_FLAG:
+                        dislikedit_users.append(user_repr)
+                        if flag.user == user:
+                            dislikedit = True
+                if with_flagging:
+                    if flag.flag == CommentFlag.SUGGEST_REMOVAL:
+                        flagging_users.append(user_repr)
+
+            if with_feedback:
+                flags_dict.update({
+                    'likedit_users': likedit_users, 'likedit': likedit,
+                    'dislikedit_users': dislikedit_users, 'disliked': dislikedit
+                })
+            if with_flagging:
+                flags_dict.update({ 'flagged': flagging_users })
+            if with_flagging and add_flagged_count:
+                flags_dict.update({ 'flagged_count': len(flagging_users) })
+
+            return flags_dict
 
         def add_children(children, obj, user):
             for item in children:
                 if item['comment'].pk == obj.parent_id:
                     child_dict = {'comment': obj, 'children': []}
-                    if with_feedback:
-                        child_dict.update(get_user_feedback(obj, user))
+                    child_dict.update(get_flags(obj, user))
                     item['children'].append(child_dict)
                     return True
                 elif item['children']:
@@ -152,16 +176,17 @@ class XtdComment(Comment):
                         return True
             return False
 
-        def get_new_dict(obj):
-            new_dict = {'comment': obj, 'children': []}
-            if with_feedback:
-                new_dict.update(get_user_feedback(obj, user))
-            if with_flagging:
-                users_flagging = obj.users_flagging(CommentFlag.SUGGEST_REMOVAL)
-                if user.has_perm('django_comments.can_moderate'):
-                    new_dict.update({'flagged_count': len(users_flagging)})
-                new_dict.update({'flagged': user in users_flagging})
+        def get_comment_dict(obj):
+            new_dict ={'comment': obj, 'children':[]}
+            flags_dict = get_flags(obj, user)
+            if len(flags_dict):
+                new_dict.update(flags_dict)
             return new_dict
+
+        # ------------------------------
+        add_flagged_count = False
+        if user.has_perm('django_comments.can_moderate'):
+            add_flagged_count = True
 
         dic_list = []
         cur_dict = None
@@ -170,19 +195,17 @@ class XtdComment(Comment):
                 dic_list.append(cur_dict)
                 cur_dict = None
             if not cur_dict:
-                cur_dict = get_new_dict(obj)
+                cur_dict = get_comment_dict(obj)
                 continue
             if obj.parent_id == cur_dict['comment'].pk:
-                child_dict = get_new_dict(obj)
+                child_dict = get_comment_dict(obj)
                 cur_dict['children'].append(child_dict)
             else:
                 add_children(cur_dict['children'], obj, user)
         if cur_dict:
             dic_list.append(cur_dict)
-        return dic_list
 
-    def users_flagging(self, flag):
-        return [obj.user for obj in self.flags.filter(flag=flag)]
+        return dic_list
 
 
 def publish_or_unpublish_nested_comments(comment_id, are_public=False):

@@ -352,10 +352,12 @@ def like(request, comment_id, next=None):
                              c=comment.pk)
     # Render a form on GET
     else:
-        liked_it = request.user in comment.users_flagging(LIKEDIT_FLAG)
+        flag_qs = comment.flags.prefetch_related('user')\
+                                .filter(flag=LIKEDIT_FLAG)
+        users_likedit = [item.user for item in flag_qs]
         return render(request, 'django_comments_xtd/like.html',
                       {'comment': comment,
-                       'already_liked_it': liked_it,
+                       'already_liked_it': request.user in users_likedit,
                        'next': next})
 
 
@@ -386,10 +388,12 @@ def dislike(request, comment_id, next=None):
                              c=comment.pk)
     # Render a form on GET
     else:
-        disliked_it = request.user in comment.users_flagging(DISLIKEDIT_FLAG)
+        flag_qs = comment.flags.prefetch_related('user')\
+                                .filter(flag=DISLIKEDIT_FLAG)
+        users_dislikedit = [item.user for item in flag_qs]
         return render(request, 'django_comments_xtd/dislike.html',
                       {'comment': comment,
-                       'already_disliked_it': disliked_it,
+                       'already_disliked_it': request.user in users_dislikedit,
                        'next': next})
 
 

@@ -9,6 +9,10 @@ PROJECT_DIR = os.path.abspath(os.path.curdir)
 
 DEBUG = True
 
+INTERNAL_IPS = [
+    '127.0.0.1'
+]
+
 ADMINS = (
     ('Alice Bloggs', 'alice@example.com'),
 )
@@ -91,6 +95,7 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -109,6 +114,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'debug_toolbar',
+    'django_extensions',
     'django_markdown2',
     'simple.articles',
     'django_comments_xtd',
@@ -138,3 +145,7 @@ COMMENTS_XTD_MAX_THREAD_LEVEL = 0  # Default value
 COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.sql.SQLPanel',
+]

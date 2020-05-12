@@ -7,13 +7,13 @@ const STATIC_DIR = path.resolve(__dirname,
 const SOURCE_DIR = path.resolve(STATIC_DIR, 'src');
 
 module.exports = {
-  mode: "none",
+  mode: "production",
   devtool: 'source-map',
   entry: {
     plugin: path.resolve(SOURCE_DIR, 'index.js')
   },
   output: {
-    filename: '[name]-2.5.1.js',
+    filename: '[name]-2.6.0.js',
     path: STATIC_DIR
   },
   optimization: {
@@ -21,7 +21,6 @@ module.exports = {
       cacheGroups: {
         default: false,
         vendors: false,
-        
         vendor: {
           chunks: 'all',
           test: /node_modules/

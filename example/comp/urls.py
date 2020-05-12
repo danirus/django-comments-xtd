@@ -2,11 +2,7 @@ import django
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
-if django.VERSION[:2] < (2, 0):
-    from django.conf.urls import include, url as re_path
-else:
-    from django.urls import include, re_path
+from django.urls import include, path, re_path
 
 from django.views.i18n import JavaScriptCatalog
     
@@ -40,7 +36,10 @@ urlpatterns = [
 
 
 if settings.DEBUG:
-    urlpatterns += staticfiles_urlpatterns()
+    import debug_toolbar
+    urlpatterns += [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + staticfiles_urlpatterns()
 
 
 if 'rosetta' in settings.INSTALLED_APPS:

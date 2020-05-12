@@ -1,14 +1,16 @@
 import six
 
+from django.db.models import Prefetch
 from django.contrib.contenttypes.models import ContentType
 
+from django_comments.models import CommentFlag
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.response import Response
 
 from django_comments_xtd import views
 from django_comments_xtd.api import serializers
-from django_comments_xtd.models import XtdComment
+from django_comments_xtd.models import XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
 from django_comments_xtd.utils import get_current_site_id
 
 
@@ -36,7 +38,7 @@ class CommentList(generics.ListAPIView):
     """List all comments for a given ContentType and object ID."""
     serializer_class = serializers.ReadCommentSerializer
 
-    def get_queryset(self):
+    def get_queryset(self, **kwargs):
         content_type_arg = self.kwargs.get('content_type', None)
         object_pk_arg = self.kwargs.get('object_pk', None)
         app_label, model = content_type_arg.split("-")
@@ -46,11 +48,19 @@ class CommentList(generics.ListAPIView):
         except ContentType.DoesNotExist:
             qs = XtdComment.objects.none()
         else:
-            qs = XtdComment.objects.filter(
-                content_type=content_type,
-                object_pk=object_pk_arg,
-                site__pk=get_current_site_id(self.request),
-                is_public=True)
+            flags_qs = CommentFlag.objects.filter(flag__in=[
+                CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+            ]).prefetch_related('user')
+            prefetch = Prefetch('flags', queryset=flags_qs)
+            qs = XtdComment\
+                .objects\
+                .prefetch_related(prefetch)\
+                .filter(
+                    content_type=content_type,
+                    object_pk=object_pk_arg,
+                    site__pk=get_current_site_id(self.request),
+                    is_public=True
+                )
         return qs
 
 

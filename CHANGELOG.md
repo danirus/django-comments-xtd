@@ -1,5 +1,19 @@
 # Change Log
 
+## [2.6.0] - 2020-05-12
+
+    * Fixes issue #145, on inadequate number of SQL queries used by API
+      entry point "comments-xtd-api-list", available in the URL
+      "/comments/api/<content-type>/<object-pk>/".
+      The issue also happened when rendering the comments using tags
+      get_xtdcomment_tree and render_xtdcomment_tree. It has been fixed
+      in both cases too.
+    * Updates the JSON schema of the output retrieved by the API entry
+      point "comments-xtd-api-list". Thus the version number change.
+      The flags attribute of each retrieved is now a list of flags instead
+      of a summary for each the flags: "I like it", "I dislike it",
+      "suggest removal".
+
 ## [2.5.1] - 2020-04-27
 
     * Fixes issue #138, on unpublishing a single comment with public nested

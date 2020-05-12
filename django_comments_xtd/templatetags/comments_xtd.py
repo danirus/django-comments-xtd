@@ -17,7 +17,7 @@ from django.utils.safestring import mark_safe
 from django_comments.models import CommentFlag
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.api import frontend
-from django_comments_xtd.models import XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+from django_comments_xtd.models import LIKEDIT_FLAG, DISLIKEDIT_FLAG
 from django_comments_xtd.utils import get_current_site_id
 
 

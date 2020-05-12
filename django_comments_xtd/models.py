@@ -10,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_comments.managers import CommentManager
 from django_comments.models import Comment, CommentFlag
-from django_comments.signals import comment_was_flagged
 
 from django_comments_xtd.conf import settings
 
@@ -158,9 +157,9 @@ class XtdComment(Comment):
                     'dislikedit_users': dislikedit_users, 'disliked': dislikedit
                 })
             if with_flagging:
-                flags_dict.update({ 'flagged': flagging_users })
+                flags_dict.update({'flagged': flagging_users})
             if with_flagging and add_flagged_count:
-                flags_dict.update({ 'flagged_count': len(flagging_users) })
+                flags_dict.update({'flagged_count': len(flagging_users)})
 
             return flags_dict
 
@@ -177,7 +176,7 @@ class XtdComment(Comment):
             return False
 
         def get_comment_dict(obj):
-            new_dict ={'comment': obj, 'children':[]}
+            new_dict = {'comment': obj, 'children': []}
             flags_dict = get_flags(obj, user)
             if len(flags_dict):
                 new_dict.update(flags_dict)
@@ -210,12 +209,12 @@ class XtdComment(Comment):
 
 def publish_or_unpublish_nested_comments(comment_id, are_public=False):
     qs = XtdComment.objects.filter(~Q(pk=comment_id), parent_id=comment_id)
-    nested = [ cm.id for cm in qs ]
+    nested = [cm.id for cm in qs]
     qs.update(is_public=are_public)
     while len(nested):
         cm_id = nested.pop()
         qs = XtdComment.objects.filter(~Q(pk=cm_id), parent_id=cm_id)
-        nested.extend([ cm.id for cm in qs ])
+        nested.extend([cm.id for cm in qs])
         qs.update(is_public=are_public)
 
 

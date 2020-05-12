@@ -312,11 +312,19 @@ class GetXtdCommentTreeNode(Node):
     def render(self, context):
         obj = self.obj.resolve(context)
         ctype = ContentType.objects.get_for_model(obj)
-        queryset = XtdComment.objects.filter(
-            content_type=ctype,
-            object_pk=obj.pk,
-            site__pk=get_current_site_id(context.get('request')),
-            is_public=True)
+        flags_qs = CommentFlag.objects.filter(flag__in=[
+            CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+        ]).prefetch_related('user')
+        prefetch = Prefetch('flags', queryset=flags_qs)
+        queryset = XtdComment\
+            .objects\
+            .prefetch_related(prefetch)\
+            .filter(
+                content_type=ctype,
+                object_pk=obj.pk,
+                site__pk=get_current_site_id(context.get('request')),
+                is_public=True
+            )
         dic_list = XtdComment.tree_from_queryset(
             queryset,
             with_feedback=self.with_feedback,

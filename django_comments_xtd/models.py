@@ -150,7 +150,7 @@ class XtdComment(Comment):
                             dislikedit = True
                 if with_flagging:
                     if flag.flag == CommentFlag.SUGGEST_REMOVAL:
-                        flagging_users.append(user_repr)
+                        flagging_users.append(flag.user)
 
             if with_feedback:
                 flags_dict.update({

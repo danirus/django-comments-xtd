@@ -316,7 +316,7 @@ export class CommentForm extends React.Component {
 
     // Build Gravatar.
     const hash = md5(this.state.email.toLowerCase());
-    const avatar_url = "http://www.gravatar.com/avatar/"+hash+"?s=48&d=mm";
+    const avatar_url = "//www.gravatar.com/avatar/"+hash+"?s=48&d=mm";
     const avatar_img = <img className="mr-3" src={avatar_url}
                             height="48" width="48"/>;
     

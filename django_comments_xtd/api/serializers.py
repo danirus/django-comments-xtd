@@ -258,7 +258,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     def get_user_avatar(self, obj):
         path = hashlib.md5(obj.user_email.lower().encode('utf-8')).hexdigest()
         param = urlencode({'s': 48})
-        return "http://www.gravatar.com/avatar/%s?%s&d=mm" % (path, param)
+        return "//www.gravatar.com/avatar/%s?%s&d=mm" % (path, param)
 
     def get_permalink(self, obj):
         return obj.get_absolute_url()

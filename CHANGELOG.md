@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.6.1] - 2020-05-13
+
+    * Fixes issue #150, about wrong protocol in the URL when fetching avatar
+      images from gravatar.
+
 ## [2.6.0] - 2020-05-12
 
     * Fixes issue #145, on inadequate number of SQL queries used by API

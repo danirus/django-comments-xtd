@@ -34,6 +34,7 @@ Before we install any package we will set up a virtualenv and install everything
        $ cd ~/django-comments-xtd-tutorial
        $ virtualenv venv
        $ source venv/bin/activate
+       (venv)$ pip install django==2.2
        (venv)$ pip install django-comments-xtd
        (venv)$ wget https://github.com/danirus/django-comments-xtd/raw/master/example/tutorial.tar.gz
        (venv)$ tar -xvzf tutorial.tar.gz

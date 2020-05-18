@@ -200,7 +200,7 @@ class ReadFlagField(serializers.RelatedField):
         elif value.flag == DISLIKEDIT_FLAG:
             flag = "dislike"
         else:
-            raise Exception(f'Unexpected value for flag: {value.flag}')
+            raise Exception('Unexpected value for flag: %s' % value.flag)
         return {
             "flag": flag,
             "user": settings.COMMENTS_XTD_API_USER_REPR(value.user),

@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.6.2] -
+
+    * Fixes issue #154, on using string formatting compatible with Python
+      versions prior to 3.6.
+
 ## [2.6.1] - 2020-05-13
 
     * Fixes issue #150, about wrong protocol in the URL when fetching avatar

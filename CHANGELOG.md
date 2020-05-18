@@ -2,6 +2,9 @@
 
 ## [2.6.2] -
 
+    * Fixes issue #149, on wrong SQL boolean literal value used when running
+      special command populate_xtdcomments to load Postgres database with
+      xtdcomments.
     * Fixes issue #154, on using string formatting compatible with Python
       versions prior to 3.6.
 

@@ -23,7 +23,7 @@ class Command(BaseCommand):
             sql = ("INSERT INTO %(table)s "
                    "       ('comment_ptr_id', 'thread_id', 'parent_id',"
                    "        'level', 'order', 'followup') "
-                   "VALUES (%(id)d, %(id)d, %(id)d, 0, 1, 0)")
+                   "VALUES (%(id)d, %(id)d, %(id)d, 0, 1, FALSE)")
             cursor.execute(sql % {'table': XtdComment._meta.db_table,
                                   'id': comment.id})
 

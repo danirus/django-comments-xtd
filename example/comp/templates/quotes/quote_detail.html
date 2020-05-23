@@ -14,7 +14,7 @@
       <hr/>
     </div>
   </div>
-
+  
   <div class="row justify-content-center flex-fill">
     <article class="col-md-8">
       <blockquote class="blockquote">{{ object.quote|linebreaks }}</blockquote>
@@ -23,7 +23,7 @@
       </p>
     </article>
   </div>
-
+  
   <div class="row justify-content-center flex-fill">
     <div class="col-md-7">
       <div id="comments">
@@ -37,6 +37,7 @@
           {% endblocktrans %}
         </H5>
         {% endif %}
+        
         {% if object.allow_comments and object|can_user_post_comments:user %}
         <div class="card card-block mt-4 mb-5">
           <div class="card-body">
@@ -47,15 +48,27 @@
         {% elif not object.allow_comments %}
         <h4 class="mt-4 mb-5 text-center text-secondary">Comments are disabled for this quote.</h4>
         {% else %}
-        <h4 class="text-center text-center text-info">Only registered users can post comments.</h4>
+        <h4 class="mt-4 mb-5 text-center text-info">Only registered users can post comments.</h4>
         {% endif %}
+        
         {% if comment_count %}
         <div id="comment-tree">
           {% render_xtdcomment_tree for object allow_feedback show_feedback allow_flagging %}
         </div>
         {% endif %}
       </div>
+      
     </div>
+    {% elif not object.allow_comments %}
+    <h4 class="mt-4 mb-5 text-center text-secondary">Comments are disabled for this quote.</h4>
+    {% else %}
+    <h4 class="text-center text-center text-info">Only registered users can post comments.</h4>
+    {% endif %}
+    {% if comment_count %}
+    <div id="comment-tree">
+      {% render_xtdcomment_tree for object allow_feedback show_feedback allow_flagging %}
+    </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

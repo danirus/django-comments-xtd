@@ -834,7 +834,7 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
          allow_feedback: true,
          show_feedback: true,
          allow_flagging: true,
-         poll_interval: 5000  // In milliseconds.
+         polling_interval: 5000  // In milliseconds.
      };
     </script>
     <script

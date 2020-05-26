@@ -134,7 +134,7 @@ The application entry point is located inside the ``index.js`` file. The ``props
            allow_feedback: true,
            show_feedback: true,
            allow_flagging: true,
-           poll_interval: 2000,
+           polling_interval: 2000,
          };
        </script>
 

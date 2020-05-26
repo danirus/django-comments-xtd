@@ -25,7 +25,7 @@ def commentbox_props(obj, user, request=None):
             allow_feedback: false,
             show_feedback: false,
             can_moderate: <bool>,  // Whether current_user can moderate.
-            poll_interval: 2000, // Check for new comments every 2 seconds.
+            polling_interval: 2000, // Check for new comments every 2 seconds.
             feedback_url: <api-url-to-send-like/dislike-feedback>,
             delete_url: <api-url-for-moderators-to-remove-comment>,
             login_url: settings.LOGIN_URL,
@@ -68,7 +68,7 @@ def commentbox_props(obj, user, request=None):
         "allow_feedback": False,
         "show_feedback": False,
         "can_moderate": False,
-        "poll_interval": 2000,
+        "polling_interval": 2000,
         "feedback_url": _reverse("comments-xtd-api-feedback"),
         "delete_url": _reverse("comments-delete", args=(0,)),
         "reply_url": _reverse("comments-xtd-reply", kwargs={'cid': 0}),

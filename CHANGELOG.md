@@ -7,6 +7,9 @@
       xtdcomments.
     * Fixes issue #154, on using string formatting compatible with Python
       versions prior to 3.6.
+    * Fixes issue #156, on wrong props name "poll_interval". JavaScript plugin
+      expects uses "polling_interval" while the api/frontend.py module referred
+      to it as "poll_interval". (thanks to @ashwani99).
 
 ## [2.6.1] - 2020-05-13
 

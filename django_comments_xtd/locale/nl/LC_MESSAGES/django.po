@@ -140,7 +140,7 @@ msgstr "verstuur"
 
 #: templates/comments/form.html:71
 msgid "preview"
-msgstr "Voorbeeld"
+msgstr "voorbeeld"
 
 #: templates/comments/list.html:25
 #: templates/django_comments_xtd/comment_tree.html:43

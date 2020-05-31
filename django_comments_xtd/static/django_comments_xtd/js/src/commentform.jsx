@@ -202,9 +202,12 @@ export class CommentForm extends React.Component {
 
   render_field_followup() {
     let label = django.gettext("Notify me about follow-up comments"),
-        label_cssc = "custom-control-label";
-    if(this.state.reply_to > 0)
-      label_cssc += " small";
+        label_cssc = "custom-control-label",
+        elem_id = "id_followup";
+    if(this.state.reply_to > 0) {
+        label_cssc += " small";
+        elem_id += `_${this.state.reply_to}`;
+    }
     return (
       <div className="form-group row">
         <div className="offset-md-3 col-md-7">
@@ -212,8 +215,8 @@ export class CommentForm extends React.Component {
             <input className="custom-control-input" type="checkbox"
                    checked={this.state.followup}
                    onChange={this.handle_input_change}
-                   name="followup" id="id_followup" />
-            <label className={label_cssc} htmlFor="id_followup">
+                   name="followup" id={elem_id} />
+            <label className={label_cssc} htmlFor={elem_id}>
               &nbsp;{label}
             </label>
           </div>

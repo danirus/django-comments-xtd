@@ -186,3 +186,11 @@ Rendered when a user clicks on the **reply** link of a comment. Reply links are 
 --------------
 
 Rendered when a user clicks on the **mute link** received in a follow-up notification message. It informs the user that the site will not send more notifications on new comments sent to the object.
+
+
+``only_users_can_post.html``
+----------------------------
+
+django-comments-xtd can be customize so that only registered users can post comments. Read the use case *Only registered users can post*, for details. The purpose of this template is to allow customizing the HTML message displayed when a non-registered visitor gets to the comments page. The message is displayed instead of the comment form.
+
+This template expects a context variable ``html_id_suffix``.

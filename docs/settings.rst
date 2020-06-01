@@ -41,8 +41,9 @@ An example::
     COMMENTS_XTD_MAX_THREAD_LEVEL = 0
     COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
         'projects.release': 2,
-	'blog.stories': 8, 'blog.quotes': 8, 
-	'blog.diarydetail': 0 # not required as it defaults to COMMENTS_XTD_MAX_THREAD_LEVEL
+	    'blog.stories': 8, 
+        'blog.quotes': 8, 
+	    'blog.diarydetail': 0 # not required as it defaults to COMMENTS_XTD_MAX_THREAD_LEVEL
     }
 
 In the example, comments posted to ``projects.release`` instances can go up to level 2::
@@ -207,6 +208,7 @@ Defaults to ``True``.
  * ``allow_flagging``: Allow registered users to flag comments as inappropriate.
  * ``allow_feedback``: Allow registered users to like/dislike comments.
  * ``show_feedback``: Allow django-comments-xtd to report the list of users who liked/disliked the comment. The representation of each user in the list depends on the next setting :setting::`COMMENTS_XTD_API_USER_REPR`.
+ * ``who_can_post``: Can be either 'all' or 'users'. When it is 'all', all users can post, whether registered users or visitors. When it is 'users', only registered users can post. Read the use case *Only registered users can post*, for details on how to set it up.
 
 An example use:
 
@@ -217,6 +219,7 @@ An example use:
                'allow_flagging': True,
                'allow_feedback': True,
                'show_feedback': True,
+               'who_can_post': 'users'
            }
        }
 
@@ -229,6 +232,7 @@ Defaults to:
                'allow_flagging': False,
                'allow_feedback': False,
                'show_feedback': False,
+               'who_can_post': 'all'
            }
        }
 

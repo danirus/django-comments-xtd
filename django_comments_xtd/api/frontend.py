@@ -6,7 +6,9 @@ from rest_framework.reverse import reverse
 
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
-from django_comments_xtd.utils import get_current_site_id, get_app_model_options
+from django_comments_xtd.utils import (
+    get_current_site_id, get_app_model_options, get_html_id_suffix
+)
 
 
 XtdComment = get_comment_model()
@@ -45,7 +47,8 @@ def commentbox_props(obj, user, request=None):
             },
             login_url: <only_when_user_is_not_authenticated>,
             like_url: <only_when_user_is_not_authenticated>,
-            dislike_url: <only_when_user_is_not_authenticated>
+            dislike_url: <only_when_user_is_not_authenticated>,
+            html_id_suffix: <html_element_id_suffix>
         }
     """
 
@@ -91,7 +94,8 @@ def commentbox_props(obj, user, request=None):
             "object_pk": form['object_pk'].value(),
             "timestamp": form['timestamp'].value(),
             "security_hash": form['security_hash'].value()
-        }
+        },
+        "html_id_suffix": get_html_id_suffix(obj)
     }
     try:
         user_is_authenticated = user.is_authenticated()

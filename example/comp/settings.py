@@ -90,24 +90,22 @@ STATICFILES_FINDERS = (
 
 SECRET_KEY = 'v2824l&2-n+4zznbsk9c-ap5i)b3e8b+%*a=dxqlahm^%)68jn'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+TEMPLATES = [{
+    'BACKEND': 'django.template.backends.django.DjangoTemplates',
 	'DIRS': [
 	    os.path.join(os.path.dirname(__file__), "templates"),
 	],
-        'APP_DIRS': True,
+    'APP_DIRS': True,
 	'OPTIONS': {
 	    'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-		'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'comp.context_processors.settings',
+            'django.template.context_processors.debug',
+            'django.template.context_processors.request',
+            'django.contrib.auth.context_processors.auth',
+            'django.contrib.messages.context_processors.messages',
+            'comp.context_processors.settings',
 	    ],
 	},
-    },
-]
+}]
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -172,12 +170,12 @@ COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
 # Quotes can have 1-level depth nested comments.
 COMMENTS_XTD_MAX_THREAD_LEVEL = 1
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
-    'articles.article': 0,
+    'articles.article': 2,
 }
 COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'articles.article': {
-        'who_can_post': 'all',
+        'who_can_post': 'users',
         'allow_flagging': True,
         'allow_feedback': True,
         'show_feedback': True,

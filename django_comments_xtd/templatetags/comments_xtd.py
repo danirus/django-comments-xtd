@@ -18,7 +18,9 @@ from django_comments.models import CommentFlag
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.api import frontend
 from django_comments_xtd.models import LIKEDIT_FLAG, DISLIKEDIT_FLAG
-from django_comments_xtd.utils import get_app_model_options, get_current_site_id
+from django_comments_xtd.utils import (
+    get_app_model_options, get_current_site_id, get_html_id_suffix
+)
 
 
 XtdComment = get_comment_model()
@@ -586,3 +588,8 @@ def can_user_post_comments(post_to_obj, user_obj):
         print("This user CAN NOT post")
         return False
 
+
+# ----------------------------------------------------------------------
+@register.inclusion_tag('django_comments_xtd/only_users_can_post.html')
+def render_only_users_can_post_template(object):
+    return {'html_id_suffix': get_html_id_suffix(object)}

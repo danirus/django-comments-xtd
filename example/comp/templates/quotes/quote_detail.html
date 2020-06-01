@@ -57,18 +57,7 @@
         </div>
         {% endif %}
       </div>
-      
     </div>
-    {% elif not object.allow_comments %}
-    <h4 class="mt-4 mb-5 text-center text-secondary">Comments are disabled for this quote.</h4>
-    {% else %}
-    <h4 class="text-center text-center text-info">Only registered users can post comments.</h4>
-    {% endif %}
-    {% if comment_count %}
-    <div id="comment-tree">
-      {% render_xtdcomment_tree for object allow_feedback show_feedback allow_flagging %}
-    </div>
-    {% endif %}
   </div>
 </div>
 {% endblock %}

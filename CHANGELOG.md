@@ -10,6 +10,10 @@
     * Fixes issue #156, on wrong props name "poll_interval". JavaScript plugin
       expects uses "polling_interval" while the api/frontend.py module referred
       to it as "poll_interval". (thanks to @ashwani99).
+    * Fixes issue #159, about using the same id for all the checkboxes in the
+      comment list. When ticking one checkbox in a nested form the checkbox of
+      the main form was ticked. Now each checkbox has a different id, suffixed
+      with the content of the `reply_to` field.
 
 ## [2.6.1] - 2020-05-13
 

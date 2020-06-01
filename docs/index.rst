@@ -3,16 +3,36 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-===================   
-django-comments-xtd
-===================
+==============================
+Welcome to django-comments-xtd
+==============================
 
 .. module:: django_comments_xtd
    :synopsis: django-comments-extended.
 
 .. highlightlang:: html+django
 
-A Django pluggable application that adds comments to your project. It extends the once official `Django Comments Framework <https://pypi.python.org/pypi/django-contrib-comments>`_ with the following features:
+A Django pluggable application that adds comments to your project. It extends the once official `Django Comments Framework <https://pypi.python.org/pypi/django-contrib-comments>`_.
+
+
+.. note::
+
+    This documentation represents the current version of django-comments-xtd. For old versions of the documentation:
+
+    * v2.6.0: https://django-comments-xtd.readthedocs.io/en/2.6.0/
+    * v2.5.1: https://django-comments-xtd.readthedocs.io/en/2.5.1/
+    * v2.4.3: https://django-comments-xtd.readthedocs.io/en/2.4.3/
+    * v2.3.1: https://django-comments-xtd.readthedocs.io/en/2.3.1/
+    * v2.2.1: https://django-comments-xtd.readthedocs.io/en/2.2.1/
+    * v2.1.0: https://django-comments-xtd.readthedocs.io/en/2.1.0/
+    * v2.0.10: https://django-comments-xtd.readthedocs.io/en/2.0.10/
+    * v1.7.1: https://django-comments-xtd.readthedocs.io/en/1.7.1/
+    * v1.6.7: https://django-comments-xtd.readthedocs.io/en/1.6.7/
+    * v1.5.1: https://django-comments-xtd.readthedocs.io/en/1.5.1/
+
+
+Features
+========
 
 .. index::
    single: Features
@@ -29,16 +49,28 @@ A Django pluggable application that adds comments to your project. It extends th
 #. Fully functional JavaScript plugin using ReactJS, jQuery, Bootstrap, Remarkable and MD5.
 
 .. image:: images/cover.png
-    
-Contents
-========
-   
+
+Getting started
+===============
+
+Start with these documents to get you up and running:
+
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    quickstart
    tutorial
    example
+
+
+Advanced Uses
+=============
+
+Once you've got django-comments-xtd working, you may want to know more about specific features, or check out the use cases to see how others customize it.
+   
+.. toctree::
+   :maxdepth: 1
+
    logic
    webapi
    javascript
@@ -48,3 +80,4 @@ Contents
    i18n
    settings
    templates
+   usecases

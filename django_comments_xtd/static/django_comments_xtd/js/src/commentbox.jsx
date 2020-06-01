@@ -5,8 +5,8 @@ import ReactDOM from 'react-dom';
 import * as lib from './lib.js';
 import django from 'django';
 
-import {Comment} from './comment.jsx';
-import {CommentForm} from './commentform.jsx';
+import { Comment } from './comment.jsx';
+import { CommentForm } from './commentform.jsx';
 
 
 export class CommentBox extends React.Component {
@@ -57,7 +57,9 @@ export class CommentBox extends React.Component {
   }
 
   render_comment_form() {
-    const { allow_comments, who_can_post, is_authenticated } = this.props;
+    const {
+      allow_comments, who_can_post, is_authenticated, html_id_suffix
+    } = this.props;
     if(allow_comments) {
       if (
         who_can_post === 'all' ||
@@ -67,13 +69,17 @@ export class CommentBox extends React.Component {
           <CommentForm {...this.props}
                        on_comment_created={this.handle_comment_created} />
         );
-      }
-      else {
-        return (
-          <h5 className="mt-4 mb-5 text-center text-info">
-            Only registered users can post comments.
-          </h5>
-        );
+      } else {
+        const _id = `only-users-can-post-${html_id_suffix}`;
+        const elem = document.getElementById(_id);
+        if (elem != undefined)
+          return <div dangerouslySetInnerHTML={{__html: elem.innerHTML}} />;
+        else
+          return (
+            <h5 className="mt-4 mb-5 text-center text-info">
+              Only registered users can post comments.
+           </h5>
+          );
       }
     } else {
       return (

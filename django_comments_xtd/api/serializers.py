@@ -77,12 +77,8 @@ class WriteCommentSerializer(serializers.Serializer):
             model = apps.get_model(*ctype.split(".", 1))
             target = model._default_manager.get(pk=object_pk)
             whocan = get_app_model_options(content_type=ctype)['who_can_post']
-        except TypeError:
+        except (AttributeError, TypeError, LookupError):
             raise serializers.ValidationError("Invalid content_type value: %r"
-                                              % escape(ctype))
-        except AttributeError:
-            raise serializers.ValidationError("The given content-type %r does "
-                                              "not resolve to a valid model."
                                               % escape(ctype))
         except model.ObjectDoesNotExist:
             raise serializers.ValidationError(

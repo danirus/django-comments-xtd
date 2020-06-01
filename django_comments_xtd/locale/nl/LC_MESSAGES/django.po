@@ -1,0 +1,355 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Jean-Paul Ladage <j.ladage@zestsoftware.nl>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 2.6.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-30 13:39+0200\n"
+"PO-Revision-Date: 2020-05-30 14:40+0200\n"
+"Last-Translator: Jean-Paul Ladage <j.ladage@zestsoftware.nl>\n"
+"Language-Team: Jean-Paul Ladage <j.ladage@zestsoftware.nl>\n"
+"Language: nl \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: api/serializers.py:242 templates/comments/list.html:17
+#: templates/django_comments_xtd/comment.html:15
+#: templates/django_comments_xtd/comment_tree.html:34
+msgid "This comment has been removed."
+msgstr "Deze reactie is verwijderd."
+
+#: forms.py:13
+msgid "Notify me about follow-up comments"
+msgstr "Stuur mij een notificatie als iemand op mijn reactie antwoord. "
+
+#: forms.py:28
+msgid "Name"
+msgstr "Naam"
+
+#: forms.py:29
+msgid "name"
+msgstr "naam"
+
+#: forms.py:32
+msgid "Mail"
+msgstr "Mail"
+
+#: forms.py:32
+msgid "Required for comment verification"
+msgstr "Verplicht voor verificatie per e-mail."
+
+#: forms.py:33
+msgid "mail address"
+msgstr "e-mailadres"
+
+#: forms.py:36
+msgid "Link"
+msgstr "Link"
+
+#: forms.py:38
+msgid "url your name links to (optional)"
+msgstr "URL waar uw naam naar linkt (optioneel)."
+
+#: forms.py:41
+msgid "Your comment"
+msgstr "Uw reactie"
+
+#: models.py:70
+msgid "Notify follow-up comments"
+msgstr "Notificaties bij reacties."
+
+#: templates/comments/delete.html:5
+msgid "Remove comment"
+msgstr "Verwijder reactie"
+
+#: templates/comments/delete.html:9
+msgid "Remove this comment?"
+msgstr "Deze reactie verwijderen?"
+
+#: templates/comments/delete.html:12
+msgid ""
+"As a moderator you can delete comments. Deleting a comment does not remove "
+"it from the site, only prevents your website from showing the text. Click on "
+"the remove button to delete the following comment:"
+msgstr "As beheerder kunt u reacties verwijderen. Deze worden niet echt verwijderd van de website, alleen verborgen."
+
+#: templates/comments/delete.html:41
+msgid "Remove"
+msgstr "Verwijder"
+
+#: templates/comments/deleted.html:5
+msgid "Comment removed"
+msgstr "Reactie verwijderd"
+
+#: templates/comments/deleted.html:12
+msgid "The comment has been removed."
+msgstr "De reactie is verwijderd."
+
+#: templates/comments/deleted.html:13 templates/comments/flagged.html:13
+msgid ""
+"Thank you for taking the time to improve the quality of discussion in our "
+"site."
+msgstr "Bedankt voor het bijdragen aan de kwaliteit van discussie."
+
+#: templates/comments/flag.html:5
+msgid "Flag comment"
+msgstr "Markeer als ongepast"
+
+#: templates/comments/flag.html:13
+msgid "Flag this comment?"
+msgstr "Deze reactie als ongepast markeren?"
+
+#: templates/comments/flag.html:16
+msgid ""
+"Click on the flag button to mark the following comment as inappropriate."
+msgstr "Klik op het vlag icoon om deze reactie te markeren als ongepast."
+
+#: templates/comments/flag.html:41
+#: templates/django_comments_xtd/comment.html:11
+#: templates/django_comments_xtd/dislike.html:49
+#: templates/django_comments_xtd/like.html:47
+msgid "Posted to "
+msgstr "Aan "
+
+#: templates/comments/flag.html:56
+msgid "Flag"
+msgstr "Markeer"
+
+#: templates/comments/flag.html:57
+#: templates/django_comments_xtd/dislike.html:74
+#: templates/django_comments_xtd/like.html:73
+msgid "cancel"
+msgstr "annuleer"
+
+#: templates/comments/flagged.html:5
+msgid "Comment flagged"
+msgstr "Reactie gemarkeerd"
+
+#: templates/comments/flagged.html:12
+msgid "The comment has been flagged."
+msgstr "De reactie is gemarkeerd."
+
+#: templates/comments/form.html:70
+msgid "send"
+msgstr "verstuur"
+
+#: templates/comments/form.html:71
+msgid "preview"
+msgstr "voorbeeld"
+
+#: templates/comments/list.html:25
+#: templates/django_comments_xtd/comment_tree.html:43
+msgid "Reply"
+msgstr "Beantwoorden..."
+
+#: templates/comments/posted.html:6
+msgid "Comment confirmation requested."
+msgstr "Reactie bevestiging gestuurd."
+
+#: templates/comments/posted.html:12
+msgid ""
+"A confirmation message has been sent to your\n"
+"            email address. Please, click on the link in the message to "
+"confirm\n"
+"            your comment."
+msgstr "Er is een bevestigingsbericht gestuurd naar uw e-mailadres.\n"
+"Klik op de link in het bericht om uw reactie te bevestigen"
+
+#: templates/comments/preview.html:5 templates/comments/preview.html:10
+msgid "Preview your comment"
+msgstr "Voorbeeldweergave"
+
+#: templates/comments/preview.html:14
+msgid "Preview of your comment for:"
+msgstr "Voorbeeldweergave van uw reactie op:"
+
+#: templates/comments/preview.html:21
+msgid "Empty comment."
+msgstr "Lege reactie"
+
+#: templates/comments/preview.html:41
+#: templates/django_comments_xtd/reply.html:32
+msgid "Post your comment"
+msgstr "Plaats uw reactie"
+
+#: templates/django_comments_xtd/comment_list.html:11
+msgid "List of comments"
+msgstr "Reacties"
+
+#: templates/django_comments_xtd/comment_tree.html:13
+msgid "moderator"
+msgstr "beheerder"
+
+#: templates/django_comments_xtd/comment_tree.html:13
+msgid "comment permalink"
+msgstr "permalink"
+
+#: templates/django_comments_xtd/comment_tree.html:18
+#, python-format
+msgid "A user has flagged this comment as inappropriate."
+msgid_plural "%(counter)s users have flagged this comment as inappropriate."
+msgstr[0] "Een gebruiker heeft deze reactie als ongepast gemarkeerd."
+msgstr[1] "%(counter)s gebruikers hebben dit bericht als ongepast gemarkeerd."
+
+#: templates/django_comments_xtd/comment_tree.html:22
+msgid "comment flagged"
+msgstr "reactie gemarkeerd"
+
+#: templates/django_comments_xtd/comment_tree.html:25
+msgid "flag comment"
+msgstr "markeer reactie"
+
+#: templates/django_comments_xtd/comment_tree.html:28
+msgid "remove comment"
+msgstr "verwijder reactie"
+
+#: templates/django_comments_xtd/discarded.html:4
+msgid "Comment discarded"
+msgstr "Reactie genegeerd"
+
+#: templates/django_comments_xtd/discarded.html:7
+msgid "Comment automatically discarded"
+msgstr "Reactie automatisch genegeerd"
+
+#: templates/django_comments_xtd/discarded.html:8
+msgid "Sorry, your comment has been automatically discarded"
+msgstr "Sorry, uw reactie is automatisch genegeerd"
+
+#: templates/django_comments_xtd/dislike.html:5
+#: templates/django_comments_xtd/like.html:5
+msgid "Confirm your opinion"
+msgstr "Bevestig uw keuze"
+
+#: templates/django_comments_xtd/dislike.html:15
+msgid "You didn't like this comment, do you want to change it?"
+msgstr "U heeft deze reactie niet 'geliked', wilt u dat aanpassen?"
+
+#: templates/django_comments_xtd/dislike.html:17
+msgid "Do you dislike this comment?"
+msgstr "U vindt deze reactie niet leuk?"
+
+#: templates/django_comments_xtd/dislike.html:22
+#: templates/django_comments_xtd/like.html:22
+msgid "Please, confirm your opinion about the comment."
+msgstr "Bevestig a.u..b uw mening over deze reactie"
+
+#: templates/django_comments_xtd/dislike.html:62
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your negative "
+"opinion on this comment."
+msgstr "Klik op \"Intrekken\" als u uw negatieve reactie wilt intrekken."
+
+#: templates/django_comments_xtd/dislike.html:70
+#: templates/django_comments_xtd/like.html:69
+msgid "Withdraw"
+msgstr "Intrekken"
+
+#: templates/django_comments_xtd/dislike.html:72
+msgid "I dislike it"
+msgstr "Vind ik niet leuk!"
+
+#: templates/django_comments_xtd/disliked.html:4
+msgid "You disliked the comment"
+msgstr "U vindt deze reactie niet leuk"
+
+#: templates/django_comments_xtd/disliked.html:7
+#: templates/django_comments_xtd/liked.html:7
+msgid "Thanks for taking the time to participate."
+msgstr "Bedankt dat actief deelneemt."
+
+#: templates/django_comments_xtd/email_followup_comment.txt:4
+msgid "There is a new comment following up yours."
+msgstr "Er is een nieuw antwoord op jouw reactie geplaatst."
+
+#: templates/django_comments_xtd/email_followup_comment.txt:20
+msgid "Kind regards"
+msgstr "Met vriendelijke groet,"
+
+#: templates/django_comments_xtd/like.html:15
+msgid "You liked this comment, do you want to change it?"
+msgstr "Uw vindt deze reactie leuk, wil je dit veranderen?"
+
+#: templates/django_comments_xtd/like.html:17
+msgid "Do you like this comment?"
+msgstr "Vindt u deze reactie leuk?"
+
+#: templates/django_comments_xtd/like.html:60
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your positive "
+"opinion on this comment."
+msgstr "Klik op \"Intrekken\" als u uw positieve reactie wilt intrekken."
+
+#: templates/django_comments_xtd/like.html:71
+msgid "I like it"
+msgstr "Vind ik leuk!"
+
+#: templates/django_comments_xtd/liked.html:4
+msgid "Your opinion is appreciated"
+msgstr "Uw reactie wordt gewaardeerd"
+
+#: templates/django_comments_xtd/moderated.html:4
+msgid "Comment requires approval"
+msgstr "Reacties vereisen goedkeuring"
+
+#: templates/django_comments_xtd/moderated.html:8
+msgid "Comment in moderation"
+msgstr "Reactie wacht op goedkeuring"
+
+#: templates/django_comments_xtd/moderated.html:14
+msgid ""
+"\n"
+"            Your comment is in moderation.<br/>\n"
+"            It has to be reviewed before being published.<br/>\n"
+"            Thank you for your patience and understanding.\n"
+"            "
+msgstr ""
+"\n"
+"            Uw reactie wacht op goedkeuring door de beheerder.<br/>\n"
+"            De inhoud wordt gecontroleerd voordat het gepubliceerd mag worden.<br/>\n"
+"            Bedankt voor uw geduld en begrip.\n"
+"            "
+
+#: templates/django_comments_xtd/moderated.html:22
+#, python-format
+msgid ""
+"\n"
+"            Go back to: <a href=\"%(content_object_url)s\">"
+"%(content_object_str)s</a>\n"
+"            "
+msgstr ""
+"\n"
+"            Terug naar: <a href=\"%(content_object_url)s\">"
+"%(content_object_str)s</a>\n"
+"            "
+#: templates/django_comments_xtd/muted.html:4
+msgid "Comment thread muted"
+msgstr "Discussie gedempd"
+
+#: templates/django_comments_xtd/muted.html:7
+msgid "Comment thread has been muted"
+msgstr "Reacties op deze discussies worden gedempd"
+
+#: templates/django_comments_xtd/muted.html:9
+msgid "You will no longer receive email notifications for comments sent to"
+msgstr "U ontvangt geen nieuwe notificaties per e-mail als er reacties door anderen geplaatst worden."
+
+#: templates/django_comments_xtd/reply.html:6
+msgid "Comment reply"
+msgstr "Beantwoorden"
+
+#: templates/django_comments_xtd/reply.html:11
+msgid "Reply to comment"
+msgstr "Beantwoord deze reactie"
+
+#: views.py:49
+msgid "comment confirmation request"
+msgstr "reactiebevestiging gestuurd"
+
+#: views.py:212
+msgid "new comment posted"
+msgstr "Nieuw reactie geplaatst."

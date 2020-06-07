@@ -91,7 +91,7 @@ class WriteCommentSerializer(serializers.Serializer):
                                e.__class__.__name__))
         else:
             if whocan == "users" and not self.request.user.is_authenticated:
-                raise serializers.ValidationError("User not autenticated")
+                raise serializers.ValidationError("User not authenticated")
 
         self.form = get_form()(target, data=data)
 

@@ -2,6 +2,8 @@
 
 ## [2.6.2] -
 
+    * Adds Dutch translation (thanks to Jean-Paul Ladage, @jladage).
+    * Adds Russian translation (thanks to Михаил Рыбкин, @MikerStudio).
     * Fixes issue #149, on wrong SQL boolean literal value used when running
       special command populate_xtdcomments to load Postgres database with
       xtdcomments.

@@ -1,0 +1,370 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-06-08 11:50+0300\n"
+"PO-Revision-Date: 2020-06-08 12:10+0053\n"
+"Last-Translator: b'Administrator  <admin@example.com>'\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"X-Translated-Using: django-rosetta 0.9.4\n"
+
+#: .\api\serializers.py:242 .\templates\comments\list.html:17
+#: .\templates\django_comments_xtd\comment.html:15
+#: .\templates\django_comments_xtd\comment_tree.html:34
+msgid "This comment has been removed."
+msgstr "Комментарий был удален"
+
+#: .\forms.py:13
+msgid "Notify me about follow-up comments"
+msgstr "Сообщить об ответных комментариях"
+
+#: .\forms.py:28
+msgid "Name"
+msgstr "Имя"
+
+#: .\forms.py:29
+msgid "name"
+msgstr "имя"
+
+#: .\forms.py:32
+msgid "Mail"
+msgstr "Почта"
+
+#: .\forms.py:32
+msgid "Required for comment verification"
+msgstr "Необходима для подтверждения комментария"
+
+#: .\forms.py:33
+msgid "mail address"
+msgstr "почтовый адрес"
+
+#: .\forms.py:36
+msgid "Link"
+msgstr "Ссылка"
+
+#: .\forms.py:38
+msgid "url your name links to (optional)"
+msgstr "ссылка, на которую ведет Ваше имя (не обязательно)"
+
+#: .\forms.py:41
+msgid "Your comment"
+msgstr "Ваш комментарий"
+
+#: .\models.py:70
+msgid "Notify follow-up comments"
+msgstr "Уведомлять о последующих комментариях"
+
+#: .\templates\comments\delete.html:5
+msgid "Remove comment"
+msgstr "Удалить комментарий"
+
+#: .\templates\comments\delete.html:9
+msgid "Remove this comment?"
+msgstr "Удалить комментарий?"
+
+#: .\templates\comments\delete.html:12
+msgid ""
+"As a moderator you can delete comments. Deleting a comment does not remove "
+"it from the site, only prevents your website from showing the text. Click on"
+" the remove button to delete the following comment:"
+msgstr ""
+"Как модератор, Вы можете удалять комментарий. Удаление комментария уберет "
+"его с сайта, но он будет доступен в администраторской панели. Нажмите "
+"\"Удалить\", чтобы удалить следующий комментарий:"
+
+#: .\templates\comments\delete.html:41
+msgid "Remove"
+msgstr "Удалить"
+
+#: .\templates\comments\deleted.html:5
+msgid "Comment removed"
+msgstr "Комментарий удален"
+
+#: .\templates\comments\deleted.html:12
+msgid "The comment has been removed."
+msgstr "Комментарий удален"
+
+#: .\templates\comments\deleted.html:13 .\templates\comments\flagged.html:13
+msgid ""
+"Thank you for taking the time to improve the quality of discussion in our "
+"site."
+msgstr "Спасибо за Ваш вклад в улучшение качества общения на этом сайте"
+
+#: .\templates\comments\flag.html:5
+msgid "Flag comment"
+msgstr "Пометить комментарий"
+
+#: .\templates\comments\flag.html:13
+msgid "Flag this comment?"
+msgstr "Пометить комментарий?"
+
+#: .\templates\comments\flag.html:16
+msgid ""
+"Click on the flag button to mark the following comment as inappropriate."
+msgstr ""
+"Нажмите на кнопку с флагом, чтобы пометить этот комментарий, как "
+"некорректный."
+
+#: .\templates\comments\flag.html:41
+#: .\templates\django_comments_xtd\comment.html:11
+#: .\templates\django_comments_xtd\dislike.html:49
+#: .\templates\django_comments_xtd\like.html:47
+msgid "Posted to "
+msgstr "Размещено в"
+
+#: .\templates\comments\flag.html:56
+msgid "Flag"
+msgstr "Флаг"
+
+#: .\templates\comments\flag.html:57
+#: .\templates\django_comments_xtd\dislike.html:74
+#: .\templates\django_comments_xtd\like.html:73
+msgid "cancel"
+msgstr "отмена"
+
+#: .\templates\comments\flagged.html:5
+msgid "Comment flagged"
+msgstr "Комментарий помечен"
+
+#: .\templates\comments\flagged.html:12
+msgid "The comment has been flagged."
+msgstr "Комментарий помечен"
+
+#: .\templates\comments\form.html:70
+msgid "send"
+msgstr "отправить"
+
+#: .\templates\comments\form.html:71
+msgid "preview"
+msgstr "предпросмотр"
+
+#: .\templates\comments\list.html:25
+#: .\templates\django_comments_xtd\comment_tree.html:43
+msgid "Reply"
+msgstr "Ответить"
+
+#: .\templates\comments\posted.html:6
+msgid "Comment confirmation requested."
+msgstr "Необходимо подтверждение комментария"
+
+#: .\templates\comments\posted.html:12
+msgid ""
+"A confirmation message has been sent to your\n"
+"            email address. Please, click on the link in the message to confirm\n"
+"            your comment."
+msgstr ""
+"На ваш адрес электронной почты было отправлено сообщение со ссылкой для "
+"подтверждения. Пожалуйста, пройдите по ссылке, чтобы верифицировать "
+"комментарий."
+
+#: .\templates\comments\preview.html:5 .\templates\comments\preview.html:10
+msgid "Preview your comment"
+msgstr "Предпросмотр комментария"
+
+#: .\templates\comments\preview.html:14
+msgid "Preview of your comment for:"
+msgstr "Предпросмотр комментария для:"
+
+#: .\templates\comments\preview.html:21
+msgid "Empty comment."
+msgstr "Пустой комментарий."
+
+#: .\templates\comments\preview.html:41
+#: .\templates\django_comments_xtd\reply.html:32
+msgid "Post your comment"
+msgstr "Оставить комментарий"
+
+#: .\templates\django_comments_xtd\comment_list.html:11
+msgid "List of comments"
+msgstr "Список комментариев"
+
+#: .\templates\django_comments_xtd\comment_tree.html:13
+msgid "moderator"
+msgstr "модератор"
+
+#: .\templates\django_comments_xtd\comment_tree.html:13
+msgid "comment permalink"
+msgstr "ссылка на комментарий"
+
+#: .\templates\django_comments_xtd\comment_tree.html:18
+#, python-format
+msgid "A user has flagged this comment as inappropriate."
+msgid_plural "%(counter)s users have flagged this comment as inappropriate."
+msgstr[0] ""
+"%(counter)s пользователь отметил этот комментарий как некорректный."
+msgstr[1] ""
+"%(counter)s пользователей отметили этот комментарий как некорректный."
+
+#: .\templates\django_comments_xtd\comment_tree.html:22
+msgid "comment flagged"
+msgstr "Комментарий помечен"
+
+#: .\templates\django_comments_xtd\comment_tree.html:25
+msgid "flag comment"
+msgstr "Пометить комментарий"
+
+#: .\templates\django_comments_xtd\comment_tree.html:28
+msgid "remove comment"
+msgstr "удалить комментарий"
+
+#: .\templates\django_comments_xtd\discarded.html:4
+msgid "Comment discarded"
+msgstr "Комментарий отклонен"
+
+#: .\templates\django_comments_xtd\discarded.html:7
+msgid "Comment automatically discarded"
+msgstr "Комментарий автоматически отклонен"
+
+#: .\templates\django_comments_xtd\discarded.html:8
+msgid "Sorry, your comment has been automatically discarded"
+msgstr "К сожалению, Ваш комментарий был автоматически отклонён"
+
+#: .\templates\django_comments_xtd\dislike.html:5
+#: .\templates\django_comments_xtd\like.html:5
+msgid "Confirm your opinion"
+msgstr "Подтвердите Ваш выбор"
+
+#: .\templates\django_comments_xtd\dislike.html:15
+msgid "You didn't like this comment, do you want to change it?"
+msgstr "Вам не понравился комментарий, не хотите его поменять?"
+
+#: .\templates\django_comments_xtd\dislike.html:17
+msgid "Do you dislike this comment?"
+msgstr "Вам не понравился комментарий?"
+
+#: .\templates\django_comments_xtd\dislike.html:22
+#: .\templates\django_comments_xtd\like.html:22
+msgid "Please, confirm your opinion about the comment."
+msgstr "Пожалуйста, подтвердите Ваш выбор насчет комментария."
+
+#: .\templates\django_comments_xtd\dislike.html:62
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your negative "
+"opinion on this comment."
+msgstr ""
+"Нажмите на кнопку \"отозвать\", чтобы поменять Ваш выбор относительно "
+"данного комментария."
+
+#: .\templates\django_comments_xtd\dislike.html:70
+#: .\templates\django_comments_xtd\like.html:69
+msgid "Withdraw"
+msgstr "Отозвать"
+
+#: .\templates\django_comments_xtd\dislike.html:72
+msgid "I dislike it"
+msgstr "Мне это не нравится"
+
+#: .\templates\django_comments_xtd\disliked.html:4
+#, fuzzy
+msgid "You disliked the comment"
+msgstr "Вы поставили комментарию \"дизлайк\""
+
+#: .\templates\django_comments_xtd\disliked.html:7
+#: .\templates\django_comments_xtd\liked.html:7
+msgid "Thanks for taking the time to participate."
+msgstr "Спасибо за участие."
+
+#: .\templates\django_comments_xtd\email_followup_comment.txt:4
+msgid "There is a new comment following up yours."
+msgstr "Появился ответный комментарий."
+
+#: .\templates\django_comments_xtd\email_followup_comment.txt:20
+msgid "Kind regards"
+msgstr "С уважением"
+
+#: .\templates\django_comments_xtd\like.html:15
+msgid "You liked this comment, do you want to change it?"
+msgstr "Вам понравился комментарий, хотите изменить выбор?"
+
+#: .\templates\django_comments_xtd\like.html:17
+msgid "Do you like this comment?"
+msgstr "Вам нравится комментарий?"
+
+#: .\templates\django_comments_xtd\like.html:60
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your positive "
+"opinion on this comment."
+msgstr ""
+"Нажмите на кнопку \"отозвать\", чтобы поменять Ваш выбор относительно "
+"данного комментария."
+
+#: .\templates\django_comments_xtd\like.html:71
+msgid "I like it"
+msgstr "Мне это нравится"
+
+#: .\templates\django_comments_xtd\liked.html:4
+msgid "Your opinion is appreciated"
+msgstr "Ваше мнение очень важно для нас"
+
+#: .\templates\django_comments_xtd\moderated.html:4
+msgid "Comment requires approval"
+msgstr "Комментарий требует подтверждения"
+
+#: .\templates\django_comments_xtd\moderated.html:8
+msgid "Comment in moderation"
+msgstr "Комментарий на модерации"
+
+#: .\templates\django_comments_xtd\moderated.html:14
+msgid ""
+"\n"
+"            Your comment is in moderation.<br/>\n"
+"            It has to be reviewed before being published.<br/>\n"
+"            Thank you for your patience and understanding.\n"
+"            "
+msgstr ""
+"\n"
+"Ваш комментарий на модерации. <br/>\n"
+"Он должен быть отсмотрен перед публикацией.<br/>\n"
+"Спасибо за терпение и понимание."
+
+#: .\templates\django_comments_xtd\moderated.html:22
+#, python-format
+msgid ""
+"\n"
+"            Go back to: <a href=\"%(content_object_url)s\">%(content_object_str)s</a>\n"
+"            "
+msgstr ""
+"\n"
+"Вернуться обратно к: <a href=\"%(content_object_url)s\">%(content_object_str)s</a>"
+
+#: .\templates\django_comments_xtd\muted.html:4
+#, fuzzy
+msgid "Comment thread muted"
+msgstr ""
+
+#: .\templates\django_comments_xtd\muted.html:7
+#, fuzzy
+msgid "Comment thread has been muted"
+msgstr ""
+
+#: .\templates\django_comments_xtd\muted.html:9
+msgid "You will no longer receive email notifications for comments sent to"
+msgstr ""
+"Вы больше не будете получать уведомления на почту о комментариях, "
+"отправленных к:"
+
+#: .\templates\django_comments_xtd\reply.html:6
+msgid "Comment reply"
+msgstr "Ответ на комментарий"
+
+#: .\templates\django_comments_xtd\reply.html:11
+msgid "Reply to comment"
+msgstr "Ответить на комментарий"
+
+#: .\views.py:49
+msgid "comment confirmation request"
+msgstr "запрос на подтверждение комментария"
+
+#: .\views.py:212
+msgid "new comment posted"
+msgstr "опубликован новый комментарий"

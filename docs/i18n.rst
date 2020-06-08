@@ -37,10 +37,13 @@ Edit the **comp/settings.py** module. Add the `ISO-639-1 <https://en.wikipedia.o
    .. code-block:: python
 
        LANGUAGES = (
+           ('nl', 'Dutch'),
            ('en', 'English'),
            ('fi', 'Finnish'),
            ('fr', 'French'),
+           ('de', 'German'),
            ('no', 'Norwegian'),
+           ('ru', 'Russian'),
            ('es', 'Spanish'),
            ...
        )

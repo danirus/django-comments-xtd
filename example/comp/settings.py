@@ -43,12 +43,14 @@ USE_TZ = True
 LANGUAGE_CODE = 'en'
 
 LANGUAGES = (
+    ('nl', 'Dutch'),
     ('en', 'English'),
-    ('es', 'Spanish'),
     ('fi', 'Finnish'),
     ('fr', 'French'),
+    ('de', 'German'),
     ('no', 'Norwegian'),
     ('ru', 'Russian'),
+    ('es', 'Spanish'),
 )
 
 SITE_ID = os.environ.get('SITE_ID', 1)

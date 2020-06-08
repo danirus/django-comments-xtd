@@ -48,6 +48,7 @@ LANGUAGES = (
     ('fi', 'Finnish'),
     ('fr', 'French'),
     ('no', 'Norwegian'),
+    ('ru', 'Russian'),
 )
 
 SITE_ID = os.environ.get('SITE_ID', 1)

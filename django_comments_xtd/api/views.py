@@ -24,7 +24,7 @@ class CommentCreate(generics.CreateAPIView):
             response = super(CommentCreate, self).post(request, *args, **kwargs)
         else:
             if 'non_field_errors' in serializer.errors:
-                response_msg = f"{serializer.errors['non_field_errors'][0]}"
+                response_msg = serializer.errors['non_field_errors'][0]
             else:
                 response_msg = [k for k in six.iterkeys(serializer.errors)]
             return Response(response_msg, status=400)

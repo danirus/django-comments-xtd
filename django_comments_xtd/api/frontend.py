@@ -62,8 +62,8 @@ def commentbox_props(obj, user, request=None):
                                          object_pk=obj.pk,
                                          site__pk=get_current_site_id(request),
                                          is_public=True)
-    ctype_slug = f"{ctype.app_label}-{ctype.model}"
-    ctype_key = f"{ctype.app_label}.{ctype.model}"
+    ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
+    ctype_key = "%s.%s" % (ctype.app_label, ctype.model)
     options = get_app_model_options(content_type=ctype_key)
     d = {
         "comment_count": queryset.count(),

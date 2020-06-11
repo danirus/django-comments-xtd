@@ -6,11 +6,22 @@ Demo projects
 
 There are three example projects available within django-comments-xtd:
 
-1. **simple**: Provides non-threaded comment support to articles. It's an only-backend project, meant as a test case of the basic features (confirmation by mail, follow-up notifications, mute link).
-2. **custom**: Provides threaded comment support to articles using a new Comment class that inherits from django-comments-xtd's. The new comment model adds a **title** field to the **XtdComment** class. Find more details in :ref:`ref-extending`.
-3. **comp**: This example project provides comment support to several models, defining the maximum thread level on per app.model basis. It uses moderation, removal suggestion flag, like/dislike flags, and list of users who liked/disliked comments. Comment support for Articles are frontend based while comments for Quotes are backend based.
+1. **simple**: Provides non-threaded comment support to articles. It's an
+   only-backend project, meant as a test case of the basic features (
+   confirmation by mail, follow-up notifications, mute link).
+2. **custom**: Provides threaded comment support to articles using a new
+   Comment class that inherits from django-comments-xtd's. The new comment
+   model adds a **title** field to the **XtdComment** class. Find more details
+   in :ref:`ref-extending`.
+3. **comp**: This example project provides comment support to several models,
+   defining the maximum thread level on per app.model basis. It uses
+   moderation, removal suggestion flag, like/dislike flags, and list of users
+   who liked/disliked comments. Comment support for Articles are frontend
+   based while comments for Quotes are backend based.
 
-Visit the **example** directory within the repository `in GitHub <http://github.com/danirus/django-comments-xtd/tree/master/example>`_ for a quick look.
+Visit the **example** directory within the repository `in GitHub
+<http://github.com/danirus/django-comments-xtd/tree/master/example>`_ for a
+quick look.
 
 .. contents:: Table of Contents
    :depth: 1

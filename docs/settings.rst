@@ -252,9 +252,10 @@ Defaults to ``True``.
    liked/disliked the comment. The representation of each user in the list
    depends on the next setting :setting::`COMMENTS_XTD_API_USER_REPR`.
  * ``who_can_post``: Can be either 'all' or 'users'. When it is 'all', all
-   users can post, whether registered users or visitors. When it is 'users',
-   only registered users can post. Read the use case *Only registered users
-   can post*, for details on how to set it up.
+   users can post, whether registered users or mere visitors. When it is
+   'users', only registered users can post. Read the use case
+   :ref:`ref-recipe-only-signed-in-can-comment`, for details on how to set it
+   up.
 
 An example use:
 

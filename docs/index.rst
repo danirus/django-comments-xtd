@@ -12,14 +12,16 @@ Welcome to django-comments-xtd
 
 .. highlightlang:: html+django
 
-A Django pluggable application that adds comments to your project. It extends the once official `Django Comments Framework <https://pypi.python.org/pypi/django-contrib-comments>`_.
+A Django pluggable application that adds comments to your project. It extends
+the once official `Django Comments Framework
+<https://pypi.python.org/pypi/django-contrib-comments>`_.
 
 
 .. note::
 
-    This documentation represents the current version of django-comments-xtd. For old versions of the documentation:
+    This documentation represents the current version of django-comments-xtd.
+    For old versions of the documentation:
 
-    * v2.6.0: https://django-comments-xtd.readthedocs.io/en/2.6.0/
     * v2.5.1: https://django-comments-xtd.readthedocs.io/en/2.5.1/
     * v2.4.3: https://django-comments-xtd.readthedocs.io/en/2.4.3/
     * v2.3.1: https://django-comments-xtd.readthedocs.io/en/2.3.1/
@@ -38,15 +40,19 @@ Features
    single: Features
 
 #. Thread support, so comments can be nested.
-#. Customizable maximum thread level, either for all models or on a per app.model basis.
+#. Customizable maximum thread level, either for all models or on a per
+   app.model basis.
 #. Optional notifications on follow-up comments via email.
 #. Mute links to allow cancellation of follow-up notifications.
 #. Comment confirmation via email when users are not authenticated.
 #. Comments hit the database only after they have been confirmed.
 #. Registered users can like/dislike comments and can suggest comments removal.
-#. Template tags to list/render the last N comments posted to any given list of app.model pairs.
-#. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
-#. Fully functional JavaScript plugin using ReactJS, jQuery, Bootstrap, Remarkable and MD5.
+#. Template tags to list/render the last N comments posted to any given list of
+   app.model pairs.
+#. Emails sent through threads (can be disable to allow other solutions, like a
+   Celery app).
+#. Fully functional JavaScript plugin using ReactJS, jQuery, Bootstrap,
+   Remarkable and MD5.
 
 .. image:: images/cover.png
 
@@ -63,10 +69,11 @@ Start with these documents to get you up and running:
    example
 
 
-Advanced Uses
-=============
+Advanced Use
+============
 
-Once you've got django-comments-xtd working, you may want to know more about specific features, or check out the use cases to see how others customize it.
+Once you've got django-comments-xtd working, you may want to know more about
+specific features, or check out the use cases to see how others customize it.
    
 .. toctree::
    :maxdepth: 1

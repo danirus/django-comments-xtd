@@ -75,7 +75,7 @@ def get_app_model_options(comment=None, content_type=None):
         # the developer added all the expected keys in the dictionary.
         has_missing_key = False
         for k in default.keys():
-            if not k in settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default']:
+            if k not in settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default']:
                 has_missing_key = True
         if not has_missing_key:
             default = copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default'])
@@ -87,10 +87,10 @@ def get_app_model_options(comment=None, content_type=None):
         key = content_type
     else:
         return default
-    try: 
+    try:
         default.update(settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key])
         return default
-    except:
+    except Exception:
         return default
 
 

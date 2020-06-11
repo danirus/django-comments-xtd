@@ -572,11 +572,12 @@ def has_permission(user_obj, str_permission):
     except Exception as exc:
         raise exc
 
+
 # ----------------------------------------------------------------------
 @register.filter
 def can_user_post_comments(post_to_obj, user_obj):
     ct = ContentType.objects.get_for_model(post_to_obj)
-    app_label = f'{ct.app_label}.{ct.model}'
+    app_label = '%s.%s' % (ct.app_label, ct.model)
     who_can_post = get_app_model_options(content_type=app_label)['who_can_post']
     if (
             who_can_post == 'all' or

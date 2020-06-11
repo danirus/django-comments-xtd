@@ -184,7 +184,7 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
         'show_feedback': True,
     },
     'quotes.quote': {
-        'who_can_post': 'all',
+        'who_can_post': 'users',
         'allow_flagging': True,
         'allow_feedback': True,
         'show_feedback': True,

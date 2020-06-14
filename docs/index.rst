@@ -19,8 +19,8 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version of django-comments-xtd.
-    For old versions of the documentation:
+    This documentation represents the current version, v2.6.2, of
+    django-comments-xtd. For old versions of the documentation:
 
     * v2.5.1: https://django-comments-xtd.readthedocs.io/en/2.5.1/
     * v2.4.3: https://django-comments-xtd.readthedocs.io/en/2.4.3/

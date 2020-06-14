@@ -1,2 +1,4 @@
+django-debug-toolbar
+django-extensions
 django-markdown2
 -e git+ssh://git@github.com/mbi/django-rosetta.git#egg=django-rosetta

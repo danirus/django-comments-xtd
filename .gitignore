@@ -4,7 +4,6 @@
 *.zip
 *.egg-info
 *.db
-*.code-workspace
 plugin*.js
 plugin*.js.map
 vendor*.js
@@ -28,4 +27,3 @@ example/env
 .pytest_cache/
 .venv
 .idea
-.vscode

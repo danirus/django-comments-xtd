@@ -4,6 +4,24 @@
 Only signed in users can comment
 ================================
 
+This page describes how to setup django-comments-xtd so that only registered
+users can write comments or flag them.
+
+.. contents:: Table of Contents
+   :depth: 1
+   :local:
+
+Using only Django
+=================
+
+
+
+
+Using Django and JavaScript
+===========================
+
+
+
 Setup your Django project so that django-comments-xtd will allow only signed in users to post comments.
 
  * commentbox.jsx control whether the user in the session can post comments or not. If she cannot, we inform the user of such a condition. There are two ways to inform the user:

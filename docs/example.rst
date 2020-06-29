@@ -4,7 +4,9 @@
 Demo projects
 =============
 
-There are three example projects available within django-comments-xtd.
+There are three example projects available within `django-comments-xtd's GitHub
+repository <https://github.com/danirus/django-comments-xtd
+/tree/master/example>`_.
 
 The **simple project** provides non-threaded comment support to articles.
 It's an only-backend project, meant as a test case of the basic features
@@ -27,10 +29,15 @@ Visit the **example** directory within the repository `in GitHub
 <http://github.com/danirus/django-comments-xtd/tree/master/example>`_ for a
 quick look.
 
+.. contents:: Table of Contents
+   :depth: 1
+   :local:
 
 .. index::
-   pair: Demo; Setup 
-   
+   pair: Demo; Setup
+
+.. _example-setup:
+
 Setup
 =====
 
@@ -83,11 +90,13 @@ settings.
    single: Simple
    pair: Simple; Demo
 
+.. _example-simple:
+
 Simple project
 ==============
 
 The simple example project features:
-  
+
  #. An Articles App, with a model ``Article`` whose instances accept comments.
  #. Confirmation by mail is required before the comment hit the database,
     unless ``COMMENTS_XTD_CONFIRM_EMAIL`` is set to False. Authenticated users
@@ -160,7 +169,7 @@ Threaded comments
 The setting `COMMENTS_XTD_MAX_THREAD_LEVEL` is set to 2, meaning that comments
 may be threaded up to 2 levels below the the first level (internally known as
 level 0)::
-    
+
     First comment (level 0)
         |-- Comment to "First comment" (level 1)
             |-- Comment to "Comment to First comment" (level 2)

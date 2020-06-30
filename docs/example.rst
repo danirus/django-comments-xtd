@@ -142,6 +142,8 @@ featuring:
    single: Multiple
    pair: Multiple; Demo
 
+.. _example-comp:
+
 Comp project
 ============
 

@@ -15,7 +15,6 @@ admin.autodiscover()
 
 urlpatterns = [
     re_path(r'^$', views.HomepageView.as_view(), name='homepage'),
-    re_path(r'^accounts/', include('django.contrib.auth.urls')),
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^articles/', include('simple.articles.urls')),
     re_path(r'^comments/', include('django_comments_xtd.urls')),

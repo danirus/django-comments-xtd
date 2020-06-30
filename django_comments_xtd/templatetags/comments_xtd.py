@@ -575,14 +575,14 @@ def has_permission(user_obj, str_permission):
 
 # ----------------------------------------------------------------------
 @register.filter
-def can_user_post_comments(post_to_obj, user_obj):
-    ct = ContentType.objects.get_for_model(post_to_obj)
+def can_receive_comments_from(obj, user):
+    ct = ContentType.objects.get_for_model(obj)
     app_label = '%s.%s' % (ct.app_label, ct.model)
     options = get_app_model_options(content_type=app_label)
     who_can_post = options['who_can_post']
     if (
             who_can_post == 'all' or
-            (who_can_post == 'users' and user_obj.is_authenticated)
+            (who_can_post == 'users' and user.is_authenticated)
     ):
         return True
     else:

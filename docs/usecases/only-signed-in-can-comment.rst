@@ -45,15 +45,14 @@ the ``settings.py`` module:
 Now restart the runserver command and see that registered users can comment
 without issues. However visitors get the HTTP-400 page (Bad Request).
 
-As a final step to customize the simple example site either edit the
-``templates/comments/form.html`` template or the
-``templates/articles/article_detail.html`` template,
-to prevent non-registered users from seeing the post comment form and rather
-display a message inviting them to login or register.
+As a final step to customize the simple example site either edit
+``templates/comments/form.html`` or ``templates/articles/article_detail.html``
+to display a message inviting visitors to login or register instead of showing
+the post comment form.
 
-As an example, here below there is a modified version of the
-``article_detail.html`` template of the simple example project, that displays
-a message with a link to the login page when the user is not authenticated:
+As an example, here is a modified version of ``article_detail.html`` that
+displays a message with a link to the login page when the user is not
+authenticated:
 
    .. code-block:: html+django
 
@@ -83,16 +82,17 @@ a message with a link to the login page when the user is not authenticated:
 Using Django and JavaScript
 ===========================
 
-This section goes through the steps to customize the :ref:`example-comp` to
-prevent that unregistered users post comments.
+This section goes through the steps to customize a project that uses the
+backend side of djando-comments-xtd, with the REST API, and the JavaScript
+opinionated plugin to prevent that unregistered users post comments.
+
+For such goal we use will the :ref:`example-comp`.
 
 The :ref:`example-comp` contains two apps, articles and quotes, that can
 receive comments. The articles app uses the JavaScript plugin and the REST
 API, while the quotes app uses merely the backend. Both apps allow registered
 users and visitors to post nested comments. While only registered users can
 send like/dislike flags.
-
-Let is customize the project.
 
 
 Customize the quotes app of the comp project
@@ -102,7 +102,7 @@ If you have already setup the :ref:`example-comp`, and have sent a few
 testing comments to see that visitors and registered users can comment, edit
 the :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS` at the bottom of the
 ``settings.py`` and append the pair ``'who_can_post': 'users'`` to the
-quotes app:
+quotes app dictionary:
 
    .. code-block:: python
 
@@ -116,7 +116,7 @@ quotes app:
        }
 
 Now restart the runserver command and see that registered users can comment
-without issues. However visitors get the HTTP-400 page (Bad Request).
+without issues. However visitors however get the HTTP-400 page (Bad Request).
 
 One last customization has to be done to prevent the HTTP-400 Bad Request. We
 have to edit the ``templates/quotes/quote_detail.html`` file and be sure
@@ -149,21 +149,96 @@ like the following:
 
     [...]
 
-In the previous snippet we use the template filter
-:ttag:`can_receive_comments_from`. Using this filter you could change the
-setting ``'who_can_post'`` to ``'all'`` in your
-:setting:`COMMENTS_XTD_APP_MODEL_OPTIONS` to allow mere visitors to also post
-comments, and your template would display the comment form without any further
-change.
+.. note::
 
-If you rather had used ``{% if user.is_authenticated %}`` your template would
-not allow visitors to see the comment form. Even with a
-``'who_can_post': 'all'``
+    In the previous snippet we use the template filter
+    :ttag:`can_receive_comments_from`. Using this filter you could change the
+    setting ``'who_can_post'`` to ``'all'`` in your
+    :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS` to allow mere visitors to post
+    comments, and your template would do as expected without further changes.
+
+    If we rather had used ``{% if user.is_authenticated %}`` the template would
+    have still to be changed to display the comment form to all, visitors and
+    registered users.
 
 See that after the changes, you can only post comments as a registered user.
-See also that the **Reply** link to send nested comments is already aware of
-the value of the ``'who_can_post'`` setting and behaves accordingly.
+After you have sent a comment, see that the **Reply** link to send nested
+comments is already aware of the value of the ``'who_can_post'`` setting and
+redirects you to login if you have not logged in yet.
 
+
+Customize the articles app of the comp project
+----------------------------------------------
+
+The articles app uses the JavaScript plugin that in turn uses the REST API.
+
+The first change to do is to add the pair ``'who_can_post': 'users'`` to the
+``'articles.article'`` dictionary entry of the
+:setting:`COMMENTS_XTD_APP_MODEL_OPTIONS`, as we did with the quotes app. That
+simple change will make it work.
+
+Launch the runserver command and check that as a mere visitor (logout:
+http://localhost:8000/admin/logout) you can not send comments to articles.
+Instead there must be a boring message in blue saying that **Only registered
+users can post comments.** If you login (http://localhost:8000/admin/login/)
+and visit an article's page the post comment form becomes visible again.
+
+The boring message is the default response of the ``commentbox.jsx``
+module of the JavaScript plugin. The commentbox module controls whether the user
+in the session can post comments or not. If the user can not post comments it
+defaults to display that message in blue.
+
+Most of the times we will want to customize the message. We will achieve it by
+modifying both, the ``base.html`` and the ``articles/article_detail.html``, and
+by creating a new template in the ``comp/templates/django_comments_xtd``
+directory called ``only_users_can_post.html``.
+
+The changes in ``templates/base.html`` consist of adding a hidden block. We will
+put content in this hidden block in the ``articles_detail.html``. So far we just
+add the following HTML code before the script tags:
+
+   .. code-block:: html+django
+
+    [...] around line 67, right before the first <script> tag...
+
+        <div style="display:none">
+          {% block hidden %}
+          {% endblock %}
+        </div>
+
+    [...]
+
+The changes in ``templates/articles/article_detail.html`` add content to
+the hidden block:
+
+   .. code-block:: html+django
+
+    [...] around line 46, right before the {% block extra_js %}...
+
+    {% block hidden %}
+      {% render_only_users_can_post_template object %}
+    {% endblock %}
+
+And finally we create the file ``only_users_can_post.html`` within the
+``comp/templates/django_comments_xtd`` directory, and add the following content
+to it:
+
+   .. code-block:: html+django
+
+    <div id="only-users-can-post-{{ html_id_suffix }}">
+      <p>Only registered users can post comments. Please,
+        <a href="{% url 'admin:login' %}?next={{ object.get_absolute_url }}">login</a>.
+      </p>
+    </div>
+
+Now logout of the comp site (http://localhost:8000/admin/logout/) and reload the
+article's page. You should see
+
+In this hidden block we will place the HTML content that will be displayed to
+visitors instead of the post comment form.
+
+In the quotes app we did that by modifiying the ``quote_detail.html`` template.
+But for the articles app we use the JavaScript plugin.
 
 Setup your Django project so that django-comments-xtd will allow only signed in users to post comments.
 

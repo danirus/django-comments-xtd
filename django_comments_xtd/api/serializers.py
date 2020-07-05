@@ -179,13 +179,12 @@ class FlagSerializer(serializers.ModelSerializer):
             option = 'allow_flagging'
         comment = data['comment']
         ctype = ContentType.objects.get_for_model(comment.content_object)
-        if not get_app_model_options(content_type=ctype)[option]:
+        key = "%s.%s" % (ctype.app_label, ctype.model)
+        if not get_app_model_options(content_type=key)[option]:
             raise serializers.ValidationError(
-                "Comments posted to instances of '%s.%s' are not explicitly "
+                "Comments posted to instances of '%s' are not explicitly "
                 "allowed to receive '%s' flags. Check the "
-                "COMMENTS_XTD_APP_MODEL_OPTIONS setting." % (
-                    ctype.app_label, ctype.model, data['flag']
-                )
+                "COMMENTS_XTD_APP_MODEL_OPTIONS setting." % (key, data['flag'])
             )
         data['flag'] = self.flag_choices[data['flag']]
         return data

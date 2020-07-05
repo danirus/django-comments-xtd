@@ -4,8 +4,8 @@
 Use cases
 =========
 
-In addition to the generic use cases implemented in the demo projects here are
-more specific and interesting use examples.
+In addition to the standard usage introduced over the previous chapters, this
+page will list more specific use examples.
 
 .. toctree::
    :maxdepth: 1

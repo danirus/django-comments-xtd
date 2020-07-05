@@ -4,7 +4,7 @@ import django from 'django';
 import md5 from 'md5';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Remarkable from 'remarkable';
+import { Remarkable } from 'remarkable';
 
 import * as lib from './lib.js';
 

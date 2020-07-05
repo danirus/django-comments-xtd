@@ -3,9 +3,9 @@ import django from 'django';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Remarkable from 'remarkable';
+import { Remarkable } from 'remarkable';
 
-import {CommentForm} from './commentform.jsx';
+import { CommentForm } from './commentform.jsx';
 
 
 function reduce_flags(data, current_user) {

@@ -65,6 +65,13 @@ def confirm_comment_url(key, follow=True):
     return views.confirm(request, key)
 
 
+app_model_options_mock = {
+    'tests.article': {
+        'who_can_post': 'users'
+    }
+}
+
+
 class OnCommentWasPostedTestCase(TestCase):
     def setUp(self):
         patcher = patch('django_comments_xtd.views.send_mail')
@@ -75,19 +82,20 @@ class OnCommentWasPostedTestCase(TestCase):
         self.factory = RequestFactory()
         self.user = AnonymousUser()
 
-    def post_valid_data(self, auth_user=None):
+    def post_valid_data(self, auth_user=None, response_code=302):
         data = {"name": "Bob", "email": "bob@example.com", "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
         response = post_article_comment(data, self.article, auth_user)
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.url.startswith('/comments/posted/?c='))
+        self.assertEqual(response.status_code, response_code)
+        if response.status_code == 302:
+            self.assertTrue(response.url.startswith('/comments/posted/?c='))
 
     def test_post_as_authenticated_user(self):
         self.user = User.objects.create_user("bob", "bob@example.com", "pwd")
         self.assertTrue(self.mock_mailer.call_count == 0)
-        self.post_valid_data(self.user)
+        self.post_valid_data(auth_user=self.user)
         # no confirmation email sent as user is authenticated
         self.assertTrue(self.mock_mailer.call_count == 0)
 
@@ -95,6 +103,13 @@ class OnCommentWasPostedTestCase(TestCase):
         self.assertTrue(self.mock_mailer.call_count == 0)
         self.post_valid_data()
         self.assertTrue(self.mock_mailer.call_count == 1)
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_APP_MODEL_OPTIONS=app_model_options_mock)
+    def test_post_as_visitor_when_only_users_can_post(self):
+        self.assertTrue(self.mock_mailer.call_count == 0)
+        self.post_valid_data(response_code=400)
+        self.assertTrue(self.mock_mailer.call_count == 0)
 
 
 class ConfirmCommentTestCase(TestCase):
@@ -305,6 +320,14 @@ class ReplyCommentTestCase(TestCase):
         response = self.client.get(reverse("comments-xtd-reply",
                                            kwargs={"cid": 3}))
         self.assertEqual(response.status_code, 403)
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_APP_MODEL_OPTIONS=app_model_options_mock)
+    def test_reply_as_visitor_when_only_users_can_post(self):
+        response = self.client.get(reverse("comments-xtd-reply",
+                                           kwargs={"cid": 1}))
+        self.assertEqual(response.status_code, 302)  # Redirect to login.
+        self.assertTrue(response.url.startswith(settings.LOGIN_URL))
 
 
 class MuteFollowUpsTestCase(TestCase):

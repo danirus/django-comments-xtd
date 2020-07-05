@@ -37,7 +37,7 @@
           {% endblocktrans %}
         </H5>
         {% endif %}
-      
+
         {% if object.allow_comments %}
         <div class="card card-block mt-4 mb-5">
           <div class="card-body">
@@ -45,10 +45,10 @@
             {% render_comment_form for object %}
           </div>
         </div>
-        {% else %}
-        <h5 class="text-center">comments are disabled for this quote</h5>
+        {% elif not object.allow_comments %}
+        <h4 class="mt-4 mb-5 text-center text-secondary">Comments are disabled for this quote.</h4>
         {% endif %}
-      
+
         {% if comment_count %}
         <div id="comment-tree">
           {% render_xtdcomment_tree for object allow_feedback show_feedback allow_flagging %}

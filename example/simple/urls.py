@@ -13,7 +13,7 @@ from simple import views
 admin.autodiscover()
 
 
-urlpatterns = [                       
+urlpatterns = [
     re_path(r'^$', views.HomepageView.as_view(), name='homepage'),
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^articles/', include('simple.articles.urls')),

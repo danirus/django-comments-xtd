@@ -28,6 +28,13 @@ def post_comment(data, auth_user=None):
     return view(request)
 
 
+app_model_options_mock = {
+    'tests.article': {
+        'who_can_post': 'users'
+    }
+}
+
+
 class CommentCreateTestCase(TestCase):
     def setUp(self):
         patcher = patch('django_comments_xtd.views.send_mail')
@@ -59,3 +66,17 @@ class CommentCreateTestCase(TestCase):
         self.assertTrue('name' in response.data)
         self.assertTrue('email' in response.data)
         self.assertEqual(self.mock_mailer.call_count, 0)
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_APP_MODEL_OPTIONS=app_model_options_mock)
+    def test_post_returns_unauthorize_response(self):
+        data = {"name": "Bob", "email": "fulanito@detal.com",
+                "followup": True, "reply_to": 0, "level": 1, "order": 1,
+                "comment": "Es war einmal eine kleine...",
+                "honeypot": ""}
+        data.update(self.form.initial)
+        response = post_comment(data)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.rendered_content, b'"User not authenticated"')
+        self.assertEqual(self.mock_mailer.call_count, 0)
+

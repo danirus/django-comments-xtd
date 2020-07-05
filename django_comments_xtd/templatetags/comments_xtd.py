@@ -18,7 +18,9 @@ from django_comments.models import CommentFlag
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.api import frontend
 from django_comments_xtd.models import LIKEDIT_FLAG, DISLIKEDIT_FLAG
-from django_comments_xtd.utils import get_current_site_id
+from django_comments_xtd.utils import (
+    get_app_model_options, get_current_site_id, get_html_id_suffix
+)
 
 
 XtdComment = get_comment_model()
@@ -73,6 +75,51 @@ def get_xtdcomment_count(parser, token):
 
     content_types = _get_content_types(tokens[0], tokens[4:])
     return XtdCommentCountNode(as_varname, content_types)
+
+
+# ----------------------------------------------------------------------
+class WhoCanPostNode(Node):
+    """Stores the who_can_post value from COMMENTS_XTD_APP_MODEL_OPTION"""
+
+    def __init__(self, content_type, as_varname):
+        self.content_type = content_type
+        self.as_varname = as_varname
+
+    def render(self, context):
+        context[self.as_varname] = get_app_model_options(
+            content_type=self.content_type)['who_can_post']
+        return ''
+
+
+@register.tag
+def get_who_can_post(parser, token):
+    """
+    Gets the comment count for the given params and populates the template
+    context with a variable containing that value, whose name is defined by the
+    'as' clause.
+
+    Syntax::
+
+        {% get_who_can_post for app.model as var %}
+
+    Example usage::
+
+        {% get_who_can_post for articles.article as who_can_post %}
+
+    """
+    tokens = token.contents.split()
+
+    if tokens[1] != 'for':
+        raise TemplateSyntaxError("2nd. argument in %r tag must be 'for'" %
+                                  tokens[0])
+
+    if tokens[3] != 'as':
+        raise TemplateSyntaxError("4th. argument in %r tag must be 'as'" %
+                                  tokens[0])
+
+    content_type = _get_content_types(tokens[0], [tokens[2]])
+    as_varname = tokens[4]
+    return WhoCanPostNode(content_type, as_varname)
 
 
 # ----------------------------------------------------------------------
@@ -151,8 +198,8 @@ def _get_content_types(tagname, tokens):
                     token, tagname))
         except ContentType.DoesNotExist:
             raise TemplateSyntaxError(
-                "%r tag has non-existant content-type: '%s.%s'" % (
-                    tagname, app, model))
+                "ContentType '%s.%s' used for tag %r doesn't exist" % (
+                    app, model, tagname))
     return content_types
 
 
@@ -524,3 +571,25 @@ def has_permission(user_obj, str_permission):
         return user_obj.has_perm(str_permission)
     except Exception as exc:
         raise exc
+
+
+# ----------------------------------------------------------------------
+@register.filter
+def can_receive_comments_from(obj, user):
+    ct = ContentType.objects.get_for_model(obj)
+    app_label = '%s.%s' % (ct.app_label, ct.model)
+    options = get_app_model_options(content_type=app_label)
+    who_can_post = options['who_can_post']
+    if (
+            who_can_post == 'all' or
+            (who_can_post == 'users' and user.is_authenticated)
+    ):
+        return True
+    else:
+        return False
+
+
+# ----------------------------------------------------------------------
+@register.inclusion_tag('django_comments_xtd/only_users_can_post.html')
+def render_only_users_can_post_template(object):
+    return {'html_id_suffix': get_html_id_suffix(object)}

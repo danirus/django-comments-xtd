@@ -2,12 +2,14 @@ from __future__ import unicode_literals
 import six
 
 from django.apps import apps
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
 from django.http import Http404, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.template import loader
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -19,14 +21,20 @@ from django_comments.models import CommentFlag
 from django_comments.views.moderation import perform_flag
 from django_comments.views.utils import next_redirect, confirmation_view
 
-from django_comments_xtd import (get_form, comment_was_posted, signals, signed,
-                                 get_model as get_comment_model)
+from django_comments_xtd import (
+    comment_was_posted, comment_will_be_posted,
+    get_form, get_model as get_comment_model,
+    signals, signed  #  module.
+)
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import (TmpXtdComment,
-                                        MaxThreadLevelExceededException,
-                                        LIKEDIT_FLAG, DISLIKEDIT_FLAG)
-from django_comments_xtd.utils import (get_current_site_id, send_mail,
-                                       has_app_model_option)
+from django_comments_xtd.models import (
+    TmpXtdComment,
+    MaxThreadLevelExceededException,
+    LIKEDIT_FLAG, DISLIKEDIT_FLAG
+)
+from django_comments_xtd.utils import (
+    get_current_site_id, send_mail, get_app_model_options
+)
 
 
 XtdComment = get_comment_model()
@@ -42,9 +50,10 @@ def get_moderated_tmpl(cmt):
 
 
 def send_email_confirmation_request(
-        comment, key, site,
-        text_template="django_comments_xtd/email_confirmation_request.txt",
-        html_template="django_comments_xtd/email_confirmation_request.html"):
+    comment, key, site,
+    text_template="django_comments_xtd/email_confirmation_request.txt",
+    html_template="django_comments_xtd/email_confirmation_request.html"
+):
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
     confirmation_url = reverse("comments-xtd-confirm",
@@ -87,6 +96,35 @@ def _create_comment(tmp_comment):
     # comment.is_public = True
     comment.save()
     return comment
+
+
+def on_comment_will_be_posted(sender, comment, request, **kwargs):
+    """
+    Check whether there are conditions to reject the post.
+
+    Returns False if there are conditions to reject the comment.
+    """
+    if settings.COMMENTS_APP != "django_comments_xtd":
+        # Do not kill the post if handled by other commenting app.
+        return True
+
+    if comment.user:
+        user_is_authenticated = comment.user.is_authenticated
+    else:
+        user_is_authenticated = False
+
+    ct = comment.get("content_type")
+    ct_str = "%s.%s" % (ct.app_label, ct.model)
+    options = get_app_model_options(content_type=ct_str)
+
+    if not user_is_authenticated and options['who_can_post'] == 'users':
+        # Reject comment.
+        return False
+    else:
+        return True
+
+
+comment_will_be_posted.connect(on_comment_will_be_posted, sender=TmpXtdComment)
 
 
 def on_comment_was_posted(sender, comment, request, **kwargs):
@@ -242,6 +280,19 @@ def reply(request, cid):
     except XtdComment.DoesNotExist as exc:
         raise Http404(exc)
 
+    ct_str = "%s.%s" % (comment.content_type.app_label,
+                        comment.content_type.model)
+    options = get_app_model_options(content_type=ct_str)
+
+    if (
+        not request.user.is_authenticated and
+        options['who_can_post'] == 'users'
+    ):
+        path = request.build_absolute_uri()
+        resolved_login_url = resolve_url(settings.LOGIN_URL)
+        return redirect_to_login(path, resolved_login_url,
+                                 REDIRECT_FIELD_NAME)
+
     form = get_form()(comment.content_object, comment=comment)
     next = request.GET.get("next", reverse("comments-xtd-sent"))
 
@@ -306,7 +357,7 @@ def flag(request, comment_id, next=None):
     comment = get_object_or_404(
         get_comment_model(), pk=comment_id,
         site__pk=get_current_site_id(request))
-    if not has_app_model_option(comment)['allow_flagging']:
+    if not get_app_model_options(comment=comment)['allow_flagging']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
                       "explicitly allowed to receive 'removal suggestion' "
@@ -338,7 +389,7 @@ def like(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
-    if not has_app_model_option(comment)['allow_feedback']:
+    if not get_app_model_options(comment=comment)['allow_feedback']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
                       "explicitly allowed to receive 'liked it' flags. "
@@ -353,7 +404,7 @@ def like(request, comment_id, next=None):
     # Render a form on GET
     else:
         flag_qs = comment.flags.prefetch_related('user')\
-                                .filter(flag=LIKEDIT_FLAG)
+            .filter(flag=LIKEDIT_FLAG)
         users_likedit = [item.user for item in flag_qs]
         return render(request, 'django_comments_xtd/like.html',
                       {'comment': comment,
@@ -374,7 +425,7 @@ def dislike(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
-    if not has_app_model_option(comment)['allow_feedback']:
+    if not get_app_model_options(comment=comment)['allow_feedback']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
                       "explicitly allowed to receive 'disliked it' flags. "
@@ -389,7 +440,7 @@ def dislike(request, comment_id, next=None):
     # Render a form on GET
     else:
         flag_qs = comment.flags.prefetch_related('user')\
-                                .filter(flag=DISLIKEDIT_FLAG)
+            .filter(flag=DISLIKEDIT_FLAG)
         users_dislikedit = [item.user for item in flag_qs]
         return render(request, 'django_comments_xtd/dislike.html',
                       {'comment': comment,
@@ -457,9 +508,9 @@ class XtdCommentListView(ListView):
         if content_types is None:
             return None
         return XtdComment.objects.for_content_types(
-                content_types,
-                site=get_current_site_id(self.request)
-            )\
+            content_types,
+            site=get_current_site_id(self.request)
+        )\
             .filter(is_removed=False)\
             .order_by('submit_date')
 

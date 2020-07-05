@@ -1,10 +1,15 @@
 from django.contrib.contenttypes.models import ContentType
+
 from django_comments.forms import CommentSecurityForm
-from django_comments_xtd import get_model as get_comment_model
-from django_comments_xtd.conf import settings
-from django_comments_xtd.utils import get_current_site_id
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+
+from django_comments_xtd import get_model as get_comment_model
+from django_comments_xtd.conf import settings
+from django_comments_xtd.utils import (
+    get_current_site_id, get_app_model_options, get_html_id_suffix
+)
+
 
 XtdComment = get_comment_model()
 
@@ -42,7 +47,8 @@ def commentbox_props(obj, user, request=None):
             },
             login_url: <only_when_user_is_not_authenticated>,
             like_url: <only_when_user_is_not_authenticated>,
-            dislike_url: <only_when_user_is_not_authenticated>
+            dislike_url: <only_when_user_is_not_authenticated>,
+            html_id_suffix: <html_element_id_suffix>
         }
     """
 
@@ -57,6 +63,8 @@ def commentbox_props(obj, user, request=None):
                                          site__pk=get_current_site_id(request),
                                          is_public=True)
     ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
+    ctype_key = "%s.%s" % (ctype.app_label, ctype.model)
+    options = get_app_model_options(content_type=ctype_key)
     d = {
         "comment_count": queryset.count(),
         "allow_comments": True,
@@ -64,6 +72,7 @@ def commentbox_props(obj, user, request=None):
         "request_name": False,
         "request_email_address": False,
         "is_authenticated": False,
+        "who_can_post": options['who_can_post'],
         "allow_flagging": False,
         "allow_feedback": False,
         "show_feedback": False,
@@ -85,7 +94,8 @@ def commentbox_props(obj, user, request=None):
             "object_pk": form['object_pk'].value(),
             "timestamp": form['timestamp'].value(),
             "security_hash": form['security_hash'].value()
-        }
+        },
+        "html_id_suffix": get_html_id_suffix(obj)
     }
     try:
         user_is_authenticated = user.is_authenticated()

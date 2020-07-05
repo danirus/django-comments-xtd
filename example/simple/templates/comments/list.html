@@ -2,11 +2,12 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<div id="comments" class="media-list">
+<div id="comments" class="py-3 media-list">
   {% for comment in comment_list %}
   <div class="media pb-2">
     <a name="c{{ comment.id }}"></a>
-    {{ comment.user_email|xtd_comment_gravatar }}
+    <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
+         class="mr-3" width="48" height="48">
     <div class="media-body">
       <div class="comment pb-3">
         <h6 class="mb-1 small d-flex">

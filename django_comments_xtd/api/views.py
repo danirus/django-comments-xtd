@@ -23,8 +23,11 @@ class CommentCreate(generics.CreateAPIView):
         if serializer.is_valid():
             response = super(CommentCreate, self).post(request, *args, **kwargs)
         else:
-            return Response([k for k in six.iterkeys(serializer.errors)],
-                            status=400)
+            if 'non_field_errors' in serializer.errors:
+                response_msg = serializer.errors['non_field_errors'][0]
+            else:
+                response_msg = [k for k in six.iterkeys(serializer.errors)]
+            return Response(response_msg, status=400)
         if self.resp_dict['code'] == 201:  # The comment has been created.
             return response
         elif self.resp_dict['code'] in [202, 204, 403]:

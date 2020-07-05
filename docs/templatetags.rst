@@ -272,3 +272,19 @@ Available markup languages are:
  * `Markdown <http://daringfireball.net/projects/markdown/syntax>`_, when starting the comment with ``#!markdown``.
  * `reStructuredText <http://docutils.sourceforge.net/docs/user/rst/quickref.html>`_, when starting the comment with ``#!restructuredtext``.
  * Linebreaks, when starting the comment with ``#!linebreaks``.
+
+
+.. index::
+   single: can_receive_comments_from
+   pair: filter; can_receive_comments_from
+
+.. templatetag:: can_receive_comments_from
+
+Filter ``can_receive_comments_from``
+====================================
+
+Filter syntax::
+
+  {{ quote|can_receive_comments_from:user }}
+
+Tralari tralara...

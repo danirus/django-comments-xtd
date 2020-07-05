@@ -5,33 +5,22 @@
     <meta charset="utf-8" />
     <title>{% block title %}django-comments-xtd - simple demo{% endblock %}</title>
     <link href="{% static 'django_comments_xtd/css/bootstrap.min.css' %}" rel="stylesheet">
-    <style>
-      .container {
-        width: auto;
-        max-width: 680px;
-        padding: 0 15px;
-      }
-      .post-footer, .comments {
-        padding: 20px 0;
-      }
-    </style>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
   </head>
   <body>
     <div class="container">
-      <div class="page-header">
-	    <h3 class="text-center">custom demo site</h3>
-	    <h4 class="text-center">{% block header %}{% endblock %}</h4>
+      <div class="py-4">
+	    <h5 class="text-center">custom demo site</h5>
+	    <h3 class="text-center">{% block header %}{% endblock %}</h3>
       </div>
     </div>
 
-    <div class="container">
-      {% block content %}
-      {% endblock %}
-    </div>
+    {% block content %}
+    {% endblock %}
 
     <div class="container">
       <div class="row">
-        <div class="col-lg-12 col-md-12">
+        <div class="col-md-12">
           <hr/>
           <p class="text-center text-muted small">django-comments-xtd custom demo.</p>
         </div>

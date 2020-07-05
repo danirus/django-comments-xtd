@@ -1,9 +1,11 @@
 # Change Log
 
-## [2.6.2] -
+## [2.6.2] - 2020-07-05
 
     * Adds Dutch translation (thanks to Jean-Paul Ladage, @jladage).
     * Adds Russian translation (thanks to Михаил Рыбкин, @MikerStudio).
+    * Fixes issue #140, which adds the capacity to allow only registered users
+      to post comments.
     * Fixes issue #149, on wrong SQL boolean literal value used when running
       special command populate_xtdcomments to load Postgres database with
       xtdcomments.

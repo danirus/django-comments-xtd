@@ -285,6 +285,7 @@ Filter ``can_receive_comments_from``
 
 Filter syntax::
 
-  {{ quote|can_receive_comments_from:user }}
+  {{ object|can_receive_comments_from:user }}
 
-Tralari tralara...
+Returns True depending on the value of the ``'who_can_post'`` entry in the
+:setting:`COMMENTS_XTD_APP_MODEL_OPTIONS`.

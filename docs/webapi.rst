@@ -70,26 +70,23 @@ This method retrieves the list of comments posted to a given content type and ob
            {
                "allow_reply": true,
                "comment": "Integer erat leo, ...",
-               "flags": {
-                   "dislike": {
-                       "active": false,
-                       "users": []
+               "flags": [
+                   {
+                       "flag": "like",
+                       "id": 1,
+                       "user": "admin"
                    },
-                   "like": {
-                       "active": false,
-                       "users": [
-                           "1:admin",
-                           "5:alice",
-                           "2:fulanito",
-                           "4:joebloggs",
-                           "3:menganito"
-                       ]
+                   {
+                       "flag": "like",
+                       "id": 2,
+                       "user": "fulanito"
                    },
-                   "removal": {
-                       "active": false,
-                       "count": null
+                   {
+                       "flag": "removal",
+                       "id": 2,
+                       "user": "fulanito"
                    }
-               },
+               ],
                "id": 10,
                "is_removed": false,
                "level": 0,

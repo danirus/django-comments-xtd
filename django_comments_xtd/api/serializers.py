@@ -244,7 +244,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     def get_user_moderator(self, obj):
         try:
-            if obj.user and obj.user.has_perm('comments.can_moderate'):
+            if obj.user and obj.user.has_perm('django_comments.can_moderate'):
                 return True
             else:
                 return False

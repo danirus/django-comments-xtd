@@ -178,13 +178,13 @@ COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
 COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'articles.article': {
-        'who_can_post': 'users',
+        'who_can_post': 'all',
         'allow_flagging': True,
         'allow_feedback': True,
         'show_feedback': True,
     },
     'quotes.quote': {
-        'who_can_post': 'users',
+        'who_can_post': 'all',
         'allow_flagging': True,
         'allow_feedback': True,
         'show_feedback': True,

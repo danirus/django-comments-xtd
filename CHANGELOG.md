@@ -1,20 +1,26 @@
 # Change Log
 
+## [2.6.3] -
+
+    * Fixes issue #171, on wrong permission used to decide whether a user is a
+      moderator. The right permission is django_comments.can_moderate.
+      (thanks to Ashwani Gupta, @ashwani99)
+
 ## [2.6.2] - 2020-07-05
 
     * Adds Dutch translation (thanks to Jean-Paul Ladage, @jladage).
     * Adds Russian translation (thanks to Михаил Рыбкин, @MikerStudio).
-    * Fixes issue #140, which adds the capacity to allow only registered users
+    * Fixesissue #140, which adds the capacity to allow only registered users
       to post comments.
-    * Fixes issue #149, on wrong SQL boolean literal value used when running
+    * Fixesissue #149, on wrong SQL boolean literal value used when running
       special command populate_xtdcomments to load Postgres database with
       xtdcomments.
-    * Fixes issue #154, on using string formatting compatible with Python
+    * Fixesissue #154, on using string formatting compatible with Python
       versions prior to 3.6.
-    * Fixes issue #156, on wrong props name "poll_interval". JavaScript plugin
+    * Fixesissue #156, on wrong props name "poll_interval". JavaScript plugin
       expects uses "polling_interval" while the api/frontend.py module referred
-      to it as "poll_interval". (thanks to @ashwani99).
-    * Fixes issue #159, about using the same id for all the checkboxes in the
+      to itas "poll_interval". (thanks to @ashwani99).
+    * Fixesissue #159, about using the same id for all the checkboxes in the
       comment list. When ticking one checkbox in a nested form the checkbox of
       the main form was ticked. Now each checkbox has a different id, suffixed
       with the content of the `reply_to` field.

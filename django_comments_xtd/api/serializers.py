@@ -47,8 +47,8 @@ class WriteCommentSerializer(serializers.Serializer):
     def validate_name(self, value):
         if not len(value):
             if (
-                    not len(self.request.user.get_full_name())
-                    or not self.request.user.is_authenticated
+                not len(self.request.user.get_full_name())
+                or not self.request.user.is_authenticated
             ):
                 raise serializers.ValidationError("This field is required")
             else:
@@ -59,8 +59,8 @@ class WriteCommentSerializer(serializers.Serializer):
     def validate_email(self, value):
         if not len(value):
             if (
-                    not len(self.request.user.email) or
-                    not self.request.user.is_authenticated
+                not len(self.request.user.email) or
+                not self.request.user.is_authenticated
             ):
                 raise serializers.ValidationError("This field is required")
             else:
@@ -244,7 +244,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     def get_user_moderator(self, obj):
         try:
-            if obj.user and obj.user.has_perm('comments.can_moderate'):
+            if obj.user and obj.user.has_perm('django_comments.can_moderate'):
                 return True
             else:
                 return False

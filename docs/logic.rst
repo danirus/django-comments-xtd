@@ -53,7 +53,7 @@ Following is the application control logic described in 4 actions:
      
 
 Creating the secure token for the confirmation URL
---------------------------------------------------
+==================================================
 
 The Confirmation URL sent by email to the user has a secured token with the comment. To create the token Django-comments-xtd uses the module ``signed.py`` authored by Simon Willison and provided in `Django-OpenID <http://github.com/simonw/django-openid>`_. 
 
@@ -114,7 +114,8 @@ Extending the demo site with the following code will do the job:
            plus7days = timedelta(days=7)
 	       if data["submit_date"] + plus7days < datetime.now():
 	           return False
-           signals.confirmation_received.connect(check_submit_date_is_within_last_7days)
+
+       signals.confirmation_received.connect(check_submit_date_is_within_last_7days)
     
     
        #-----------------------------------------------------

@@ -4,7 +4,9 @@
 Web API
 =======
 
-django-comments-xtd uses `django-rest-framework <http://www.django-rest-framework.org/>`_ to expose a Web API that provides developers with access to the same functionalities offered through the web user interface. The Web API has been designed to cover the needs required by the :doc:`javascript`, and it's open to grow in the future to cover additional functionalities.
+.. _django-rest-framework: http://www.django-rest-framework.org/
+
+django-comments-xtd uses django-rest-framework_ to expose a Web API that provides developers with access to the same functionalities offered through the web user interface. The Web API has been designed to cover the needs required by the :doc:`javascript`, and it's open to grow in the future to cover additional functionalities.
 
 There are 5 methods available to perform the following actions:
 
@@ -17,7 +19,7 @@ There are 5 methods available to perform the following actions:
 Finally there is the ability to generate a view action in ``django_comments_xtd.api.frontend`` to return the commentbox props as used by the :doc:`javascript` plugin for use with an existing `django-rest-framework <http://www.django-rest-framework.org/>`_ project.
 
 .. contents:: Table of Contents
-   :depth: 3
+   :depth: 1
    :local:
 
     
@@ -30,7 +32,9 @@ Post a new comment
  | HTTP Responses: 201, 202, 204, 403
  | Serializer: ``django_comments_xtd.api.serializers.WriteCommentSerializer``
 
-This method expects the same fields submitted in a regular django-comments-xtd form. The serializer uses the function ``django_comments.get_form`` to verify data validity.
+This method expects the same fields submitted in a regular django-comments-xtd
+form. The serializer uses the function ``django_comments.get_form`` to verify
+data validity.
 
 Meaning of the HTTP Response codes:
 
@@ -38,6 +42,73 @@ Meaning of the HTTP Response codes:
  * **202**: Comment in moderation.
  * **204**: Comment confirmation has been sent by mail.
  * **403**: Comment rejected, as in :ref:`disallow`.
+
+.. note::
+
+   Up until v2.6 fields ``timestamp`` and ``security_hash``, related with the
+   `CommentSecurityForm <https://django-contrib-comments.readthedocs.io/en/latest/forms.html?highlight=commentsecurityform#django_comments.forms.CommentSecurityForm>`_, had to be provided in the post request. As of v2.7 it is possible to use
+   a django-rest-framework's authentication class in combination with
+   django-comments-xtd's signal ``should_request_be_authorized``
+   (:ref:`signal-and-receiver-label`) to automatically pass the
+   CommentSecurityForm validation.
+
+
+Authorize the request
+---------------------
+
+As pointed out in the note above, django-comments-xtd notifies receivers of the
+signal ``should_request_be_authorized`` to give the request the chance to pass
+the `CommentSecurityForm` validation. When a receiver returns ``True``, the form
+automatically receives valid values for the ``timestamp`` and ``security_hash``
+fields, and the request continues its processing.
+
+These two fields, ``timestamp`` and ``security_hash``, are part of the frontline
+against spam in django-comments. In a classic backend driven request-response
+cycle these two fields received their values during the GET request, where the
+comment form is rendered via the Django template.
+
+However, when using the web API there is no such previous GET request, and thus
+both fields can in fact be ignored. In such cases, in order to enable some
+sort of spam control, the request can be authenticated via the Django REST
+Framework, what in combination of a receiver of the
+``should_request_be_authorized`` signal has the effect of **authorizing**
+the POST request.
+
+
+Example of authorization
+------------------------
+
+Using the :ref:`example-comp`, in this section we see how to enable posting
+comments via the web API.
+
+To start let's see what happens when we try to post a comment. I use the
+excellent `HTTPie <https://httpie.org/docs>`_ command line client. Launch
+the runserver command in one terminal and try the following in another:
+
+   .. code-block:: bash
+
+    $ http POST http://localhost:8000/comments/api/comment/ \
+    > content_type="articles.article" object_pk=1 name="Joe Bloggs" \
+    > comment="This is the body of the comment. My opinion on the article." \
+    > followup=false reply_to=0 email="joe@bloggs.com" honeypot=""
+
+    HTTP/1.1 400 Bad Request
+    Allow: POST, OPTIONS
+    Content-Language: en
+    Content-Length: 29
+    Content-Type: application/json
+    Date: Sun, 19 Jul 2020 18:32:46 GMT
+    Server: WSGIServer/0.2 CPython/3.8.0
+    Vary: Accept, Accept-Language
+
+    [
+        "timestamp",
+        "security_hash"
+    ]
+
+django-comments-xtd is missing the fields ``timestamp`` and ``security_hash``.
+Let's add the following code to the comp project...
+
 
 
 Retrieve comment list

@@ -90,10 +90,20 @@ Signal and receiver
 
 In addition to the `signals sent by the Django Comments Framework <https://docs.djangoproject.com/en/1.3/ref/contrib/comments/signals/>`_, django-comments-xtd sends the following signal:
 
- * **confirmation_received**: Sent when the user clicks on the confirmation link and before the ``XtdComment`` instance is created in the database.
+ * **confirmation_received**: Sent when the user clicks on the confirmation
+   link and before the ``XtdComment`` instance is created in the database.
 
- * **comment_thread_muted**: Sent when the user clicks on the mute link, in a follow-up notification.
+ * **comment_thread_muted**: Sent when the user clicks on the mute link, in a
+   follow-up notification.
 
+ * **should_request_be_authorized**: Sent before the data in the form in a web
+   API post comment request is validated. A receiver returning `True` will
+   suffice to automatically add valid values to the CommentSecurityForm_ fields
+   `timestamp` and `security_hash`. The intention is to combine a receiver with
+   a django-rest-framework authentication class, and return `True` when the
+   `request.auth` is not `None`.
+
+.. _CommentSecurityForm: https://django-contrib-comments.readthedocs.io/en/latest/forms.html?highlight=commentsecurityform#django_comments.forms.CommentSecurityForm
 
 Sample use of the ``confirmation_received`` signal
 --------------------------------------------------

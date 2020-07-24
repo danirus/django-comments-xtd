@@ -56,59 +56,230 @@ Meaning of the HTTP Response codes:
 Authorize the request
 ---------------------
 
-As pointed out in the note above, django-comments-xtd notifies receivers of the
-signal ``should_request_be_authorized`` to give the request the chance to pass
-the `CommentSecurityForm` validation. When a receiver returns ``True``, the form
-automatically receives valid values for the ``timestamp`` and ``security_hash``
-fields, and the request continues its processing.
+As pointed out in the note above, django-comments-xtd notifies receivers of the signal ``should_request_be_authorized`` to give the request the chance to pass the `CommentSecurityForm` validation. When a receiver returns ``True``, the form automatically receives valid values for the ``timestamp`` and ``security_hash`` fields, and the request continues its processing.
 
-These two fields, ``timestamp`` and ``security_hash``, are part of the frontline
-against spam in django-comments. In a classic backend driven request-response
-cycle these two fields received their values during the GET request, where the
-comment form is rendered via the Django template.
+These two fields, ``timestamp`` and ``security_hash``, are part of the frontline against spam in django-comments. In a classic backend driven request-response cycle these two fields received their values during the GET request, where the comment form is rendered via the Django template.
 
-However, when using the web API there is no such previous GET request, and thus
-both fields can in fact be ignored. In such cases, in order to enable some
-sort of spam control, the request can be authenticated via the Django REST
-Framework, what in combination of a receiver of the
-``should_request_be_authorized`` signal has the effect of **authorizing**
-the POST request.
+However, when using the web API there is no such previous GET request, and thus both fields can in fact be ignored. In such cases, in order to enable some sort of spam control, the request can be authenticated via the Django REST Framework, what in combination with a receiver of the ``should_request_be_authorized`` signal has the effect of **authorizing** the POST request.
 
 
 Example of authorization
 ------------------------
 
-Using the :ref:`example-comp`, in this section we see how to enable posting
-comments via the web API.
+In this section we go through the changes that will enable posting comments via the web API in the :ref:`example-simple`. We have to: 
 
-To start let's see what happens when we try to post a comment. I use the
-excellent `HTTPie <https://httpie.org/docs>`_ command line client. Launch
-the runserver command in one terminal and try the following in another:
+ 1. Modify the settings module.
+ 2. Modify the urls module to allow login and logout via DRF's api-auth.
+ 3. Create a new authentication class, in this case it will be an authentication scheme based on DRF's `Custom authentication <https://www.django-rest-framework.org/api-guide/authentication/#custom-authentication>`_, but you could use any other one.
+ 4. Create a new receiver function for the signal ``should_request_be_authorized``.
+ 5. Post a test comment as a visitor.
+ 6. Post a test comment as a signed in user.
+
+Modify the settings module
+**************************
+
+We will modify the ``simple/settings.py`` module to add ``rest_framework`` to ``INSTALLED_APPS``. We will create a custom setting that will be used later in the receiver function for the signal ``should_request_be_authorized``. I call the setting ``MY_DRF_AUTH_TOKEN``. We will also add Django Rest Framework settings to enable request authentication. Append the following at the end of ``simple/settings.py``:
+
+   .. code-block:: python
+
+      INSTALLED_APPS = [
+         ...
+         'rest_framework',
+         'simple.articles',
+         ...
+      ]
+
+      MY_DRF_AUTH_TOKEN = "tal"
+
+      REST_FRAMEWORK = {
+          'DEFAULT_AUTHENTICATION_CLASSES': [
+              'rest_framework.authentication.SessionAuthentication',
+              'simple.apiauth.APIRequestAuthentication'
+         ]
+      }
+
+Modify the urls module
+**********************
+
+In order to send comments as a logged in user we will first login using the end point provided by Django REST Framework's urls module. Append the following to the ``urlpatterns`` in ``simple/urls.py``:
+
+.. code-block:: python
+
+   urlpatterns = [
+       ...
+
+       re_path(r'^api-auth/', include('rest_framework.urls',
+                                      namespace='rest_framework')),
+   ]
+
+Next we will create the module ``simple/apiauth.py``.
+
+Create a new authentication class
+*********************************
+
+Create the module ``simple/apiauth.py`` with the following content. It is a custom authentication class based on the authentication classes provided by Django REST Framework:
+
+   .. code-block:: python
+
+      from django.contrib.auth.models import AnonymousUser
+
+      from rest_framework import HTTP_HEADER_ENCODING, authentication, exceptions
+
+
+      class APIRequestAuthentication(authentication.BaseAuthentication):
+        def authenticate(self, request):
+          auth = request.META.get('HTTP_AUTHORIZATION', b'')
+          if isinstance(auth, str):
+            auth = auth.encode(HTTP_HEADER_ENCODING)
+          
+          pieces = auth.split()
+          if not pieces or pieces[0].lower() != b'token':
+            return None
+
+          if len(pieces) == 1:
+            msg = _("Invalid token header. No credentials provided.")
+            raise exceptions.AuthenticationFailed(msg)
+          elif len(pieces) > 2:
+            msg = _("Invalid token header." 
+                "Token string should not contain spaces.")
+            raise exceptions.AuthenticationFailed(msg)
+
+          try:
+            auth = pieces[1].decode()
+          except UnicodeError:
+            msg = _("Invalid token header. "
+                "Token string should not contain invalid characters.")
+
+          return (AnonymousUser(), auth) 
+
+
+Create a receiver for ``should_request_be_authorized``
+******************************************************
+
+Now let's create a receiver function in the ``simple/articles/models.py`` module. Append the following code:
+
+   .. code-block:: python
+
+      from django.dispatch import receiver
+      from django_comments_xtd.signals import should_request_be_authorized
+
+      [...]
+
+      @receiver(should_request_be_authorized)
+      def my_callback(sender, comment, request, **kwargs):
+          if request.auth == settings.MY_DRF_AUTH_TOKEN:
+              return True
+
+
+Post a test comment as a visitor
+********************************
+
+Now with the previous changes in place launch the Django development server and let's try to post a comment using the web API.
+
+These are the fields that have to be sent when the user posting the comment is a mere visitor instead of a signed in user:
+
+ * **content_type**: A string with the content_type ie: ``content_type="articles.article"``.
+ * **object_pk**: The object ID we are posting the comment to.
+ * **name**: The name of the person posting the comment.
+ * **email**: The email address of the person posting the comment. It's required when the comment has to be confirmed via email.
+ * **followup**: Boolean to indicate whether the user wants to receive follow-up notification via email.
+ * **reply_to**: When threading is enabled, reply_to is the comment ID being responded with the comment being sent. If comments are not threaded the reply_to must be 0.
+ * **comment**: The content of the comment.
+
+I will use the excellent `HTTPie <https://httpie.org/docs>`_ command line client:
 
    .. code-block:: bash
 
     $ http POST http://localhost:8000/comments/api/comment/ \
-    > content_type="articles.article" object_pk=1 name="Joe Bloggs" \
-    > comment="This is the body of the comment. My opinion on the article." \
-    > followup=false reply_to=0 email="joe@bloggs.com" honeypot=""
+           'Authorization:Token tal' \
+           content_type="articles.article" object_pk=1 name="Joe Bloggs" \
+           followup=false reply_to=0 email="joe@bloggs.com" \
+           comment="This is the body, the actual comment..."
 
-    HTTP/1.1 400 Bad Request
+    HTTP/1.1 204 No Content
     Allow: POST, OPTIONS
-    Content-Language: en
-    Content-Length: 29
+    Content-Length: 2
     Content-Type: application/json
-    Date: Sun, 19 Jul 2020 18:32:46 GMT
+    Date: Fri, 24 Jul 2020 20:06:02 GMT
     Server: WSGIServer/0.2 CPython/3.8.0
-    Vary: Accept, Accept-Language
+    Vary: Accept
 
-    [
-        "timestamp",
-        "security_hash"
-    ]
+See that in the terminal where you are running ``python manage.py runserver`` you have got the content of the mail message that would be sent to **joe@bloggs.com**. Copy the confirmation URL and visit it to confirm the comment. 
 
-django-comments-xtd is missing the fields ``timestamp`` and ``security_hash``.
-Let's add the following code to the comp project...
+Post a test comment as a signed in user
+***************************************
 
+To post a comment as a logged in user we first have to obtain the csrftoken:
+
+   .. code-block:: bash
+
+    $ http localhost:8000/api-auth/login/ --session=session1 -h
+
+    HTTP/1.1 200 OK
+    Cache-Control: max-age=0, no-cache, no-store, must-revalidate, private
+    Content-Length: 4253
+    Content-Type: text/html; charset=utf-8
+    Date: Fri, 24 Jul 2020 21:00:35 GMT
+    Expires: Fri, 24 Jul 2020 21:00:35 GMT
+    Server: WSGIServer/0.2 CPython/3.8.0
+    Server-Timing: SQLPanel_sql_time;dur=0;desc="SQL 0 queries"
+    Set-Cookie: csrftoken=nEJczcG2M3LrcxIKiHbkxDFy2gmplPtn87pAFhp0CQz47TvZ58v8S2eCpWD9Zadm; expires=Fri, 23 Jul 2021 21:00:35 GMT; Max-Age=31449600; Path=/; SameSite=Lax
+    Vary: Cookie
+
+Now we copy the value of csrftoken and attach it to the login HTTP request:
+
+   .. code-block:: bash
+
+    $ http -f POST localhost:8000/api-auth/login/ username=admin password=admin \
+              X-CSRFToken:nEJczcG2M3LrcxIKiHbkxDFy2gmplPtn87pAFhp0CQz47TvZ58v8S2eCpWD9Zadm \
+              --session=session1
+
+    HTTP/1.1 302 Found
+    Cache-Control: max-age=0, no-cache, no-store, must-revalidate, private
+    Content-Length: 0
+    Content-Type: text/html; charset=utf-8
+    Date: Fri, 24 Jul 2020 21:06:11 GMT
+    Expires: Fri, 24 Jul 2020 21:06:11 GMT
+    Location: /accounts/profile/
+    Server: WSGIServer/0.2 CPython/3.8.0
+    Set-Cookie: csrftoken=z3FtVTPWudwYrWrqSQLOb2HZ0JNAmoA3P8M4RSDhTtJr7LrSVVAbfDp847Xetuwm; expires=Fri, 23 Jul 2021 21:06:11 GMT; Max-Age=31449600; Path=/; SameSite=Lax
+    Set-Cookie: sessionid=iyq0q9kqxhjwsgnq95taqbdw2p35v4jb; expires=Fri, 07 Aug 2020 21:06:11 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax
+    Vary: Cookie
+
+
+Finally we send the comment with the new csrftoken:
+
+   .. code-block:: bash
+
+    $ http POST http://localhost:8000/comments/api/comment/ \
+                content_type="articles.article" object_pk=1 followup=false \
+                reply_to=0 comment="This is the body, the actual comment..." \
+                name="Administrator" email="admin@example.com" \
+                X-CSRFToken:z3FtVTPWudwYrWrqSQLOb2HZ0JNAmoA3P8M4RSDhTtJr7LrSVVAbfDp847Xetuwm \
+                --session=session1
+
+    HTTP/1.1 201 Created
+    Allow: POST, OPTIONS
+    Content-Length: 282
+    Content-Type: application/json
+    Date: Fri, 24 Jul 2020 21:06:58 GMT
+    Server: WSGIServer/0.2 CPython/3.8.0
+    Vary: Accept, Cookie
+
+    {
+        "comment": "This is the body, the actual comment...",
+        "content_type": "articles.article",
+        "email": "admin@example.com",
+        "followup": false,
+        "honeypot": "",
+        "name": "Administrator",
+        "object_pk": "1",
+        "reply_to": 0,
+        "security_hash": "9da968a7ff000f2bd4aa1a669bb70d18934be574",
+        "timestamp": "1595624818"
+    }
+
+And the comment must have been posted as the user ``admin``.
 
 
 Retrieve comment list

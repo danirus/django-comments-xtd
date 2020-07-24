@@ -32,9 +32,9 @@ COMMENT_MAX_LENGTH = getattr(settings, 'COMMENT_MAX_LENGTH', 3000)
 class WriteCommentSerializer(serializers.Serializer):
     content_type = serializers.CharField()
     object_pk = serializers.CharField()
-    timestamp = serializers.CharField(allow_blank=True)
-    security_hash = serializers.CharField(allow_blank=True)
-    honeypot = serializers.CharField(allow_blank=True)
+    timestamp = serializers.CharField(required=False)
+    security_hash = serializers.CharField(required=False)
+    honeypot = serializers.CharField(required=False)
     name = serializers.CharField(allow_blank=True)
     email = serializers.EmailField(allow_blank=True)
     url = serializers.URLField(required=False)
@@ -88,7 +88,7 @@ class WriteCommentSerializer(serializers.Serializer):
                 % (escape(ctype), escape(object_pk)))
         except (ValueError, serializers.ValidationError) as e:
             raise serializers.ValidationError(
-                "Attempting go get content-type %r and object PK %r exists "
+                "Attempting to get content-type %r and object PK %r exists "
                 "raised %s" % (escape(ctype), escape(object_pk),
                                e.__class__.__name__))
         else:
@@ -109,6 +109,7 @@ class WriteCommentSerializer(serializers.Serializer):
                 # to pass the form validation step.
                 secform = CommentSecurityForm(target)
                 data.update({
+                    "honeypot": "",
                     "timestamp": secform['timestamp'].value(),
                     "security_hash": secform['security_hash'].value()
                 })

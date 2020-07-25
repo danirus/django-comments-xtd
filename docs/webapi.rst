@@ -78,7 +78,9 @@ In this section we go through the changes that will enable posting comments via 
 Modify the settings module
 **************************
 
-We will modify the ``simple/settings.py`` module to add ``rest_framework`` to ``INSTALLED_APPS``. We will create a custom setting that will be used later in the receiver function for the signal ``should_request_be_authorized``. I call the setting ``MY_DRF_AUTH_TOKEN``. We will also add Django Rest Framework settings to enable request authentication. Append the following at the end of ``simple/settings.py``:
+We will modify the ``simple/settings.py`` module to add ``rest_framework`` to ``INSTALLED_APPS``. In addition we will create a custom setting that will be used later in the receiver function for the signal ``should_request_be_authorized``. I call the setting ``MY_DRF_AUTH_TOKEN``. And we will also add Django Rest Framework settings to enable request authentication.
+
+Append the code to your ``simple/settings.py`` module:
 
    .. code-block:: python
 
@@ -89,7 +91,8 @@ We will modify the ``simple/settings.py`` module to add ``rest_framework`` to ``
          ...
       ]
 
-      MY_DRF_AUTH_TOKEN = "tal"
+      # import os, binascii; binascii.hexlify(os.urandom(20)).decode()
+      MY_DRF_AUTH_TOKEN = "08d9fd42468aebbb8087b604b526ff0821ce4525"
 
       REST_FRAMEWORK = {
           'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -112,12 +115,15 @@ In order to send comments as a logged in user we will first login using the end 
                                       namespace='rest_framework')),
    ]
 
-Next we will create the module ``simple/apiauth.py``.
 
 Create a new authentication class
 *********************************
 
-Create the module ``simple/apiauth.py`` with the following content. It is a custom authentication class based on the authentication classes provided by Django REST Framework:
+In this step we create a class to validate that the request has a valid Authorization header. We follow the instructions about how to create a `Custom authentication <https://www.django-rest-framework.org/api-guide/authentication/#custom-authentication>`_ scheme in the Django REST Framework documentation.
+
+In the particular case of this class we don't want to authenticate the user but merely the request. To authenticate the user we added the class ``rest_framework.authentication.SessionAuthentication`` to the **DEFAULT_AUTHENTICATION_CLASSES** of the **REST_FRAMEWORK** setting. So once we read the auth token we will return a tuple with an **AnonymousUser** instance and the content of the token read.
+
+Create the module ``simple/apiauth.py`` with the following content:
 
    .. code-block:: python
 
@@ -152,11 +158,14 @@ Create the module ``simple/apiauth.py`` with the following content. It is a cust
 
           return (AnonymousUser(), auth) 
 
+The class doesn't validate the token. We will do it with the receiver function in the next section.
 
 Create a receiver for ``should_request_be_authorized``
 ******************************************************
 
-Now let's create a receiver function in the ``simple/articles/models.py`` module. Append the following code:
+Now let's create the receiver function. The receiver function will be called when the comment is posted, from the validate method of the **WriteCommentSerializer**. If the receiver returns True the request is considered authorized.
+
+Append the following code to the ``simple/articles/models.py`` module:
 
    .. code-block:: python
 
@@ -167,16 +176,20 @@ Now let's create a receiver function in the ``simple/articles/models.py`` module
 
       @receiver(should_request_be_authorized)
       def my_callback(sender, comment, request, **kwargs):
-          if request.auth == settings.MY_DRF_AUTH_TOKEN:
+          if (
+              (request.user and request.user.is_authenticated) or
+              (request.auth and request.auth == settings.MY_DRF_AUTH_TOKEN)
+          ):
               return True
 
+The left part of the *if* is True when the ``rest_framework.authentication.SessionAuthentication`` recognizes the user posting the comment as a signed in user. However if the user sending the comment is a mere visitor and the request contains a valid **Authorization** token, then our class ``simple.apiauth.APIRequestAuthentication`` will have put the auth token in the request. If the auth token contains the value given in the setting **MY_DRF_AUTH_TOKEN** we can considered the request authorized.
 
 Post a test comment as a visitor
 ********************************
 
 Now with the previous changes in place launch the Django development server and let's try to post a comment using the web API.
 
-These are the fields that have to be sent when the user posting the comment is a mere visitor instead of a signed in user:
+These are the fields that have to be sent:
 
  * **content_type**: A string with the content_type ie: ``content_type="articles.article"``.
  * **object_pk**: The object ID we are posting the comment to.
@@ -191,7 +204,7 @@ I will use the excellent `HTTPie <https://httpie.org/docs>`_ command line client
    .. code-block:: bash
 
     $ http POST http://localhost:8000/comments/api/comment/ \
-           'Authorization:Token tal' \
+           'Authorization:Token 08d9fd42468aebbb8087b604b526ff0821ce4525' \
            content_type="articles.article" object_pk=1 name="Joe Bloggs" \
            followup=false reply_to=0 email="joe@bloggs.com" \
            comment="This is the body, the actual comment..."
@@ -204,7 +217,7 @@ I will use the excellent `HTTPie <https://httpie.org/docs>`_ command line client
     Server: WSGIServer/0.2 CPython/3.8.0
     Vary: Accept
 
-See that in the terminal where you are running ``python manage.py runserver`` you have got the content of the mail message that would be sent to **joe@bloggs.com**. Copy the confirmation URL and visit it to confirm the comment. 
+Check that in the terminal where you are running ``python manage.py runserver`` you have got the content of the mail message that would be sent to **joe@bloggs.com**. Copy the confirmation URL and visit it to confirm the comment. 
 
 Post a test comment as a signed in user
 ***************************************

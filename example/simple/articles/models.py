@@ -3,8 +3,13 @@ from __future__ import unicode_literals
 
 import django
 from django.db import models
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+
+from django_comments_xtd.conf import settings
+from django_comments_xtd.signals import should_request_be_authorized
+
 
 class PublicManager(models.Manager):
     """Returns published articles that are not in the future."""
@@ -41,3 +46,12 @@ class Article(models.Model):
                     'month': int(self.publish.strftime('%m').lower()),
                     'day': self.publish.day,
                     'slug': self.slug})
+
+
+@receiver(should_request_be_authorized)
+def my_callback(sender, comment, request, **kwargs):
+    if (
+        (request.auth and request.auth == settings.MY_DRF_AUTH_TOKEN) or
+        (request.user and request.user.is_authenticated)
+    ):
+        return True

@@ -1,7 +1,13 @@
 # Change Log
 
-## [2.6.3] -
+## [2.7.0] - 
 
+    * Fixes issue #155 (and #170), on how to post comments via the web API. Up
+      until version 2.6.2 posting comments required the fields timestamp,
+      security_hash and honeypot. As of 2.7.0 there is support to allow
+      Django REST Framework authentication classes: WriteCommentSerializer
+      send the signal should_request_be_authorize that enables posting comments.
+      Read the documentation about the web API.
     * Fixes issue #171, on wrong permission used to decide whether a user is a
       moderator. The right permission is django_comments.can_moderate.
       (thanks to Ashwani Gupta, @ashwani99)

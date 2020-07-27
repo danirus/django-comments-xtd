@@ -3,6 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.urls import reverse
 
+from django_comments_xtd.conf import settings
 from django_comments_xtd.moderation import moderator, XtdCommentModerator
 
 
@@ -59,3 +60,13 @@ class DiaryCommentModerator(XtdCommentModerator):
 
 
 moderator.register(Diary, DiaryCommentModerator)
+
+
+def authorize_api_post_comment(sender, comment, request, **kwargs):
+    if (
+        (request.user and request.user.is_authenticated) or
+        (request.auth and request.auth == settings.MY_DRF_AUTH_TOKEN)
+    ):
+        return True
+    else:
+        return False

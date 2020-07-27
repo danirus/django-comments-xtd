@@ -137,7 +137,7 @@ This template gets rendered if any receiver of the signal ``confirmation_receive
 ``email_followup_comment``
 --------------------------
 
-As ``.html`` and ``.txt``, this template represents the mail message sent when there is a new comment following up the user's. It's sent to the user who posted the comment that is being commented in a thread, or that arrived before the one being sent. To receive this email the user must tick the box *Notify me of follow up comments via email*.
+As ``.html`` and ``.txt``, this template represents the mail message sent to notify that comments have been sent after yours. It's sent to the user who posted the comment in the first place, when another comment arrives in the same thread or in a not nested list of comments. To receive this email the user must tick the box *Notify me follow up comments via email*.
 
 The template expects the following objects in the context:
 

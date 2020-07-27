@@ -79,18 +79,18 @@ SECRET_KEY = 'v2824l&2-n+4zznbsk9c-ap5i)b3e8b+%*a=dxqlahm^%)68jn'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-	'DIRS': [
-	    os.path.join(os.path.dirname(__file__), "templates"),
-	],
+        'DIRS': [
+            os.path.join(os.path.dirname(__file__), "templates"),
+        ],
         'APP_DIRS': True,
-	'OPTIONS': {
-	    'context_processors': [
+        'OPTIONS': {
+            'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-		'django.contrib.auth.context_processors.auth',
+                'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-	    ],
-	},
+            ],
+        },
     },
 ]
 

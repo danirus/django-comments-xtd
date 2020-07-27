@@ -12,15 +12,17 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _, activate, get_language
 
 from django_comments import get_form
+from django_comments.forms import CommentSecurityForm
 from django_comments.models import CommentFlag
 from django_comments.signals import comment_will_be_posted, comment_was_posted
-from rest_framework import serializers
+from rest_framework import exceptions, serializers
 
-from django_comments_xtd import signed, views
+from django_comments_xtd import signals, signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)
-from django_comments_xtd.signals import confirmation_received
+from django_comments_xtd.signals import (should_request_be_authorized,
+                                         confirmation_received)
 from django_comments_xtd.utils import get_app_model_options
 
 
@@ -30,9 +32,9 @@ COMMENT_MAX_LENGTH = getattr(settings, 'COMMENT_MAX_LENGTH', 3000)
 class WriteCommentSerializer(serializers.Serializer):
     content_type = serializers.CharField()
     object_pk = serializers.CharField()
-    timestamp = serializers.CharField()
-    security_hash = serializers.CharField()
-    honeypot = serializers.CharField(allow_blank=True)
+    timestamp = serializers.CharField(required=False)
+    security_hash = serializers.CharField(required=False)
+    honeypot = serializers.CharField(required=False)
     name = serializers.CharField(allow_blank=True)
     email = serializers.EmailField(allow_blank=True)
     url = serializers.URLField(required=False)
@@ -86,20 +88,37 @@ class WriteCommentSerializer(serializers.Serializer):
                 % (escape(ctype), escape(object_pk)))
         except (ValueError, serializers.ValidationError) as e:
             raise serializers.ValidationError(
-                "Attempting go get content-type %r and object PK %r exists "
+                "Attempting to get content-type %r and object PK %r exists "
                 "raised %s" % (escape(ctype), escape(object_pk),
                                e.__class__.__name__))
         else:
             if whocan == "users" and not self.request.user.is_authenticated:
                 raise serializers.ValidationError("User not authenticated")
 
+        # Signal that the request allows to be authorized.
+        responses = should_request_be_authorized.send(
+            sender=target.__class__,
+            comment=target,
+            request=self.request
+        )
+
+        for (receiver, response) in responses:
+            if response is True:
+                # A positive response indicates that the POST request
+                # must be trusted. So inject the CommentSecurityForm values
+                # to pass the form validation step.
+                secform = CommentSecurityForm(target)
+                data.update({
+                    "honeypot": "",
+                    "timestamp": secform['timestamp'].value(),
+                    "security_hash": secform['security_hash'].value()
+                })
+                break
         self.form = get_form()(target, data=data)
 
-        # Check security information
+        # Check security information.
         if self.form.security_errors():
-            raise serializers.ValidationError(
-                "The comment form failed security verification: %s" %
-                escape(str(self.form.security_errors())))
+            raise exceptions.PermissionDenied()
         if self.form.errors:
             raise serializers.ValidationError(self.form.errors)
         return data
@@ -132,8 +151,8 @@ class WriteCommentSerializer(serializers.Serializer):
 
         # Replicate logic from django_comments_xtd.views.on_comment_was_posted.
         if (
-                not settings.COMMENTS_XTD_CONFIRM_EMAIL or
-                self.request.user.is_authenticated
+            not settings.COMMENTS_XTD_CONFIRM_EMAIL or
+            self.request.user.is_authenticated
         ):
             if not views._comment_exists(resp['comment']):
                 new_comment = views._create_comment(resp['comment'])

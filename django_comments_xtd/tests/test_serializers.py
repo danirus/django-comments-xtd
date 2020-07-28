@@ -45,7 +45,7 @@ class UserModeratorTestCase(TestCase):
 
     def _send_auth_comment(self, user):
         data = {"name": "", "email": "",
-                "followup": True, "reply_to": 0, "level": 1, "order": 1,
+                "followup": True, "reply_to": 0,
                 "comment": "Es war einmal eine kleine...",
                 "honeypot": ""}
         data.update(self.form.initial)

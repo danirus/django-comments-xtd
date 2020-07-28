@@ -17,7 +17,7 @@ from django_comments.models import CommentFlag
 from django_comments.signals import comment_will_be_posted, comment_was_posted
 from rest_framework import exceptions, serializers
 
-from django_comments_xtd import signals, signed, views
+from django_comments_xtd import signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
                                         LIKEDIT_FLAG, DISLIKEDIT_FLAG)

@@ -46,12 +46,3 @@ class Article(models.Model):
                     'month': int(self.publish.strftime('%m').lower()),
                     'day': self.publish.day,
                     'slug': self.slug})
-
-
-@receiver(should_request_be_authorized)
-def my_callback(sender, comment, request, **kwargs):
-    if (
-        (request.auth and request.auth == settings.MY_DRF_AUTH_TOKEN) or
-        (request.user and request.user.is_authenticated)
-    ):
-        return True

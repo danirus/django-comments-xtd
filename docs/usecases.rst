@@ -10,4 +10,5 @@ page will list more specific use examples.
 .. toctree::
    :maxdepth: 1
 
+   usecases/change-user-image-or-avatar
    usecases/only-signed-in-can-comment

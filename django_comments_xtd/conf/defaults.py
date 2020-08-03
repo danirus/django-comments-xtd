@@ -57,3 +57,8 @@ def username(u):
 
 
 COMMENTS_XTD_API_USER_REPR = username
+
+# Function to obtain comment's avatar. Receives the comment as parameter.
+# Rewrite this function to make the web API use a different logic. 
+# Should return an URL.
+COMMENTS_XTD_API_GET_USER_AVATAR = "django_comments_xtd.utils.get_user_avatar"

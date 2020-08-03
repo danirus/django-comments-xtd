@@ -6,10 +6,13 @@ Change user image or avatar
 
 .. _Gravatar: http://gravatar.com/
 .. _django-avatar: https://github.com/grantmcconnaughey/django-avatar
+.. _django-contrib-comments: https://django-contrib-comments.readthedocs.io/
 
-By default django-comments-xtd uses Gravatar_ to fetch user profile images, but such behaviour can be customized. This page describes how to setup django-comments-xtd so that user images come from a different origin other than the default.
+By default django-comments-xtd uses its own template filters to fetch user profile images from Gravatar_. Such behaviour can be customized. This page describes how to setup django-comments-xtd so that user images displayed in comments can come from a different origin.
 
-This page will use django-avatar_ to provide registered users' images. Your Django project may be using another method to procure user images, perhaps it manages them directly or it fetches them using any social service. Just adapt your case to the methodology exposed here.
+For such purpose, in addition to the default filters, we will modify the example projects to make use of django-avatar_. Django-avatar allows registered users' to have their own images stored in the project. This way we won't hit Gravatar every time we display a comment's user image. 
+
+Your Django project may be using another method to procure user images, perhaps it manages them directly or it fetches them using any social service. Just adapt your case to the methodology exposed here.
 
 
 .. contents:: Table of Contents
@@ -19,7 +22,7 @@ This page will use django-avatar_ to provide registered users' images. Your Djan
 Using only Django templates
 ===========================
 
-If you don't use django-comments-xtd's web API nor the JavaScript plugin, but just the template based views of django-comments-xtd, then you only have to adapt your project's HTML templates. Let's see the changes using an example project.
+If you don't use django-comments-xtd's web API nor the JavaScript plugin, but just the template based views, you only have to adapt your project's HTML templates. Let's go through the changes using an example project.
 
 A simple example web project using only Django templates to render web pages can be represented by the :ref:`example-simple`. We are going to customize it to display stored user images via django-avatar_. First, visit the samples :ref:`example-setup` page in this documentation to get the :ref:`example-simple` up and running.
 
@@ -94,13 +97,15 @@ Create a ``comments/preview.html`` template
 
 We also want to apply the same logic to the ``comments/preview.html`` template. The preview template gets rendered when the user clicks on the preview button in the comment form. 
 
-In this case the ``preview.html`` template is not within the ``simple/templates`` directory. We have to copy it from django-comments-xtd's templates directory into the simple project templates directory:
+The ``preview.html`` template is initially served by django-contrib-comments_, but it is overriden by a copy provided from django-comments-xtd templates directory. 
+
+For our purpose we have to modify that version, let's copy it from django-comments-xtd's templates directory into the simple project templates directory:
 
 .. code-block:: bash
 
     $ cp django_comments_xtd/templates/comments/preview.html example/simple/templates/comments/
 
-And finally edit the template so that the ``<div class="media">`` looks like this:
+And edit the template so that the ``<div class="media">`` starts like this:
 
 .. code-block:: html+django
 
@@ -126,9 +131,9 @@ And finally edit the template so that the ``<div class="media">`` looks like thi
 Testing the changes
 -------------------
 
-Login in `localhost:8000/admin/ <http://localhost:8000>`_ with user/password ``admin/admin``, and visit avatar's admin application to add a squared dimensioned image to the admin user. 
+These changes are enough when your project uses only Django templates to render comments. Now login in `localhost:8000/admin/ <http://localhost:8000>`_ with user/password ``admin/admin``, and visit avatar's admin application to add a squared dimensioned image to the admin user. 
 
-The simple project is ready. Send a comment as the admin user and another one as a mere visitor (not registered user). When sending the comment as a mere user, the email message to confirm the comment is displayed in the console (due to the setting ``EMAIL_BACKEND``). Scroll up in the console to see the plain-text part of the message and copy the confirmation URL. Then paste it in the browser.
+The simple project is ready. To test it, send a comment as the admin user and another one as a mere visitor (not registered user). When sending the comment as a mere user, the email message to confirm the comment is displayed in the console. Scroll up in the console to see the plain-text part of the message and copy the confirmation URL. Then paste it in the browser.
 
 The message posted as the admin user gets the avatar image from django-avatar, while the image sent as a mere visitor comes directly from Gravatar.
 

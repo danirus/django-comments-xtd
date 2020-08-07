@@ -303,3 +303,23 @@ Defaults to:
    .. code-block:: python
 
        COMMENTS_XTD_API_USER_REPR = lambda u: u.username
+
+
+.. setting:: COMMENTS_XTD_API_GET_USER_AVATAR
+
+``COMMENTS_XTD_API_GET_USER_AVATAR``
+====================================
+
+.. _Gravatar: http://gravatar.com/
+
+**Optional**. Path to the function used by the web API to retrieve the the user's image URL of the user associated with a comment. By default django-comments-xtd tries to retrieve images from Gravatar_. If you use the web API (the JavaScript plugin uses it) then you might want to write a function to provide the URL to the user's image from a comment object. You might be interested on the use case :ref:`ref-change-user-image-or-avatar`, which cover the topic in depth. 
+
+ .. code-block:: python
+
+     COMMENTS_XTD_API_GET_USER_AVATAR = "comp.utils.get_avatar_url"
+
+The function used by default, **get_user_avatar** in ``django_comments_xtd/utils.py``, tries to fetch every user's image from Gravatar:
+
+ .. code-block:: python
+
+     COMMENTS_XTD_API_GET_USER_AVATAR = "django_comments_xtd.utils.get_user_avatar"

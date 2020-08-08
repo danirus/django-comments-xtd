@@ -534,7 +534,7 @@ def get_commentbox_props(parser, token):
 
 # ----------------------------------------------------------------------
 @register.filter
-def xtd_comment_gravatar_url(email, size=48, avatar='mp'):
+def xtd_comment_gravatar_url(email, size=48, avatar='identicon'):
     """
     This is the parameter of the production avatar.
     The first parameter is the way of generating the
@@ -548,7 +548,7 @@ def xtd_comment_gravatar_url(email, size=48, avatar='mp'):
 
 # ----------------------------------------------------------------------
 @register.filter
-def xtd_comment_gravatar(email, config='48,mp'):
+def xtd_comment_gravatar(email, config='48,identicon'):
     size, avatar = config.split(',')
     url = xtd_comment_gravatar_url(email, size, avatar)
     return mark_safe('<img src="%s" height="%s" width="%s">' %

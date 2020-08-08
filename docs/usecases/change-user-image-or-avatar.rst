@@ -70,6 +70,7 @@ Let's go then through the following changes:
 
  * Change the ``comment_tree.html`` template.
  * Create the ``comments/preview.html`` template.
+ * Create the ``django_comments_xtd/comment.html`` template (bonus).
 
 
 Change the ``comment_tree.html`` template
@@ -136,6 +137,38 @@ And edit the template so that the ``<div class="media">`` starts like this:
 
 	[...]
 
+Create the ``django_comments_xtd/comment.html`` template
+--------------------------------------------------------
+
+Additionally to the templates used by the **quotes app**, the :ref:`example-comp` displays a list with the last 5 comments posted to the site, regardless of whether they were sent to the quotes app or the articles app.
+
+In order to get the appropriate avatar images in such a list we need to override the ``django_comments_xtd/comment.html`` template:
+
+.. code-block:: bash
+
+    $ cp django_comments_xtd/templates/django_comments_xtd/comment.html example/comp/templates/django_comments_xtd/
+
+Now edit the template and make the following changes:
+
+
+.. code-block:: html+django
+
+	{% load avatar_tags %}
+	
+	[...]
+
+	<div id="c{{ comment.id }}" class="media"><a name="c{{ comment.id }}"></a>
+	  <img
+	    {% if comment.user|has_avatar %}
+	      src="{% avatar_url comment.user 48 %}"
+	    {% else %}
+	      src="{{ comment.user_email|xtd_comment_gravatar_url }}"
+	    {% endif %}
+	    height="48" width="48" class="mr-3"
+	  >
+	  <div class="media-body">
+
+	[...]
 
 
 Test the changes
@@ -157,24 +190,24 @@ When using the web API
 
 If your project uses the web API you have to customize :setting:`COMMENTS_XTD_API_GET_USER_AVATAR` to point to the function that will retrieve the avatar image when the REST API requires it.
 
-The **articles app** of the :ref:`example-comp` uses the web API (actually, the JavaScript plugin does). By default the setting :setting:`COMMENTS_XTD_API_GET_USER_AVATAR` points to the function **get_user_avatar** in ``django_comments_xtd/utils.py``. That function only uses Gravatar_ to fetch user images.
+The **articles app** of the :ref:`example-comp` uses the web API (actually, the JavaScript plugin does). We have to customize it so that avatar images for registered users are fetched using django-avatar, while avatar images for mere visitors are fetched using the standard Gravatar_ approach.
 
-However for our purpose we have to customize the **articles app** so that avatar images for registered users are fetched using django-avatar, while avatar images for mere visitors are fetched using the standard Gravatar_ approach.
+The default value of :setting:`COMMENTS_XTD_API_GET_USER_AVATAR` points to the function **get_user_avatar** in ``django_comments_xtd/utils.py``. That function only uses Gravatar_ to fetch user images. 
 
 To acomplish it we only need to do the following:
 
- * Implement the function that fetches the image.
+ * Implement the function that fetches images' URLs.
  * Override ``COMMENTS_XTD_API_GET_USER_AVATAR``.
  * Test the changes.
 
 
-Implement the function that fetches the image
----------------------------------------------
+Implement the function that fetches images' URLs
+------------------------------------------------
 
-The web API calls the function pointed to by the :setting:`COMMENTS_XTD_API_GET_USER_AVATAR`. The default function does not distinguish whether the user is a registered user or a mere visitor. However we want to apply different logic:
+We want to apply the following logic when fetching images' URLs:
 
- * When a registered user sends a comment, the ``comment.user`` object points to an instance of that user. There we will use **django-avatar**.
- * When a mere visitor sends a comment, the ``comment.user`` object is ``None``. But we still have the ``comment.user_email`` which contains the email address of the visitor. Here we will use django-comments-xtd.
+ * When a registered user sends a comment, the ``comment.user`` object points to an instance of that user. There we will use **django-avatar** to fetch that uses's image URL.
+ * When a mere visitor sends a comment, the ``comment.user`` object is ``None``. But we still have the ``comment.user_email`` which contains the email address of the visitor. Here we will use django-comments-xtd (which in turn defaults to Gravatar).
 
 Create the module ``comp/utils.py`` with the following content:
 
@@ -215,9 +248,11 @@ Test the changes
 
 Now the **articles app** is ready. If you already added an avatar image for the admin user, as we did in the previous **Test the changes** section, then send two comments to any of the articles:
 
- 1. Login in as admin/admin in the `admin UI <http://localhost:8000/admin/>`_ and then visit any of the `articles page <http://localhost:8000/articles/>`_ and send a comment as the admin user.
+ 1. Login in as admin/admin in the `admin UI <http://localhost:8000/admin/>`_, then visit any of the `articles page <http://localhost:8000/articles/>`_ and send a comment as the admin user. See also that the image displayed in the preview corresponds to the image added to the admin user.
+ 2. `Logout <http://localhost:8000/admin/logout/>`_ from the admin interface and send another comment as a mere visitor. If you have a Gravatar account, use the same email address when posting the comment. The Gravatar image associated should be displayed in the comment. 
+
 
 Conclusion
 ==========
 
-Tal
+Images displayed in association with comments can come from customized sources. Adapting your project to use your own sources is a matter of adjusting the templates or writing a new function to feed web API calls.

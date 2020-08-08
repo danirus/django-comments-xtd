@@ -127,7 +127,7 @@ def preview_user_avatar(request):
     """Fetch the image associated with the user previewing the comment."""
     print("I am here")
     temp_comment = TmpXtdComment({
-        'user': None, 
+        'user': None,
         'user_email': request.data['email']
     })
     if request.user.is_authenticated:

@@ -273,4 +273,3 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     def get_permalink(self, obj):
         return obj.get_absolute_url()
-

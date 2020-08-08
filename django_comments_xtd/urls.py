@@ -22,6 +22,8 @@ urlpatterns = [
     # API handlers.
     url(r'^api/comment/$', api.CommentCreate.as_view(),
         name='comments-xtd-api-create'),
+    url(r'^api/preview/$', api.preview_user_avatar, 
+        name='comments-xtd-api-preview'),
     url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[-\w]+)/$',
         api.CommentList.as_view(), name='comments-xtd-api-list'),
     url(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[-\w]+)/count/$',

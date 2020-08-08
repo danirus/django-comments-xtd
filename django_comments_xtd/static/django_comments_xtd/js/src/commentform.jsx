@@ -21,6 +21,7 @@ export class CommentForm extends React.Component {
       alert: {message: '', cssc: ''}
     };
     this.handle_input_change = this.handle_input_change.bind(this);
+    this.handle_ajax_error = this.handle_ajax_error.bind(this);
     this.handle_blur = this.handle_blur.bind(this);
     this.handle_submit = this.handle_submit.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
@@ -235,14 +236,17 @@ export class CommentForm extends React.Component {
 
   handle_submit_response(status) {
     let css_class = "";
-    const msg_202 = django.gettext("Your comment will be reviewed. Thank your for your patience."),
-	      msg_204 = django.gettext("Thank you, a comment confirmation request has been sent by mail."),
-	      msg_403 = django.gettext("Sorry, your comment has been rejected.");
+    const 
+      msg_202 = django.gettext("Your comment will be reviewed. Thank your for your patience."),
+	    msg_204 = django.gettext("Thank you, a comment confirmation request has been sent by mail."),
+	    msg_403 = django.gettext("Sorry, your comment has been rejected.");
 
-    const message = {202: msg_202,
-		             204: msg_204,
-		             403: msg_403},
-	      cssc = "alert alert-";
+    const message = {
+      202: msg_202,
+		  204: msg_204,
+		  403: msg_403
+    };
+	  const cssc = "alert alert-";
 
     if(status == 403)
       css_class = cssc + "danger";
@@ -254,6 +258,20 @@ export class CommentForm extends React.Component {
     this.props.on_comment_created();
   }
   
+  handle_ajax_error(xhr, status, err) {
+    if(xhr.status == 400) {
+      let errors = this.state.errors;
+      xhr.responseJSON.forEach(function(item, idx, array) {
+        errors[item] = true;
+      });
+      this.setState({errors: errors});
+    } else if (xhr.status == 403) {
+      this.handle_submit_response(xhr.status);
+    } else {
+      console.error(xhr, status, err.toString());
+    }
+  }
+
   handle_submit(event) {
     event.preventDefault();
     if(!this.validate())
@@ -284,26 +302,29 @@ export class CommentForm extends React.Component {
 	      this.handle_submit_response(xhr.status);
         }
       }.bind(this),
-      error: function(xhr, status, err) {
-	    if(xhr.status == 400) {
-	      let errors = this.state.errors;
-	      xhr.responseJSON.forEach(function(item, idx, array) {
-	        errors[item] = true;
-	      });
-	      this.setState({errors: errors});
-	    } else if (xhr.status == 403) {
-	      this.handle_submit_response(xhr.status);
-	    } else {
-          console.error(this.props.send_url, status, err.toString());
-	    }
-      }.bind(this)
+      error: this.handle_ajax_error
     });
   }
   
   handle_preview(event) {
     event.preventDefault();
-    if(this.validate())
-      this.setState({previewing: true});
+    if(!this.validate())
+      return;
+
+    $.ajax({
+      method: 'POST',
+      url: this.props.preview_url,
+      data: { email: this.state.email },
+      dataType: 'json',
+      success: function(data, textStatus, xhr) {
+        if (xhr.status === 200)
+          this.setState({
+            avatar_url: data.url,
+            previewing: true
+          });
+      }.bind(this),
+      error: this.handle_ajax_error
+    });
   }
 
   rawMarkup() {
@@ -318,9 +339,7 @@ export class CommentForm extends React.Component {
     let heading_name = "";
 
     // Build Gravatar.
-    const hash = md5(this.state.email.toLowerCase());
-    const avatar_url = "//www.gravatar.com/avatar/"+hash+"?s=48&d=mm";
-    const avatar_img = <img className="mr-3" src={avatar_url}
+    const avatar_img = <img className="mr-3" src={this.state.avatar_url}
                             height="48" width="48"/>;
     
     if(this.state.url) {

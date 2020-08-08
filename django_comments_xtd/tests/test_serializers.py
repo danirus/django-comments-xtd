@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from datetime import datetime
 try:
     from unittest.mock import patch
 except ImportError:
@@ -7,6 +8,7 @@ except ImportError:
 
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.test import TestCase
 from django.urls import reverse
 
@@ -138,3 +140,55 @@ class PostCommentAsVisitorTestCase(TestCase):
         response = client.post(reverse('comments-xtd-api-create'), data)
         self.assertEqual(response.status_code, 201)  # Comment created.
         self.assertTrue(self.mock_mailer.call_count == 0)
+
+
+def get_fake_avatar(comment):
+    return f"/fake/avatar/{comment.user.username}"
+
+
+funcpath = "django_comments_xtd.tests.test_serializers.get_fake_avatar"
+
+
+class ReadCommentsGetUserAvatarTestCase(TestCase):
+    # Test ReadCommentSerializer method get_user_avatar.
+    # Change setting COMMENTS_XTD_API_GET_USER_AVATAR so that it uses a
+    # deterministic function: get_fake_avatar (here defined). Then send a 
+    # couple of comments and verify that the function is called.
+
+    def setUp(self):
+        joe = User.objects.create_user("joe", "joe@example.com", "joepwd",
+                                       first_name="Joe", last_name="Bloggs")
+        alice = User.objects.create_user("alice", "alice@tal.com", "alicepwd",
+                                         first_name="Alice", last_name="Bloggs")
+        self.article = Article.objects.create(title="September", 
+                                              slug="september", 
+                                              body="During September...")
+        self.article_ct = ContentType.objects.get(app_label="tests",
+                                                  model="article")
+        self.site = Site.objects.get(pk=1)
+
+        # Testing comment from Bob.
+        XtdComment.objects.create(content_type=self.article_ct,
+                                  object_pk=self.article.id,
+                                  content_object=self.article,
+                                  site=self.site,
+                                  comment="testing comment from Bob",
+                                  user=joe,
+                                  submit_date=datetime.now())
+
+        # Testing comment from Alice.
+        XtdComment.objects.create(content_type=self.article_ct,
+                                  object_pk=self.article.id,
+                                  content_object=self.article,
+                                  site=self.site,
+                                  comment="testing comment from Alice",
+                                  user=alice,
+                                  submit_date=datetime.now())
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_API_GET_USER_AVATAR=funcpath)
+    def test_setting_COMMENTS_XTD_API_GET_USER_AVATAR_works(self):
+        qs = XtdComment.objects.all()
+        ser = ReadCommentSerializer(qs, context={"request": None}, many=True)
+        self.assertEqual(ser.data[0]['user_avatar'], '/fake/avatar/joe')
+        self.assertEqual(ser.data[1]['user_avatar'], '/fake/avatar/alice')

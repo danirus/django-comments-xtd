@@ -38,7 +38,8 @@ def commentbox_props(obj, user, request=None):
             flag_url: <api-url-to-suggest-comment-removal>,
             list_url: <api-url-to-list-comments>,
             count_url: <api-url-to-count-comments>,
-            send_url: <api-irl-to-send-a-comment>,
+            send_url: <api-url-to-send-a-comment>,
+            preview_url: <api-url-to-preview-users-avatar>,
             form: {
                 content_type: <value>,
                 object_pk: <value>,
@@ -89,6 +90,7 @@ def commentbox_props(obj, user, request=None):
                               kwargs={'content_type': ctype_slug,
                                       'object_pk': obj.id}),
         "send_url": _reverse("comments-xtd-api-create"),
+        "preview_url": _reverse("comments-xtd-api-preview"),
         "form": {
             "content_type": form['content_type'].value(),
             "object_pk": form['object_pk'].value(),

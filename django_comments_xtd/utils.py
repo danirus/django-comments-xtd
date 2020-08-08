@@ -2,11 +2,16 @@
 # http://ui.co.id/blog/asynchronous-send_mail-in-django
 
 from copy import copy
+import hashlib
 try:
     import Queue as queue  # python2
 except ImportError:
     import queue as queue  # python3
 import threading
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.contenttypes.models import ContentType
@@ -103,3 +108,9 @@ def get_html_id_suffix(object):
     value = "%s" % object.__hash__()
     suffix = salted_hmac(settings.COMMENTS_XTD_SALT, value).hexdigest()
     return suffix
+
+
+def get_user_avatar(comment):
+    path = hashlib.md5(comment.user_email.lower().encode('utf-8')).hexdigest()
+    param = urlencode({'s': 48})
+    return "//www.gravatar.com/avatar/%s?%s&d=identicon" % (path, param)

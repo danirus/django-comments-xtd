@@ -1,14 +1,9 @@
-import hashlib
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
-
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils import formats
 from django.utils.html import escape
+from django.utils.module_loading import import_string
 from django.utils.translation import ugettext as _, activate, get_language
 
 from django_comments import get_form
@@ -274,9 +269,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         return obj.allow_thread()
 
     def get_user_avatar(self, obj):
-        path = hashlib.md5(obj.user_email.lower().encode('utf-8')).hexdigest()
-        param = urlencode({'s': 48})
-        return "//www.gravatar.com/avatar/%s?%s&d=mm" % (path, param)
+        return import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)(obj)
 
     def get_permalink(self, obj):
         return obj.get_absolute_url()

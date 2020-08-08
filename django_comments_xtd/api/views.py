@@ -2,15 +2,20 @@ import six
 
 from django.db.models import Prefetch
 from django.contrib.contenttypes.models import ContentType
+from django.utils.module_loading import import_string
 
 from django_comments.models import CommentFlag
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from django_comments_xtd import views
+from django_comments_xtd.conf import settings
 from django_comments_xtd.api import serializers
-from django_comments_xtd.models import XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+from django_comments_xtd.models import (
+    TmpXtdComment, XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+)
 from django_comments_xtd.utils import get_current_site_id
 
 
@@ -115,3 +120,17 @@ class CreateReportFlag(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         perform_flag(self.request, serializer.validated_data['comment'])
+
+
+@api_view(["POST"])
+def preview_user_avatar(request):
+    """Fetch the image associated with the user previewing the comment."""
+    print("I am here")
+    temp_comment = TmpXtdComment({
+        'user': None,
+        'user_email': request.data['email']
+    })
+    if request.user.is_authenticated:
+        temp_comment['user'] = request.user
+    get_user_avatar = import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)
+    return Response({'url': get_user_avatar(temp_comment)})

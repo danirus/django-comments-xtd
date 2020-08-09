@@ -18,7 +18,7 @@ test.run_tests = run_tests
 
 setup(
     name="django-comments-xtd",
-    version="2.6.2",
+    version="2.7.0",
     packages=find_packages(),
     include_package_data=True,
     license="MIT",

@@ -1,16 +1,22 @@
 # Change Log
 
-## [2.7.0] - 
+## [2.7.0] - 2020-08-09
 
-    * Fixes issue #155 (and #170), on how to post comments via the web API. Up
-      until version 2.6.2 posting comments required the fields timestamp,
-      security_hash and honeypot. As of 2.7.0 there is support to allow
-      Django REST Framework authentication classes: WriteCommentSerializer
+    * Enhancement, closing issue #155 (and #170), on how to post comments via 
+      the web API. Up until version 2.6.2 posting comments required the fields
+      timestamp, security_hash and honeypot. As of 2.7.0 there is support to 
+      allow Django REST Framework authentication classes: WriteCommentSerializer
       send the signal should_request_be_authorize that enables posting comments.
       Read the documentation about the web API.
+    * Enhancement, closing issue #175 on how to customize django-comments-xts
+      so that user images displayed in comments come from other sources. A new
+      setting COMMENTS_XTD_API_GET_USER_AVATAR has been added. The docs have
+      been extended with a page that explains the use case in depth.
     * Fixes issue #171, on wrong permission used to decide whether a user is a
       moderator. The right permission is django_comments.can_moderate.
-      (thanks to Ashwani Gupta, @ashwani99)
+      (thanks to Ashwani Gupta, @ashwani99).
+    * Fixes issue #136 on missing <link> element in the templates/base.html
+      file distributed with the tutorial.tar.gz bundle.
 
 ## [2.6.2] - 2020-07-05
 

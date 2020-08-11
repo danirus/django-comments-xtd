@@ -706,8 +706,7 @@ Commenting options
 As of version 2.0 django-comments-xtd has a new setting
 :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS` that must be used to allow comment
 flagging. The purpose of it is to give an additional level of control about what
-action users can do on comments: flag them as inappropriate, like/dislike them,
-and retrieve the list of users who liked/disliked them.
+actions users can perform on comments: flag them as inappropriate, like/dislike them, retrieve the list of users who liked/disliked them, and whether visitors can post comments or only registered users can do it.
 
 It defaults to:
 
@@ -718,10 +717,11 @@ It defaults to:
                'allow_flagging': False,
                'allow_feedback': False,
                'show_feedback': False,
+               'who_can_post': 'all'  # Valid values: 'all', users'
            }
        }
 
-We will enable each option in the next sections.
+We will go through the first three options in the following sections. As for the last option, *who_can_post*, I recommend you to read the special use case :ref:`ref-recipe-only-signed-in-can-comment`, that explains the topic in depth.
 
 
 Removal suggestion

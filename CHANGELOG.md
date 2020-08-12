@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.7.1] - 2020-08-12
+
+    * Fixes issue #188, about loading a templatetags module not required for
+      the application. 
+
 ## [2.7.0] - 2020-08-09
 
     * Enhancement, closing issue #155 (and #170), on how to post comments via 

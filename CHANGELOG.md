@@ -3,7 +3,10 @@
 ## [2.7.1] - 2020-08-12
 
     * Fixes issue #188, about loading a templatetags module not required for
-      the application. 
+      the application.
+    * Fixes issue #196. When extending django-comments-xtd's comment model, the
+      receiver function that reviews whether nested comments have to be publish or
+      unpublish is not called.
 
 ## [2.7.0] - 2020-08-09
 

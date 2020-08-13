@@ -1,16 +1,15 @@
 from django.db import models
 from django.db.models import F, Max, Min, Q
-from django.db.models.signals import pre_save
 from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
 from django.core import signing
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from django_comments.managers import CommentManager
 from django_comments.models import Comment, CommentFlag
 
+from django_comments_xtd import get_model
 from django_comments_xtd.conf import settings
 
 
@@ -218,7 +217,6 @@ def publish_or_unpublish_nested_comments(comment_id, are_public=False):
         qs.update(is_public=are_public)
 
 
-@receiver(pre_save, sender=XtdComment)
 def publish_or_unpublish_on_pre_save(sender, instance, raw, using, **kwargs):
     if not raw and instance and instance.id:
         are_public = (not instance.is_removed) and instance.is_public

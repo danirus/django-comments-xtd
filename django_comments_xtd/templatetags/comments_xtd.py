@@ -14,6 +14,7 @@ from django.template import (Library, Node, TemplateSyntaxError,
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from django_comments_xtd.conf import settings
 from django_comments.models import CommentFlag
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.api import frontend
@@ -36,12 +37,17 @@ class XtdCommentCountNode(Node):
     def __init__(self, as_varname, content_types):
         """Class method to parse get_xtdcomment_list and return a Node."""
         self.as_varname = as_varname
-        self.qs = XtdComment.objects.for_content_types(content_types)
+        self.qs = get_comment_model().objects.for_content_types(content_types)
+        self.qs = self.qs.filter(is_public=True)
+        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+            self.qs = self.qs.filter(is_removed=False)
 
     def render(self, context):
-        context[self.as_varname] = self.qs.filter(
-                site=get_current_site_id(context.get('request'))
-            ).count()
+        # import ipdb; ipdb.set_trace()
+        site_id = getattr(settings, "SITE_ID", None)
+        if not site_id and ('request' in context):
+            site_id = get_current_site(context['request']).pk
+        context[self.as_varname] = self.qs.filter(site=site_id).count()
         return ''
 
 

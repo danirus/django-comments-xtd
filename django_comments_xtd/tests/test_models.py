@@ -109,13 +109,13 @@ class XtdCommentManagerTestCase(ArticleBaseTestCase):
 
 def thread_test_step_1(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
-    site = Site.objects.get(pk=1)
+    if not "site" in kwargs:
+      kwargs["site"] = Site.objects.get(pk=1)
 
     # post Comment 1 with parent_id 0
     model.objects.create(content_type=article_ct,
                          object_pk=article.id,
                          content_object=article,
-                         site=site,
                          comment="comment 1 to article",
                          submit_date=datetime.now(),
                          **kwargs)
@@ -124,7 +124,6 @@ def thread_test_step_1(article, model=get_model(), **kwargs):
     model.objects.create(content_type=article_ct,
                          object_pk=article.id,
                          content_object=article,
-                         site=site,
                          comment="comment 2 to article",
                          submit_date=datetime.now(),
                          **kwargs)
@@ -485,7 +484,7 @@ class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
         self.assertFalse(cm4.is_removed)
 
 
-_model = "django_comments_xtd.tests.models.MyComment"
+_xtd_model = "django_comments_xtd.tests.models.MyComment"
 
 
 class PublishOrUnpublishNestedComments_2_TestCase(ArticleBaseTestCase):
@@ -496,8 +495,10 @@ class PublishOrUnpublishNestedComments_2_TestCase(ArticleBaseTestCase):
 
     def setUp(self):
         super(PublishOrUnpublishNestedComments_2_TestCase, self).setUp()
-        thread_test_step_1(self.article_1, model=MyComment, title="Can't be empty 1")
-        thread_test_step_2(self.article_1, model=MyComment, title="Can't be empty 2")
+        thread_test_step_1(self.article_1, model=MyComment, 
+                           title="Can't be empty 1")
+        thread_test_step_2(self.article_1, model=MyComment, 
+                           title="Can't be empty 2")
         #
         # These two lines create the following comments:
         #
@@ -513,14 +514,16 @@ class PublishOrUnpublishNestedComments_2_TestCase(ArticleBaseTestCase):
             self.assertTrue(cm.is_public)
             self.assertFalse(cm.is_removed)
 
-    @patch.multiple('django_comments_xtd.conf.settings', COMMENTS_XTD_MODEL=_model)
+    @patch.multiple('django_comments_xtd.conf.settings', 
+                    COMMENTS_XTD_MODEL=_xtd_model)
     def test_removing_c1_unpublishes_c3_and_c4(self):
-        # Register the receiver again. It was registered in apps.py, but we have
-        # patched the COMMENTS_XTD_MODEL, however we won't fake the ready. It's
-        # easier to just register again the receiver, to test only what depends
-        # on django-comments-xtd.
+        # Register the receiver again. It was registered in apps.py, but we 
+        # have patched the COMMENTS_XTD_MODEL, however we won't fake the 
+        # ready. It's easier to just register again the receiver, to test 
+        # only what depends on django-comments-xtd.
         model_app_label = get_model()._meta.label
-        pre_save.connect(publish_or_unpublish_on_pre_save, sender=model_app_label)
+        pre_save.connect(publish_or_unpublish_on_pre_save, 
+                         sender=model_app_label)
 
         cm1 = MyComment.objects.get(pk=1)
         cm1.is_removed = True

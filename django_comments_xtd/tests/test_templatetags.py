@@ -5,22 +5,24 @@ except ImportError:
 import unittest
 
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.sites.models import Site
 from django.template import Context, Template, TemplateSyntaxError
 from django.test import TestCase as DjangoTestCase
 
 from django_comments_xtd.models import XtdComment
-from django_comments_xtd.tests.models import Article, Diary
+from django_comments_xtd.tests.models import Article, Diary, MyComment
 from django_comments_xtd.tests.test_models import (
     thread_test_step_1, thread_test_step_2, thread_test_step_3,
     thread_test_step_4, thread_test_step_5, add_comment_to_diary_entry)
+
+
+_xtd_model = "django_comments_xtd.tests.models.MyComment"
 
 
 class GetXtdCommentCountTestCase(DjangoTestCase):
     def setUp(self):
         self.article_1 = Article.objects.create(
             title="September", slug="september", body="During September...")
-        self.article_2 = Article.objects.create(
-            title="October", slug="october", body="What I did on October...")
         self.day_in_diary = Diary.objects.create(body="About Today...")
 
     def test_get_xtdcomment_count_for_one_model(self):
@@ -38,6 +40,49 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
              "   for tests.article tests.diary %}"
              "{{ varname }}")
         self.assertEqual(Template(t).render(Context()), '3')
+
+    @patch.multiple('django_comments_xtd.conf.settings', 
+                    COMMENTS_XTD_MODEL=_xtd_model)
+    def test_get_xtdcomment_count_for_xtdcomment_model(self):
+        thread_test_step_1(self.article_1, model=MyComment, 
+                           title="Can't be empty 1")
+        t = ("{% load comments_xtd %}"
+             "{% get_xtdcomment_count as varname for tests.article %}"
+             "{{ varname }}")
+        self.assertEqual(Template(t).render(Context()), '2')
+
+    @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
+    def test_get_xtdcomment_count_for_one_site(self):
+        site2 = Site.objects.create(domain='site2.com', name='site2.com')
+        thread_test_step_1(self.article_1, site=site2)
+        t = ("{% load comments_xtd %}"
+             "{% get_xtdcomment_count as varname for tests.article %}"
+             "{{ varname }}")
+        self.assertEqual(Template(t).render(Context()), '2')        
+
+    def test_get_xtdcomment_count_after_removing(self):
+        thread_test_step_1(self.article_1)
+        thread_test_step_2(self.article_1)
+        #
+        # These two lines create the following comments:
+        #
+        # (  # content ->    cmt.id  thread_id  parent_id  level  order
+        #     cm1,   # ->     1         1          1        0      1
+        #     cm3,   # ->     3         1          1        1      2
+        #     cm4,   # ->     4         1          1        1      3
+        #     cm2,   # ->     2         2          2        0      1
+        # ) = XtdComment.objects.all()
+        #        
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        # After removing the cm1, both cm3 and cm4 must remain hidden,
+        # as COMMENTS_HIDE_REMOVED is True by default. Therefore the
+        # count should return 1.
+        t = ("{% load comments_xtd %}"
+             "{% get_xtdcomment_count as varname for tests.article %}"
+             "{{ varname }}")
+        self.assertEqual(Template(t).render(Context()), '1')
 
 
 class LastXtdCommentsTestCase(DjangoTestCase):

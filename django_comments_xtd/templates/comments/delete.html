@@ -6,43 +6,47 @@
 
 {% block content %}
 <div class="mb-4">
-    <h3 class="text-center">{% trans "Remove this comment?" %}</h3>
-    <hr/>
+  <h3 class="text-center">{% trans "Remove this comment?" %}</h3>
+  <hr/>
 </div>
 <p class="lead text-center">{% trans "As a moderator you can delete comments. Deleting a comment does not remove it from the site, only prevents your website from showing the text. Click on the remove button to delete the following comment:" %}</p>
 <div class="row">
-    <div class="offset-md-1 col-md-10">
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="media">
-                    {{ comment.user_email|xtd_comment_gravatar }}
-                    <div class="media-body">
-                        <h6 class="mb-1 small">
-                            {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-                            {% if comment.user_url %}
-                            <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                                {{ comment.user_name }}
-                                {% if comment.user_url %}
-                            </a>{% endif %}
-                        </h6>
-                        <p>{{ comment.comment }}</p>
-                    </div>
-                </div>
-            </div>
+  <div class="offset-md-1 col-md-10">
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="media">
+          <div class="mr-3">
+            {{ comment.user_email|xtd_comment_gravatar }}
+          </div>
+          <div class="media-body">
+            <h6 class="mb-1 small">
+              {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+              {% if comment.user_url %}
+              <a href="{{ comment.user_url }}" target="_new">
+                {{ comment.user_name }}
+              </a>
+              {% else %}
+              {{ comment.user_name }}
+              {% endif %}
+            </h6>
+            <p>{{ comment.comment }}</p>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 <div class="row">
   <div class="offset-md-1 col-md-10">
-      <form action="." method="post">{% csrf_token %}
-          <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
-          <div class="form-group">
-              <div class="text-center">
-                  <input type="submit" name="submit" class="btn btn-danger" value="{% trans "Remove" %}"/>
-                  <a class="btn btn-secondary" href="{{ comment.get_absolute_url }}">cancel</a>
-              </div>
+    <form action="." method="post">{% csrf_token %}
+      <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
+        <div class="form-group">
+          <div class="text-center">
+            <input type="submit" name="submit" class="btn btn-danger" value="{% trans "Remove" %}"/>
+            <a class="btn btn-secondary" href="{{ comment.get_absolute_url }}">cancel</a>
           </div>
-      </form>
+        </div>
+    </form>
   </div>
 </div>
 {% endblock %}

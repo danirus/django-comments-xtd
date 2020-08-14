@@ -1,12 +1,19 @@
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 from datetime import datetime
 
+from django.db.models.signals import pre_save
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.test import TestCase as DjangoTestCase
 
+from django_comments_xtd import get_model
 from django_comments_xtd.models import (XtdComment,
-                                        MaxThreadLevelExceededException)
-from django_comments_xtd.tests.models import Article, Diary
+                                        MaxThreadLevelExceededException,
+                                        publish_or_unpublish_on_pre_save)
+from django_comments_xtd.tests.models import Article, Diary, MyComment
 
 
 class ArticleBaseTestCase(DjangoTestCase):
@@ -100,48 +107,52 @@ class XtdCommentManagerTestCase(ArticleBaseTestCase):
 #  step5     9        -      c9                        <-                 cmt9
 
 
-def thread_test_step_1(article):
+def thread_test_step_1(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
     site = Site.objects.get(pk=1)
 
     # post Comment 1 with parent_id 0
-    XtdComment.objects.create(content_type=article_ct,
-                              object_pk=article.id,
-                              content_object=article,
-                              site=site,
-                              comment="comment 1 to article",
-                              submit_date=datetime.now())
+    model.objects.create(content_type=article_ct,
+                         object_pk=article.id,
+                         content_object=article,
+                         site=site,
+                         comment="comment 1 to article",
+                         submit_date=datetime.now(),
+                         **kwargs)
 
     # post Comment 2 with parent_id 0
-    XtdComment.objects.create(content_type=article_ct,
-                              object_pk=article.id,
-                              content_object=article,
-                              site=site,
-                              comment="comment 2 to article",
-                              submit_date=datetime.now())
+    model.objects.create(content_type=article_ct,
+                         object_pk=article.id,
+                         content_object=article,
+                         site=site,
+                         comment="comment 2 to article",
+                         submit_date=datetime.now(),
+                         **kwargs)
 
 
-def thread_test_step_2(article):
+def thread_test_step_2(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
     site = Site.objects.get(pk=1)
 
     # post Comment 3 to parent_id 1
-    XtdComment.objects.create(content_type=article_ct,
-                              object_pk=article.id,
-                              content_object=article,
-                              site=site,
-                              comment="comment 1 to comment 1",
-                              submit_date=datetime.now(),
-                              parent_id=1)
+    model.objects.create(content_type=article_ct,
+                         object_pk=article.id,
+                         content_object=article,
+                         site=site,
+                         comment="comment 1 to comment 1",
+                         submit_date=datetime.now(),
+                         parent_id=1,
+                         **kwargs)
 
     # post Comment 4 to parent_id 1
-    XtdComment.objects.create(content_type=article_ct,
-                              object_pk=article.id,
-                              content_object=article,
-                              site=site,
-                              comment="comment 2 to comment 1",
-                              submit_date=datetime.now(),
-                              parent_id=1)
+    model.objects.create(content_type=article_ct,
+                         object_pk=article.id,
+                         content_object=article,
+                         site=site,
+                         comment="comment 2 to comment 1",
+                         submit_date=datetime.now(),
+                         parent_id=1,
+                         **kwargs)
 
 
 def thread_test_step_3(article):
@@ -433,3 +444,94 @@ class DiaryBaseTestCase(DjangoTestCase):
                                       comment="cmt to cmt to day in diary",
                                       submit_date=datetime.now(),
                                       parent_id=1)  # already max thread level
+
+
+class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
+    # Add a threaded comment structure (c1, c2, c3) and verify that 
+    # removing c1 unpublishes c3.
+
+    def setUp(self):
+        super(PublishOrUnpublishNestedComments_1_TestCase, self).setUp()
+        thread_test_step_1(self.article_1)
+        thread_test_step_2(self.article_1)
+        #
+        # These two lines create the following comments:
+        #
+        # (  # content ->    cmt.id  thread_id  parent_id  level  order
+        #     cm1,   # ->     1         1          1        0      1
+        #     cm3,   # ->     3         1          1        1      2
+        #     cm4,   # ->     4         1          1        1      3
+        #     cm2,   # ->     2         2          2        0      1
+        # ) = XtdComment.objects.all()
+
+    def test_all_comments_are_public_and_have_not_been_removed(self):
+        for cm in XtdComment.objects.all():
+            self.assertTrue(cm.is_public)
+            self.assertFalse(cm.is_removed)
+
+    def test_removing_c1_unpublishes_c3_and_c4(self):
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        self.assertTrue(cm1.is_public)
+        self.assertTrue(cm1.is_removed)
+
+        cm3 = XtdComment.objects.get(pk=3)
+        self.assertFalse(cm3.is_public)
+        self.assertFalse(cm3.is_removed)
+
+        cm4 = XtdComment.objects.get(pk=4)
+        self.assertFalse(cm4.is_public)
+        self.assertFalse(cm4.is_removed)
+
+
+_model = "django_comments_xtd.tests.models.MyComment"
+
+
+class PublishOrUnpublishNestedComments_2_TestCase(ArticleBaseTestCase):
+    # Then mock the settings so that the project uses a customized
+    # comment model (django_comments_xtd.tests.models.MyComment), and repeat
+    # the logic adding MyComment instances. Then remove c1 and be sure
+    # that c3 gets unpublished.
+
+    def setUp(self):
+        super(PublishOrUnpublishNestedComments_2_TestCase, self).setUp()
+        thread_test_step_1(self.article_1, model=MyComment, title="Can't be empty 1")
+        thread_test_step_2(self.article_1, model=MyComment, title="Can't be empty 2")
+        #
+        # These two lines create the following comments:
+        #
+        # (  # content ->    cmt.id  thread_id  parent_id  level  order
+        #     cm1,   # ->     1         1          1        0      1
+        #     cm3,   # ->     3         1          1        1      2
+        #     cm4,   # ->     4         1          1        1      3
+        #     cm2,   # ->     2         2          2        0      1
+        # ) = MyComment.objects.all()
+        
+    def test_all_comments_are_public_and_have_not_been_removed(self):
+        for cm in MyComment.objects.all():
+            self.assertTrue(cm.is_public)
+            self.assertFalse(cm.is_removed)
+
+    @patch.multiple('django_comments_xtd.conf.settings', COMMENTS_XTD_MODEL=_model)
+    def test_removing_c1_unpublishes_c3_and_c4(self):
+        # Register the receiver again. It was registered in apps.py, but we have
+        # patched the COMMENTS_XTD_MODEL, however we won't fake the ready. It's
+        # easier to just register again the receiver, to test only what depends
+        # on django-comments-xtd.
+        model_app_label = get_model()._meta.label
+        pre_save.connect(publish_or_unpublish_on_pre_save, sender=model_app_label)
+
+        cm1 = MyComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        self.assertTrue(cm1.is_public)
+        self.assertTrue(cm1.is_removed)
+
+        cm3 = MyComment.objects.get(pk=3)
+        self.assertFalse(cm3.is_public)
+        self.assertFalse(cm3.is_removed)
+
+        cm4 = MyComment.objects.get(pk=4)
+        self.assertFalse(cm4.is_public)
+        self.assertFalse(cm4.is_removed)

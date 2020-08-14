@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 
 from django_comments_xtd.conf import settings
+from django_comments_xtd.models import XtdComment
 from django_comments_xtd.moderation import moderator, XtdCommentModerator
 
 
@@ -70,3 +71,7 @@ def authorize_api_post_comment(sender, comment, request, **kwargs):
         return True
     else:
         return False
+
+
+class MyComment(XtdComment):
+    title = models.CharField(max_length=256)

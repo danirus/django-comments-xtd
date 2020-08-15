@@ -11,4 +11,5 @@ class CommentsXtdConfig(AppConfig):
         from django_comments_xtd.models import publish_or_unpublish_on_pre_save
 
         model_app_label = get_model()._meta.label
-        pre_save.connect(publish_or_unpublish_on_pre_save, sender=model_app_label)
+        pre_save.connect(publish_or_unpublish_on_pre_save,
+                         sender=model_app_label)

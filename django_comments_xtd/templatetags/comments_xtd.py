@@ -149,10 +149,18 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
         if not isinstance(self.count, int):
             self.count = int(self.count.resolve(context))
 
-        self.qs = XtdComment.objects.for_content_types(
-                self.content_types,
-                site=get_current_site_id(context.get('request'))
-            ).order_by('submit_date')[:self.count]
+        site_id = getattr(settings, "SITE_ID", None)
+        if not site_id and ('request' in context):
+            site_id = get_current_site(context['request']).pk
+
+        self.qs = get_comment_model().objects.for_content_types(
+            self.content_types, site=site_id)
+
+        self.qs = self.qs.filter(is_public=True)
+        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+            self.qs = self.qs.filter(is_removed=False)
+
+        self.qs = self.qs.order_by('submit_date')[:self.count]
 
         strlist = []
         context_dict = context.flatten()

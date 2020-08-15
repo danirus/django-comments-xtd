@@ -85,20 +85,24 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
         self.assertEqual(Template(t).render(Context()), '1')
 
 
-class LastXtdCommentsTestCase(DjangoTestCase):
+class RenderLastXtdCommentsTestCase(DjangoTestCase):
     def setUp(self):
         self.article = Article.objects.create(
             title="September", slug="september", body="During September...")
         self.day_in_diary = Diary.objects.create(body="About Today...")
+
+    def test_render_last_xtdcomments(self):
+        # Send some nested comments to the article.
         thread_test_step_1(self.article)
         thread_test_step_2(self.article)
         thread_test_step_3(self.article)
+        # And send another comment to the diary.
         add_comment_to_diary_entry(self.day_in_diary)
 
-    def test_render_last_xtdcomments(self):
         t = ("{% load comments_xtd %}"
              "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
         output = Template(t).render(Context())
+
         self.assertEqual(output.count('<a name='), 5)
         self.assertEqual(output.count('<a name="c6">'), 1)
         self.assertEqual(output.count('<a name="c5">'), 1)
@@ -109,6 +113,69 @@ class LastXtdCommentsTestCase(DjangoTestCase):
         # the first one must not be rendered in the output.
         self.assertEqual(output.count('<a name="c1">'), 0)
 
+    @patch.multiple('django_comments_xtd.conf.settings', 
+                    COMMENTS_XTD_MODEL=_xtd_model)
+    def test_render_last_customized_comments(self):
+        # Send nested comments using the MyComment model.
+        thread_test_step_1(self.article, model=MyComment, title="title1")
+        thread_test_step_2(self.article, model=MyComment, title="title2")
+        thread_test_step_3(self.article, model=MyComment, title="title3")
+        # Also send a comment of type MyComment to the diary.
+        add_comment_to_diary_entry(self.day_in_diary, model=MyComment, 
+                                   title="title4")
+
+        # render_last_xtdcomments should also render comments of the
+        # model MyComment, defined in COMMENTS_XTD_MODEL setting.
+        t = ("{% load comments_xtd %}"
+             "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
+        output = Template(t).render(Context())
+
+        self.assertEqual(output.count('<a name='), 5)
+        self.assertEqual(output.count('<a name="c6">'), 1)
+        self.assertEqual(output.count('<a name="c5">'), 1)
+        self.assertEqual(output.count('<a name="c4">'), 1)
+        self.assertEqual(output.count('<a name="c3">'), 1)
+        self.assertEqual(output.count('<a name="c2">'), 1)
+        # We added 6 comments, and we render the last 5, so
+        # the first one must not be rendered in the output.
+        self.assertEqual(output.count('<a name="c1">'), 0)
+
+    @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
+    def test_render_last_xtdcomment_for_one_site(self):
+        site2 = Site.objects.create(domain='site2.com', name='site2.com')
+
+        # Send some nested comments to the article in the site1.
+        thread_test_step_1(self.article)  # Sends 2 comments.
+        thread_test_step_2(self.article)  # Sends 2 comments.
+        thread_test_step_3(self.article)  # Sends 1 comment.
+        # And send another comment to the diary.
+        add_comment_to_diary_entry(self.day_in_diary)  # Sends 1 comment.
+
+        # Send some nested comments to the article in the site2.
+        thread_test_step_1(self.article, site=site2)
+
+        # render_last_xtdcomments should be able to list only the comments
+        # posted to the active site.
+        t = ("{% load comments_xtd %}"
+             "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
+        output = Template(t).render(Context())
+
+        # In  the output we will see only the comments sent to site2,
+        # which have comment IDs 7 and 8.
+        self.assertEqual(output.count('<a name='), 2)
+        self.assertEqual(output.count('<a name="c8">'), 1)
+        self.assertEqual(output.count('<a name="c7">'), 1)
+
+
+class GetLastXtdCommentsTestCase(DjangoTestCase):
+    def setUp(self):
+        self.article = Article.objects.create(
+            title="September", slug="september", body="During September...")
+        self.day_in_diary = Diary.objects.create(body="About Today...")
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        thread_test_step_3(self.article)
+        add_comment_to_diary_entry(self.day_in_diary)
     def test_get_last_xtdcomments(self):
         t = ("{% load comments_xtd %}"
              "{% get_last_xtdcomments 5 as last_comments"

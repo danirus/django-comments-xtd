@@ -43,7 +43,6 @@ class XtdCommentCountNode(Node):
             self.qs = self.qs.filter(is_removed=False)
 
     def render(self, context):
-        # import ipdb; ipdb.set_trace()
         site_id = getattr(settings, "SITE_ID", None)
         if not site_id and ('request' in context):
             site_id = get_current_site(context['request']).pk

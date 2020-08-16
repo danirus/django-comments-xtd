@@ -206,21 +206,22 @@ class XtdComment(Comment):
         return dic_list
 
 
-def publish_or_unpublish_nested_comments(comment_id, are_public=False):
+def publish_or_unpublish_nested_comments(comment_id, shall_be_public=False):
     qs = get_model().objects.filter(~Q(pk=comment_id), parent_id=comment_id)
     nested = [cm.id for cm in qs]
-    qs.update(is_public=are_public)
+    qs.update(is_public=shall_be_public)
     while len(nested):
         cm_id = nested.pop()
         qs = XtdComment.objects.filter(~Q(pk=cm_id), parent_id=cm_id)
         nested.extend([cm.id for cm in qs])
-        qs.update(is_public=are_public)
+        qs.update(is_public=shall_be_public)
 
 
 def publish_or_unpublish_on_pre_save(sender, instance, raw, using, **kwargs):
     if not raw and instance and instance.id:
-        are_public = (not instance.is_removed) and instance.is_public
-        publish_or_unpublish_nested_comments(instance.id, are_public=are_public)
+        shall_be_public = (not instance.is_removed) and instance.is_public
+        publish_or_unpublish_nested_comments(instance.id, 
+                                             shall_be_public=shall_be_public)
 
 
 # ----------------------------------------------------------------------

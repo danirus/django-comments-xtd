@@ -54,7 +54,8 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
     @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
     def test_get_xtdcomment_count_for_one_site(self):
         site2 = Site.objects.create(domain='site2.com', name='site2.com')
-        thread_test_step_1(self.article_1, site=site2)
+        thread_test_step_1(self.article_1)  # Creates 2 comments in site1.
+        thread_test_step_1(self.article_1, site=site2)  # Creates 2 comments.
         t = ("{% load comments_xtd %}"
              "{% get_xtdcomment_count as varname for tests.article %}"
              "{{ varname }}")
@@ -83,6 +84,32 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
              "{% get_xtdcomment_count as varname for tests.article %}"
              "{{ varname }}")
         self.assertEqual(Template(t).render(Context()), '1')
+
+    @patch.multiple('django_comments_xtd.conf.settings', 
+                    COMMENTS_HIDE_REMOVED=False)
+    def test_get_xtdcomment_count_after_removing_but_not_hiding(self):
+        thread_test_step_1(self.article_1)
+        thread_test_step_2(self.article_1)
+        #
+        # These two lines create the following comments:
+        #
+        # (  # content ->    cmt.id  thread_id  parent_id  level  order
+        #     cm1,   # ->     1         1          1        0      1
+        #     cm3,   # ->     3         1          1        1      2
+        #     cm4,   # ->     4         1          1        1      3
+        #     cm2,   # ->     2         2          2        0      1
+        # ) = XtdComment.objects.all()
+        #        
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        # After removing the cm1, both cm3 and cm4 don't get hidden,
+        # as COMMENTS_HIDE_REMOVED is False. Therefore the count 
+        # should return 2.
+        t = ("{% load comments_xtd %}"
+             "{% get_xtdcomment_count as varname for tests.article %}"
+             "{{ varname }}")
+        self.assertEqual(Template(t).render(Context()), '2')
 
 
 class RenderLastXtdCommentsTestCase(DjangoTestCase):

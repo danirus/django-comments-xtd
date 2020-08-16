@@ -1,5 +1,12 @@
 # Change Log
 
+## [3.0.0] -
+
+    * Fixes issue #194. Take into account setting COMMENTS_HIDE_REMOVED from
+      parent's app django-comments. This is a backwards incompatible change.
+      When COMMENTS_HIDE_REMOVED is not defined or is defined as True, removed
+      comments should not be retrieved nor counted. <document this>
+
 ## [2.7.1] - 2020-08-12
 
     * Fixes issue #188, about loading a templatetags module not required for

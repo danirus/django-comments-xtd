@@ -143,7 +143,6 @@ class BaseLastXtdCommentsNode(Node):
 
 
 class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
-
     def render(self, context):
         if not isinstance(self.count, int):
             self.count = int(self.count.resolve(context))
@@ -152,18 +151,18 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
         if not site_id and ('request' in context):
             site_id = get_current_site(context['request']).pk
 
-        self.qs = get_comment_model().objects.for_content_types(
+        qs = get_comment_model().objects.for_content_types(
             self.content_types, site=site_id)
 
-        self.qs = self.qs.filter(is_public=True)
+        qs = qs.filter(is_public=True)
         if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
-            self.qs = self.qs.filter(is_removed=False)
+            qs = qs.filter(is_removed=False)
 
-        self.qs = self.qs.order_by('submit_date')[:self.count]
+        qs = qs.order_by('submit_date')[:self.count]
 
         strlist = []
         context_dict = context.flatten()
-        for xtd_comment in self.qs:
+        for xtd_comment in qs:
             if self.template_path:
                 template_arg = self.template_path
             else:
@@ -181,7 +180,6 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
 
 
 class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
-
     def __init__(self, count, as_varname, content_types):
         super(GetLastXtdCommentsNode, self).__init__(count, content_types)
         self.as_varname = as_varname
@@ -189,12 +187,21 @@ class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
     def render(self, context):
         if not isinstance(self.count, int):
             self.count = int(self.count.resolve(context))
-        self.qs = XtdComment.objects.for_content_types(
-                self.content_types,
-                site=get_current_site_id(context.get('request'))
-            )\
-            .order_by('submit_date')[:self.count]
-        context[self.as_varname] = self.qs
+
+        site_id = getattr(settings, "SITE_ID", None)
+        if not site_id and ('request' in context):
+            site_id = get_current_site(context['request']).pk
+
+        qs = get_comment_model().objects.for_content_types(
+                self.content_types, site=site_id)
+
+        qs = qs.filter(is_public=True)
+        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+            qs = qs.filter(is_removed=False)
+
+        qs = qs.order_by('submit_date')[:self.count]
+
+        context[self.as_varname] = qs
         return ''
 
 

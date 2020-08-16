@@ -66,7 +66,7 @@ load the data in the fixtures directory:
     (venv)$ python manage.py loaddata ../fixtures/sites.json
     (venv)$ python manage.py loaddata ../fixtures/articles.json
     (venv)$ # The **comp** example project needs quotes.json too:
-    (venv)$ python manage.py loaddata ../fixtures/json.quotes
+    (venv)$ python manage.py loaddata ../fixtures/quotes.json
     (venv)$ python manage.py runserver
 
 Example projects make use of the package `django-markdown2

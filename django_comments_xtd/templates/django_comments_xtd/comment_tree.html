@@ -47,7 +47,7 @@
         {% endif %}
       {% endif %}
     </div>
-    {% if not item.comment.is_removed and item.children %}
+    {% if item.children and not hide_removed or item.children and hide_removed and not item.is_removed %}
       {% render_xtdcomment_tree with comments=item.children %}
     {% endif %}
   </div>

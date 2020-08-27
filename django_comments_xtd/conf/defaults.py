@@ -49,16 +49,9 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
     }
 }
 
-# Counterpart of django-comments COMMENTS_HIDE_REMOVED.
-# COMMENTS_XTD_HIDE_REMOVED applies to nested comments. Therefore, this
-# setting is ignored when COMMENTS_HIDE_REMOVED is True, as removed comments
-# don't display and thus neither their nested comments.
-# When COMMENTS_HIDE_REMOVED is False but COMMENTS_XTD_HIDE_REMOVED is True,
-# The removed comment is retrieved but not their nested comments.
-# When both COMMENTS_HIDE_REMOVED and COMMENTS_XTD_HIDE_REMOVED are True,
-# all comments are retrieved, and it depends on the templates or frontend code
-# to display a "this comment has been removed" text instead of the comment.
-COMMENTS_XTD_HIDE_REMOVED = True  
+# When True, an approval or removal operation on a comment will
+# trigger a publishing or withholding operation on its nested comments.
+COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED = True
 
 # Define a function to return the user representation. Used by
 # the web API to represent user strings in response objects.

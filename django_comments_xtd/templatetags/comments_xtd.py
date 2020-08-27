@@ -321,6 +321,10 @@ class RenderXtdCommentTreeNode(Node):
         for attr in ['allow_flagging', 'allow_feedback', 'show_feedback']:
             context_dict[attr] = (getattr(self, attr, False) or
                                   context.get(attr, False))
+
+        hide_removed = getattr(settings, 'COMMENTS_HIDE_REMOVED', True)
+        context_dict['hide_removed'] = hide_removed
+
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
@@ -328,22 +332,23 @@ class RenderXtdCommentTreeNode(Node):
                 CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
             ]).prefetch_related('user')
             prefetch = Prefetch('flags', queryset=flags_qs)
-            queryset = XtdComment\
-                .objects\
-                .prefetch_related(prefetch)\
-                .filter(
-                    content_type=ctype,
-                    object_pk=obj.pk,
-                    site__pk=get_current_site_id(context.get('request')),
-                    is_public=True
-                )
+            fkwds = {
+                "content_type": ctype,
+                "object_pk": obj.pk,
+                "site__pk": get_current_site_id(context.get('request')),
+                "is_public": True            
+            }
+            if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+                fkwds['is_removed'] = False
+            qs = XtdComment.objects.prefetch_related(prefetch).filter(**fkwds)
             comments = XtdComment.tree_from_queryset(
-                queryset,
+                qs,
                 with_flagging=self.allow_flagging,
                 with_feedback=self.allow_feedback,
                 user=context['user']
             )
             context_dict['comments'] = comments
+
         if self.cvars:
             for vname, vobj in self.cvars:
                 context_dict[vname] = vobj.resolve(context)

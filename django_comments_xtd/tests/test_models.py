@@ -12,7 +12,7 @@ from django.test import TestCase as DjangoTestCase
 from django_comments_xtd import get_model
 from django_comments_xtd.models import (XtdComment,
                                         MaxThreadLevelExceededException,
-                                        publish_or_unpublish_on_pre_save)
+                                        publish_or_withhold_on_pre_save)
 from django_comments_xtd.tests.models import Article, Diary, MyComment
 
 
@@ -448,12 +448,12 @@ class DiaryBaseTestCase(DjangoTestCase):
                                       parent_id=1)  # already max thread level
 
 
-class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
+class PublishOrWithholdNestedComments_1_TestCase(ArticleBaseTestCase):
     # Add a threaded comment structure (c1, c2, c3) and verify that 
-    # removing c1 unpublishes c3.
+    # removing c1 withholds c3.
 
     def setUp(self):
-        super(PublishOrUnpublishNestedComments_1_TestCase, self).setUp()
+        super(PublishOrWithholdNestedComments_1_TestCase, self).setUp()
         thread_test_step_1(self.article_1)
         thread_test_step_2(self.article_1)
         #
@@ -471,7 +471,7 @@ class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
             self.assertTrue(cm.is_public)
             self.assertFalse(cm.is_removed)
 
-    def test_removing_c1_unpublishes_c3_and_c4(self):
+    def test_removing_c1_withholds_c3_and_c4(self):
         cm1 = XtdComment.objects.get(pk=1)
         cm1.is_removed = True
         cm1.save()
@@ -490,14 +490,14 @@ class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
 _xtd_model = "django_comments_xtd.tests.models.MyComment"
 
 
-class PublishOrUnpublishNestedComments_2_TestCase(ArticleBaseTestCase):
+class PublishOrWithholdNestedComments_2_TestCase(ArticleBaseTestCase):
     # Then mock the settings so that the project uses a customized
     # comment model (django_comments_xtd.tests.models.MyComment), and repeat
     # the logic adding MyComment instances. Then remove c1 and be sure
-    # that c3 gets unpublished.
+    # that c3 gets withheld.
 
     def setUp(self):
-        super(PublishOrUnpublishNestedComments_2_TestCase, self).setUp()
+        super(PublishOrWithholdNestedComments_2_TestCase, self).setUp()
         thread_test_step_1(self.article_1, model=MyComment, 
                            title="Can't be empty 1")
         thread_test_step_2(self.article_1, model=MyComment, 
@@ -519,13 +519,13 @@ class PublishOrUnpublishNestedComments_2_TestCase(ArticleBaseTestCase):
 
     @patch.multiple('django_comments_xtd.conf.settings', 
                     COMMENTS_XTD_MODEL=_xtd_model)
-    def test_removing_c1_unpublishes_c3_and_c4(self):
+    def test_removing_c1_withholds_c3_and_c4(self):
         # Register the receiver again. It was registered in apps.py, but we 
         # have patched the COMMENTS_XTD_MODEL, however we won't fake the 
         # ready. It's easier to just register again the receiver, to test 
         # only what depends on django-comments-xtd.
         model_app_label = get_model()._meta.label
-        pre_save.connect(publish_or_unpublish_on_pre_save, 
+        pre_save.connect(publish_or_withhold_on_pre_save, 
                          sender=model_app_label)
 
         cm1 = MyComment.objects.get(pk=1)

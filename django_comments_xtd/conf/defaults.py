@@ -53,6 +53,7 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 # trigger a publishing or withholding operation on its nested comments.
 COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED = True
 
+
 # Define a function to return the user representation. Used by
 # the web API to represent user strings in response objects.
 def username(u):

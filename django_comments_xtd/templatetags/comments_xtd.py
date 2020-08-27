@@ -45,7 +45,7 @@ class XtdCommentCountNode(Node):
     def render(self, context):
         site_id = getattr(settings, "SITE_ID", None)
         if not site_id and ('request' in context):
-            site_id = get_current_site(context['request']).pk
+            site_id = get_current_site_id(context['request'])
         context[self.as_varname] = self.qs.filter(site=site_id).count()
         return ''
 
@@ -149,7 +149,7 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
 
         site_id = getattr(settings, "SITE_ID", None)
         if not site_id and ('request' in context):
-            site_id = get_current_site(context['request']).pk
+            site_id = get_current_site_id(context['request'])
 
         qs = get_comment_model().objects.for_content_types(
             self.content_types, site=site_id)
@@ -190,7 +190,7 @@ class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
 
         site_id = getattr(settings, "SITE_ID", None)
         if not site_id and ('request' in context):
-            site_id = get_current_site(context['request']).pk
+            site_id = get_current_site_id(context['request'])
 
         qs = get_comment_model().objects.for_content_types(
                 self.content_types, site=site_id)
@@ -336,7 +336,7 @@ class RenderXtdCommentTreeNode(Node):
                 "content_type": ctype,
                 "object_pk": obj.pk,
                 "site__pk": get_current_site_id(context.get('request')),
-                "is_public": True            
+                "is_public": True
             }
             if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
                 fkwds['is_removed'] = False

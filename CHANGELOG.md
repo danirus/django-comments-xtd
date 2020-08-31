@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.7.2] -
+
+    * Fixes issue #208, about the JavaScript plugin not displaying the like and
+      dislike buttons and the reply link when django-comments-xtd is setup to
+      allow posting comments only to registered users (who_can_post: "users"). 
+
 ## [2.7.1] - 2020-08-12
 
     * Fixes issue #188, about loading a templatetags module not required for

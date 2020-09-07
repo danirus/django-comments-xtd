@@ -25,7 +25,7 @@ msgstr "Deze reactie is verwijderd."
 
 #: forms.py:13
 msgid "Notify me about follow-up comments"
-msgstr "Stuur mij een notificatie als iemand op mijn reactie antwoord. "
+msgstr "Stuur mij een notificatie als iemand op mijn reactie antwoord."
 
 #: forms.py:28
 msgid "Name"
@@ -336,7 +336,9 @@ msgstr "Reacties op deze discussies worden gedempd"
 
 #: templates/django_comments_xtd/muted.html:9
 msgid "You will no longer receive email notifications for comments sent to"
-msgstr "U ontvangt geen nieuwe notificaties per e-mail als er reacties door anderen geplaatst worden."
+msgstr ""
+"U ontvangt geen nieuwe notificaties per e-mail als er reacties door anderen"
+" geplaatst worden."
 
 #: templates/django_comments_xtd/reply.html:6
 msgid "Comment reply"

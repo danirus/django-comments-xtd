@@ -22,7 +22,7 @@ msgstr ""
 #: templates/django_comments_xtd/comment.html:14
 #: templates/django_comments_xtd/comment_tree.html:34
 msgid "This comment has been removed."
-msgstr ""
+msgstr "Dieser Kommentar wurde entfernt."
 
 #: forms.py:13
 msgid "Notify me about follow-up comments"
@@ -197,7 +197,9 @@ msgstr "Permanenter Link"
 msgid "A user has flagged this comment as inappropriate."
 msgid_plural "%(counter)s users have flagged this comment as inappropriate."
 msgstr[0] ""
+"Ein Benutzer hat diesen Kommentar als unangemessen gekennzeichnet."
 msgstr[1] ""
+"%(counter)s Benutzer haben diesen Kommentar als unangemessen gekennzeichnet."
 
 #: templates/django_comments_xtd/comment_tree.html:22
 msgid "comment flagged"

@@ -1,10 +1,12 @@
 # Change Log
 
-## [2.7.2] -
+## [2.7.2] - 2020-09-08
 
     * Fixes issue #208, about the JavaScript plugin not displaying the like and
       dislike buttons and the reply link when django-comments-xtd is setup to
       allow posting comments only to registered users (who_can_post: "users"). 
+    * Fixes issue #212, about missing i18n JavaScript catalog files for Dutch,
+      German and Russian.
 
 ## [2.7.1] - 2020-08-12
 

@@ -1,5 +1,9 @@
 # Change Log
 
+## [] - YYYY-MM-DD
+
+    * Fixes issue #215 about running the tests with Django 3.1 and Python 3.8.
+
 ## [2.7.2] - 2020-09-08
 
     * Fixes issue #208, about the JavaScript plugin not displaying the like and
@@ -13,8 +17,8 @@
     * Fixes issue #188, about loading a templatetags module not required for
       the application.
     * Fixes issue #196. When extending django-comments-xtd's comment model, the
-      receiver function that reviews whether nested comments have to be publish or
-      unpublish is not called.
+      receiver function that reviews whether nested comments have to be publish
+      or unpublish is not called.
 
 ## [2.7.0] - 2020-08-09
 

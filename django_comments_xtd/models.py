@@ -67,6 +67,7 @@ class XtdComment(Comment):
     order = models.IntegerField(default=1, db_index=True)
     followup = models.BooleanField(blank=True, default=False,
                                    help_text=_("Notify follow-up comments"))
+    nested_count = models.IntegerField(default=0, db_index=True)
     objects = XtdCommentManager()
 
     def save(self, *args, **kwargs):
@@ -99,13 +100,18 @@ class XtdComment(Comment):
                                           order__gt=parent.order)
         if qc_ge_level.count():
             min_order = qc_ge_level.aggregate(Min('order'))['order__min']
-            XtdComment.objects.filter(thread_id=parent.thread_id,
-                                      order__gte=min_order)\
-                              .update(order=F('order') + 1)
+            qc_eq_thread.filter(order__gte=min_order)\
+                        .update(order=F('order') + 1)
             self.order = min_order
         else:
             max_order = qc_eq_thread.aggregate(Max('order'))['order__max']
             self.order = max_order + 1
+
+        parent.nested_count = F('nested_count') + 1
+        parent.save()
+        qc_eq_thread.filter(level__lt=parent.level,
+                            order__lt=parent.order)\
+                    .update(nested_count=F('nested_count') + 1)
 
     def get_reply_url(self):
         return reverse("comments-xtd-reply", kwargs={"cid": self.pk})

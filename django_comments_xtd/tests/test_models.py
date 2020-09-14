@@ -434,6 +434,19 @@ class ThreadStep5TestCase(ArticleBaseTestCase):
                                       submit_date=datetime.now(),
                                       parent_id=8)  # already max thread level
 
+    def test_removing_c4_withdraws_c7_and_updates_nested_count(self):
+        cm4 = XtdComment.objects.get(pk=4)
+        self.assertEqual(cm4.nested_count, 1)
+        cm1 = XtdComment.objects.get(pk=1)
+        self.assertEqual(cm1.nested_count, 4)
+        # Remove comment 4, save, and check again.
+        cm4.is_removed = True
+        cm4.save()
+        cm4 = XtdComment.objects.get(pk=4)
+        self.assertEqual(cm4.nested_count, 1)
+        cm1 = XtdComment.objects.get(pk=1)
+        self.assertEqual(cm1.nested_count, 3)
+
 
 def add_comment_to_diary_entry(diary_entry):
     diary_ct = ContentType.objects.get(app_label="tests", model="diary")

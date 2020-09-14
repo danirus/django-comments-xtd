@@ -107,10 +107,8 @@ class XtdComment(Comment):
             max_order = qc_eq_thread.aggregate(Max('order'))['order__max']
             self.order = max_order + 1
 
-        parent.nested_count = F('nested_count') + 1
-        parent.save()
-        qc_eq_thread.filter(level__lt=parent.level,
-                            order__lt=parent.order)\
+        qc_eq_thread.filter(Q(pk=parent.pk) | Q(level__lt=parent.level,
+                                                order__lt=parent.order))\
                     .update(nested_count=F('nested_count') + 1)
 
     def get_reply_url(self):
@@ -233,6 +231,7 @@ def publish_or_unpublish_nested_comments(comment, are_public=False):
                               level__lt=comment.level,
                               order__lt=comment.order)\
                       .update(nested_count=op)
+
 
 def publish_or_unpublish_on_pre_save(sender, instance, raw, using, **kwargs):
     if not raw and instance and instance.id:

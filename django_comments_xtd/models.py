@@ -222,6 +222,9 @@ def publish_or_unpublish_nested_comments(comment, are_public=False):
         nested.extend([cm.id for cm in qs])
         qs.update(is_public=are_public)
     # Update nested_count in parents comments in the same thread.
+    # The comment.nested_count doesn't change because the comment's is_public
+    # attribute is not changing, only its nested comments change, and it will
+    # help to re-populate nested_count should it be published again.
     if are_public:
         op = F('nested_count') + comment.nested_count
     else:

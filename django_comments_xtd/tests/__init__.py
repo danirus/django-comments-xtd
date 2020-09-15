@@ -16,13 +16,11 @@ def run_tests():
 
     import django
     from django.conf import settings
-    from django.core.management import call_command
     from django.test.utils import get_runner
 
     # Django 1.7.x or above.
     if django.VERSION[0] >=1 or django.VERSION[1] >= 7:
         django.setup()
-        call_command('migrate', 'django_comments_xtd')
         runner = get_runner(settings,
                             "django.test.runner.DiscoverRunner")
     else:

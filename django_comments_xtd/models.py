@@ -35,7 +35,6 @@ class MaxThreadLevelExceededException(Exception):
 
 
 class XtdCommentManager(CommentManager):
-
     def for_app_models(self, *args, **kwargs):
         """Return XtdComments for pairs "app.model" given in args"""
         content_types = []

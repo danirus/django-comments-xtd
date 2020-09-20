@@ -1,8 +1,5 @@
-import sys
-
-from django.db import connections
-from django.db.utils import ConnectionDoesNotExist, IntegrityError
-from django.core.management.base import BaseCommand, CommandError
+from django.db.utils import ConnectionDoesNotExist
+from django.core.management.base import BaseCommand
 
 from django_comments_xtd.models import XtdComment
 
@@ -14,7 +11,7 @@ class Command(BaseCommand):
         parser.add_argument('using', nargs='*', type=str)
 
     def initialize_nested_count(self, using):
-        # Control break.
+        # Control break.
         active_thread_id = -1
         parents = {}
 

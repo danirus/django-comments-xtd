@@ -1,4 +1,3 @@
-# from django.conf.urls import include, url
 from django.urls import include, re_path
 
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -12,7 +11,7 @@ urlpatterns = [
     re_path(r'^mute/(?P<key>[^/]+)/$', views.mute, name='comments-xtd-mute'),
     re_path(r'^reply/(?P<cid>[\d]+)/$', views.reply, name='comments-xtd-reply'),
 
-    # Remap comments-flag to check allow-flagging is enabled.
+    # Remap comments-flag to check allow-flagg<ing is enabled.
     re_path(r'^flag/(\d+)/$', views.flag, name='comments-flag'),
     # New flags in addition to those provided by django-contrib-comments.
     re_path(r'^like/(\d+)/$', views.like, name='comments-xtd-like'),

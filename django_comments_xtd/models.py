@@ -35,7 +35,6 @@ class MaxThreadLevelExceededException(Exception):
 
 
 class XtdCommentManager(CommentManager):
-
     def for_app_models(self, *args, **kwargs):
         """Return XtdComments for pairs "app.model" given in args"""
         content_types = []
@@ -67,6 +66,7 @@ class XtdComment(Comment):
     order = models.IntegerField(default=1, db_index=True)
     followup = models.BooleanField(blank=True, default=False,
                                    help_text=_("Notify follow-up comments"))
+    nested_count = models.IntegerField(default=0, db_index=True)
     objects = XtdCommentManager()
 
     def save(self, *args, **kwargs):
@@ -99,13 +99,16 @@ class XtdComment(Comment):
                                           order__gt=parent.order)
         if qc_ge_level.count():
             min_order = qc_ge_level.aggregate(Min('order'))['order__min']
-            XtdComment.objects.filter(thread_id=parent.thread_id,
-                                      order__gte=min_order)\
-                              .update(order=F('order') + 1)
+            qc_eq_thread.filter(order__gte=min_order)\
+                        .update(order=F('order') + 1)
             self.order = min_order
         else:
             max_order = qc_eq_thread.aggregate(Max('order'))['order__max']
             self.order = max_order + 1
+
+        qc_eq_thread.filter(Q(pk=parent.pk) | Q(level__lt=parent.level,
+                                                order__lt=parent.order))\
+                    .update(nested_count=F('nested_count') + 1)
 
     def get_reply_url(self):
         return reverse("comments-xtd-reply", kwargs={"cid": self.pk})
@@ -206,8 +209,8 @@ class XtdComment(Comment):
         return dic_list
 
 
-def publish_or_unpublish_nested_comments(comment_id, are_public=False):
-    qs = get_model().objects.filter(~Q(pk=comment_id), parent_id=comment_id)
+def publish_or_unpublish_nested_comments(comment, are_public=False):
+    qs = get_model().objects.filter(~Q(pk=comment.id), parent_id=comment.id)
     nested = [cm.id for cm in qs]
     qs.update(is_public=are_public)
     while len(nested):
@@ -215,12 +218,24 @@ def publish_or_unpublish_nested_comments(comment_id, are_public=False):
         qs = XtdComment.objects.filter(~Q(pk=cm_id), parent_id=cm_id)
         nested.extend([cm.id for cm in qs])
         qs.update(is_public=are_public)
+    # Update nested_count in parents comments in the same thread.
+    # The comment.nested_count doesn't change because the comment's is_public
+    # attribute is not changing, only its nested comments change, and it will
+    # help to re-populate nested_count should it be published again.
+    if are_public:
+        op = F('nested_count') + comment.nested_count
+    else:
+        op = F('nested_count') - comment.nested_count
+    XtdComment.objects.filter(thread_id=comment.thread_id,
+                              level__lt=comment.level,
+                              order__lt=comment.order)\
+                      .update(nested_count=op)
 
 
 def publish_or_unpublish_on_pre_save(sender, instance, raw, using, **kwargs):
     if not raw and instance and instance.id:
         are_public = (not instance.is_removed) and instance.is_public
-        publish_or_unpublish_nested_comments(instance.id, are_public=are_public)
+        publish_or_unpublish_nested_comments(instance, are_public=are_public)
 
 
 # ----------------------------------------------------------------------

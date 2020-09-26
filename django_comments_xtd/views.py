@@ -18,7 +18,6 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView
 
 
-from django_comments.models import CommentFlag
 from django_comments.views.moderation import perform_flag
 from django_comments.views.utils import next_redirect, confirmation_view
 
@@ -30,8 +29,7 @@ from django_comments_xtd import (
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
     CommentReaction, TmpXtdComment,
-    MaxThreadLevelExceededException,
-    LIKEDIT_FLAG, DISLIKEDIT_FLAG
+    MaxThreadLevelExceededException
 )
 from django_comments_xtd.utils import (
     get_current_site_id, send_mail, get_app_model_options
@@ -373,7 +371,6 @@ def flag(request, comment_id, next=None):
     else:
         return render(request, 'comments/flag.html', {
             'comment': comment,
-            'reaction':
             'next': next
         })
 

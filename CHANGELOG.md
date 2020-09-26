@@ -1,11 +1,13 @@
 # Change Log
 
-## [2.8.0] - YYYY-MM-DD
+## [2.8.0] - 2020-09-26
 
     * Fixes issue #106, which is about computing the number of nested comments
       for every comment at every level down the tree. The fix consists of
       adding a new field called 'nested_count' to the XtdComment model. Its
-      value represents the number of threaded comments under itself. A new management command, 'initialize_nested_count', can be used to update the value of the field, the command is idempotent. Two new migrations have
+      value represents the number of threaded comments under itself. A new
+      management command, 'initialize_nested_count', can be used to update the
+      value of the field, the command is idempotent. Two new migrations have
       been added: migration 0007 adds the new field, and migration 0008 calls
       the 'initialize_nested_count' command to populate the nested_count new
       field with correct values.

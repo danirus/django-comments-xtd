@@ -8,6 +8,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
+from django.db.models import F
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.template import loader
@@ -28,7 +29,7 @@ from django_comments_xtd import (
 )
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
-    TmpXtdComment,
+    CommentReaction, TmpXtdComment,
     MaxThreadLevelExceededException,
     LIKEDIT_FLAG, DISLIKEDIT_FLAG
 )
@@ -347,23 +348,22 @@ def mute(request, key):
 @login_required
 def flag(request, comment_id, next=None):
     """
-    Flags a comment. Confirmation on GET, action on POST.
+    Reaction to a comment. Show confirmation on GET, process reaction on POST.
 
-    Templates: :template:`comments/flag.html`,
+    Templates: :template:`comments/reaction.html`,
     Context:
-        comment
-            the flagged `comments.comment` object
+        comment_id
+            The id of the comment the user is sending a reaction to.
     """
-    comment = get_object_or_404(
-        get_comment_model(), pk=comment_id,
-        site__pk=get_current_site_id(request))
+    comment = get_object_or_404(get_comment_model(), pk=comment_id,
+                                site__pk=get_current_site_id(request))
     if not get_app_model_options(comment=comment)['allow_flagging']:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         raise Http404("Comments posted to instances of '%s.%s' are not "
                       "explicitly allowed to receive 'removal suggestion' "
                       "flags. Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
                       "setting." % (ctype.app_label, ctype.model))
-    # Flag on POST
+    # Flag on POST.
     if request.method == 'POST':
         perform_flag(request, comment)
         return next_redirect(request, fallback=next or 'comments-flag-done',
@@ -371,9 +371,11 @@ def flag(request, comment_id, next=None):
 
     # Render a form on GET
     else:
-        return render(request, 'comments/flag.html',
-                      {'comment': comment,
-                       'next': next})
+        return render(request, 'comments/flag.html', {
+            'comment': comment,
+            'reaction':
+            'next': next
+        })
 
 
 @csrf_protect
@@ -395,21 +397,26 @@ def like(request, comment_id, next=None):
                       "explicitly allowed to receive 'liked it' flags. "
                       "Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
                       "setting." % (ctype.app_label, ctype.model))
-    # Flag on POST
+    # Flag on POST.
     if request.method == 'POST':
-        perform_like(request, comment)
+        # Undo the opposite reaction to avoid users like and dislike together.
+        undo_reaction(request, comment=comment,
+                      reaction=CommentReaction.DISLIKED_IT)
+        perform_reaction(request, comment=comment,
+                         reaction=CommentReaction.LIKED_IT)
         return next_redirect(request,
                              fallback=next or 'comments-xtd-like-done',
                              c=comment.pk)
-    # Render a form on GET
+    # Render a form on GET.
     else:
-        flag_qs = comment.flags.prefetch_related('user')\
-            .filter(flag=LIKEDIT_FLAG)
-        users_likedit = [item.user for item in flag_qs]
-        return render(request, 'django_comments_xtd/like.html',
-                      {'comment': comment,
-                       'already_liked_it': request.user in users_likedit,
-                       'next': next})
+        reactions_qs = comment.reactions.filter(
+            reaction=CommentReaction.LIKED_IT, authors=request.user
+        )
+        return render(request, 'django_comments_xtd/like.html', {
+            'comment': comment,
+            'already_liked_it': reactions_qs.count() > 0,
+            'next': next
+        })
 
 
 @csrf_protect
@@ -431,49 +438,48 @@ def dislike(request, comment_id, next=None):
                       "explicitly allowed to receive 'disliked it' flags. "
                       "Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
                       "setting." % (ctype.app_label, ctype.model))
-    # Flag on POST
+    # Flag on POST.
     if request.method == 'POST':
-        perform_dislike(request, comment)
+        # Undo the opposite reaction to avoid users like and dislike together.
+        undo_reaction(request, comment=comment,
+                      reaction=CommentReaction.LIKED_IT)
+        perform_reaction(request, comment=comment,
+                         reaction=CommentReaction.DISLIKED_IT)
         return next_redirect(request,
                              fallback=(next or 'comments-xtd-dislike-done'),
                              c=comment.pk)
-    # Render a form on GET
+    # Render a form on GET.
     else:
-        flag_qs = comment.flags.prefetch_related('user')\
-            .filter(flag=DISLIKEDIT_FLAG)
-        users_dislikedit = [item.user for item in flag_qs]
-        return render(request, 'django_comments_xtd/dislike.html',
-                      {'comment': comment,
-                       'already_disliked_it': request.user in users_dislikedit,
-                       'next': next})
+        reactions_qs = comment.reactions.filter(
+            reaction=CommentReaction.DISLIKED_IT, authors=request.user
+        )
+        return render(request, 'django_comments_xtd/dislike.html', {
+            'comment': comment,
+            'already_disliked_it': reactions_qs.count() > 0,
+            'next': next
+        })
 
 
-def perform_like(request, comment):
-    """Actually set the 'Likedit' flag on a comment from a request."""
-    flag, created = CommentFlag.objects.get_or_create(comment=comment,
-                                                      user=request.user,
-                                                      flag=LIKEDIT_FLAG)
-    if created:
-        CommentFlag.objects.filter(comment=comment,
-                                   user=request.user,
-                                   flag=DISLIKEDIT_FLAG).delete()
-    else:
-        flag.delete()
-    return created
+def undo_reaction(request, **kwargs):
+    cr_qs = CommentReaction.objects.filter(authors=request.user, **kwargs)
+    if cr_qs.count() == 1:
+        cr_qs[0].authors.remove(request.user)
+        cr_qs.update(counter=F('counter') - 1)
+        return True
+    return False
 
 
-def perform_dislike(request, comment):
-    """Actually set the 'Dislikedit' flag on a comment from a request."""
-    flag, created = CommentFlag.objects.get_or_create(comment=comment,
-                                                      user=request.user,
-                                                      flag=DISLIKEDIT_FLAG)
-    if created:
-        CommentFlag.objects.filter(comment=comment,
-                                   user=request.user,
-                                   flag=LIKEDIT_FLAG).delete()
-    else:
-        flag.delete()
-    return created
+def perform_reaction(request, **kwargs):
+    """As kwargs it receives a comment object and a reaction string."""
+    cr_qs = CommentReaction.objects.filter(authors=request.user, **kwargs)
+    if cr_qs.count() > 0:  # This user's reaction is already there, do nothing.
+        return False
+
+    comment_reaction, created = CommentReaction.objects.get_or_create(**kwargs)
+    comment_reaction.authors.add(request.user)
+    comment_reaction.counter += 1
+    comment_reaction.save()
+    return True
 
 
 like_done = confirmation_view(

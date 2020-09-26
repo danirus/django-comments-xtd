@@ -312,3 +312,18 @@ class BlackListedDomain(models.Model):
 
     class Meta:
         ordering = ('domain',)
+
+
+#  ----------------------------------------------------------------------
+class CommentReaction(models.Model):
+    reaction = models.CharField(_('reaction'), max_length=30, db_index=True)
+    comment = models.ForeignKey(XtdComment,
+                                verbose_name=_('reactions'),
+                                related_name="reactions",
+                                on_delete=models.CASCADE)
+    counter = models.IntegerField(default=0)
+    authors = models.ManyToManyField(settings.AUTH_USER_MODEL)
+
+    # Constants for reaction types.
+    LIKED_IT = "I liked it"
+    DISLIKED_IT = "I disliked it"

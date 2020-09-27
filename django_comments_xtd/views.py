@@ -346,12 +346,12 @@ def mute(request, key):
 @login_required
 def flag(request, comment_id, next=None):
     """
-    Reaction to a comment. Show confirmation on GET, process reaction on POST.
+    Flags a comment. Confirmation on GET, action on POST.
 
-    Templates: :template:`comments/reaction.html`,
+    Templates: :template:`comments/flag.html`,
     Context:
         comment_id
-            The id of the comment the user is sending a reaction to.
+            The id of the comment the user is flagging.
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))

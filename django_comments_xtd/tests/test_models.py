@@ -219,47 +219,52 @@ class BaseThreadStep1TestCase(ArticleBaseTestCase):
     def setUp(self):
         super(BaseThreadStep1TestCase, self).setUp()
         thread_test_step_1(self.article_1)
-        (  # content ->     cmt.id  thread_id  parent_id  level  order
-            self.c1,  # ->    1         1          1        0      1
-            self.c2   # ->    2         2          2        0      1
+        (  # content ->     cmt.id  thread_id  parent_id  level  order  nested
+            self.c1,  # ->    1         1          1        0      1      0
+            self.c2   # ->    2         2          2        0      1      0
         ) = XtdComment.objects.all()
 
     def test_threaded_comments_step_1_level_0(self):
         # comment 1
         self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
         self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
+        self.assertEqual(self.c1.nested_count, 0)
         # comment 2
         self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
         self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
-
+        self.assertEqual(self.c2.nested_count, 0)
 
 class ThreadStep2TestCase(ArticleBaseTestCase):
     def setUp(self):
         super(ThreadStep2TestCase, self).setUp()
         thread_test_step_1(self.article_1)
         thread_test_step_2(self.article_1)
-        (  # content ->    cmt.id  thread_id  parent_id  level  order
-            self.c1,  # ->   1         1          1        0      1
-            self.c3,  # ->   3         1          1        1      2
-            self.c4,  # ->   4         1          1        1      3
-            self.c2   # ->   2         2          2        0      1
+        (  # content ->    cmt.id  thread_id  parent_id  level  order  nested
+            self.c1,  # ->   1         1          1        0      1      2
+            self.c3,  # ->   3         1          1        1      2      0
+            self.c4,  # ->   4         1          1        1      3      0
+            self.c2   # ->   2         2          2        0      1      0
         ) = XtdComment.objects.all()
 
     def test_threaded_comments_step_2_level_0(self):
         # comment 1
         self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
         self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
+        self.assertEqual(self.c1.nested_count, 2)
         # comment 2
         self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
         self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
+        self.assertEqual(self.c2.nested_count, 0)
 
     def test_threaded_comments_step_2_level_1(self):
         # comment 3
         self.assertTrue(self.c3.parent_id == 1 and self.c3.thread_id == 1)
         self.assertTrue(self.c3.level == 1 and self.c3.order == 2)
+        self.assertEqual(self.c3.nested_count, 0)
         # comment 4
         self.assertTrue(self.c4.parent_id == 1 and self.c4.thread_id == 1)
         self.assertTrue(self.c4.level == 1 and self.c4.order == 3)
+        self.assertEqual(self.c4.nested_count, 0)
 
 
 class ThreadStep3TestCase(ArticleBaseTestCase):
@@ -269,32 +274,37 @@ class ThreadStep3TestCase(ArticleBaseTestCase):
         thread_test_step_2(self.article_1)
         thread_test_step_3(self.article_1)
 
-        (  # -> content:   cmt.id  thread_id  parent_id  level  order
-            self.c1,  # ->   1         1          1        0      1
-            self.c3,  # ->   3         1          1        1      2
-            self.c4,  # ->   4         1          1        1      3
-            self.c2,  # ->   2         2          2        0      1
-            self.c5   # ->   5         2          2        1      2
+        (  # -> content:   cmt.id  thread_id  parent_id  level  order  nested
+            self.c1,  # ->   1         1          1        0      1      2
+            self.c3,  # ->   3         1          1        1      2      0
+            self.c4,  # ->   4         1          1        1      3      0
+            self.c2,  # ->   2         2          2        0      1      1
+            self.c5   # ->   5         2          2        1      2      0
         ) = XtdComment.objects.all()
 
     def test_threaded_comments_step_3_level_0(self):
         # comment 1
         self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
         self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
+        self.assertEqual(self.c1.nested_count, 2)
         # comment 2
         self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
         self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
+        self.assertEqual(self.c2.nested_count, 1)
 
     def test_threaded_comments_step_3_level_1(self):
         # comment 3
         self.assertTrue(self.c3.parent_id == 1 and self.c3.thread_id == 1)
         self.assertTrue(self.c3.level == 1 and self.c3.order == 2)
+        self.assertEqual(self.c3.nested_count, 0)
         # comment 4
         self.assertTrue(self.c4.parent_id == 1 and self.c4.thread_id == 1)
         self.assertTrue(self.c4.level == 1 and self.c4.order == 3)
+        self.assertEqual(self.c4.nested_count, 0)
         # comment 5
         self.assertTrue(self.c5.parent_id == 2 and self.c5.thread_id == 2)
         self.assertTrue(self.c5.level == 1 and self.c5.order == 2)
+        self.assertEqual(self.c5.nested_count, 0)
 
 
 class ThreadStep4TestCase(ArticleBaseTestCase):
@@ -305,42 +315,49 @@ class ThreadStep4TestCase(ArticleBaseTestCase):
         thread_test_step_3(self.article_1)
         thread_test_step_4(self.article_1)
 
-        (  # content ->    cmt.id  thread_id  parent_id  level  order
-            self.c1,  # ->   1         1          1        0      1
-            self.c3,  # ->   3         1          1        1      2
-            self.c4,  # ->   4         1          1        1      3
-            self.c7,  # ->   7         1          4        2      4
-            self.c2,  # ->   2         2          2        0      1
-            self.c5,  # ->   5         2          2        1      2
-            self.c6   # ->   6         2          5        2      3
+        (  # content ->    cmt.id  thread_id  parent_id  level  order  nested
+            self.c1,  # ->   1         1          1        0      1      3
+            self.c3,  # ->   3         1          1        1      2      0
+            self.c4,  # ->   4         1          1        1      3      1
+            self.c7,  # ->   7         1          4        2      4      0
+            self.c2,  # ->   2         2          2        0      1      2
+            self.c5,  # ->   5         2          2        1      2      1
+            self.c6   # ->   6         2          5        2      3      0
         ) = XtdComment.objects.all()
 
     def test_threaded_comments_step_4_level_0(self):
         # comment 1
         self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
         self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
+        self.assertEqual(self.c1.nested_count, 3)
         # comment 2
         self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
         self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
+        self.assertEqual(self.c2.nested_count, 2)
 
     def test_threaded_comments_step_4_level_1(self):
         # comment 3
         self.assertTrue(self.c3.parent_id == 1 and self.c3.thread_id == 1)
         self.assertTrue(self.c3.level == 1 and self.c3.order == 2)
+        self.assertEqual(self.c3.nested_count, 0)
         # comment 4
         self.assertTrue(self.c4.parent_id == 1 and self.c4.thread_id == 1)
         self.assertTrue(self.c4.level == 1 and self.c4.order == 3)
+        self.assertEqual(self.c4.nested_count, 1)
         # comment 5
         self.assertTrue(self.c5.parent_id == 2 and self.c5.thread_id == 2)
         self.assertTrue(self.c5.level == 1 and self.c5.order == 2)
+        self.assertEqual(self.c5.nested_count, 1)
 
     def test_threaded_comments_step_4_level_2(self):
         # comment 6
         self.assertTrue(self.c6.parent_id == 5 and self.c6.thread_id == 2)
         self.assertTrue(self.c6.level == 2 and self.c6.order == 3)
+        self.assertEqual(self.c6.nested_count, 0)
         # comment 7
         self.assertTrue(self.c7.parent_id == 4 and self.c7.thread_id == 1)
         self.assertTrue(self.c7.level == 2 and self.c7.order == 4)
+        self.assertEqual(self.c7.nested_count, 0)
 
 
 class ThreadStep5TestCase(ArticleBaseTestCase):
@@ -352,50 +369,59 @@ class ThreadStep5TestCase(ArticleBaseTestCase):
         thread_test_step_4(self.article_1)
         thread_test_step_5(self.article_1)
 
-        (  # content ->    cmt.id  thread_id  parent_id  level  order
-            self.c1,  # ->   1         1          1        0      1
-            self.c3,  # ->   3         1          1        1      2
-            self.c8,  # ->   8         1          3        2      3
-            self.c4,  # ->   4         1          1        1      4
-            self.c7,  # ->   7         1          4        2      5
-            self.c2,  # ->   2         2          2        0      1
-            self.c5,  # ->   5         2          2        1      2
-            self.c6,  # ->   6         2          5        2      3
-            self.c9   # ->   9         9          9        0      1
+        (  # content ->    cmt.id  thread_id  parent_id  level  order  nested
+            self.c1,  # ->   1         1          1        0      1      4
+            self.c3,  # ->   3         1          1        1      2      1
+            self.c8,  # ->   8         1          3        2      3      0
+            self.c4,  # ->   4         1          1        1      4      1
+            self.c7,  # ->   7         1          4        2      5      0
+            self.c2,  # ->   2         2          2        0      1      2
+            self.c5,  # ->   5         2          2        1      2      1
+            self.c6,  # ->   6         2          5        2      3      0
+            self.c9   # ->   9         9          9        0      1      0
         ) = XtdComment.objects.all()
 
     def test_threaded_comments_step_5_level_0(self):
         # comment 1
         self.assertTrue(self.c1.parent_id == 1 and self.c1.thread_id == 1)
         self.assertTrue(self.c1.level == 0 and self.c1.order == 1)
+        self.assertEqual(self.c1.nested_count, 4)
         # comment 2
         self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
         self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
+        self.assertEqual(self.c2.nested_count, 2)
         # comment 9
         self.assertTrue(self.c9.parent_id == 9 and self.c9.thread_id == 9)
         self.assertTrue(self.c9.level == 0 and self.c9.order == 1)
+        self.assertEqual(self.c9.nested_count, 0)
 
     def test_threaded_comments_step_5_level_1(self):
         # comment 3
         self.assertTrue(self.c3.parent_id == 1 and self.c3.thread_id == 1)
         self.assertTrue(self.c3.level == 1 and self.c3.order == 2)
+        self.assertEqual(self.c3.nested_count, 1)
         # comment 4
         self.assertTrue(self.c4.parent_id == 1 and self.c4.thread_id == 1)
         self.assertTrue(self.c4.level == 1 and self.c4.order == 4)  # changed
+        self.assertEqual(self.c4.nested_count, 1)
         # comment 5
         self.assertTrue(self.c5.parent_id == 2 and self.c5.thread_id == 2)
         self.assertTrue(self.c5.level == 1 and self.c5.order == 2)
+        self.assertEqual(self.c5.nested_count, 1)
 
     def test_threaded_comments_step_5_level_2(self):
         # comment 6
         self.assertTrue(self.c6.parent_id == 5 and self.c6.thread_id == 2)
         self.assertTrue(self.c6.level == 2 and self.c6.order == 3)
-        # comment 7
+        self.assertEqual(self.c6.nested_count, 0)
+        # comment 7
         self.assertTrue(self.c7.parent_id == 4 and self.c7.thread_id == 1)
         self.assertTrue(self.c7.level == 2 and self.c7.order == 5)  # changed
+        self.assertEqual(self.c7.nested_count, 0)
         # comment 8
         self.assertTrue(self.c8.parent_id == 3 and self.c8.thread_id == 1)
         self.assertTrue(self.c8.level == 2 and self.c8.order == 3)
+        self.assertEqual(self.c8.nested_count, 0)
 
     def test_exceed_max_thread_level_raises_exception(self):
         article_ct = ContentType.objects.get(app_label="tests", model="article")
@@ -409,31 +435,36 @@ class ThreadStep5TestCase(ArticleBaseTestCase):
                                       submit_date=datetime.now(),
                                       parent_id=8)  # already max thread level
 
+    def test_removing_c4_withdraws_c7_and_updates_nested_count(self):
+        cm4 = XtdComment.objects.get(pk=4)
+        self.assertEqual(cm4.nested_count, 1)
+        cm1 = XtdComment.objects.get(pk=1)
+        self.assertEqual(cm1.nested_count, 4)
+        # Remove comment 4, save, and check again.
+        cm4.is_removed = True
+        cm4.save()
+        cm4 = XtdComment.objects.get(pk=4)
+        self.assertEqual(cm4.nested_count, 1)
+        cm1 = XtdComment.objects.get(pk=1)
+        self.assertEqual(cm1.nested_count, 3)
+
 
 def add_comment_to_diary_entry(diary_entry, model=get_model(), **kwargs):
     diary_ct = ContentType.objects.get(app_label="tests", model="diary")
     if not "site" in kwargs:
-      kwargs["site"] = Site.objects.get(pk=1)
+        kwargs["site"] = Site.objects.get(pk=1)
     model.objects.create(content_type=diary_ct,
                          object_pk=diary_entry.id,
                          content_object=diary_entry,
                          comment="cmt to day in diary",
                          submit_date=datetime.now(),
                          **kwargs)
-    
-            
+
+
 class DiaryBaseTestCase(DjangoTestCase):
     def setUp(self):
         self.day_in_diary = Diary.objects.create(body="About Today...")
-        add_comment_to_diary_entry(self.day_in_diary)        
-        # diary_ct = ContentType.objects.get(app_label="tests", model="diary")
-        # site = Site.objects.get(pk=1)
-        # XtdComment.objects.create(content_type=diary_ct,
-        #                           object_pk=self.day_in_diary.id,
-        #                           content_object=self.day_in_diary,
-        #                           site=site,
-        #                           comment="cmt to day in diary",
-        #                           submit_date=datetime.now())
+        add_comment_to_diary_entry(self.day_in_diary)
 
     def test_max_thread_level_by_app_model(self):
         diary_ct = ContentType.objects.get(app_label="tests", model="diary")
@@ -449,7 +480,7 @@ class DiaryBaseTestCase(DjangoTestCase):
 
 
 class PublishOrWithholdNestedComments_1_TestCase(ArticleBaseTestCase):
-    # Add a threaded comment structure (c1, c2, c3) and verify that 
+    # Add a threaded comment structure (c1, c2, c3) and verify that
     # removing c1 withholds c3.
 
     def setUp(self):
@@ -459,11 +490,11 @@ class PublishOrWithholdNestedComments_1_TestCase(ArticleBaseTestCase):
         #
         # These two lines create the following comments:
         #
-        # (  # content ->    cmt.id  thread_id  parent_id  level  order
-        #     cm1,   # ->     1         1          1        0      1
-        #     cm3,   # ->     3         1          1        1      2
-        #     cm4,   # ->     4         1          1        1      3
-        #     cm2,   # ->     2         2          2        0      1
+        # (  # content ->    cmt.id  thread_id  parent_id  level  order  nested
+        #     cm1,   # ->     1         1          1        0      1       2
+        #     cm3,   # ->     3         1          1        1      2       0
+        #     cm4,   # ->     4         1          1        1      3       0
+        #     cm2,   # ->     2         2          2        0      1       0
         # ) = XtdComment.objects.all()
 
     def test_all_comments_are_public_and_have_not_been_removed(self):
@@ -473,10 +504,15 @@ class PublishOrWithholdNestedComments_1_TestCase(ArticleBaseTestCase):
 
     def test_removing_c1_withholds_c3_and_c4(self):
         cm1 = XtdComment.objects.get(pk=1)
+        self.assertEqual(cm1.nested_count, 2)  # nested_count should be 2.
+
         cm1.is_removed = True
         cm1.save()
+        cm1 = XtdComment.objects.get(pk=1)
         self.assertTrue(cm1.is_public)
         self.assertTrue(cm1.is_removed)
+        # Is still public, so the nested_count doesn't change.
+        self.assertEqual(cm1.nested_count, 2)
 
         cm3 = XtdComment.objects.get(pk=3)
         self.assertFalse(cm3.is_public)
@@ -498,34 +534,34 @@ class PublishOrWithholdNestedComments_2_TestCase(ArticleBaseTestCase):
 
     def setUp(self):
         super(PublishOrWithholdNestedComments_2_TestCase, self).setUp()
-        thread_test_step_1(self.article_1, model=MyComment, 
+        thread_test_step_1(self.article_1, model=MyComment,
                            title="Can't be empty 1")
-        thread_test_step_2(self.article_1, model=MyComment, 
+        thread_test_step_2(self.article_1, model=MyComment,
                            title="Can't be empty 2")
         #
         # These two lines create the following comments:
         #
-        # (  # content ->    cmt.id  thread_id  parent_id  level  order
-        #     cm1,   # ->     1         1          1        0      1
-        #     cm3,   # ->     3         1          1        1      2
-        #     cm4,   # ->     4         1          1        1      3
-        #     cm2,   # ->     2         2          2        0      1
+        # (  # content ->    cmt.id thread_id parent_id level order nested
+        #     cm1,   # ->     1        1         1        0     1      2
+        #     cm3,   # ->     3        1         1        1     2      0
+        #     cm4,   # ->     4        1         1        1     3      0
+        #     cm2,   # ->     2        2         2        0     1      0
         # ) = MyComment.objects.all()
-        
+
     def test_all_comments_are_public_and_have_not_been_removed(self):
         for cm in MyComment.objects.all():
             self.assertTrue(cm.is_public)
             self.assertFalse(cm.is_removed)
 
-    @patch.multiple('django_comments_xtd.conf.settings', 
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_XTD_MODEL=_xtd_model)
     def test_removing_c1_withholds_c3_and_c4(self):
-        # Register the receiver again. It was registered in apps.py, but we 
-        # have patched the COMMENTS_XTD_MODEL, however we won't fake the 
-        # ready. It's easier to just register again the receiver, to test 
+        # Register the receiver again. It was registered in apps.py, but we
+        # have patched the COMMENTS_XTD_MODEL, however we won't fake the
+        # ready. It's easier to just register again the receiver, to test
         # only what depends on django-comments-xtd.
         model_app_label = get_model()._meta.label
-        pre_save.connect(publish_or_withhold_on_pre_save, 
+        pre_save.connect(publish_or_withhold_on_pre_save,
                          sender=model_app_label)
 
         cm1 = MyComment.objects.get(pk=1)

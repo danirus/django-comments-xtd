@@ -9,9 +9,9 @@ from django_comments_xtd.models import XtdComment, BlackListedDomain
 
 
 class XtdCommentsAdmin(CommentsAdmin):
-    list_display = ('thread_level', 'cid', 'name', 'content_type', 'object_pk',
-                    'ip_address', 'submit_date', 'followup', 'is_public',
-                    'is_removed')
+    list_display = ('cid', 'thread_level', 'nested_count', 'name',
+                    'content_type', 'object_pk', 'ip_address', 'submit_date',
+                    'followup', 'is_public', 'is_removed')
     list_display_links = ('cid',)
     list_filter = ('content_type', 'is_public', 'is_removed', 'followup')
     fieldsets = (

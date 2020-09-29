@@ -33,7 +33,7 @@ comments.
 .. index::
    single: preparation
    pair: tutorial; preparation
-   
+
 Preparation
 ===========
 
@@ -84,7 +84,7 @@ Head to http://localhost:8000 and visit the tutorial site.
           `shortcut` view of `django.contrib.contenttypes` which in turn uses
           the `get_absolute_url` method.
 
-          
+
 .. _configuration:
 
 Configuration
@@ -244,7 +244,7 @@ before the ``endblock`` tag:
          {% render_comment_list for object %}
        </div>
        {% endif %}
- 
+
 
 Below the list of comments we want to display the comment form. There are two
 template tags available for that purpose, the :ttag:`render_comment_form` and
@@ -265,7 +265,7 @@ following code before the ``endblock`` tag:
          </div>
        </div>
        {% endif %}
-       
+
 
 .. note:: The ``{% if object.allow_comments %}`` and corresponding ``{% endif %}`` are not necessary in your code. I use it in this tutorial (and in the demo sites) as a way to disable comments whenever the author of a blog post decides so. It has been mentioned `here <https://github.com/danirus/django-comments-xtd/issues/108>`_ too.
 
@@ -310,7 +310,7 @@ nested comments. Now we will set up comment moderation.
    single: Moderation
 
 .. _moderation:
-   
+
 Moderation
 ==========
 
@@ -425,7 +425,7 @@ file and add:
    .. code-block:: python
 
        COMMENTS_XTD_CONFIRM_EMAIL = False
-       
+
 
 django-comments-xtd comes with a **Moderator** class that inherits from
 ``CommentModerator`` and implements a method ``allow`` that will do the
@@ -489,7 +489,7 @@ Now edit ``blog/models.py`` and add the code corresponding to our new
        from blog.badwords import badwords
 
        ...
-       
+
        class PostCommentModerator(SpamModerator):
            email_notification = True
 
@@ -528,7 +528,7 @@ Now edit ``blog/models.py`` and add the code corresponding to our new
                                                                  content_object,
                                                                  request)
 
-       moderator.register(Post, PostCommentModerator)       
+       moderator.register(Post, PostCommentModerator)
 
 
 Now we can try to send a comment with any of the bad words listed in badwords_.
@@ -608,7 +608,7 @@ Edit ``blog/post_detail.html`` to make it look like follows:
        <div>
          {{ object.body|linebreaks }}
        </div>
-       
+
        {% get_comment_count for object as comment_count %}
        <div class="py-4 text-center>
          <a href="{% url 'blog:post-list' %}">Back to the post list</a>
@@ -625,7 +625,7 @@ Edit ``blog/post_detail.html`` to make it look like follows:
          </div>
        </div>
        {% endif %}
-       
+
        {% if comment_count %}
        <ul class="media-list">
          {% render_xtdcomment_tree for object %}
@@ -646,7 +646,7 @@ nest comments inside one level deeper.
 
 .. image:: images/reply-link.png
 
-       
+
 Different max thread levels
 ---------------------------
 
@@ -671,6 +671,11 @@ up to level one for blog posts, we would set it up as follows in our
            # up to thread level 1.
    	       'blog.post': 1,
        }
+
+The ``nested_count`` field
+--------------------------
+
+When threaded comments are enabled the field ``nested_count`` of every **XtdComment** instance keeps track of how many nested comments it contains.
 
 
 Flags
@@ -995,7 +1000,7 @@ comments, or to like/dislike them. But it comes at the cost of using:
 
 To know more about the client side of the application and the build process
 read the specific page on the :doc:`javascript`.
-   
+
 In this section of the tutorial we go through the steps to make use of the
 JavaScript plugin.
 
@@ -1062,14 +1067,14 @@ Edit ``tutorial/urls.py`` and add the following url:
    .. code-block:: python
 
        from django.views.i18n import JavaScriptCatalog
-       
+
        urlpatterns = [
            ...
            path(r'jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
        ]
 
 In the next section we will use the new URL to load the i18n JavaScript catalog.
-       
+
 Load the plugin
 ---------------
 
@@ -1081,9 +1086,9 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
     {% load static %}
     {% load comments %}
     {% load comments_xtd %}
-    
+
     {% block title %}{{ object.title }}{% endblock %}
-    
+
     {% block content %}
     <div class="pb-3">
       <h1 class="text-center">{{ object.title }}</h1>
@@ -1092,14 +1097,14 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
     <div>
       {{ object.body|linebreaks }}
     </div>
-    
+
     <div class="py-4 text-center">
       <a href="{% url 'blog:post-list' %}">Back to the post list</a>
     </div>
-    
+
     <div id="comments"></div>
     {% endblock %}
-    
+
     {% block extra-js %}
     <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
@@ -1127,8 +1132,8 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
     <script
       type="text/javascript"
       src="{% url 'javascript-catalog' %}"></script>
-    <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.7.1.js' %}"></script>
-    <script src="{% static 'django_comments_xtd/js/plugin-2.7.1.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.8.0.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/plugin-2.8.0.js' %}"></script>
     <script>
     $(function() {
       $('[data-toggle="tooltip"]').tooltip({html: true});
@@ -1151,7 +1156,7 @@ plugin, including the following features:
  #. Immediate like/dislike actions.
 
 .. image:: images/update-comment-tree.png
-    
+
 
 Final notes
 ===========

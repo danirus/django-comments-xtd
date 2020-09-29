@@ -24,7 +24,7 @@ indicate recently received comment entries.
 This plugin is done by making choices that might not be the same you made in
 your own projects.
 
-           
+
 Frontend opinions
 =================
 
@@ -82,7 +82,7 @@ creating the virtualenv and fetching the sources:
        (django-comments-xtd)$ python setup.py develop
 
 Check whether the app passes the battery of tests:
-       
+
    .. code-block:: shell
 
        (django-comments-xtd)$ python setup.py test
@@ -130,13 +130,13 @@ Webpack will put the bundles in the static directory of django-comments-xtd and
 Django will fetch them from there when rendering the article's detail page:
 
    .. code-block:: html+django
- 
+
        {% block extra-js %}
        [...]
-       <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.7.1.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.7.1.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.8.0.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-2.8.0.js' %}"></script>
        {% endblock extra-js %}
-       
+
 
 Code structure
 ==============
@@ -147,7 +147,7 @@ Plugin sources live inside the **static** directory of django-comments-xtd:
 
        $ cd ~/src/django-comments-xtd
        $ tree django_comments_xtd/static/django_comments_xtd/js
-       
+
        django_comments_xtd/static/django_comments_xtd/js
        ├── src
        │   ├── comment.jsx
@@ -155,11 +155,11 @@ Plugin sources live inside the **static** directory of django-comments-xtd:
        │   ├── commentform.jsx
        │   ├── index.js
        │   └── lib.js
-       ├── vendor~plugin-2.7.1.js
-       └── plugin-2.7.1.js
-       
+       ├── vendor~plugin-2.7.2.js
+       └── plugin-2.7.2.js
+
        1 directory, 7 files
-       
+
 The intial development was inspired by the `ReactJS Comment Box tutorial
 <https://github.com/facebook/react/blob/v15.3.2/docs/docs/tutorial.md>`_.
 Component names reflect those of the ReactJS tutorial.
@@ -169,7 +169,7 @@ The application entry point is located inside the ``index.js`` file. The
 ``var window.comments_props`` defined in the django template:
 
    .. code-block:: html+django
-       
+
        <script>
          window.comments_props = {% get_commentbox_props for object %};
          window.comments_props_override = {

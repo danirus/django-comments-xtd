@@ -7,19 +7,44 @@
       When COMMENTS_HIDE_REMOVED is not defined or is defined as True, removed
       comments should not be retrieved nor counted. <document this>
 
+## [2.8.0] - 2020-09-26
+
+    * Fixes issue #106, which is about computing the number of nested comments
+      for every comment at every level down the tree. The fix consists of
+      adding a new field called 'nested_count' to the XtdComment model. Its
+      value represents the number of threaded comments under itself. A new
+      management command, 'initialize_nested_count', can be used to update the
+      value of the field, the command is idempotent. Two new migrations have
+      been added: migration 0007 adds the new field, and migration 0008 calls
+      the 'initialize_nested_count' command to populate the nested_count new
+      field with correct values.
+    * Fixes issue #215 about running the tests with Django 3.1 and Python 3.8.
+
+## [2.7.2] - 2020-09-08
+
+    * Fixes issue #208, about the JavaScript plugin not displaying the like and
+      dislike buttons and the reply link when django-comments-xtd is setup to
+      allow posting comments only to registered users (who_can_post: "users").
+    * Fixes issue #212, about missing i18n JavaScript catalog files for Dutch,
+      German and Russian.
+    * Fixes issue #194. Take into account setting COMMENTS_HIDE_REMOVED from
+      parent's app django-comments. This is a backwards incompatible change.
+      When COMMENTS_HIDE_REMOVED is not defined or is defined as True, removed
+      comments should not be retrieved nor counted. <document this>
+
 ## [2.7.1] - 2020-08-12
 
     * Fixes issue #188, about loading a templatetags module not required for
       the application.
     * Fixes issue #196. When extending django-comments-xtd's comment model, the
-      receiver function that reviews whether nested comments have to be publish or
-      unpublish is not called.
+      receiver function that reviews whether nested comments have to be publish
+      or unpublish is not called.
 
 ## [2.7.0] - 2020-08-09
 
-    * Enhancement, closing issue #155 (and #170), on how to post comments via 
+    * Enhancement, closing issue #155 (and #170), on how to post comments via
       the web API. Up until version 2.6.2 posting comments required the fields
-      timestamp, security_hash and honeypot. As of 2.7.0 there is support to 
+      timestamp, security_hash and honeypot. As of 2.7.0 there is support to
       allow Django REST Framework authentication classes: WriteCommentSerializer
       send the signal should_request_be_authorize that enables posting comments.
       Read the documentation about the web API.

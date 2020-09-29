@@ -196,11 +196,7 @@ export class Comment extends React.Component {
       allow_feedback, who_can_post, is_authenticated
     } = this.props.settings;
     
-    if(
-      (allow_feedback && who_can_post === 'all') ||
-      (allow_feedback && who_can_post === 'users' && is_authenticated)
-    )
-    {
+    if (allow_feedback) {
       let feedback_id = "feedback-"+this.props.data.id;
       if(this.props.settings.show_feedback)
         this.disposeTooltips(feedback_id);
@@ -218,6 +214,13 @@ export class Comment extends React.Component {
   
   handle_reply_click(event) {
     event.preventDefault();
+    const { is_authenticated, who_can_post } = this.props.settings;
+    if (who_can_post === 'users' && !is_authenticated) {
+      return window.location.href = (
+        this.props.settings.login_url + "?next=" +
+        this.props.settings.reply_url.replace('0', this.props.data.id)
+      );      
+    }
     let component = this.state.reply_form.component;
     let visible = !this.state.reply_form.is_visible;
     if(component == null)
@@ -230,9 +233,6 @@ export class Comment extends React.Component {
   }
 
   _get_reply_link_chunk() {
-    const { is_authenticated, who_can_post } = this.props.settings;
-    if (!is_authenticated && who_can_post === 'users')
-      return null;
     let url = this.props.settings.reply_url.replace('0', this.props.data.id),
         reply_label = django.gettext("Reply");
     

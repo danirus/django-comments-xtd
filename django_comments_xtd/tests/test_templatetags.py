@@ -89,8 +89,47 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
         self.assertEqual(Template(t).render(Context()), '1')
 
     @patch.multiple('django_comments_xtd.conf.settings', 
-                    COMMENTS_HIDE_REMOVED=False)
-    def test_get_xtdcomment_count_after_removing_but_not_hiding(self):
+                    COMMENTS_HIDE_REMOVED=True,
+                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    def test_get_xtdcomment_count_under_HIDE_REMOVE_case_1(self):
+        # To find out what are the cases 1, 2 and 3, read the docs settings
+        # page, section COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED.
+        thread_test_step_1(self.article_1)
+        thread_test_step_2(self.article_1)
+        # Previous two lines create the following comments:
+        #  content ->    cmt.id  thread_id  parent_id  level  order
+        #   cm1,   ->     1         1          1        0      1
+        #   cm3,   ->     3         1          1        1      2
+        #   cm4,   ->     4         1          1        1      3
+        #   cm2,   ->     2         2          2        0      1
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        # After removing the cm1, both cm3 and cm4 have is_public=False.
+        # Therefore the count should return 1 -> cm2. cm1 is hidden.
+        t = ("{% load comments_xtd %}"
+             "{% get_xtdcomment_count as varname for tests.article %}"
+             "{{ varname }}")
+        self.assertEqual(Template(t).render(Context()), '1')
+
+        (cm1, cm3, cm4, cm2) = XtdComment.objects.all()
+        # Comment 1 is public, but is also removed.
+        self.assertEqual(cm1.id, 1)
+        self.assertEqual(cm1.is_public, True)
+        self.assertEqual(cm1.is_removed, True)
+        # Comment 2 is public, and not removed.
+        self.assertEqual(cm2.id, 2)
+        self.assertEqual(cm2.is_public, True)
+        self.assertEqual(cm2.is_removed, False)
+        # Comment 3 and 4 are not public, but not removed.
+        for cm in [cm3, cm4]:
+            self.assertEqual(cm.is_public, False)
+            self.assertEqual(cm.is_removed, False)
+        
+    @patch.multiple('django_comments_xtd.conf.settings', 
+                    COMMENTS_HIDE_REMOVED=False,
+                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    def test_get_xtdcomment_count_under_HIDE_REMOVE_case_2(self):
         thread_test_step_1(self.article_1)
         thread_test_step_2(self.article_1)
         #
@@ -106,18 +145,36 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
         cm1 = XtdComment.objects.get(pk=1)
         cm1.is_removed = True
         cm1.save()
-        # After removing the cm1, both cm3 and cm4 don't get hidden,
-        # as COMMENTS_HIDE_REMOVED is False. Therefore the count 
-        # should return 2.
+
+        # After removing the cm1, both cm3 and cm4 have is_public=False,
+        # as COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED is True. Therefore the
+        # count should return 2 -> (cm1, cm2). cm1 is not hidden due to
+        # COMMENTS_HIDE_REMOVED being False (a message will be displayed
+        # saying that the comment has been removed, but the message won't be
+        # removed from the queryset).
         t = ("{% load comments_xtd %}"
              "{% get_xtdcomment_count as varname for tests.article %}"
              "{{ varname }}")
         self.assertEqual(Template(t).render(Context()), '2')
 
+        (cm1, cm3, cm4, cm2) = XtdComment.objects.all()
+        # Comment 1 is public, but is also removed.
+        self.assertEqual(cm1.id, 1)
+        self.assertEqual(cm1.is_public, True)
+        self.assertEqual(cm1.is_removed, True)
+        # Comment 2 is public, and not removed.
+        self.assertEqual(cm2.id, 2)
+        self.assertEqual(cm2.is_public, True)
+        self.assertEqual(cm2.is_removed, False)
+        # Comment 3 and 4 are not public, but not removed.
+        for cm in [cm3, cm4]:
+            self.assertEqual(cm.is_public, False)
+            self.assertEqual(cm.is_removed, False)
+        
     @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_HIDE_REMOVED=False,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False)
-    def test_get_xtdcomment_count_after_switching_off_both_hiding(self):
+    def test_get_xtdcomment_count_under_HIDE_REMOVE_case_3(self):
         model_app_label = get_model()._meta.label
         # The function publish_or_withhold_on_pre_save is only called if
         # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True. 
@@ -138,13 +195,28 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
         cm1 = XtdComment.objects.get(pk=1)
         cm1.is_removed = True
         cm1.save()
+
         # After removing the cm1, both cm3 and cm4 must remain visible,
-        # as COMMENTS_HIDE_REMOVED and COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED
-        # are both False.
+        # as COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED is False.
         t = ("{% load comments_xtd %}"
              "{% get_xtdcomment_count as varname for tests.article %}"
              "{{ varname }}")
         self.assertEqual(Template(t).render(Context()), '4')
+
+        (cm1, cm3, cm4, cm2) = XtdComment.objects.all()
+        # Comment 1 is public, but is also removed.
+        self.assertEqual(cm1.id, 1)
+        self.assertEqual(cm1.is_public, True)
+        self.assertEqual(cm1.is_removed, True)
+        # Comment 2 is public, and not removed.
+        self.assertEqual(cm2.id, 2)
+        self.assertEqual(cm2.is_public, True)
+        self.assertEqual(cm2.is_removed, False)
+        # Comment 3 and 4 are not public, but not removed.
+        for cm in [cm3, cm4]:
+            self.assertEqual(cm.is_public, True)
+            self.assertEqual(cm.is_removed, False)
+        
         # Re-connect the function for the following tests.
         pre_save.connect(publish_or_withhold_on_pre_save, 
                          sender=model_app_label)

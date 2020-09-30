@@ -338,3 +338,34 @@ Defaults to:
    .. code-block:: python
 
        COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED = True
+
+This setting has to be considered in combination with :setting:`COMMENTS_HIDE_REMOVED`. The following table draws the relationship. Each case is explained below.
+
++------+-----------------------+-----------------------------------------+
+| Case | COMMENTS_HIDE_REMOVED | XTD_COMMENTS_PUBLISH_OR_WITHHOLD_NESTED |
++------+-----------------------+-----------------------------------------+
+| 1    | True                  | ---                                     |
++      +-----------------------+-----------------------------------------+
+|      | True                  | ---                                     |
++------+-----------------------+-----------------------------------------+
+| 2    | False                 | True                                    |
++------+-----------------------+-----------------------------------------+
+| 3    | False                 | False                                   |
++------+-----------------------+-----------------------------------------+
+
+Case 1
+------
+
+Parent's app setting ``COMMENTS_HIDE_REMOVED`` is True,
+
+
+Case 2
+------
+
+Tal.
+
+
+Case 3
+------
+
+Tal.

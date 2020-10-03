@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.8.1] -
+
+    * Fixes issue #221, about the get_version function. Now it returns the full
+      version number <major>.<minor>.<patch>. Thanks to @mckinly.
+
 ## [2.8.0] - 2020-09-26
 
     * Fixes issue #106, which is about computing the number of nested comments

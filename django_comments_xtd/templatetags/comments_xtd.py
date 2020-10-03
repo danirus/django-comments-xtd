@@ -332,15 +332,21 @@ class RenderXtdCommentTreeNode(Node):
                 CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
             ]).prefetch_related('user')
             prefetch = Prefetch('flags', queryset=flags_qs)
+            site_id = getattr(settings, "SITE_ID", None)
+            if not site_id and ('request' in context):
+                site_id = get_current_site_id(context['request'])
             fkwds = {
                 "content_type": ctype,
                 "object_pk": obj.pk,
-                "site__pk": get_current_site_id(context.get('request')),
+                "site__pk": site_id,
                 "is_public": True
             }
             if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
                 fkwds['is_removed'] = False
-            qs = XtdComment.objects.prefetch_related(prefetch).filter(**fkwds)
+            qs = get_comment_model()\
+                .objects\
+                .prefetch_related(prefetch)\
+                .filter(**fkwds)
             comments = XtdComment.tree_from_queryset(
                 qs,
                 with_flagging=self.allow_flagging,
@@ -388,7 +394,7 @@ class GetXtdCommentTreeNode(Node):
             CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
         ]).prefetch_related('user')
         prefetch = Prefetch('flags', queryset=flags_qs)
-        queryset = XtdComment\
+        queryset = get_comment_model()\
             .objects\
             .prefetch_related(prefetch)\
             .filter(

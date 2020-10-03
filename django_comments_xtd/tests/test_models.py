@@ -133,6 +133,8 @@ def thread_test_step_2(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
     if not "site" in kwargs:
       kwargs["site"] = Site.objects.get(pk=1)
+    if not "parent_id" in kwargs:
+        kwargs["parent_id"] = 1
 
     # post Comment 3 to parent_id 1
     model.objects.create(content_type=article_ct,
@@ -140,7 +142,6 @@ def thread_test_step_2(article, model=get_model(), **kwargs):
                          content_object=article,
                          comment="comment 1 to comment 1",
                          submit_date=datetime.now(),
-                         parent_id=1,
                          **kwargs)
 
     # post Comment 4 to parent_id 1
@@ -149,7 +150,6 @@ def thread_test_step_2(article, model=get_model(), **kwargs):
                          content_object=article,
                          comment="comment 2 to comment 1",
                          submit_date=datetime.now(),
-                         parent_id=1,
                          **kwargs)
 
 

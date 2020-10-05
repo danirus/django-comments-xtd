@@ -24,19 +24,19 @@ _xtd_model = "django_comments_xtd.tests.models.MyComment"
 
 class GetXtdCommentCountTestCase(DjangoTestCase):
     def setUp(self):
-        self.article_1 = Article.objects.create(
+        self.article = Article.objects.create(
             title="September", slug="september", body="During September...")
         self.day_in_diary = Diary.objects.create(body="About Today...")
 
     def test_get_xtdcomment_count_for_one_model(self):
-        thread_test_step_1(self.article_1)
+        thread_test_step_1(self.article)
         t = ("{% load comments_xtd %}"
              "{% get_xtdcomment_count as varname for tests.article %}"
              "{{ varname }}")
         self.assertEqual(Template(t).render(Context()), '2')
 
     def test_get_xtdcomment_count_for_two_models(self):
-        thread_test_step_1(self.article_1)
+        thread_test_step_1(self.article)
         add_comment_to_diary_entry(self.day_in_diary)
         t = ("{% load comments_xtd %}"
              "{% get_xtdcomment_count as varname"
@@ -44,10 +44,10 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
              "{{ varname }}")
         self.assertEqual(Template(t).render(Context()), '3')
 
-    @patch.multiple('django_comments_xtd.conf.settings', 
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_XTD_MODEL=_xtd_model)
     def test_get_xtdcomment_count_for_xtdcomment_model(self):
-        thread_test_step_1(self.article_1, model=MyComment, 
+        thread_test_step_1(self.article, model=MyComment,
                            title="Can't be empty 1")
         t = ("{% load comments_xtd %}"
              "{% get_xtdcomment_count as varname for tests.article %}"
@@ -57,21 +57,21 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
     @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
     def test_get_xtdcomment_count_for_one_site(self):
         site2 = Site.objects.create(domain='site2.com', name='site2.com')
-        thread_test_step_1(self.article_1)  # Creates 2 comments in site1.
-        thread_test_step_1(self.article_1, site=site2)  # Creates 2 comments.
+        thread_test_step_1(self.article)  # Creates 2 comments in site1.
+        thread_test_step_1(self.article, site=site2)  # Creates 2 comments.
         t = ("{% load comments_xtd %}"
              "{% get_xtdcomment_count as varname for tests.article %}"
              "{{ varname }}")
-        self.assertEqual(Template(t).render(Context()), '2')        
+        self.assertEqual(Template(t).render(Context()), '2')
 
-    @patch.multiple('django_comments_xtd.conf.settings', 
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_HIDE_REMOVED=True,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
     def test_get_xtdcomment_count_for_HIDE_REMOVED_case_1(self):
         # To find out what are the cases 1, 2 and 3, read the docs settings
         # page, section COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED.
-        thread_test_step_1(self.article_1)
-        thread_test_step_2(self.article_1)
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
         # Previous two lines create the following comments:
         #  content ->    cmt.id  thread_id  parent_id  level  order
         #   cm1,   ->     1         1          1        0      1
@@ -101,13 +101,13 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
         for cm in [cm3, cm4]:
             self.assertEqual(cm.is_public, False)
             self.assertEqual(cm.is_removed, False)
-        
-    @patch.multiple('django_comments_xtd.conf.settings', 
+
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_HIDE_REMOVED=False,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
     def test_get_xtdcomment_count_for_HIDE_REMOVED_case_2(self):
-        thread_test_step_1(self.article_1)
-        thread_test_step_2(self.article_1)
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
         # These two lines create the following comments:
         # (  # content ->    cmt.id  thread_id  parent_id  level  order
         #     cm1,   # ->     1         1          1        0      1
@@ -115,11 +115,11 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
         #     cm4,   # ->     4         1          1        1      3
         #     cm2,   # ->     2         2          2        0      1
         # ) = XtdComment.objects.all()
-        #        
+        #
         cm1 = XtdComment.objects.get(pk=1)
         cm1.is_removed = True
         cm1.save()
-        
+
         # After removing the cm1, both cm3 and cm4 have is_public=False,
         # as COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED is True. Therefore the
         # count should return 2 -> (cm1, cm2). cm1 is not hidden due to
@@ -130,7 +130,7 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
              "{% get_xtdcomment_count as varname for tests.article %}"
              "{{ varname }}")
         self.assertEqual(Template(t).render(Context()), '2')
-        
+
         (cm1, cm3, cm4, cm2) = XtdComment.objects.all()
         # Comment 1 is public, but is also removed.
         self.assertEqual(cm1.id, 1)
@@ -144,18 +144,18 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
         for cm in [cm3, cm4]:
             self.assertEqual(cm.is_public, False)
             self.assertEqual(cm.is_removed, False)
-        
+
     @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_HIDE_REMOVED=False,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False)
     def test_get_xtdcomment_count_for_HIDE_REMOVED_case_3(self):
         model_app_label = get_model()._meta.label
         # The function publish_or_withhold_on_pre_save is only called if
-        # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True. 
-        pre_save.disconnect(publish_or_withhold_on_pre_save, 
+        # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True.
+        pre_save.disconnect(publish_or_withhold_on_pre_save,
                             sender=model_app_label)
-        thread_test_step_1(self.article_1)
-        thread_test_step_2(self.article_1)
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
         #
         # These two lines create the following comments:
         #
@@ -190,9 +190,9 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
         for cm in [cm3, cm4]:
             self.assertEqual(cm.is_public, True)
             self.assertEqual(cm.is_removed, False)
-        
+
         # Re-connect the function for the following tests.
-        pre_save.connect(publish_or_withhold_on_pre_save, 
+        pre_save.connect(publish_or_withhold_on_pre_save,
                          sender=model_app_label)
 
 
@@ -230,7 +230,7 @@ class RenderLastXtdCommentsTestCase(DjangoTestCase):
         # the first one must not be rendered in the output.
         self.assertEqual(output.count('<a name="c1">'), 0)
 
-    @patch.multiple('django_comments_xtd.conf.settings', 
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_XTD_MODEL=_xtd_model)
     def test_render_last_customized_comments(self):
         # Send nested comments using the MyComment model.
@@ -238,7 +238,7 @@ class RenderLastXtdCommentsTestCase(DjangoTestCase):
         thread_test_step_2(self.article, model=MyComment, title="title2")
         thread_test_step_3(self.article, model=MyComment, title="title3")
         # Also send a comment of type MyComment to the diary.
-        add_comment_to_diary_entry(self.day_in_diary, model=MyComment, 
+        add_comment_to_diary_entry(self.day_in_diary, model=MyComment,
                                    title="title4")
 
         # render_last_xtdcomments should also render comments of the
@@ -283,7 +283,7 @@ class RenderLastXtdCommentsTestCase(DjangoTestCase):
         self.assertEqual(output.count('<a name="c8">'), 1)
         self.assertEqual(output.count('<a name="c7">'), 1)
 
-    @patch.multiple('django_comments_xtd.conf.settings', 
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_HIDE_REMOVED=True,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
     def test_render_last_xtdcomments_for_HIDE_REMOVED_case_1(self):
@@ -309,7 +309,7 @@ class RenderLastXtdCommentsTestCase(DjangoTestCase):
         self.assertEqual(output.count('<a name="c4">'), 0)
         self.assertEqual(output.count('<a name="c2">'), 1)
 
-    @patch.multiple('django_comments_xtd.conf.settings', 
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_HIDE_REMOVED=False,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
     def test_render_last_xtdcomments_for_HIDE_REMOVED_case_2(self):
@@ -322,7 +322,7 @@ class RenderLastXtdCommentsTestCase(DjangoTestCase):
         #     cm4,   # ->     4         1          1        1      3
         #     cm2,   # ->     2         2          2        0      1
         # ) = XtdComment.objects.all()
-        #        
+        #
         cm1 = XtdComment.objects.get(pk=1)
         cm1.is_removed = True
         cm1.save()
@@ -347,8 +347,8 @@ class RenderLastXtdCommentsTestCase(DjangoTestCase):
     def test_render_last_xtdcomments_for_HIDE_REMOVED_case_3(self):
         model_app_label = get_model()._meta.label
         # The function publish_or_withhold_on_pre_save is only called if
-        # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True. 
-        pre_save.disconnect(publish_or_withhold_on_pre_save, 
+        # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True.
+        pre_save.disconnect(publish_or_withhold_on_pre_save,
                             sender=model_app_label)
         thread_test_step_1(self.article)
         thread_test_step_2(self.article)
@@ -375,10 +375,10 @@ class RenderLastXtdCommentsTestCase(DjangoTestCase):
         self.assertEqual(output.count('<a name="c4">'), 1)
         self.assertEqual(output.count('<a name="c2">'), 1)
         # Re-connect the function for the following tests.
-        pre_save.connect(publish_or_withhold_on_pre_save, 
+        pre_save.connect(publish_or_withhold_on_pre_save,
                          sender=model_app_label)
-        
-        
+
+
 class GetLastXtdCommentsTestCase(DjangoTestCase):
     def setUp(self):
         self.article = Article.objects.create(
@@ -415,7 +415,7 @@ class GetLastXtdCommentsTestCase(DjangoTestCase):
         # the first one must not be rendered in the output.
         self.assertEqual(output.count('<comment>1</comment>'), 0)
 
-    @patch.multiple('django_comments_xtd.conf.settings', 
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_XTD_MODEL=_xtd_model)
     def test_get_last_customized_comments(self):
         # Send nested comments using the MyComment model.
@@ -423,7 +423,7 @@ class GetLastXtdCommentsTestCase(DjangoTestCase):
         thread_test_step_2(self.article, model=MyComment, title="title2")
         thread_test_step_3(self.article, model=MyComment, title="title3")
         # Also send a comment of type MyComment to the diary.
-        add_comment_to_diary_entry(self.day_in_diary, model=MyComment, 
+        add_comment_to_diary_entry(self.day_in_diary, model=MyComment,
                                    title="title4")
         # render_last_xtdcomments should also render comments of the
         # model MyComment, defined in COMMENTS_XTD_MODEL setting.
@@ -473,7 +473,7 @@ class GetLastXtdCommentsTestCase(DjangoTestCase):
         self.assertEqual(output.count('<comment>8</comment>'), 1)
         self.assertEqual(output.count('<comment>7</comment>'), 1)
 
-    @patch.multiple('django_comments_xtd.conf.settings', 
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_HIDE_REMOVED=True,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
     def test_get_last_xtdcomments_for_HIDE_REMOVED_case_1(self):
@@ -502,7 +502,7 @@ class GetLastXtdCommentsTestCase(DjangoTestCase):
         self.assertEqual(output.count('<comment>4</comment>'), 0)
         self.assertEqual(output.count('<comment>2</comment>'), 1)
 
-    @patch.multiple('django_comments_xtd.conf.settings', 
+    @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_HIDE_REMOVED=False,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
     def test_get_last_xtdcomments_for_HIDE_REMOVED_case_2(self):
@@ -515,7 +515,7 @@ class GetLastXtdCommentsTestCase(DjangoTestCase):
         #     cm4,   # ->     4         1          1        1      3
         #     cm2,   # ->     2         2          2        0      1
         # ) = XtdComment.objects.all()
-        #        
+        #
         cm1 = XtdComment.objects.get(pk=1)
         cm1.is_removed = True
         cm1.save()
@@ -544,8 +544,8 @@ class GetLastXtdCommentsTestCase(DjangoTestCase):
     def test_render_last_xtdcomments_for_HIDE_REMOVED_case_3(self):
         model_app_label = get_model()._meta.label
         # The function publish_or_withhold_on_pre_save is only called if
-        # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True. 
-        pre_save.disconnect(publish_or_withhold_on_pre_save, 
+        # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True.
+        pre_save.disconnect(publish_or_withhold_on_pre_save,
                             sender=model_app_label)
         thread_test_step_1(self.article)
         thread_test_step_2(self.article)
@@ -577,7 +577,7 @@ class GetLastXtdCommentsTestCase(DjangoTestCase):
         self.assertEqual(output.count('<comment>2</comment>'), 1)
 
         # Re-connect the function for the following tests.
-        pre_save.connect(publish_or_withhold_on_pre_save, 
+        pre_save.connect(publish_or_withhold_on_pre_save,
                          sender=model_app_label)
 
 
@@ -742,7 +742,7 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
         self.assertTrue(pos_c6 > 0)
         self.assertTrue(pos_c4 > 0)
         self.assertTrue(pos_c3 < pos_c5 < pos_c6 < pos_c4)
-        
+
 # ----------------------------------------------------------------------------
 # testcase cmt.id   parent level-0  level-1  level-2
 #  step1     2        -      c2                        <-                 cmt2
@@ -759,7 +759,7 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
         # withholds all the nested comments too.
         cm1 = XtdComment.objects.get(pk=1)
         cm1.is_removed = True
-        cm1.save()        
+        cm1.save()
         # Make changes in comments_xtd.py so that comments are removed from the
         # queryset when COMMENTS_HIDE_REMOVED is True.
         t = ("{% load comments_xtd %}"
@@ -789,8 +789,8 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
     def test_render_xtdcomment_tree_for_HIDE_REMOVED_case_2(self):
         self._create_comments()
-        # As the comment above the method shows, when 
-        # XTD_COMMENTS_PUBLISH_OR_WITHHOLD_NESTED is True and 
+        # As the comment above the method shows, when
+        # XTD_COMMENTS_PUBLISH_OR_WITHHOLD_NESTED is True and
         # COMMENTS_HIDE_REMOVED is False, removing a comment make unvisible
         # its nested comments but keeps the removed one visible.
         cm1 = XtdComment.objects.get(pk=1)
@@ -830,12 +830,12 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
     def test_render_xtdcomment_tree_for_HIDE_REMOVED_case_3(self):
         self._create_comments()
         model_app_label = get_model()._meta.label
-        pre_save.disconnect(publish_or_withhold_on_pre_save, 
+        pre_save.disconnect(publish_or_withhold_on_pre_save,
                             sender=model_app_label)
         cm1 = XtdComment.objects.get(pk=1)
         cm1.is_removed = True
         cm1.save()
         self._assert_all_comments_are_published()
         # Connect the receiver again.
-        pre_save.connect(publish_or_withhold_on_pre_save, 
+        pre_save.connect(publish_or_withhold_on_pre_save,
                          sender=model_app_label)

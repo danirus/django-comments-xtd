@@ -1,20 +1,29 @@
 from __future__ import unicode_literals
 
+import json
 try:
     from unittest.mock import patch
 except ImportError:
     from mock import patch
 
+from django.db.models.signals import pre_save
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase
+from django.contrib.sites.models import Site
+from django.urls import reverse
+from django.test import TestCase as DjangoTestCase
 
-from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.test import APIRequestFactory, APITestCase
 
-from django_comments_xtd import django_comments
-from django_comments_xtd.api.views import CommentCreate
-from django_comments_xtd.tests.models import Article, Diary
+from django_comments_xtd import django_comments, get_model
+from django_comments_xtd.api.views import (
+    CommentCount, CommentCreate, CommentList)
+from django_comments_xtd.models import (
+    XtdComment, publish_or_withhold_on_pre_save)
+from django_comments_xtd.tests.models import Article, Diary, MyComment
 from django_comments_xtd.tests.utils import post_comment
+from django_comments_xtd.tests.test_models import (
+    thread_test_step_1, thread_test_step_2, thread_test_step_3)
 
 
 app_model_options_mock = {
@@ -24,7 +33,10 @@ app_model_options_mock = {
 }
 
 
-class CommentCreateTestCase(TestCase):
+factory = APIRequestFactory()
+
+
+class CommentCreateTestCase(DjangoTestCase):
     def setUp(self):
         patcher = patch('django_comments_xtd.views.send_mail')
         self.mock_mailer = patcher.start()
@@ -68,3 +80,176 @@ class CommentCreateTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.rendered_content, b'"User not authenticated"')
         self.assertEqual(self.mock_mailer.call_count, 0)
+
+
+_xtd_model = "django_comments_xtd.tests.models.MyComment"
+
+
+class CommentCountTestCase(APITestCase):
+    def setUp(self):
+        self.article = Article.objects.create(
+            title="September", slug="september", body="During September...")
+        self.day_in_diary = Diary.objects.create(body="About Today...")
+
+    def _send_request(self):
+        kwargs = {"content_type": "tests-article", "object_pk": "1"}
+        req = factory.get(reverse('comments-xtd-api-count', kwargs=kwargs))
+        view = CommentCount.as_view()
+        return view(req, **kwargs)
+
+    def test_get_count_shall_be_0(self):
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.rendered_content, b'{"count":0}')
+
+    def test_get_count_shall_be_2(self):
+        thread_test_step_1(self.article)
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.rendered_content, b'{"count":2}')
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_MODEL=_xtd_model)
+    def test_get_count_for_custom_comment_model_shall_be_2(self):
+        thread_test_step_1(self.article, model=MyComment,
+                           title="Can't be empty 1")
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.rendered_content, b'{"count":2}')
+
+    @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
+    def test_get_count_for_comments_sent_to_different_site(self):
+        site2 = Site.objects.create(domain='site2.com', name='site2.com')
+        thread_test_step_1(self.article)
+        thread_test_step_1(self.article, site=site2)
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.rendered_content, b'{"count":2}')
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_HIDE_REMOVED=True,
+                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    def test_get_count_for_HIDE_REMOVED_case_1(self):
+        # To find out what are the cases 1, 2 and 3, read the docs settings
+        # page, section COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED.
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        # Previous two lines create the following comments:
+        #  content ->    cmt.id  thread_id  parent_id  level  order
+        #   cm1,   ->     1         1          1        0      1
+        #   cm3,   ->     3         1          1        1      2
+        #   cm4,   ->     4         1          1        1      3
+        #   cm2,   ->     2         2          2        0      1
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        # After removing the cm1, both cm3 and cm4 have is_public=False.
+        # Therefore the count should return 1 -> cm2. cm1 is hidden.
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.rendered_content, b'{"count":1}')
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_HIDE_REMOVED=False,
+                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    def test_get_count_for_HIDE_REMOVED_case_2(self):
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        # These two lines create the following comments:
+        # (  # content ->    cmt.id  thread_id  parent_id  level  order
+        #     cm1,   # ->     1         1          1        0      1
+        #     cm3,   # ->     3         1          1        1      2
+        #     cm4,   # ->     4         1          1        1      3
+        #     cm2,   # ->     2         2          2        0      1
+        # ) = XtdComment.objects.all()
+        #
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        # After removing the cm1, both cm3 and cm4 have is_public=False,
+        # as COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED is True. Therefore the
+        # count should return 2 -> (cm1, cm2). cm1 is not hidden due to
+        # COMMENTS_HIDE_REMOVED being False (a message will be displayed
+        # saying that the comment has been removed, but the message won't be
+        # removed from the queryset).
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.rendered_content, b'{"count":2}')
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_HIDE_REMOVED=False,
+                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False)
+    def test_get_count_for_HIDE_REMOVED_case_3(self):
+        model_app_label = get_model()._meta.label
+        # The function publish_or_withhold_on_pre_save is only called if
+        # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True.
+        pre_save.disconnect(publish_or_withhold_on_pre_save,
+                            sender=model_app_label)
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        #
+        # These two lines create the following comments:
+        #
+        # (  # content ->    cmt.id  thread_id  parent_id  level  order
+        #     cm1,   # ->     1         1          1        0      1
+        #     cm3,   # ->     3         1          1        1      2
+        #     cm4,   # ->     4         1          1        1      3
+        #     cm2,   # ->     2         2          2        0      1
+        # ) = XtdComment.objects.all()
+
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        # After removing the cm1, both cm3 and cm4 must remain visible,
+        # as COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED is False.
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.rendered_content, b'{"count":4}')
+
+        # Re-connect the function for the following tests.
+        pre_save.connect(publish_or_withhold_on_pre_save,
+                         sender=model_app_label)
+
+
+class CommentListTestCase(APITestCase):
+    def setUp(self):
+        self.article = Article.objects.create(
+            title="September", slug="september", body="During September...")
+        self.day_in_diary = Diary.objects.create(body="About Today...")
+
+    def _send_request(self):
+        kwargs = {"content_type": "tests-article", "object_pk": "1"}
+        req = factory.get(reverse('comments-xtd-api-list', kwargs=kwargs))
+        view = CommentList.as_view()
+        return view(req, **kwargs)
+
+    def test_get_list(self):
+        thread_test_step_1(self.article)  # Sends 2 comments.
+        thread_test_step_2(self.article)  # Sends 2 comments.
+        thread_test_step_3(self.article)  # Sends 1 comment.
+        # -> content:   cmt.id  thread_id  parent_id  level  order
+        # cm1,   # ->      1         1          1        0      1
+        # cm3,   # ->      3         1          1        1      2
+        # cm4,   # ->      4         1          1        1      3
+        # cm2,   # ->      2         2          2        0      1
+        # cm5    # ->      5         2          2        1      2
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.rendered_content)
+        self.assertEqual(len(data), 5)
+        for cm, cm_id in zip(data, [1, 3, 4, 2, 5]):
+            self.assertEqual(cm['id'], cm_id)
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_MODEL=_xtd_model)
+    def test_get_list_of_customized_comments(self):
+        # Send nested comments using the MyComment model.
+        thread_test_step_1(self.article, model=MyComment, title="title1")
+        thread_test_step_2(self.article, model=MyComment, title="title2")
+        thread_test_step_3(self.article, model=MyComment, title="title3")
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.rendered_content)
+        self.assertEqual(len(data), 5)
+        for cm, cm_id in zip(data, [1, 3, 4, 2, 5]):
+            self.assertEqual(cm['id'], cm_id)

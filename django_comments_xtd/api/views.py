@@ -89,8 +89,8 @@ class CommentCount(generics.GenericAPIView):
         app_label, model = content_type_arg.split("-")
         content_type = ContentType.objects.get_by_natural_key(app_label, model)
         site_id = getattr(settings, "SITE_ID", None)
-        if not site_id and ('request' in context):
-            fkwds["site"] = get_current_site_id(context['request'])
+        if not site_id:
+            site_id = get_current_site_id(self.request)
         fkwds = {
             "content_type": content_type,
             "object_pk": object_pk_arg,

@@ -89,7 +89,6 @@ class CommentCountTestCase(APITestCase):
     def setUp(self):
         self.article = Article.objects.create(
             title="September", slug="september", body="During September...")
-        self.day_in_diary = Diary.objects.create(body="About Today...")
 
     def _send_request(self):
         kwargs = {"content_type": "tests-article", "object_pk": "1"}
@@ -215,7 +214,6 @@ class CommentListTestCase(APITestCase):
     def setUp(self):
         self.article = Article.objects.create(
             title="September", slug="september", body="During September...")
-        self.day_in_diary = Diary.objects.create(body="About Today...")
 
     def _send_request(self):
         kwargs = {"content_type": "tests-article", "object_pk": "1"}
@@ -240,16 +238,111 @@ class CommentListTestCase(APITestCase):
         for cm, cm_id in zip(data, [1, 3, 4, 2, 5]):
             self.assertEqual(cm['id'], cm_id)
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_XTD_MODEL=_xtd_model)
-    def test_get_list_of_customized_comments(self):
-        # Send nested comments using the MyComment model.
-        thread_test_step_1(self.article, model=MyComment, title="title1")
-        thread_test_step_2(self.article, model=MyComment, title="title2")
-        thread_test_step_3(self.article, model=MyComment, title="title3")
+    # Missing enhancement: extend the capacity to customize the comment model
+    # to the API, so that a comment model can be used in combination with its
+    # own serializer, and test it here.
+
+    @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
+    def test_get_list_for_a_second_site(self):
+        site2 = Site.objects.create(domain='site2.com', name='site2.com')
+
+        # Send nested comments to the article in the site1.
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        thread_test_step_3(self.article)
+
+        # Send some nested comments to the article in the site2.
+        thread_test_step_1(self.article, site=site2)
+
         resp = self._send_request()
         self.assertEqual(resp.status_code, 200)
         data = json.loads(resp.rendered_content)
-        self.assertEqual(len(data), 5)
-        for cm, cm_id in zip(data, [1, 3, 4, 2, 5]):
+        self.assertEqual(len(data), 2)
+        for cm, cm_id in zip(data, [6, 7]):
             self.assertEqual(cm['id'], cm_id)
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_HIDE_REMOVED=True,
+                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    def test_get_list_for_HIDE_REMOVED_case_1(self):
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        # Previous two lines create the following comments:
+        #  content ->    cmt.id  thread_id  parent_id  level  order
+        #   cm1,   ->     1         1          1        0      1
+        #   cm3,   ->     3         1          1        1      2
+        #   cm4,   ->     4         1          1        1      3
+        #   cm2,   ->     2         2          2        0      1
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        # After removing cm1, both cm3 and cm4 have is_public=False.
+        # Therefore the list of comments should contain only cm2.
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.rendered_content)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['id'], 2)
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_HIDE_REMOVED=False,
+                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    def test_get_list_for_HIDE_REMOVED_case_2(self):
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        # These two lines create the following comments:
+        # (  # content ->    cmt.id  thread_id  parent_id  level  order
+        #     cm1,   # ->     1         1          1        0      1
+        #     cm3,   # ->     3         1          1        1      2
+        #     cm4,   # ->     4         1          1        1      3
+        #     cm2,   # ->     2         2          2        0      1
+        # ) = XtdComment.objects.all()
+        #
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        # After removing the cm1, both cm3 and cm4 have is_public=False,
+        # as COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED is True. Therefore the
+        # count should return 2 -> (cm1, cm2). cm1 is not hidden due to
+        # COMMENTS_HIDE_REMOVED being False (a message will be displayed
+        # saying that the comment has been removed, but the message won't be
+        # removed from the queryset).
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.rendered_content)
+        self.assertEqual(len(data), 2)
+        for cm, cm_id in zip(data, [1, 2]):
+            self.assertEqual(cm['id'], cm_id)
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_HIDE_REMOVED=False,
+                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False)
+    def test_get_list_for_HIDE_REMOVED_case_3(self):
+        model_app_label = get_model()._meta.label
+        # The function publish_or_withhold_on_pre_save is only called if
+        # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True.
+        pre_save.disconnect(publish_or_withhold_on_pre_save,
+                            sender=model_app_label)
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        # These two lines create the following comments:
+        # (  # content ->    cmt.id  thread_id  parent_id  level  order
+        #     cm1,   # ->     1         1          1        0      1
+        #     cm3,   # ->     3         1          1        1      2
+        #     cm4,   # ->     4         1          1        1      3
+        #     cm2,   # ->     2         2          2        0      1
+        # ) = XtdComment.objects.all()
+        cm1 = XtdComment.objects.get(pk=1)
+        cm1.is_removed = True
+        cm1.save()
+        # After removing the cm1, both cm3 and cm4 remain visible,
+        # as COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED is False.
+        resp = self._send_request()
+        self.assertEqual(resp.status_code, 200)
+        data = json.loads(resp.rendered_content)
+        self.assertEqual(len(data), 4)
+        for cm, cm_id in zip(data, [1, 3, 4, 2]):
+            self.assertEqual(cm['id'], cm_id)
+        # Re-connect the function for the following tests.
+        pre_save.connect(publish_or_withhold_on_pre_save,
+                         sender=model_app_label)

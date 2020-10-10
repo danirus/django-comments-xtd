@@ -19,7 +19,7 @@ behaviour.
 
 
 .. setting:: COMMENTS_XTD_MAX_THREAD_LEVEL
-   
+
 ``COMMENTS_XTD_MAX_THREAD_LEVEL``
 =================================
 
@@ -52,8 +52,8 @@ An example::
     COMMENTS_XTD_MAX_THREAD_LEVEL = 0
     COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
         'projects.release': 2,
-	    'blog.stories': 8, 
-        'blog.quotes': 8, 
+	    'blog.stories': 8,
+        'blog.quotes': 8,
 	    'blog.diarydetail': 0 # Omit, defaults to COMMENTS_XTD_MAX_THREAD_LEVEL
     }
 
@@ -67,7 +67,7 @@ level 2::
 
 It defaults to ``{}``. What means the maximum thread level is setup
 with :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL`.
-    
+
 
 .. setting:: COMMENTS_XTD_CONFIRM_EMAIL
 
@@ -167,7 +167,7 @@ tuple with field names, used by the ``get_queryset`` method of ``XtdComment``
 model's manager.
 
 It defaults to ``('thread_id', 'order')``
-             
+
 
 .. setting:: COMMENTS_XTD_MARKUP_FALLBACK_FILTER
 
@@ -283,7 +283,7 @@ Defaults to:
            }
        }
 
-       
+
 .. setting:: COMMENTS_XTD_API_USER_REPR
 
 ``COMMENTS_XTD_API_USER_REPR``
@@ -312,7 +312,7 @@ Defaults to:
 
 .. _Gravatar: http://gravatar.com/
 
-**Optional**. Path to the function used by the web API to retrieve the user's image URL of the user associated with a comment. By default django-comments-xtd tries to retrieve images from Gravatar_. If you use the web API (the JavaScript plugin uses it) then you might want to write a function to provide the URL to the user's image from a comment object. You might be interested on the use case :ref:`ref-change-user-image-or-avatar`, which cover the topic in depth. 
+**Optional**. Path to the function used by the web API to retrieve the user's image URL of the user associated with a comment. By default django-comments-xtd tries to retrieve images from Gravatar_. If you use the web API (the JavaScript plugin uses it) then you might want to write a function to provide the URL to the user's image from a comment object. You might be interested on the use case :ref:`ref-change-user-image-or-avatar`, which cover the topic in depth.
 
  .. code-block:: python
 
@@ -341,31 +341,55 @@ Defaults to:
 
 This setting has to be considered in combination with :setting:`COMMENTS_HIDE_REMOVED`. The following table draws the relationship. Each case is explained below.
 
-+------+-----------------------+-----------------------------------------+
-| Case | COMMENTS_HIDE_REMOVED | XTD_COMMENTS_PUBLISH_OR_WITHHOLD_NESTED |
-+------+-----------------------+-----------------------------------------+
-| 1    | True                  | ---                                     |
-+      +-----------------------+-----------------------------------------+
-|      | True                  | ---                                     |
-+------+-----------------------+-----------------------------------------+
-| 2    | False                 | True                                    |
-+------+-----------------------+-----------------------------------------+
-| 3    | False                 | False                                   |
-+------+-----------------------+-----------------------------------------+
++------+-----------------------+----------------------------------------+
+| Case | comments_hide_removed | xtd_coments_publish_or_withhold_nested |
++------+-----------------------+----------------------------------------+
+| 1    | True                  | ---                                    |
++      +-----------------------+----------------------------------------+
+|      | True                  | ---                                    |
++------+-----------------------+----------------------------------------+
+| 2    | False                 | True                                   |
++------+-----------------------+----------------------------------------+
+| 3    | False                 | False                                  |
++------+-----------------------+----------------------------------------+
 
 Case 1
 ------
 
-Parent's app setting ``COMMENTS_HIDE_REMOVED`` is True,
+When Parent's app setting ``COMMENTS_HIDE_REMOVED`` is ``True``, removing a comment has the effect of hiding it and its nested comments:
+
+  .. code-block::
+
+     |                           Removing     |
+     |-> comment 1               comment 1    |               // hidden
+     |   |-> comment 1.1            ->        |               // hidden
+     |   |-> comment 1.2                      |               // hidden
+     |-> comment 2                            |-> comment 2
 
 
 Case 2
 ------
 
-Tal.
+In case 2 :setting:`COMMENTS_HIDE_REMOVED` is ``False``, but :setting:`XTD_COMMENTS_PUBLISH_OR_WITHHOLD_NESTED` is ``True``, meaning that we don't want to hide comments that have been removed, but we want to withhold nested comments. In such a case django-comments-xtd templates display a text indicating that the comment has been removed, and given that nested comments have been withheld they are not displayed:
+
+  .. code-block::
+
+     |                           Removing     |
+     |-> comment 1               comment 1    |-> This comment has been removed
+     |   |-> comment 1.1            ->        |               // hidden
+     |   |-> comment 1.2                      |               // hidden
+     |-> comment 2                            |-> comment 2
 
 
 Case 3
 ------
 
-Tal.
+In case 3 the behaviour is to avoid publishing or withholding nested comments when parents are removed or approved. So removing comment 1 will not affect its nested comments:
+
+  .. code-block::
+
+     |                           Removing     |
+     |-> comment 1               comment 1    |-> This comment has been removed
+     |   |-> comment 1.1            ->        |   |-> comment 1.1
+     |   |-> comment 1.2                      |   |-> comment 1.2
+     |-> comment 2                            |-> comment 2

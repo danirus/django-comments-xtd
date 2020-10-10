@@ -2,10 +2,7 @@
 
 ## [3.0.0] -
 
-    * Fixes issue #194. Take into account setting COMMENTS_HIDE_REMOVED from
-      parent's app django-comments. This is a backwards incompatible change.
-      When COMMENTS_HIDE_REMOVED is not defined or is defined as True, removed
-      comments should not be retrieved nor counted. <document this>
+    * Fixes issue #194, about setting COMMENTS_HIDE_REMOVED and the new setting COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED. Up until v3.0.0 removed comments were listed but their content were not displayed. They showed a "comment has been removed" message instead. That behaviour didn't fully comply with parent's app, django-comments setting COMMENTS_HIDE_REMOVED. By default COMMENTS_HIDE_REMOVED is True, which has the effect of hiding removed comments. As of v3.0.0 this is also the behaviour of django-comments-xtd. Additionally a new setting COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED has been created to control whether nested comments of a comment being removed or approved will be withhold or published.
 
 ## [2.8.1] -
 

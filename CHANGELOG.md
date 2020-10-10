@@ -1,5 +1,17 @@
 # Change Log
 
+## [3.0.0] -
+
+    * Fixes issue #194. Take into account setting COMMENTS_HIDE_REMOVED from
+      parent's app django-comments. This is a backwards incompatible change.
+      When COMMENTS_HIDE_REMOVED is not defined or is defined as True, removed
+      comments should not be retrieved nor counted. <document this>
+
+## [2.8.1] -
+
+    * Fixes issue #221, about the get_version function. Now it returns the full
+      version number <major>.<minor>.<patch>. Thanks to @mckinly.
+
 ## [2.8.0] - 2020-09-26
 
     * Fixes issue #106, which is about computing the number of nested comments

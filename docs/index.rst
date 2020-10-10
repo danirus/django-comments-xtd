@@ -94,6 +94,12 @@ specific features, or check out the use cases to see how others customize it.
 Change Log
 ==========
 
+[2.8.1] -
+--------------------
+
+    * Fixes issue `#221 <https://github.com/danirus/django-comments-xtd/issues/221>`_, about the get_version function. Now it returns the full
+      version number ``<major>.<minor>.<patch>``. Thanks to @mckinly.
+
 [2.8.0] - 2020-09-26
 --------------------
 

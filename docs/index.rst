@@ -19,9 +19,10 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.8.0, of
+    This documentation represents the current version, v3.0.0, of
     django-comments-xtd. For old versions of the documentation:
 
+    * v2.8.1: https://django-comments-xtd.readthedocs.io/en/2.8.1/
     * v2.7.2: https://django-comments-xtd.readthedocs.io/en/2.7.2/
     * v2.6.2: https://django-comments-xtd.readthedocs.io/en/2.6.2/
     * v2.5.1: https://django-comments-xtd.readthedocs.io/en/2.5.1/
@@ -93,6 +94,11 @@ specific features, or check out the use cases to see how others customize it.
 
 Change Log
 ==========
+
+[3.0.0] -
+--------------------
+
+    * Fixes issue `#194 <https://github.com/danirus/django-comments-xtd/issues/221>`_, about the :setting:`COMMENTS_HIDE_REMOVED` setting and the new :setting:`COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED`. Up until v3.0.0 removed comments were listed but their content were not displayed. They showed a "comment has been removed" message instead. That behviour didn't fully comply with the :setting:`COMMENTS_HIDE_REMOVED` setting of django-comments, the parent app. By default :setting:`COMMENTS_HIDE_REMOVED` is ``True``, which has the effect of hidding removed comments. As of v3.0.0 this is also the behaviour of django-comments-xtd. Additionally a new setting :setting:`COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED` has been created to control whether nested comments of a comment being removed or approved will be withhold or published.
 
 [2.8.1] -
 --------------------

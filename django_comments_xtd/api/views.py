@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.module_loading import import_string
 
 from django_comments.models import CommentFlag
+from django_comments_xtd import get_model as get_comment_model
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.decorators import api_view
@@ -60,15 +61,21 @@ class CommentList(generics.ListAPIView):
                 CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
             ]).prefetch_related('user')
             prefetch = Prefetch('flags', queryset=flags_qs)
-            qs = XtdComment\
+            site_id = getattr(settings, "SITE_ID", None)
+            if not site_id:
+                site_id = get_current_site_id(self.request)
+            fkwds = {
+                "content_type": content_type,
+                "object_pk": object_pk_arg,
+                "site__pk": site_id,
+                "is_public": True
+            }
+            if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+                fkwds['is_removed'] = False
+            qs = get_comment_model()\
                 .objects\
                 .prefetch_related(prefetch)\
-                .filter(
-                    content_type=content_type,
-                    object_pk=object_pk_arg,
-                    site__pk=get_current_site_id(self.request),
-                    is_public=True
-                )
+                .filter(**fkwds)
         return qs
 
 
@@ -81,10 +88,18 @@ class CommentCount(generics.GenericAPIView):
         object_pk_arg = self.kwargs.get('object_pk', None)
         app_label, model = content_type_arg.split("-")
         content_type = ContentType.objects.get_by_natural_key(app_label, model)
-        qs = XtdComment.objects.filter(content_type=content_type,
-                                       object_pk=object_pk_arg,
-                                       is_public=True)
-        return qs
+        site_id = getattr(settings, "SITE_ID", None)
+        if not site_id:
+            site_id = get_current_site_id(self.request)
+        fkwds = {
+            "content_type": content_type,
+            "object_pk": object_pk_arg,
+            "site__pk": site_id,
+            "is_public": True
+        }
+        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+            fkwds["is_removed"] = False
+        return get_comment_model().objects.filter(**fkwds)
 
     def get(self, request, *args, **kwargs):
         return Response({'count': self.get_queryset().count()})

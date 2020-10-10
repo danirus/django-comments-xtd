@@ -113,6 +113,10 @@ COMMENTS_APP = "django_comments_xtd"
 
 DEFAULT_FROM_EMAIL = "Alice Bloggs <alice@example.com>"
 
+COMMENTS_HIDE_REMOVED = True
+
+COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED = True
+
 COMMENTS_XTD_CONFIRM_EMAIL = True
 COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
 COMMENTS_XTD_MAX_THREAD_LEVEL = 2

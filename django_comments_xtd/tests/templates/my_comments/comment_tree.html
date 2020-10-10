@@ -36,6 +36,7 @@
       {% if item.comment.is_removed %}
         <p class="text-muted{% if not allow_feedback and not item.comment.allow_thread %} pb-3{% endif %}"><em>{% trans "This comment has been removed." %}</em></p>
       {% else %}
+	<h5 id="title-{{ item.comment.id }}">{{ item.title }}</h5>
         <div class="content{% if not allow_feedback and not item.comment.allow_thread %} pb-3{% endif %}">
         {% include "includes/django_comments_xtd/comment_content.html" with content=item.comment.comment %}
         </div>
@@ -48,7 +49,7 @@
       {% endif %}
     </div>
     {% if item.children and not hide_removed or item.children and hide_removed and not item.is_removed %}
-      {% render_xtdcomment_tree with comments=item.children %}
+      {% render_xtdcomment_tree with comments=item.children using my_comments/comment_tree.html %}
     {% endif %}
   </div>
 </div>

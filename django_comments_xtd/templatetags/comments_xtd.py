@@ -14,6 +14,7 @@ from django.template import (Library, Node, TemplateSyntaxError,
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from django_comments_xtd.conf import settings
 from django_comments.models import CommentFlag
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.api import frontend
@@ -36,12 +37,16 @@ class XtdCommentCountNode(Node):
     def __init__(self, as_varname, content_types):
         """Class method to parse get_xtdcomment_list and return a Node."""
         self.as_varname = as_varname
-        self.qs = XtdComment.objects.for_content_types(content_types)
+        self.qs = get_comment_model().objects.for_content_types(content_types)
+        self.qs = self.qs.filter(is_public=True)
+        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+            self.qs = self.qs.filter(is_removed=False)
 
     def render(self, context):
-        context[self.as_varname] = self.qs.filter(
-                site=get_current_site_id(context.get('request'))
-            ).count()
+        site_id = getattr(settings, "SITE_ID", None)
+        if not site_id and ('request' in context):
+            site_id = get_current_site_id(context['request'])
+        context[self.as_varname] = self.qs.filter(site=site_id).count()
         return ''
 
 
@@ -138,19 +143,26 @@ class BaseLastXtdCommentsNode(Node):
 
 
 class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
-
     def render(self, context):
         if not isinstance(self.count, int):
             self.count = int(self.count.resolve(context))
 
-        self.qs = XtdComment.objects.for_content_types(
-                self.content_types,
-                site=get_current_site_id(context.get('request'))
-            ).order_by('submit_date')[:self.count]
+        site_id = getattr(settings, "SITE_ID", None)
+        if not site_id and ('request' in context):
+            site_id = get_current_site_id(context['request'])
+
+        qs = get_comment_model().objects.for_content_types(
+            self.content_types, site=site_id)
+
+        qs = qs.filter(is_public=True)
+        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+            qs = qs.filter(is_removed=False)
+
+        qs = qs.order_by('submit_date')[:self.count]
 
         strlist = []
         context_dict = context.flatten()
-        for xtd_comment in self.qs:
+        for xtd_comment in qs:
             if self.template_path:
                 template_arg = self.template_path
             else:
@@ -168,7 +180,6 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
 
 
 class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
-
     def __init__(self, count, as_varname, content_types):
         super(GetLastXtdCommentsNode, self).__init__(count, content_types)
         self.as_varname = as_varname
@@ -176,12 +187,21 @@ class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
     def render(self, context):
         if not isinstance(self.count, int):
             self.count = int(self.count.resolve(context))
-        self.qs = XtdComment.objects.for_content_types(
-                self.content_types,
-                site=get_current_site_id(context.get('request'))
-            )\
-            .order_by('submit_date')[:self.count]
-        context[self.as_varname] = self.qs
+
+        site_id = getattr(settings, "SITE_ID", None)
+        if not site_id and ('request' in context):
+            site_id = get_current_site_id(context['request'])
+
+        qs = get_comment_model().objects.for_content_types(
+                self.content_types, site=site_id)
+
+        qs = qs.filter(is_public=True)
+        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+            qs = qs.filter(is_removed=False)
+
+        qs = qs.order_by('submit_date')[:self.count]
+
+        context[self.as_varname] = qs
         return ''
 
 
@@ -301,6 +321,10 @@ class RenderXtdCommentTreeNode(Node):
         for attr in ['allow_flagging', 'allow_feedback', 'show_feedback']:
             context_dict[attr] = (getattr(self, attr, False) or
                                   context.get(attr, False))
+
+        hide_removed = getattr(settings, 'COMMENTS_HIDE_REMOVED', True)
+        context_dict['hide_removed'] = hide_removed
+
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
@@ -308,22 +332,29 @@ class RenderXtdCommentTreeNode(Node):
                 CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
             ]).prefetch_related('user')
             prefetch = Prefetch('flags', queryset=flags_qs)
-            queryset = XtdComment\
+            site_id = getattr(settings, "SITE_ID", None)
+            if not site_id and ('request' in context):
+                site_id = get_current_site_id(context['request'])
+            fkwds = {
+                "content_type": ctype,
+                "object_pk": obj.pk,
+                "site__pk": site_id,
+                "is_public": True
+            }
+            if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
+                fkwds['is_removed'] = False
+            qs = get_comment_model()\
                 .objects\
                 .prefetch_related(prefetch)\
-                .filter(
-                    content_type=ctype,
-                    object_pk=obj.pk,
-                    site__pk=get_current_site_id(context.get('request')),
-                    is_public=True
-                )
+                .filter(**fkwds)
             comments = XtdComment.tree_from_queryset(
-                queryset,
+                qs,
                 with_flagging=self.allow_flagging,
                 with_feedback=self.allow_feedback,
                 user=context['user']
             )
             context_dict['comments'] = comments
+
         if self.cvars:
             for vname, vobj in self.cvars:
                 context_dict[vname] = vobj.resolve(context)
@@ -363,7 +394,7 @@ class GetXtdCommentTreeNode(Node):
             CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
         ]).prefetch_related('user')
         prefetch = Prefetch('flags', queryset=flags_qs)
-        queryset = XtdComment\
+        queryset = get_comment_model()\
             .objects\
             .prefetch_related(prefetch)\
             .filter(

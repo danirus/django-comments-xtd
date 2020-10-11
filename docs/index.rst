@@ -97,6 +97,7 @@ Change Log
 [2.8.1] -
 --------------------
 
+    * Fixes issue `#152 <https://github.com/danirus/django-comments-xtd/issues/152>`_, about loading the `staticfiles` templatetag instead of `static`. Since Django v3.0 the staticfiles app requires using the latter.
     * Fixes issue `#221 <https://github.com/danirus/django-comments-xtd/issues/221>`_, about the get_version function. Now it returns the full
       version number ``<major>.<minor>.<patch>``. Thanks to @mckinly.
 

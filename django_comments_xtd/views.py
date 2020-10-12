@@ -14,6 +14,7 @@ from django.template import loader
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
+from django.views.defaults import bad_request
 from django.views.generic import ListView
 
 
@@ -76,16 +77,16 @@ def send_email_confirmation_request(
               [comment.user_email, ], html=html_message)
 
 
-def _comment_exists(comment):
+def _get_comment_if_exists(comment):
     """
     True if exists a XtdComment with same user_name, user_email and submit_date.
     """
-    return (XtdComment.objects.filter(
+    return XtdComment.objects.filter(
         user_name=comment.user_name,
         user_email=comment.user_email,
         followup=comment.followup,
         submit_date=comment.submit_date
-    ).count() > 0)
+    ).first()
 
 
 def _create_comment(tmp_comment):
@@ -144,7 +145,7 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
         user_is_authenticated = False
 
     if (not settings.COMMENTS_XTD_CONFIRM_EMAIL or user_is_authenticated):
-        if not _comment_exists(comment):
+        if _get_comment_if_exists(comment) == None:
             new_comment = _create_comment(comment)
             comment.xtd_comment = new_comment
             signals.confirmation_received.send(sender=TmpXtdComment,
@@ -205,16 +206,21 @@ def confirm(request, key,
     try:
         tmp_comment = signed.loads(str(key),
                                    extra_key=settings.COMMENTS_XTD_SALT)
-    except (ValueError, signed.BadSignature):
-        raise Http404
-    # the comment does exist if the URL was already confirmed, then: Http404
-    if _comment_exists(tmp_comment):
-        raise Http404
-    # Send signal that the comment confirmation has been received
+    except (ValueError, signed.BadSignature) as exc:
+        return bad_request(request, exc)
+
+    # The comment does exist if the URL was already confirmed,
+    # in such a case, as per suggested in ticket #80, we return
+    # the comment's URL, as if the comment is just confirmed.
+    comment = _get_comment_if_exists(tmp_comment)
+    if comment is not None:
+        return redirect(comment)
+
+    # Send signal that the comment confirmation has been received.
     responses = signals.confirmation_received.send(sender=TmpXtdComment,
                                                    comment=tmp_comment,
                                                    request=request)
-    # Check whether a signal receiver decides to discard the comment
+    # Check whether a signal receiver decides to discard the comment.
     for (receiver, response) in responses:
         if response is False:
             return render(request, template_discarded, {'comment': tmp_comment})
@@ -312,10 +318,12 @@ def mute(request, key):
     try:
         comment = signed.loads(str(key),
                                extra_key=settings.COMMENTS_XTD_SALT)
-    except (ValueError, signed.BadSignature):
-        raise Http404
-    # the comment does exist if the URL was already confirmed, then: Http404
-    if not comment.followup or not _comment_exists(comment):
+    except (ValueError, signed.BadSignature) as exc:
+        return bad_request(request, exc)
+
+    # Can't mute a comment that doesn't have the followup attribute
+    # set to True, or a comment that doesn't exist.
+    if not comment.followup or _get_comment_if_exists(comment) is None:
         raise Http404
 
     # Send signal that the comment thread has been muted

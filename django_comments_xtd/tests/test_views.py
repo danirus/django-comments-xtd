@@ -79,7 +79,6 @@ class OnCommentWasPostedTestCase(TestCase):
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October...")
         self.form = django_comments.get_form()(self.article)
-        self.factory = RequestFactory()
         self.user = AnonymousUser()
 
     def post_valid_data(self, auth_user=None, response_code=302):
@@ -334,13 +333,12 @@ class ReplyCommentTestCase(TestCase):
         self.assertTrue(response.url.startswith(settings.LOGIN_URL))
 
 
-class MuteFollowUpsTestCase(TestCase):
-
+class MuteFollowUpTestCase(TestCase):
     def setUp(self):
-        # Creates an article and send two comments to the article with follow-up
-        # notifications. First comment doesn't have to send any notification.
+        # Creates an article and send two comments to the article with
+        # follow-up notifications. First comment doesn't have to send any
+        #  notification.
         # Second comment has to send one notification (to Bob).
-        self.factory = RequestFactory()
         patcher = patch('django_comments_xtd.views.send_mail')
         self.mock_mailer = patcher.start()
         self.article = Article.objects.create(
@@ -381,9 +379,9 @@ class MuteFollowUpsTestCase(TestCase):
         self.addCleanup(patcher.stop)
 
     def get_mute_followup_url(self, key):
-        request = self.factory.get(reverse("comments-xtd-mute",
-                                           kwargs={'key': key}),
-                                   follow=True)
+        request = request_factory.get(reverse("comments-xtd-mute",
+                                              kwargs={'key': key}),
+                                      follow=True)
         request.user = AnonymousUser()
         response = views.mute(request, key)
         self.assertEqual(response.status_code, 200)
@@ -404,8 +402,11 @@ class MuteFollowUpsTestCase(TestCase):
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         # Alice confirms her comment...
         self.assertTrue(self.mock_mailer.call_count == 4)
-        alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
-                                 self.mock_mailer.call_args[0][1]).group("key"))
+        alicekey = str(
+            re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+                      self.mock_mailer.call_args[0][1]
+            ).group("key")
+        )
         confirm_comment_url(alicekey)  # confirm Alice's comment
         # Alice confirmed her comment, but this time Bob won't receive any
         # notification, neither do Alice being the sender

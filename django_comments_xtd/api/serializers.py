@@ -149,7 +149,7 @@ class WriteCommentSerializer(serializers.Serializer):
             not settings.COMMENTS_XTD_CONFIRM_EMAIL or
             self.request.user.is_authenticated
         ):
-            if views._get_comment_if_exists(resp['comment']) == None:
+            if views._get_comment_if_exists(resp['comment']) is None:
                 new_comment = views._create_comment(resp['comment'])
                 resp['comment'].xtd_comment = new_comment
                 confirmation_received.send(sender=TmpXtdComment,

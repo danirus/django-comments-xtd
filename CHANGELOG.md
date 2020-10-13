@@ -6,6 +6,10 @@
 
 ## [2.8.1] -
 
+    * Fixes issue #80, that requests to change the response when clicking
+      more than once on a comment confirmation link. Up until now clicking
+      more than once on a comment confirmation link produced a HTTP 404
+      response. Since version 2.8.1 the response is the same as for the first click: the user is redirected to the comment's view in the page.
     * Fixes issue #152, about loading the `staticfiles` templatetag instead of
       `static`. Since Django v3.0 the staticfiles app requires using the
       latter.

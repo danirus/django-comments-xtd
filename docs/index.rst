@@ -97,6 +97,7 @@ Change Log
 [2.8.1] -
 --------------------
 
+    * Fixes issue `#80 <https://github.com/danirus/django-comments-xtd/issues/80>`_, that requests to change the response when clicking more than once on a comment confirmation link. Up until now clicking more than once on a comment confirmation link produced a HTTP 404 response. Since version 2.8.1 the response is the same as for the first click: the user is redirected to the comment's view in the page.
     * Fixes issue `#152 <https://github.com/danirus/django-comments-xtd/issues/152>`_, about loading the `staticfiles` templatetag instead of `static`. Since Django v3.0 the staticfiles app requires using the latter.
     * Fixes issue `#221 <https://github.com/danirus/django-comments-xtd/issues/221>`_, about the get_version function. Now it returns the full
       version number ``<major>.<minor>.<patch>``. Thanks to @mckinly.

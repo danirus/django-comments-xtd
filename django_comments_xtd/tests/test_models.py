@@ -12,7 +12,7 @@ from django.test import TestCase as DjangoTestCase
 from django_comments_xtd import get_model
 from django_comments_xtd.models import (XtdComment,
                                         MaxThreadLevelExceededException,
-                                        publish_or_unpublish_on_pre_save)
+                                        publish_or_withhold_on_pre_save)
 from django_comments_xtd.tests.models import Article, Diary, MyComment
 
 
@@ -109,13 +109,13 @@ class XtdCommentManagerTestCase(ArticleBaseTestCase):
 
 def thread_test_step_1(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
-    site = Site.objects.get(pk=1)
+    if not "site" in kwargs:
+      kwargs["site"] = Site.objects.get(pk=1)
 
     # post Comment 1 with parent_id 0
     model.objects.create(content_type=article_ct,
                          object_pk=article.id,
                          content_object=article,
-                         site=site,
                          comment="comment 1 to article",
                          submit_date=datetime.now(),
                          **kwargs)
@@ -124,7 +124,6 @@ def thread_test_step_1(article, model=get_model(), **kwargs):
     model.objects.create(content_type=article_ct,
                          object_pk=article.id,
                          content_object=article,
-                         site=site,
                          comment="comment 2 to article",
                          submit_date=datetime.now(),
                          **kwargs)
@@ -132,86 +131,88 @@ def thread_test_step_1(article, model=get_model(), **kwargs):
 
 def thread_test_step_2(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
-    site = Site.objects.get(pk=1)
+    if not "site" in kwargs:
+      kwargs["site"] = Site.objects.get(pk=1)
+    if not "parent_id" in kwargs:
+        kwargs["parent_id"] = 1
 
     # post Comment 3 to parent_id 1
     model.objects.create(content_type=article_ct,
                          object_pk=article.id,
                          content_object=article,
-                         site=site,
                          comment="comment 1 to comment 1",
                          submit_date=datetime.now(),
-                         parent_id=1,
                          **kwargs)
 
     # post Comment 4 to parent_id 1
     model.objects.create(content_type=article_ct,
                          object_pk=article.id,
                          content_object=article,
-                         site=site,
                          comment="comment 2 to comment 1",
                          submit_date=datetime.now(),
-                         parent_id=1,
                          **kwargs)
 
 
-def thread_test_step_3(article):
+def thread_test_step_3(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
-    site = Site.objects.get(pk=1)
+    if not "site" in kwargs:
+      kwargs["site"] = Site.objects.get(pk=1)
 
     # post Comment 5 to parent_id 2
-    XtdComment.objects.create(content_type=article_ct,
-                              object_pk=article.id,
-                              content_object=article,
-                              site=site,
-                              comment="comment 1 to comment 2",
-                              submit_date=datetime.now(),
-                              parent_id=2)
+    model.objects.create(content_type=article_ct,
+                         object_pk=article.id,
+                         content_object=article,
+                         comment="comment 1 to comment 2",
+                         submit_date=datetime.now(),
+                         parent_id=2,
+                         **kwargs)
 
 
-def thread_test_step_4(article):
+def thread_test_step_4(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
-    site = Site.objects.get(pk=1)
+    if not "site" in kwargs:
+      kwargs["site"] = Site.objects.get(pk=1)
 
     # post Comment 6 to parent_id 5
-    XtdComment.objects.create(content_type=article_ct,
-                              object_pk=article.id,
-                              content_object=article,
-                              site=site,
-                              comment="cmt 1 to cmt 1 to cmt 2",
-                              submit_date=datetime.now(),
-                              parent_id=5)
+    model.objects.create(content_type=article_ct,
+                         object_pk=article.id,
+                         content_object=article,
+                         comment="cmt 1 to cmt 1 to cmt 2",
+                         submit_date=datetime.now(),
+                         parent_id=5,
+                         **kwargs)
 
     # post Comment 7 to parent_id 4
-    XtdComment.objects.create(content_type=article_ct,
-                              object_pk=article.id,
-                              content_object=article,
-                              site=site,
-                              comment="cmt 1 to cmt 2 to cmt 1",
-                              submit_date=datetime.now(),
-                              parent_id=4)
+    model.objects.create(content_type=article_ct,
+                         object_pk=article.id,
+                         content_object=article,
+                         comment="cmt 1 to cmt 2 to cmt 1",
+                         submit_date=datetime.now(),
+                         parent_id=4,
+                         **kwargs)
 
 
-def thread_test_step_5(article):
+def thread_test_step_5(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
-    site = Site.objects.get(pk=1)
+    if not "site" in kwargs:
+      kwargs["site"] = Site.objects.get(pk=1)
 
     # post Comment 8 to parent_id 3
-    XtdComment.objects.create(content_type=article_ct,
-                              object_pk=article.id,
-                              content_object=article,
-                              site=site,
-                              comment="cmt 1 to cmt 1 to cmt 1",
-                              submit_date=datetime.now(),
-                              parent_id=3)
+    model.objects.create(content_type=article_ct,
+                         object_pk=article.id,
+                         content_object=article,
+                         comment="cmt 1 to cmt 1 to cmt 1",
+                         submit_date=datetime.now(),
+                         parent_id=3,
+                         **kwargs)
 
     # post Comment 9 with parent_id 0
-    XtdComment.objects.create(content_type=article_ct,
-                              object_pk=article.id,
-                              content_object=article,
-                              site=site,
-                              comment="comment 3 article",
-                              submit_date=datetime.now())
+    model.objects.create(content_type=article_ct,
+                         object_pk=article.id,
+                         content_object=article,
+                         comment="comment 3 article",
+                         submit_date=datetime.now(),
+                         **kwargs)
 
 
 class BaseThreadStep1TestCase(ArticleBaseTestCase):
@@ -448,15 +449,16 @@ class ThreadStep5TestCase(ArticleBaseTestCase):
         self.assertEqual(cm1.nested_count, 3)
 
 
-def add_comment_to_diary_entry(diary_entry):
+def add_comment_to_diary_entry(diary_entry, model=get_model(), **kwargs):
     diary_ct = ContentType.objects.get(app_label="tests", model="diary")
-    site = Site.objects.get(pk=1)
-    XtdComment.objects.create(content_type=diary_ct,
-                              object_pk=diary_entry.id,
-                              content_object=diary_entry,
-                              site=site,
-                              comment="cmt to day in diary",
-                              submit_date=datetime.now())
+    if not "site" in kwargs:
+        kwargs["site"] = Site.objects.get(pk=1)
+    model.objects.create(content_type=diary_ct,
+                         object_pk=diary_entry.id,
+                         content_object=diary_entry,
+                         comment="cmt to day in diary",
+                         submit_date=datetime.now(),
+                         **kwargs)
 
 
 class DiaryBaseTestCase(DjangoTestCase):
@@ -477,12 +479,12 @@ class DiaryBaseTestCase(DjangoTestCase):
                                       parent_id=1)  # already max thread level
 
 
-class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
+class PublishOrWithholdNestedComments_1_TestCase(ArticleBaseTestCase):
     # Add a threaded comment structure (c1, c2, c3) and verify that
-    # removing c1 unpublishes c3.
+    # removing c1 withholds c3.
 
     def setUp(self):
-        super(PublishOrUnpublishNestedComments_1_TestCase, self).setUp()
+        super(PublishOrWithholdNestedComments_1_TestCase, self).setUp()
         thread_test_step_1(self.article_1)
         thread_test_step_2(self.article_1)
         #
@@ -500,7 +502,7 @@ class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
             self.assertTrue(cm.is_public)
             self.assertFalse(cm.is_removed)
 
-    def test_removing_c1_unpublishes_c3_and_c4(self):
+    def test_removing_c1_withholds_c3_and_c4(self):
         cm1 = XtdComment.objects.get(pk=1)
         self.assertEqual(cm1.nested_count, 2)  # nested_count should be 2.
 
@@ -509,7 +511,7 @@ class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
         cm1 = XtdComment.objects.get(pk=1)
         self.assertTrue(cm1.is_public)
         self.assertTrue(cm1.is_removed)
-        # Is still public, so the nested_count doesn't change.
+        # Is still public, so the nested_count doesn't change.
         self.assertEqual(cm1.nested_count, 2)
 
         cm3 = XtdComment.objects.get(pk=3)
@@ -521,17 +523,17 @@ class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
         self.assertFalse(cm4.is_removed)
 
 
-_model = "django_comments_xtd.tests.models.MyComment"
+_xtd_model = "django_comments_xtd.tests.models.MyComment"
 
 
-class PublishOrUnpublishNestedComments_2_TestCase(ArticleBaseTestCase):
+class PublishOrWithholdNestedComments_2_TestCase(ArticleBaseTestCase):
     # Then mock the settings so that the project uses a customized
     # comment model (django_comments_xtd.tests.models.MyComment), and repeat
     # the logic adding MyComment instances. Then remove c1 and be sure
-    # that c3 gets unpublished.
+    # that c3 gets withheld.
 
     def setUp(self):
-        super(PublishOrUnpublishNestedComments_2_TestCase, self).setUp()
+        super(PublishOrWithholdNestedComments_2_TestCase, self).setUp()
         thread_test_step_1(self.article_1, model=MyComment,
                            title="Can't be empty 1")
         thread_test_step_2(self.article_1, model=MyComment,
@@ -552,14 +554,14 @@ class PublishOrUnpublishNestedComments_2_TestCase(ArticleBaseTestCase):
             self.assertFalse(cm.is_removed)
 
     @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_XTD_MODEL=_model)
-    def test_removing_c1_unpublishes_c3_and_c4(self):
+                    COMMENTS_XTD_MODEL=_xtd_model)
+    def test_removing_c1_withholds_c3_and_c4(self):
         # Register the receiver again. It was registered in apps.py, but we
-        # have patched the COMMENTS_XTD_MODEL, however we won't fake the ready.
-        # It's easier to just register again the receiver, to test only what
-        # depends on django-comments-xtd.
+        # have patched the COMMENTS_XTD_MODEL, however we won't fake the
+        # ready. It's easier to just register again the receiver, to test
+        # only what depends on django-comments-xtd.
         model_app_label = get_model()._meta.label
-        pre_save.connect(publish_or_unpublish_on_pre_save,
+        pre_save.connect(publish_or_withhold_on_pre_save,
                          sender=model_app_label)
 
         cm1 = MyComment.objects.get(pk=1)

@@ -209,20 +209,20 @@ class XtdComment(Comment):
         return dic_list
 
 
-def publish_or_unpublish_nested_comments(comment, are_public=False):
+def publish_or_withhold_nested_comments(comment, shall_be_public=False):
     qs = get_model().objects.filter(~Q(pk=comment.id), parent_id=comment.id)
     nested = [cm.id for cm in qs]
-    qs.update(is_public=are_public)
+    qs.update(is_public=shall_be_public)
     while len(nested):
         cm_id = nested.pop()
         qs = XtdComment.objects.filter(~Q(pk=cm_id), parent_id=cm_id)
         nested.extend([cm.id for cm in qs])
-        qs.update(is_public=are_public)
+        qs.update(is_public=shall_be_public)
     # Update nested_count in parents comments in the same thread.
     # The comment.nested_count doesn't change because the comment's is_public
     # attribute is not changing, only its nested comments change, and it will
     # help to re-populate nested_count should it be published again.
-    if are_public:
+    if shall_be_public:
         op = F('nested_count') + comment.nested_count
     else:
         op = F('nested_count') - comment.nested_count
@@ -232,10 +232,10 @@ def publish_or_unpublish_nested_comments(comment, are_public=False):
                       .update(nested_count=op)
 
 
-def publish_or_unpublish_on_pre_save(sender, instance, raw, using, **kwargs):
+def publish_or_withhold_on_pre_save(sender, instance, raw, using, **kwargs):
     if not raw and instance and instance.id:
-        are_public = (not instance.is_removed) and instance.is_public
-        publish_or_unpublish_nested_comments(instance, are_public=are_public)
+        shall_be_public = (not instance.is_removed) and instance.is_public
+        publish_or_withhold_nested_comments(instance, shall_be_public)
 
 
 # ----------------------------------------------------------------------

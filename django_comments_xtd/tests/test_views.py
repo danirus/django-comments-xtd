@@ -18,7 +18,7 @@ from django.test import TestCase, RequestFactory
 from django.urls import reverse
 
 from django_comments.views import comments
-    
+
 from django_comments_xtd import django_comments, signals, signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import XtdComment
@@ -79,7 +79,6 @@ class OnCommentWasPostedTestCase(TestCase):
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October...")
         self.form = django_comments.get_form()(self.article)
-        self.factory = RequestFactory()
         self.user = AnonymousUser()
 
     def post_valid_data(self, auth_user=None, response_code=302):
@@ -128,8 +127,11 @@ class ConfirmCommentTestCase(TestCase):
         data.update(self.form.initial)
         response = post_article_comment(data, self.article)
         self.assertTrue(self.mock_mailer.call_count == 1)
-        self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
-                                 self.mock_mailer.call_args[0][1]).group("key"))
+        self.key = str(
+            re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+                      self.mock_mailer.call_args[0][1]
+            ).group("key")
+        )
         self.addCleanup(patcher.stop)
 
     def test_confirm_url_is_short_enough(self):
@@ -140,17 +142,18 @@ class ConfirmCommentTestCase(TestCase):
         # print("\nXXXXXXXXXXX:", l)
         self.assertLessEqual(l, 4096, "Urls can only be a max of 4096")
 
-    def test_404_on_bad_signature(self):
-        with self.assertRaises(Http404):
-            confirm_comment_url(self.key[:-1])
+    def test_400_on_bad_signature(self):
+        response = confirm_comment_url(self.key[:-1])
+        self.assertEqual(response.status_code, 400)
 
-    def test_consecutive_confirmation_url_visits_fail(self):
+    def test_consecutive_confirmation_url_visits_doesnt_fail(self):
         # test that consecutives visits to the same confirmation URL produce
         # an Http 404 code, as the comment has already been verified in the
         # first visit
+        response = confirm_comment_url(self.key)
+        self.assertEqual(response.status_code, 302)
         confirm_comment_url(self.key)
-        with self.assertRaises(Http404):
-            confirm_comment_url(self.key)
+        self.assertEqual(response.status_code, 302)
 
     def test_signal_receiver_may_discard_the_comment(self):
         # test that receivers of signal confirmation_received may return False
@@ -330,13 +333,12 @@ class ReplyCommentTestCase(TestCase):
         self.assertTrue(response.url.startswith(settings.LOGIN_URL))
 
 
-class MuteFollowUpsTestCase(TestCase):
-
+class MuteFollowUpTestCase(TestCase):
     def setUp(self):
-        # Creates an article and send two comments to the article with follow-up
-        # notifications. First comment doesn't have to send any notification.
+        # Creates an article and send two comments to the article with
+        # follow-up notifications. First comment doesn't have to send any
+        #  notification.
         # Second comment has to send one notification (to Bob).
-        self.factory = RequestFactory()
         patcher = patch('django_comments_xtd.views.send_mail')
         self.mock_mailer = patcher.start()
         self.article = Article.objects.create(
@@ -377,9 +379,9 @@ class MuteFollowUpsTestCase(TestCase):
         self.addCleanup(patcher.stop)
 
     def get_mute_followup_url(self, key):
-        request = self.factory.get(reverse("comments-xtd-mute",
-                                           kwargs={'key': key}),
-                                   follow=True)
+        request = request_factory.get(reverse("comments-xtd-mute",
+                                              kwargs={'key': key}),
+                                      follow=True)
         request.user = AnonymousUser()
         response = views.mute(request, key)
         self.assertEqual(response.status_code, 200)
@@ -400,8 +402,11 @@ class MuteFollowUpsTestCase(TestCase):
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         # Alice confirms her comment...
         self.assertTrue(self.mock_mailer.call_count == 4)
-        alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
-                                 self.mock_mailer.call_args[0][1]).group("key"))
+        alicekey = str(
+            re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+                      self.mock_mailer.call_args[0][1]
+            ).group("key")
+        )
         confirm_comment_url(alicekey)  # confirm Alice's comment
         # Alice confirmed her comment, but this time Bob won't receive any
         # notification, neither do Alice being the sender

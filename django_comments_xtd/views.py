@@ -24,7 +24,7 @@ from django_comments.views.utils import next_redirect, confirmation_view
 
 from django_comments_xtd import (
     comment_was_posted, comment_will_be_posted,
-    get_form, get_model as get_comment_model,
+    get_form, get_model as get_comment_model, get_reactions_enum,
     signals, signed  #  module.
 )
 from django_comments_xtd.conf import settings
@@ -471,6 +471,39 @@ def dislike(request, comment_id, next=None):
         })
 
 
+@csrf_protect
+@login_required
+def react(request, comment_id, next=None):
+    """
+    React to a comment. Confirmation on GET, action on POST.
+
+    This function should not make it to the release. Comment reactions must
+    use the next vanilla JavaScript plugin with a REST endpoint.
+    """
+    comment = get_object_or_404(get_comment_model(), pk=comment_id,
+                                site__pk=get_current_site_id(request))
+    if not get_app_model_options(comment=comment)['allow_feedback']:
+        ctype = ContentType.objects.get_for_model(comment.content_object)
+        raise Http404("Comments posted to instances of '%s.%s' are not "
+                      "explicitly allowed to receive 'disliked it' flags. "
+                      "Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
+                      "setting." % (ctype.app_label, ctype.model))
+    # Action on POST.
+    if request.method == 'POST':
+        return next_redirect(request,
+                             fallback=(next or 'comments-xtd-react-done'),
+                             c=comment.pk)
+    # Render a form on GET.
+    else:
+        prev_reactions = comment.reactions.filter(authors=request.user)
+        return render(request, 'django_comments_xtd/react.html', {
+            'comment': comment,
+            'reaction_types': get_reactions_enum().__members__.values(),
+            'prev_reactions': prev_reactions,
+            'next': next
+        })
+
+
 def undo_reaction(request, **kwargs):
     cr_qs = CommentReaction.objects.filter(authors=request.user, **kwargs)
     if cr_qs.count() == 1:
@@ -501,6 +534,11 @@ like_done = confirmation_view(
 dislike_done = confirmation_view(
     template="django_comments_xtd/disliked.html",
     doc='Displays a "I disliked this comment" success page.'
+)
+
+react_done = confirmation_view(
+    template="django_comments_xtd/reacted.html",
+    doc='Displays a reaction confirmation success page.'
 )
 
 

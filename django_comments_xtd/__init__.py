@@ -18,6 +18,11 @@ def get_form():
     return import_string(settings.COMMENTS_XTD_FORM_CLASS)
 
 
+def get_reactions_enum():
+    from django_comments_xtd.conf import settings
+    return import_string(settings.COMMENTS_XTD_REACTIONS_ENUM)
+
+
 VERSION = (3, 0, 0, 'a', 0)  # following PEP 440
 
 

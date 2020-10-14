@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_comments.managers import CommentManager
 from django_comments.models import Comment, CommentFlag
 
-from django_comments_xtd import get_model
+from django_comments_xtd import get_model, get_reactions_enum
 from django_comments_xtd.conf import settings
 
 
@@ -315,15 +315,18 @@ class BlackListedDomain(models.Model):
 
 
 #  ----------------------------------------------------------------------
+class ReactionEnum(models.IntegerChoices):
+    LIKED_IT = 1, _("I liked it")
+    DISLIKED_IT = 2, _("I disliked it")
+
+
 class CommentReaction(models.Model):
-    reaction = models.CharField(_('reaction'), max_length=30, db_index=True)
-    comment = models.ForeignKey(XtdComment,
+    reaction = models.IntegerField(_('reaction'),
+                                   db_index=True,
+                                   choices=get_reactions_enum().choices)
+    comment = models.ForeignKey(get_model(),
                                 verbose_name=_('reactions'),
                                 related_name="reactions",
                                 on_delete=models.CASCADE)
     counter = models.IntegerField(default=0)
     authors = models.ManyToManyField(settings.AUTH_USER_MODEL)
-
-    # Constants for reaction types.
-    LIKED_IT = "I liked it"
-    DISLIKED_IT = "I disliked it"

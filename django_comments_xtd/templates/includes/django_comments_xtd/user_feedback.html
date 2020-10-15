@@ -7,7 +7,7 @@
     {% endif %}
 
     <a href="{% url 'comments-xtd-like' item.comment.pk %}"
-       class="{% if not item.likedit %}mutedlink{% endif %}">
+       class="{% if not item.likedit %}text-muted{% endif %}">
         <span class="fas fa-thumbs-up"></span></a>
     <span class="text-muted">|</span>
 
@@ -18,7 +18,7 @@
     {% endif %}
   
     <a href="{% url 'comments-xtd-dislike' item.comment.pk %}"
-       class="{% if not item.dislikedit %}mutedlink{% endif %}">
+       class="{% if not item.dislikedit %}text-muted{% endif %}">
         <span class="fas fa-thumbs-down"></span></a>
 </span>
 {% endif %}

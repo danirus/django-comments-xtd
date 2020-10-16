@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.8.1] -
+## [2.8.1] - 2020-10-16
 
     * Fixes issue #80, that requests to change the response when clicking
       more than once on a comment confirmation link. Up until now clicking
@@ -11,6 +11,8 @@
       latter.
     * Fixes issue #221, about the get_version function. Now it returns the full
       version number <major>.<minor>.<patch>. Thanks to @mckinly.
+    * Fixes issue #229, about failing to process empty honeypot field when
+      posting comments using the REST API. Thanks to @TommasoAmici.
 
 ## [2.8.0] - 2020-09-26
 

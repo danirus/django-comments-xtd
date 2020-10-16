@@ -28,7 +28,7 @@ class WriteCommentSerializer(serializers.Serializer):
     object_pk = serializers.CharField()
     timestamp = serializers.CharField(required=False)
     security_hash = serializers.CharField(required=False)
-    honeypot = serializers.CharField(required=False)
+    honeypot = serializers.CharField(required=False, allow_blank=True)
     name = serializers.CharField(allow_blank=True)
     email = serializers.EmailField(allow_blank=True)
     url = serializers.URLField(required=False)

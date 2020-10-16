@@ -15,14 +15,14 @@ There are 5 methods available to perform the following actions:
  #. Retrieve the number of comments posted to a given content type and object ID.
  #. Post user's like/dislike feedback.
  #. Post user's removal suggestions.
- 
+
 Finally there is the ability to generate a view action in ``django_comments_xtd.api.frontend`` to return the commentbox props as used by the :doc:`javascript` plugin for use with an existing `django-rest-framework <http://www.django-rest-framework.org/>`_ project.
 
 .. contents:: Table of Contents
    :depth: 1
    :local:
 
-    
+
 Post a new comment
 ==================
 
@@ -66,7 +66,7 @@ However, when using the web API there is no such previous GET request, and thus 
 Example of authorization
 ------------------------
 
-In this section we go through the changes that will enable posting comments via the web API in the :ref:`example-simple`. We have to: 
+In this section we go through the changes that will enable posting comments via the web API in the :ref:`example-simple`. We have to:
 
  1. Modify the settings module.
  2. Modify the urls module to allow login and logout via DRF's api-auth.
@@ -133,30 +133,30 @@ Create the module ``simple/apiauth.py`` with the following content:
 
 
       class APIRequestAuthentication(authentication.BaseAuthentication):
-        def authenticate(self, request):
-          auth = request.META.get('HTTP_AUTHORIZATION', b'')
-          if isinstance(auth, str):
-            auth = auth.encode(HTTP_HEADER_ENCODING)
-          
-          pieces = auth.split()
-          if not pieces or pieces[0].lower() != b'token':
-            return None
+          def authenticate(self, request):
+              auth = request.META.get('HTTP_AUTHORIZATION', b'')
+              if isinstance(auth, str):
+                  auth = auth.encode(HTTP_HEADER_ENCODING)
 
-          if len(pieces) == 1:
-            msg = _("Invalid token header. No credentials provided.")
-            raise exceptions.AuthenticationFailed(msg)
-          elif len(pieces) > 2:
-            msg = _("Invalid token header." 
-                "Token string should not contain spaces.")
-            raise exceptions.AuthenticationFailed(msg)
+              pieces = auth.split()
+              if not pieces or pieces[0].lower() != b'token':
+                  return None
 
-          try:
-            auth = pieces[1].decode()
-          except UnicodeError:
-            msg = _("Invalid token header. "
-                "Token string should not contain invalid characters.")
+              if len(pieces) == 1:
+                  msg = _("Invalid token header. No credentials provided.")
+                  raise exceptions.AuthenticationFailed(msg)
+              elif len(pieces) > 2:
+                  msg = _("Invalid token header."
+                          "Token string should not contain spaces.")
+                  raise exceptions.AuthenticationFailed(msg)
 
-          return (AnonymousUser(), auth) 
+              try:
+                  auth = pieces[1].decode()
+              except UnicodeError:
+                  msg = _("Invalid token header. "
+                      "Token string should not contain invalid characters.")
+
+              return (AnonymousUser(), auth)
 
 The class doesn't validate the token. We will do it with the receiver function in the next section.
 
@@ -169,6 +169,7 @@ Append the following code to the ``simple/articles/models.py`` module:
 
    .. code-block:: python
 
+      from django.conf import settings
       from django.dispatch import receiver
       from django_comments_xtd.signals import should_request_be_authorized
 
@@ -217,7 +218,7 @@ I will use the excellent `HTTPie <https://httpie.org/docs>`_ command line client
     Server: WSGIServer/0.2 CPython/3.8.0
     Vary: Accept
 
-Check that in the terminal where you are running ``python manage.py runserver`` you have got the content of the mail message that would be sent to **joe@bloggs.com**. Copy the confirmation URL and visit it to confirm the comment. 
+Check that in the terminal where you are running ``python manage.py runserver`` you have got the content of the mail message that would be sent to **joe@bloggs.com**. Copy the confirmation URL and visit it to confirm the comment.
 
 Post a test comment as a signed in user
 ***************************************
@@ -239,7 +240,7 @@ To post a comment as a logged in user we first have to obtain the csrftoken:
     Set-Cookie: csrftoken=nEJczcG2M3LrcxIKiHbkxDFy2gmplPtn87pAFhp0CQz47TvZ58v8S2eCpWD9Zadm; expires=Fri, 23 Jul 2021 21:00:35 GMT; Max-Age=31449600; Path=/; SameSite=Lax
     Vary: Cookie
 
-Now we copy the value of csrftoken and attach it to the login HTTP request:
+Copy the value of csrftoken and attach it to the login HTTP request:
 
    .. code-block:: bash
 
@@ -260,7 +261,7 @@ Now we copy the value of csrftoken and attach it to the login HTTP request:
     Vary: Cookie
 
 
-Finally we send the comment with the new csrftoken:
+Finally send the comment with the new csrftoken:
 
    .. code-block:: bash
 
@@ -292,7 +293,7 @@ Finally we send the comment with the new csrftoken:
         "timestamp": "1595624818"
     }
 
-And the comment must have been posted as the user ``admin``.
+The comment must be already listed in the page, sent as the user ``admin``.
 
 
 Retrieve comment list
@@ -357,7 +358,7 @@ This method retrieves the list of comments posted to a given content type and ob
                ...
            }
        ]
-       
+
 
 Retrieve comments count
 =======================
@@ -384,10 +385,10 @@ This method retrieves the number of comments posted to a given content type and 
        Server: WSGIServer/0.2 CPython/3.6.0
        Vary: Accept, Cookie
        X-Frame-Options: SAMEORIGIN
-       
+
        {
            "count": 4
-       }       
+       }
 
 
 Post like/dislike feedback
@@ -413,12 +414,12 @@ This method toggles flags like/dislike for a comment. Successive calls set/unset
        Server: WSGIServer/0.2 CPython/3.6.0
        Vary: Accept, Cookie
        X-Frame-Options: SAMEORIGIN
-       
+
        {
            "comment": 10,
            "flag": "I liked it"
        }
-       
+
 Calling it again unsets the *"I liked it"* flag:
 
    .. code-block:: bash
@@ -447,11 +448,11 @@ It requires the user to be logged in:
        Server: WSGIServer/0.2 CPython/3.6.0
        Vary: Accept, Cookie
        X-Frame-Options: SAMEORIGIN
-       
+
        {
            "detail": "Authentication credentials were not provided."
        }
-       
+
 
 Post removal suggestions
 ========================
@@ -476,7 +477,7 @@ This method sets the *removal suggestion* flag on a comment. Once created for a 
        Server: WSGIServer/0.2 CPython/3.6.0
        Vary: Accept, Cookie
        X-Frame-Options: SAMEORIGIN
-       
+
        {
            "comment": 10,
            "flag": "removal suggestion"

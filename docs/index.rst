@@ -19,7 +19,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.8.0, of
+    This documentation represents the current version, v2.8.1, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.7.2: https://django-comments-xtd.readthedocs.io/en/2.7.2/
@@ -94,13 +94,14 @@ specific features, or check out the use cases to see how others customize it.
 Change Log
 ==========
 
-[2.8.1] -
+[2.8.1] - 2020-10-16
 --------------------
 
     * Fixes issue `#80 <https://github.com/danirus/django-comments-xtd/issues/80>`_, that requests to change the response when clicking more than once on a comment confirmation link. Up until now clicking more than once on a comment confirmation link produced a HTTP 404 response. Since version 2.8.1 the response is the same as for the first click: the user is redirected to the comment's view in the page.
     * Fixes issue `#152 <https://github.com/danirus/django-comments-xtd/issues/152>`_, about loading the `staticfiles` templatetag instead of `static`. Since Django v3.0 the staticfiles app requires using the latter.
     * Fixes issue `#221 <https://github.com/danirus/django-comments-xtd/issues/221>`_, about the get_version function. Now it returns the full
       version number ``<major>.<minor>.<patch>``. Thanks to @mckinly.
+    * Fixes issue `#229  <https://github.com/danirus/django-comments-xtd/issues/229>`_, about failing to process empty honeypot field when posting comments using the REST API. Thanks to @TommasoAmici.
 
 [2.8.0] - 2020-09-26
 --------------------

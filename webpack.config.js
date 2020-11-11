@@ -18,6 +18,7 @@ module.exports = {
   },
   optimization: {
     splitChunks: {
+      automaticNameDelimiter: '-',
       cacheGroups: {
         default: false,
         vendors: false,

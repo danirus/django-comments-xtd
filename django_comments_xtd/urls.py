@@ -13,17 +13,6 @@ urlpatterns = [
 
     # Remap comments-flag to check allow-flagging is enabled.
     re_path(r'^flag/(\d+)/$', views.flag, name='comments-flag'),
-    # New flags in addition to those provided by django-contrib-comments.
-    re_path(r'^like/(\d+)/$', views.like, name='comments-xtd-like'),
-    re_path(r'^liked/$', views.like_done, name='comments-xtd-like-done'),
-    re_path(r'^dislike/(\d+)/$', views.dislike, name='comments-xtd-dislike'),
-    re_path(r'^disliked/$', views.dislike_done,
-            name='comments-xtd-dislike-done'),
-
-    # Send a reaction to a comment.
-    # URL paths to play with reactions. They shouldn't make it to the release.
-    re_path(r'^react/(\d+)/$', views.react, name='comments-xtd-react'),
-    re_path(r'^reacted/$', views.react_done, name='comments-xtd-react-done'),
 
     # API handlers.
     re_path(r'^api/comment/$', api.CommentCreate.as_view(),
@@ -35,8 +24,8 @@ urlpatterns = [
     re_path(
         r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[-\w]+)/count/$',
         api.CommentCount.as_view(), name='comments-xtd-api-count'),
-    re_path(r'^api/feedback/$', api.ToggleFeedbackFlag.as_view(),
-            name='comments-xtd-api-feedback'),
+    re_path(r'^api/react/$', api.PostCommentReaction.as_view(),
+            name='comments-xtd-api-react'),
     re_path(r'^api/flag/$', api.CreateReportFlag.as_view(),
             name='comments-xtd-api-flag'),
 

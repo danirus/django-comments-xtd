@@ -12,10 +12,10 @@ from django_comments.models import CommentFlag
 from django_comments.signals import comment_will_be_posted, comment_was_posted
 from rest_framework import exceptions, serializers
 
-from django_comments_xtd import signed, views
+from django_comments_xtd import get_reactions_enum, signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
-                                        LIKEDIT_FLAG, DISLIKEDIT_FLAG)
+                                        CommentReaction, ReactionEnum)
 from django_comments_xtd.signals import (should_request_be_authorized,
                                          confirmation_received)
 from django_comments_xtd.utils import get_app_model_options
@@ -173,9 +173,7 @@ class WriteCommentSerializer(serializers.Serializer):
 
 
 class FlagSerializer(serializers.ModelSerializer):
-    flag_choices = {'like': LIKEDIT_FLAG,
-                    'dislike': DISLIKEDIT_FLAG,
-                    'report': CommentFlag.SUGGEST_REMOVAL}
+    flag_choices = {'report': CommentFlag.SUGGEST_REMOVAL}
 
     class Meta:
         model = CommentFlag
@@ -185,21 +183,6 @@ class FlagSerializer(serializers.ModelSerializer):
         # Validate flag.
         if data['flag'] not in self.flag_choices:
             raise serializers.ValidationError("Invalid flag.")
-        # Check commenting options on object being commented.
-        option = ''
-        if data['flag'] in ['like', 'dislike']:
-            option = 'allow_feedback'
-        elif data['flag'] == 'report':
-            option = 'allow_flagging'
-        comment = data['comment']
-        ctype = ContentType.objects.get_for_model(comment.content_object)
-        key = "%s.%s" % (ctype.app_label, ctype.model)
-        if not get_app_model_options(content_type=key)[option]:
-            raise serializers.ValidationError(
-                "Comments posted to instances of '%s' are not explicitly "
-                "allowed to receive '%s' flags. Check the "
-                "COMMENTS_XTD_APP_MODEL_OPTIONS setting." % (key, data['flag'])
-            )
         data['flag'] = self.flag_choices[data['flag']]
         return data
 
@@ -208,10 +191,6 @@ class ReadFlagField(serializers.RelatedField):
     def to_representation(self, value):
         if value.flag == CommentFlag.SUGGEST_REMOVAL:
             flag = "removal"
-        elif value.flag == LIKEDIT_FLAG:
-            flag = "like"
-        elif value.flag == DISLIKEDIT_FLAG:
-            flag = "dislike"
         else:
             raise Exception('Unexpected value for flag: %s' % value.flag)
         return {
@@ -273,3 +252,15 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     def get_permalink(self, obj):
         return obj.get_absolute_url()
+
+
+class CommentReactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentReaction
+        fields = ('reaction', 'comment',)
+
+    def validate(self, data):
+        # Validate reaction.
+        if data['reaction'] not in get_reactions_enum():
+            raise serializers.ValidationError("Invalid reaction.")
+        return data

@@ -1,7 +1,9 @@
 import six
 
-from django.db.models import Prefetch
+from django.db.models import F, Prefetch
 from django.contrib.contenttypes.models import ContentType
+from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.utils.module_loading import import_string
 
 from django_comments.models import CommentFlag
@@ -9,15 +11,17 @@ from django_comments_xtd import get_model as get_comment_model
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from django_comments_xtd import views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.api import serializers
 from django_comments_xtd.models import (
-    TmpXtdComment, XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+    CommentReaction, TmpXtdComment, XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
 )
-from django_comments_xtd.utils import get_current_site_id
+from django_comments_xtd.utils import (
+    get_app_model_options, get_current_site_id)
 
 
 class CommentCreate(generics.CreateAPIView):
@@ -105,32 +109,30 @@ class CommentCount(generics.GenericAPIView):
         return Response({'count': self.get_queryset().count()})
 
 
-class ToggleFeedbackFlag(generics.CreateAPIView, mixins.DestroyModelMixin):
-    """Create and delete like/dislike flags."""
-
-    serializer_class = serializers.FlagSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-    def post(self, request, *args, **kwargs):
-        response = super(ToggleFeedbackFlag, self).post(request, *args,
-                                                        **kwargs)
-        if self.created:
-            return response
-        else:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def perform_create(self, serializer):
-        f = getattr(views, 'perform_%s' % self.request.data['flag'])
-        self.created = f(self.request, serializer.validated_data['comment'])
+def check_allow_feedback_option(comment):
+    is_allowed = get_app_model_options(comment=comment)['allow_feedback']
+    if not is_allowed:
+        message = "This comment does not accept reactions."
+        if settings.DEBUG:
+            ct = ContentType.objects.get_for_model(comment.content_object)
+            message = ("Comments posted to instances of '%s.%s' are not "
+                       "explicitly allowed to receive reactions. "
+                       "Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
+                       "setting." % (ct.app_label, ct.model))
+        raise PermissionDenied(detail=message,
+                               code=status.HTTP_403_FORBIDDEN)
 
 
 class CreateReportFlag(generics.CreateAPIView):
     """Create 'removal suggestion' flags."""
 
     serializer_class = serializers.FlagSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
+        comment = get_object_or_404(get_comment_model(),
+                                    pk=int(request.data['comment']))
+        check_allow_feedback_option(comment)
         return super(CreateReportFlag, self).post(request, *args, **kwargs)
 
     def perform_create(self, serializer):
@@ -140,7 +142,6 @@ class CreateReportFlag(generics.CreateAPIView):
 @api_view(["POST"])
 def preview_user_avatar(request):
     """Fetch the image associated with the user previewing the comment."""
-    print("I am here")
     temp_comment = TmpXtdComment({
         'user': None,
         'user_email': request.data['email']
@@ -149,3 +150,58 @@ def preview_user_avatar(request):
         temp_comment['user'] = request.user
     get_user_avatar = import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)
     return Response({'url': get_user_avatar(temp_comment)})
+
+
+class PostCommentReaction(mixins.CreateModelMixin,
+                          mixins.DestroyModelMixin,
+                          generics.GenericAPIView):
+    """Create and delete comment reactions."""
+
+    serializer_class = serializers.CommentReactionSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        comment = get_object_or_404(get_comment_model(),
+                                    pk=int(request.data['comment']))
+        check_allow_feedback_option(comment)
+        response = self.create(request, *args, **kwargs)
+        if self.created:
+            return response
+        else:
+            # The user already reacted it so. Nothing changed.
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_create(self, serializer):
+        cr_qs = CommentReaction.objects.filter(authors=self.request.user,
+                                               **serializer.validated_data)
+        if cr_qs.count() > 0:  # It does already exist, do nothing.
+            self.created = False
+        else:
+            creaction, _ = CommentReaction.objects.get_or_create(
+                **serializer.validated_data)
+            creaction.authors.add(self.request.user)
+            # self.created is True when the user reacting is added.
+            self.created = True
+            creaction.counter += 1
+            creaction.save()
+
+    def delete(self, request, *args, **kwargs):
+        comment = get_object_or_404(get_comment_model(),
+                                    pk=int(request.data['comment']))
+        check_allow_feedback_option(comment)
+        try:
+            kwargs = {
+                'comment': int(self.request.data['comment']),
+                'reaction': int(self.request.data['reaction']),
+                'authors': request.user
+            }
+            cr_qs = CommentReaction.objects.filter(**kwargs)
+        except (TypeError, ValueError, CommentReaction.DoesNotExist):
+            raise Http404
+        else:
+            if cr_qs.count() == 1:
+                cr_qs.update(counter=F('counter') - 1)
+                cr_qs[0].authors.remove(request.user)
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                raise Http404

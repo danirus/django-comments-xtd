@@ -314,7 +314,7 @@ class BlackListedDomain(models.Model):
         ordering = ('domain',)
 
 
-#  ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 class ReactionEnum(models.IntegerChoices):
     LIKED_IT = 1, _("I liked it")
     DISLIKED_IT = 2, _("I disliked it")

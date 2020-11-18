@@ -1,24 +1,20 @@
-{% if allow_feedback %}
+{% if allow_feedback and item.reactions %}
 <span class="small">
-    {% if show_feedback and item.likedit_users %}
-    <a class="badge badge-primary text-white cfb-counter" data-toggle="tooltip"
-       title="{{ item.likedit_users|join:'<br/>' }}">
-        {{ item.likedit_users|length }}</a>
+  {% for reaction in item.reactions %}
+    {% if show_feedback and reaction.counter > 0 %}
+      <a
+        class="badge badge-primary text-white cfb-counter"
+        title="{{ reaction.authors|join:'<br/>' }}"
+        data-toggle="tooltip"
+      >{{ reaction.counter }}</a>
     {% endif %}
 
-    <a href="{% url 'comments-xtd-like' item.comment.pk %}"
-       class="{% if not item.likedit %}mutedlink{% endif %}">
-        <span class="fas fa-thumbs-up"></span></a>
-    <span class="text-muted">|</span>
-
-    {% if show_feedback and item.dislikedit_users %}
-    <a class="badge badge-primary text-white cfb-counter" data-toggle="tooltip"
-       title="{{ item.dislikedit_users|join:'<br/>' }}">
-        {{ item.dislikedit_users|length }}</a>
+    <a
+      href="#" class="{% if reaction.counter == 0 %}mutedlink{% endif %}"
+    ><span class="{{ reaction.icon }}"></span></a>
+    {% if not forloop.last %}
+      <span class="text-muted">|</span>
     {% endif %}
-  
-    <a href="{% url 'comments-xtd-dislike' item.comment.pk %}"
-       class="{% if not item.dislikedit %}mutedlink{% endif %}">
-        <span class="fas fa-thumbs-down"></span></a>
+  {% endfor %}
 </span>
 {% endif %}

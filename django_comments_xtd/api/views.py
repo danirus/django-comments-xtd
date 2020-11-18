@@ -17,9 +17,8 @@ from rest_framework.response import Response
 from django_comments_xtd import views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.api import serializers
-from django_comments_xtd.models import (
-    CommentReaction, TmpXtdComment, XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
-)
+from django_comments_xtd.models import (CommentReaction, TmpXtdComment,
+                                        XtdComment)
 from django_comments_xtd.utils import (
     get_app_model_options, get_current_site_id)
 
@@ -61,9 +60,9 @@ class CommentList(generics.ListAPIView):
         except ContentType.DoesNotExist:
             qs = XtdComment.objects.none()
         else:
-            flags_qs = CommentFlag.objects.filter(flag__in=[
-                CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
-            ]).prefetch_related('user')
+            flags_qs = CommentFlag.objects.filter(
+                flag__in=[CommentFlag.SUGGEST_REMOVAL]
+            ).prefetch_related('user')
             prefetch = Prefetch('flags', queryset=flags_qs)
             site_id = getattr(settings, "SITE_ID", None)
             if not site_id:

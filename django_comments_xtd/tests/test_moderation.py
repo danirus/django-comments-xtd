@@ -19,7 +19,6 @@ except ImportError:
     from django.contrib.comments.models import CommentFlag
 
 from django_comments_xtd import django_comments, views
-from django_comments_xtd.models import LIKEDIT_FLAG, DISLIKEDIT_FLAG
 from django_comments_xtd.tests.models import Diary
 from django_comments_xtd.tests.test_views import (confirm_comment_url,
                                                   post_diary_comment)

@@ -18,13 +18,8 @@ from django_comments_xtd.conf import settings
 from django_comments.models import CommentFlag
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.api import frontend
-from django_comments_xtd.models import LIKEDIT_FLAG, DISLIKEDIT_FLAG
-from django_comments_xtd.utils import (
-    get_app_model_options, get_current_site_id, get_html_id_suffix
-)
-
-
-XtdComment = get_comment_model()
+from django_comments_xtd.utils import (get_app_model_options,
+                                       get_current_site_id, get_html_id_suffix)
 
 
 register = Library()
@@ -328,26 +323,8 @@ class RenderXtdCommentTreeNode(Node):
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
-            flags_qs = CommentFlag.objects.filter(flag__in=[
-                CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
-            ]).prefetch_related('user')
-            prefetch = Prefetch('flags', queryset=flags_qs)
-            site_id = getattr(settings, "SITE_ID", None)
-            if not site_id and ('request' in context):
-                site_id = get_current_site_id(context['request'])
-            fkwds = {
-                "content_type": ctype,
-                "object_pk": obj.pk,
-                "site__pk": site_id,
-                "is_public": True
-            }
-            if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
-                fkwds['is_removed'] = False
-            qs = get_comment_model()\
-                .objects\
-                .prefetch_related(prefetch)\
-                .filter(**fkwds)
-            comments = XtdComment.tree_from_queryset(
+            qs = get_comment_model().get_comments_queryset(obj)
+            comments = get_comment_model().tree_from_queryset(
                 qs,
                 with_flagging=self.allow_flagging,
                 with_feedback=self.allow_feedback,
@@ -389,22 +366,9 @@ class GetXtdCommentTreeNode(Node):
 
     def render(self, context):
         obj = self.obj.resolve(context)
-        ctype = ContentType.objects.get_for_model(obj)
-        flags_qs = CommentFlag.objects.filter(flag__in=[
-            CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
-        ]).prefetch_related('user')
-        prefetch = Prefetch('flags', queryset=flags_qs)
-        queryset = get_comment_model()\
-            .objects\
-            .prefetch_related(prefetch)\
-            .filter(
-                content_type=ctype,
-                object_pk=obj.pk,
-                site__pk=get_current_site_id(context.get('request')),
-                is_public=True
-            )
-        dic_list = XtdComment.tree_from_queryset(
-            queryset,
+        comments_qs = get_comment_model().get_comments_queryset(obj)
+        dic_list = get_comment_model().tree_from_queryset(
+            comments_qs,
             with_feedback=self.with_feedback,
             user=context['user']
         )

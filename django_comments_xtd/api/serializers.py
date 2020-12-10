@@ -15,7 +15,7 @@ from rest_framework import exceptions, serializers
 from django_comments_xtd import get_reactions_enum, signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
-                                        CommentReaction, ReactionEnum)
+                                        CommentReaction)
 from django_comments_xtd.signals import (should_request_be_authorized,
                                          confirmation_received)
 from django_comments_xtd.utils import get_app_model_options
@@ -254,7 +254,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         return obj.get_absolute_url()
 
 
-class CommentReactionSerializer(serializers.ModelSerializer):
+class WriteCommentReactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentReaction
         fields = ('reaction', 'comment',)

@@ -2,14 +2,31 @@
 
 ## [3.0.0] -
 
-    * Fixes issue #194, about setting COMMENTS_HIDE_REMOVED and the new setting COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED. Up until v3.0.0 removed comments were listed but their content were not displayed. They showed a "comment has been removed" message instead. That behaviour didn't fully comply with parent's app, django-comments setting COMMENTS_HIDE_REMOVED. By default COMMENTS_HIDE_REMOVED is True, which has the effect of hiding removed comments. As of v3.0.0 this is also the behaviour of django-comments-xtd. Additionally a new setting COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED has been created to control whether nested comments of a comment being removed or approved will be withhold or published.
+    * Fixes issue #194, about setting COMMENTS_HIDE_REMOVED and the new setting
+      COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED. Up until v3.0.0 removed comments
+      were listed but their content were not displayed. They showed a "comment
+      has been removed" message instead. That behaviour didn't comply with
+      parent's app setting COMMENTS_HIDE_REMOVED. COMMENTS_HIDE_REMOVED is True
+      by default, what has the effect of hiding removed comments. As of v3.0.0
+      this is also the behaviour of django-comments-xtd. Additionally a new
+      setting COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED has been created to
+      control whether nested comments of a comment being removed or approved
+      will be withhold or published.
+    * Fixes issue #210, about listing top comments. Since v3.0.0 there is a new
+      way to receive user feedback on comments. The model CommentFlag is no
+      longer used to store such feedback. There is a new model CommentReaction
+      that stores user reactions to comments. For each pair reaction/comment
+      there is a counter and a list of reaction authors, this way it is possible to retrieve most liked comments or any other query related with user reactions. In addition there is new frontend code to handle user
+      reactions. To get aligned with issue #161, the new frontend to handle
+      reactions doesn't have additional dependencies.
 
 ## [2.8.1] -
 
     * Fixes issue #80, that requests to change the response when clicking
       more than once on a comment confirmation link. Up until now clicking
       more than once on a comment confirmation link produced a HTTP 404
-      response. Since version 2.8.1 the response is the same as for the first click: the user is redirected to the comment's view in the page.
+      response. Since version 2.8.1 the response is the same as for the first
+      click: the user is redirected to the comment's view in the page.
     * Fixes issue #152, about loading the `staticfiles` templatetag instead of
       `static`. Since Django v3.0 the staticfiles app requires using the
       latter.

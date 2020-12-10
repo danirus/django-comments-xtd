@@ -22,19 +22,14 @@ from django.views.generic import ListView
 from django_comments.views.moderation import perform_flag
 from django_comments.views.utils import next_redirect, confirmation_view
 
-from django_comments_xtd import (
-    comment_was_posted, comment_will_be_posted,
-    get_form, get_model as get_comment_model, get_reactions_enum,
-    signals, signed  #  module.
-)
+from django_comments_xtd import (comment_was_posted, comment_will_be_posted,
+                                 get_form, get_model as get_comment_model,
+                                 signals, signed)  #  module.
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import (
-    CommentReaction, TmpXtdComment,
-    MaxThreadLevelExceededException
-)
-from django_comments_xtd.utils import (
-    get_current_site_id, send_mail, get_app_model_options
-)
+from django_comments_xtd.models import (TmpXtdComment,
+                                        MaxThreadLevelExceededException)
+from django_comments_xtd.utils import (get_current_site_id, send_mail,
+                                       get_app_model_options)
 
 
 XtdComment = get_comment_model()

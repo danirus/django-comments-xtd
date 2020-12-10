@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 {% load comments %}
 {% load comments_xtd %}
+
+{% block extra_css %}
+<link
+  href="{% static 'django_comments_xtd/css/reactions.css' %}"
+  rel="stylesheet">
+{% endblock %}
 
 {% block menu-class-quotes %}active{% endblock %}
 
@@ -26,7 +33,16 @@
 
   <div class="row justify-content-center flex-fill">
     <div class="col-md-7">
-      <div id="comments">
+      <div
+        id="comments"
+        {% if user.is_authenticated %}
+          data-type="reactions-def"
+          data-reactions="{% reactions_enum_list %}"
+          data-reactions-url="{% url 'comments-xtd-api-react' %}"
+          data-reactions-row-length="4"
+          data-reactions-header-title="{% trans 'Pick your reaction' %}"
+        {% endif %}
+      >
         {% get_comment_count for object as comment_count %}
         {% if comment_count %}
         <H5 class="text-center">
@@ -63,7 +79,11 @@
 {% block extra_js %}
 <script>
  $(function () {
-   $('[data-toggle="tooltip"]').tooltip({'html':true});
+   $('[data-toggle="tooltip"]').tooltip({html: true});
  })
 </script>
+<script
+  type="module"
+  src="{% static 'django_comments_xtd/js/reactions.js' %}"
+></script>
 {% endblock %}

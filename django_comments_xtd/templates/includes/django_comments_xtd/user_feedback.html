@@ -1,20 +1,29 @@
-{% if allow_feedback and item.reactions %}
-<span class="small">
-  {% for reaction in item.reactions %}
-    {% if show_feedback and reaction.counter > 0 %}
-      <a
-        class="badge badge-primary text-white cfb-counter"
-        title="{{ reaction.authors|join:'<br/>' }}"
-        data-toggle="tooltip"
-      >{{ reaction.counter }}</a>
-    {% endif %}
-
-    <a
-      href="#" class="{% if reaction.counter == 0 %}mutedlink{% endif %}"
-    ><span class="{{ reaction.icon }}"></span></a>
-    {% if not forloop.last %}
-      <span class="text-muted">|</span>
-    {% endif %}
-  {% endfor %}
-</span>
+{% if item.reactions %}
+  {% if item.reactions.counter > 0 %}
+    <div
+      id="cm-reactions-{{ item.comment.id }}"
+      class="reactions"
+    >
+      <div class="active-reactions">
+        {% for reaction in item.reactions.list %}
+          {% if show_feedback and reaction.counter > 0 %}
+            <span
+              class="reaction"
+              data-reaction="{{ reaction.value }}"
+            >
+              <div class="reactions-tooltip">
+                <div class="arrow"></div>
+                <p>{{ reaction.authors|join:', ' }} reacted with {{ reaction.label }}</p>
+              </div>
+              <a
+                class="small text-primary"
+                data-toggle="reactions-tooltip"
+              >{{ reaction.counter }}<span class="emoji">&{{ reaction.icon }};</span></a>
+            </span>
+          {% endif %}
+        {% endfor %}
+      </div>
+      &nbsp;<span class="text-muted">&bull;</span>&nbsp;
+    </div>
+  {% endif %}
 {% endif %}

@@ -11,8 +11,10 @@ from django.template import Context, Template, TemplateSyntaxError
 from django.test import TestCase as DjangoTestCase
 
 from django_comments_xtd import get_model
-from django_comments_xtd.models import (
-    XtdComment, publish_or_withhold_on_pre_save)
+from django_comments_xtd.models import (XtdComment,
+                                        publish_or_withhold_on_pre_save)
+from django_comments_xtd.utils import get_current_site_id
+
 from django_comments_xtd.tests.models import Article, Diary, MyComment
 from django_comments_xtd.tests.test_models import (
     thread_test_step_1, thread_test_step_2, thread_test_step_3,
@@ -54,9 +56,10 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
              "{{ varname }}")
         self.assertEqual(Template(t).render(Context()), '2')
 
-    @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
+    @patch.multiple('django.conf.settings', SITE_ID=2)
     def test_get_xtdcomment_count_for_one_site(self):
         site2 = Site.objects.create(domain='site2.com', name='site2.com')
+        self.assertEqual(get_current_site_id(), 2)
         thread_test_step_1(self.article)  # Creates 2 comments in site1.
         thread_test_step_1(self.article, site=site2)  # Creates 2 comments.
         t = ("{% load comments_xtd %}"
@@ -260,7 +263,6 @@ class RenderLastXtdCommentsTestCase(DjangoTestCase):
     @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
     def test_render_last_xtdcomment_for_one_site(self):
         site2 = Site.objects.create(domain='site2.com', name='site2.com')
-
         # Send some nested comments to the article in the site1.
         thread_test_step_1(self.article)  # Sends 2 comments.
         thread_test_step_2(self.article)  # Sends 2 comments.
@@ -270,7 +272,6 @@ class RenderLastXtdCommentsTestCase(DjangoTestCase):
 
         # Send some nested comments to the article in the site2.
         thread_test_step_1(self.article, site=site2)
-
         # render_last_xtdcomments should be able to list only the comments
         # posted to the active site.
         t = ("{% load comments_xtd %}"
@@ -713,9 +714,10 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
         # Check that there are 9 instances of the custom model.
         self.assertEqual(MyComment.objects.count(), 9)
 
-    @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
+    @patch.multiple('django.conf.settings', SITE_ID=2)
     def test_render_xtdcomment_tree_for_one_site(self):
         site2 = Site.objects.create(domain='site2.com', name='site2.com')
+        self.assertEqual(get_current_site_id(), 2)
         thread_test_step_1(self.article)
         thread_test_step_1(self.article, site=site2)
         thread_test_step_2(self.article, site=site2, parent_id=3)

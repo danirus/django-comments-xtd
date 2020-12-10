@@ -15,8 +15,8 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from django_comments_xtd.conf import settings
-from django_comments.models import CommentFlag
-from django_comments_xtd import get_model as get_comment_model
+from django_comments_xtd import (get_model as get_comment_model,
+                                 get_reactions_enum)
 from django_comments_xtd.api import frontend
 from django_comments_xtd.utils import (get_app_model_options,
                                        get_current_site_id, get_html_id_suffix)
@@ -323,14 +323,12 @@ class RenderXtdCommentTreeNode(Node):
         if self.obj:
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
-            qs = get_comment_model().get_comments_queryset(obj)
-            comments = get_comment_model().tree_from_queryset(
-                qs,
-                with_flagging=self.allow_flagging,
-                with_feedback=self.allow_feedback,
-                user=context['user']
-            )
-            context_dict['comments'] = comments
+            qs = get_comment_model().get_queryset(content_object=obj)
+            tree = get_comment_model().tree_from_queryset(qs,
+                                            with_flagging=self.allow_flagging,
+                                            with_feedback=self.allow_feedback,
+                                            user=context['user'])
+            context_dict['comments'] = tree
 
         if self.cvars:
             for vname, vobj in self.cvars:
@@ -341,9 +339,8 @@ class RenderXtdCommentTreeNode(Node):
                 ctype = context['comments'][0]['comment'].content_type
             except Exception:
                 raise TemplateSyntaxError("'render_xtdcomment_tree' doesn't "
-                                          "have 'comments' in the context and "
-                                          "neither have been provided with the "
-                                          "clause 'with'.")
+                                "have 'comments' in the context and neither "
+                                "have been provided with the clause 'with'.")
         if self.template_path:
             template_arg = self.template_path
         else:
@@ -366,13 +363,11 @@ class GetXtdCommentTreeNode(Node):
 
     def render(self, context):
         obj = self.obj.resolve(context)
-        comments_qs = get_comment_model().get_comments_queryset(obj)
-        dic_list = get_comment_model().tree_from_queryset(
-            comments_qs,
-            with_feedback=self.with_feedback,
-            user=context['user']
-        )
-        context[self.var_name] = dic_list
+        qs = get_comment_model().get_queryset(content_object=obj)
+        tree = get_comment_model().tree_from_queryset(qs,
+                                            with_feedback=self.with_feedback,
+                                            user=context['user'])
+        context[self.var_name] = tree
         return ''
 
 
@@ -405,9 +400,9 @@ def render_xtdcomment_tree(parser, token):
 
     # There must be at least a 'for <object>' or a 'with vname=obj' clause.
     if len(tokens) < 2 or tokens[0] not in ["for", "with"]:
-        raise TemplateSyntaxError("2nd and 3rd argument in %r must be either "
-                                  "a 'for <object>' or a 'with vname=<obj>' "
-                                  "clause." % tag)
+        raise TemplateSyntaxError("2nd and 3rd argument in %r must be either"
+                                  " a 'for <object>' or a 'with vname=<obj>'"
+                                  " clause." % tag)
     while tokens:
         token = tokens.pop(0)
         if token == "for":
@@ -418,8 +413,8 @@ def render_xtdcomment_tree(parser, token):
                                           "can't be reserved word 'with'."
                                           % tag)
         if token == "with":
-            tail_tokens = ["allow_feedback", "show_feedback", "allow_flagging",
-                           "using"]
+            tail_tokens = ["allow_feedback", "show_feedback",
+                           "allow_flagging", "using"]
             try:
                 if tokens[0] not in tail_tokens:
                     while len(tokens) and tokens[0] not in tail_tokens:
@@ -526,6 +521,19 @@ def get_commentbox_props(parser, token):
     obj = match.groups()[0]
     return GetCommentBoxPropsNode(obj)
 
+
+# ----------------------------------------------------------------------
+@register.simple_tag
+def reactions_enum_list():
+    """
+    Returns a string representing the list of available comment reactions.
+
+    Each reaction is a comma-separated list of 3 items: the ID of the
+    reaction, the name, and the HTML code to represent it as a button.
+    By default there are 4 reactions represented by emoji characters. Read
+    the docs to know how to extend comment reactions.
+    """
+    return get_reactions_enum().strlist()
 
 # ----------------------------------------------------------------------
 @register.filter

@@ -4,6 +4,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from django_comments_xtd import api, views
 
+
 urlpatterns = [
     re_path(r'^sent/$', views.sent, name='comments-xtd-sent'),
     re_path(r'^confirm/(?P<key>[^/]+)/$', views.confirm,

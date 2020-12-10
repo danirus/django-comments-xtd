@@ -8,8 +8,11 @@
   <head>
     <meta charset="utf-8" />
     <title>{% block title %}django-comments-xtd comp demo{% endblock %}</title>
-    <link href="{% static 'django_comments_xtd/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link
+      href="{% static 'django_comments_xtd/css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    {% block extra_css %}
+    {% endblock %}
   </head>
   <body>
     <div class="container">
@@ -51,10 +54,10 @@
         </nav>
       </div>
     </div>
-    
+
     {% block content %}
     {% endblock %}
-    
+
     <div class="container">
       <div class="row">
         <div class="col-md-12">
@@ -63,7 +66,7 @@
         </div>
       </div>
     </div>
-    
+
     <script
         src="https://code.jquery.com/jquery-3.3.1.min.js"
         crossorigin="anonymous"></script>

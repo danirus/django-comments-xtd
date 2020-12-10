@@ -242,7 +242,7 @@ class CommentListTestCase(APITestCase):
     # to the API, so that a comment model can be used in combination with its
     # own serializer, and test it here.
 
-    @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
+    @patch.multiple('django.conf.settings', SITE_ID=2)
     def test_get_list_for_a_second_site(self):
         site2 = Site.objects.create(domain='site2.com', name='site2.com')
 

@@ -17,10 +17,10 @@ from rest_framework.response import Response
 from django_comments_xtd import views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.api import serializers
-from django_comments_xtd.models import (CommentReaction, TmpXtdComment,
-                                        XtdComment)
-from django_comments_xtd.utils import (
-    get_app_model_options, get_current_site_id)
+from django_comments_xtd.models import (TmpXtdComment, XtdComment,
+                                        CommentReaction)
+from django_comments_xtd.utils import (get_app_model_options,
+                                       get_current_site_id)
 
 
 class CommentCreate(generics.CreateAPIView):
@@ -53,33 +53,14 @@ class CommentList(generics.ListAPIView):
     def get_queryset(self, **kwargs):
         content_type_arg = self.kwargs.get('content_type', None)
         object_pk_arg = self.kwargs.get('object_pk', None)
-        app_label, model = content_type_arg.split("-")
+        app, model = content_type_arg.split("-")
         try:
-            content_type = ContentType.objects.get_by_natural_key(app_label,
-                                                                  model)
+            content_type = ContentType.objects.get_by_natural_key(app, model)
         except ContentType.DoesNotExist:
             qs = XtdComment.objects.none()
         else:
-            flags_qs = CommentFlag.objects.filter(
-                flag__in=[CommentFlag.SUGGEST_REMOVAL]
-            ).prefetch_related('user')
-            prefetch = Prefetch('flags', queryset=flags_qs)
-            site_id = getattr(settings, "SITE_ID", None)
-            if not site_id:
-                site_id = get_current_site_id(self.request)
-            fkwds = {
-                "content_type": content_type,
-                "object_pk": object_pk_arg,
-                "site__pk": site_id,
-                "is_public": True
-            }
-            if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
-                fkwds['is_removed'] = False
-            qs = get_comment_model()\
-                .objects\
-                .prefetch_related(prefetch)\
-                .filter(**fkwds)
-        return qs
+            return XtdComment.get_queryset(content_type=content_type,
+                                           object_pk=object_pk_arg)
 
 
 class CommentCount(generics.GenericAPIView):
@@ -152,29 +133,35 @@ def preview_user_avatar(request):
 
 
 class PostCommentReaction(mixins.CreateModelMixin,
-                          mixins.DestroyModelMixin,
                           generics.GenericAPIView):
     """Create and delete comment reactions."""
 
-    serializer_class = serializers.CommentReactionSerializer
+    serializer_class = serializers.WriteCommentReactionSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
         comment = get_object_or_404(get_comment_model(),
                                     pk=int(request.data['comment']))
         check_allow_feedback_option(comment)
-        response = self.create(request, *args, **kwargs)
+        self.create(request, *args, **kwargs)
+        # Create a new response object with the list of reactions the
+        # comment has received. If other users sent reactions they all will
+        # be reflected in the comment, not only the reaction sent with this
+        # particular request.
         if self.created:
-            return response
+            return Response(comment.get_reactions(),
+                            status=status.HTTP_201_CREATED)
         else:
-            # The user already reacted it so. Nothing changed.
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(comment.get_reactions(),
+                            status=status.HTTP_200_OK)
 
     def perform_create(self, serializer):
-        cr_qs = CommentReaction.objects.filter(authors=self.request.user,
-                                               **serializer.validated_data)
-        if cr_qs.count() > 0:  # It does already exist, do nothing.
+        cr_qs = CommentReaction.objects.filter(
+            authors=self.request.user, **serializer.validated_data)
+        if cr_qs.count() == 1:  # It does already exist, do nothing.
             self.created = False
+            cr_qs.update(counter=F('counter') - 1)
+            cr_qs[0].authors.remove(self.request.user)
         else:
             creaction, _ = CommentReaction.objects.get_or_create(
                 **serializer.validated_data)
@@ -183,24 +170,3 @@ class PostCommentReaction(mixins.CreateModelMixin,
             self.created = True
             creaction.counter += 1
             creaction.save()
-
-    def delete(self, request, *args, **kwargs):
-        comment = get_object_or_404(get_comment_model(),
-                                    pk=int(request.data['comment']))
-        check_allow_feedback_option(comment)
-        try:
-            kwargs = {
-                'comment': int(self.request.data['comment']),
-                'reaction': int(self.request.data['reaction']),
-                'authors': request.user
-            }
-            cr_qs = CommentReaction.objects.filter(**kwargs)
-        except (TypeError, ValueError, CommentReaction.DoesNotExist):
-            raise Http404
-        else:
-            if cr_qs.count() == 1:
-                cr_qs.update(counter=F('counter') - 1)
-                cr_qs[0].authors.remove(request.user)
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            else:
-                raise Http404

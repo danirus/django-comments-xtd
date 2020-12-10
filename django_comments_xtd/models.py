@@ -118,33 +118,71 @@ class XtdComment(Comment):
         else:
             return False
 
-    @classmethod
-    def get_comments_queryset(cls, content_object):
-        hide_removed = getattr(settings, 'COMMENTS_HIDE_REMOVED', True)
-        ctype = ContentType.objects.get_for_model(content_object)
-        flags_qs = CommentFlag.objects\
-                    .filter(flag__in=[CommentFlag.SUGGEST_REMOVAL])\
-                    .prefetch_related('user')
-        prefetch_flags = Prefetch('flags', queryset=flags_qs)
-        reactions_qs = CommentReaction.objects.all()\
-                        .prefetch_related('authors')
-        prefetch_reactions = Prefetch('reactions', queryset=reactions_qs)
+    def get_reactions(self):
+        total_counter = 0
+        reactions = OrderedDict([(k, {}) for k in get_reactions_enum()])
+        # First add the existing reactions sorted by reaction value.
+        for item in self.reactions.order_by('reaction'):
+            if item.counter == 0:
+                continue
+            total_counter += item.counter
+            reaction = get_reactions_enum()(item.reaction)
+            authors = [settings.COMMENTS_XTD_API_USER_REPR(author)
+                        for author in item.authors.all()]
+            reactions[reaction.value] = {
+                'value': reaction.value,
+                'authors': authors,
+                'counter': item.counter,
+                'label': reaction.label,
+                'icon': reaction.icon
+            }
+        # Return only the values of OrderedDict after it's being sorted.
+        return {
+            "counter": total_counter,
+            "list": [v for k, v in reactions.items() if len(v)]
+        }
+
+    @staticmethod
+    def get_queryset(content_type=None, object_pk=None, content_object=None):
+        """
+        Given either a content_object or the pair content_type and object_pk
+        it returns the queryset with the comments posted to that object.
+        """
+        if (
+            content_object is None and
+            (content_type is None or object_pk is None)
+        ):
+            return None
+
+        if content_object:
+            content_type = ContentType.objects.get_for_model(content_object)
+            object_pk = content_object.id
+
+        flags = CommentFlag.objects\
+                 .filter(flag__in=[CommentFlag.SUGGEST_REMOVAL])\
+                 .prefetch_related('user')
+        reactions = CommentReaction.objects.all().prefetch_related('authors')
+        prefetch_args = [Prefetch('flags', queryset=flags),
+                         Prefetch('reactions', queryset=reactions)]
+
         fkwds = {
-            "content_type": ctype,
-            "object_pk": content_object.pk,
+            "content_type": content_type,
+            "object_pk": object_pk,
             "site__pk": get_current_site_id(),
             "is_public": True
         }
+
+        hide_removed = getattr(settings, 'COMMENTS_HIDE_REMOVED', True)
         if hide_removed:
             fkwds['is_removed'] = False
-        return get_model()\
-                .objects\
-                .prefetch_related(prefetch_flags, prefetch_reactions)\
+
+        return get_model().objects\
+                .prefetch_related(*prefetch_args)\
                 .filter(**fkwds)
 
-    @classmethod
-    def tree_from_queryset(cls, queryset, with_flagging=False,
-                           with_feedback=False, user=None):
+    @staticmethod
+    def tree_from_queryset(queryset,
+                           with_flagging=False, with_feedback=False, user=None):
         """Converts a XtdComment queryset into a list of nested dictionaries.
         The queryset has to be ordered by thread_id, order.
         Each dictionary contains two attributes::
@@ -168,39 +206,12 @@ class XtdComment(Comment):
 
             return flags_dict
 
-        def get_reactions(comment, user):
-            reactions = OrderedDict()
-            # First add the existing reactions sorted by reaction value.
-            for item in comment.reactions.order_by('reaction'):
-                reaction = get_reactions_enum()(item.reaction)
-                authors = [settings.COMMENTS_XTD_API_USER_REPR(author)
-                           for author in item.authors.all()]
-                reactions[reaction.value] = {
-                    'value': reaction.value,
-                    'authors': authors,
-                    'counter': item.counter,
-                    'selected': user in item.authors.all(),
-                    'label': reaction.label,
-                    'icon': reaction.icon
-                }
-            # Then add missing reactions (those nobody had over this comment).
-            for reaction in get_reactions_enum():
-                if not reaction.value in reactions:
-                    reactions[reaction.value] = {
-                        'value': reaction.value,
-                        'counter': 0,
-                        'label': reaction.label,
-                        'icon': reaction.icon
-                    }
-            # Return only the values of OrderedDict after it's being sorted.
-            return [v for k, v in sorted(reactions.items())]
-
         def add_children(children, obj, user):
             for item in children:
                 if item['comment'].pk == obj.parent_id:
                     child_dict = {'comment': obj, 'children': []}
                     if with_feedback:
-                        child_dict['reactions'] = get_reactions(obj, user)
+                        child_dict['reactions'] = obj.get_reactions()
                     if with_flagging:
                         child_dict.update(get_flags(obj, user))
                     item['children'].append(child_dict)
@@ -213,7 +224,7 @@ class XtdComment(Comment):
         def get_comment_dict(obj):
             new_dict = {'comment': obj, 'children': []}
             if with_feedback:
-                reactions_dict = get_reactions(obj, user)
+                reactions_dict = obj.get_reactions()
                 if len(reactions_dict):
                     new_dict['reactions'] = reactions_dict
             if with_flagging:
@@ -353,24 +364,46 @@ class BlackListedDomain(models.Model):
 
 
 # ----------------------------------------------------------------------
-reaction_icons = {
-    1: "fas fa-thumbs-up",
-    2: "fas fa-thumbs-down"
-}
-
-class ReactionEnum(models.IntegerChoices):
-    LIKE_IT =    1, _("I like it")
-    DISLIKE_IT = 2, _("I dislike it")
+class BaseReactionEnum(models.TextChoices):
+    @classmethod
+    def set_icons(cls, icons):
+        cls._icons = icons
 
     @property
     def icon(self):
-        return reaction_icons[self.value]
+        return self._icons[self]
+
+    @classmethod
+    def strlist(cls):
+        return ";".join([
+            ",".join([f'{member.value}', member.label, member.icon])
+            for member in cls
+        ])
+
+
+class ReactionEnum(BaseReactionEnum):
+    LIKE_IT =    "+", "+1"
+    DISLIKE_IT = "-", "-1"
+
+
+ReactionEnum.set_icons({
+    ReactionEnum.LIKE_IT:    "#128077",
+    ReactionEnum.DISLIKE_IT: "#128078"
+})
+
+
+class ReactionField(models.TextField):
+    description = "Code representing a user reaction to a comment"
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(ReactionField, self).deconstruct()
+        kwargs.pop('choices', None)  # Ignore choice changes in migrations.
+        return name, path, args, kwargs
 
 
 class CommentReaction(models.Model):
-    reaction = models.IntegerField(_('reaction'),
-                                   db_index=True,
-                                   choices=get_reactions_enum().choices)
+    reaction = ReactionField(_('reaction'), db_index=True,
+                             choices=get_reactions_enum().choices)
     comment = models.ForeignKey(get_model(),
                                 verbose_name=_('reactions'),
                                 related_name="reactions",

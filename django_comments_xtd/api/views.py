@@ -156,12 +156,14 @@ class PostCommentReaction(mixins.CreateModelMixin,
                             status=status.HTTP_200_OK)
 
     def perform_create(self, serializer):
-        cr_qs = CommentReaction.objects.filter(
-            authors=self.request.user, **serializer.validated_data)
-        if cr_qs.count() == 1:  # It does already exist, do nothing.
+        cr_qs = CommentReaction.objects.filter(**serializer.validated_data)
+        if cr_qs.filter(authors=self.request.user).count() == 1:
             self.created = False
-            cr_qs.update(counter=F('counter') - 1)
-            cr_qs[0].authors.remove(self.request.user)
+            if cr_qs[0].counter == 1:
+                cr_qs.delete()
+            else:
+                cr_qs.update(counter=F('counter') - 1)
+                cr_qs[0].authors.remove(self.request.user)
         else:
             creaction, _ = CommentReaction.objects.get_or_create(
                 **serializer.validated_data)

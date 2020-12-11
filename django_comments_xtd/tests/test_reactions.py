@@ -105,9 +105,9 @@ class AllowedCommentReactionTests(TestCase):
         self.assertEqual(creaction.counter, 1)
         # The second like-it removes it.
         response = send_reaction("post", data, auth_user=self.user)
-        self.assertEqual(response.status_code, 204)
-        creaction = CommentReaction.objects.get(**data)
-        self.assertEqual(creaction.counter, 0)
+        self.assertEqual(response.status_code, 200)
+        with self.assertRaises(CommentReaction.DoesNotExist):
+            creaction = CommentReaction.objects.get(**data)
 
     def test_create_DISLIKE_IT_reaction(self):
         data = {'comment': self.comment.id, 'reaction': self.renum.DISLIKE_IT}

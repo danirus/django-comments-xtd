@@ -187,7 +187,7 @@ class FlagSerializer(serializers.ModelSerializer):
         return data
 
 
-class ReadFlagField(serializers.RelatedField):
+class ReadFlagsField(serializers.RelatedField):
     def to_representation(self, value):
         if value.flag == CommentFlag.SUGGEST_REMOVAL:
             flag = "removal"
@@ -197,6 +197,24 @@ class ReadFlagField(serializers.RelatedField):
             "flag": flag,
             "user": settings.COMMENTS_XTD_API_USER_REPR(value.user),
             "id": value.user.id
+        }
+
+
+class ReadReactionsField(serializers.RelatedField):
+    def to_representation(self, value):
+        reaction_item = get_reactions_enum()(value.reaction)
+        return {
+            "reaction": value.reaction,
+            "label": reaction_item.label,
+            "icon": reaction_item.icon,
+            "counter": value.counter,
+            "authors": [
+                {
+                    'id': author.id,
+                    'author': settings.COMMENTS_XTD_API_USER_REPR(author)
+                }
+                for author in value.authors.all()
+            ]
         }
 
 
@@ -212,13 +230,15 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     comment = serializers.SerializerMethodField()
     allow_reply = serializers.SerializerMethodField()
     permalink = serializers.SerializerMethodField()
-    flags = ReadFlagField(many=True, read_only=True)
+    flags = ReadFlagsField(many=True, read_only=True)
+    reactions = ReadReactionsField(many=True, read_only=True)
 
     class Meta:
         model = XtdComment
         fields = ('id', 'user_name', 'user_url', 'user_moderator',
                   'user_avatar', 'permalink', 'comment', 'submit_date',
-                  'parent_id', 'level', 'is_removed', 'allow_reply', 'flags')
+                  'parent_id', 'level', 'is_removed', 'allow_reply',
+                  'flags', 'reactions')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs['context']['request']

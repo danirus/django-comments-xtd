@@ -16,7 +16,9 @@
       way to receive user feedback on comments. The model CommentFlag is no
       longer used to store such feedback. There is a new model CommentReaction
       that stores user reactions to comments. For each pair reaction/comment
-      there is a counter and a list of reaction authors, this way it is possible to retrieve most liked comments or any other query related with user reactions. In addition there is new frontend code to handle user
+      there is a counter and a list of reaction authors, this way it is
+      possible to retrieve most liked comments or any other query related with
+      user reactions. In addition there is new frontend code to handle user
       reactions. To get aligned with issue #161, the new frontend to handle
       reactions doesn't have additional dependencies.
 

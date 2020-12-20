@@ -127,8 +127,10 @@ class XtdComment(Comment):
                 continue
             total_counter += item.counter
             reaction = get_reactions_enum()(item.reaction)
-            authors = [settings.COMMENTS_XTD_API_USER_REPR(author)
-                        for author in item.authors.all()]
+            authors = [
+                settings.COMMENTS_XTD_API_USER_REPR(author)
+                for author in item.authors.all()
+            ]
             reactions[reaction.value] = {
                 'value': reaction.value,
                 'authors': authors,
@@ -159,8 +161,8 @@ class XtdComment(Comment):
             object_pk = content_object.id
 
         flags = CommentFlag.objects\
-                 .filter(flag__in=[CommentFlag.SUGGEST_REMOVAL])\
-                 .prefetch_related('user')
+            .filter(flag__in=[CommentFlag.SUGGEST_REMOVAL])\
+            .prefetch_related('user')
         reactions = CommentReaction.objects.all().prefetch_related('authors')
         prefetch_args = [Prefetch('flags', queryset=flags),
                          Prefetch('reactions', queryset=reactions)]
@@ -177,8 +179,8 @@ class XtdComment(Comment):
             fkwds['is_removed'] = False
 
         return get_model().objects\
-                .prefetch_related(*prefetch_args)\
-                .filter(**fkwds)
+            .prefetch_related(*prefetch_args)\
+            .filter(**fkwds)
 
     @staticmethod
     def tree_from_queryset(queryset,
@@ -191,14 +193,14 @@ class XtdComment(Comment):
                 'children': [list of child comment dictionaries]
             }
         """
-        def get_flags(comment, user):
+        def get_flags(comment):
             flags_dict = {}
             flagging_users = []
 
             for flag in comment.flags.all():
                 user_repr = settings.COMMENTS_XTD_API_USER_REPR(flag.user)
                 if flag.flag == CommentFlag.SUGGEST_REMOVAL:
-                    flagging_users.append(flag.user)
+                    flagging_users.append(user_repr)
 
             flags_dict.update({'flagged': flagging_users})
             if add_flagged_count:
@@ -213,7 +215,7 @@ class XtdComment(Comment):
                     if with_feedback:
                         child_dict['reactions'] = obj.get_reactions()
                     if with_flagging:
-                        child_dict.update(get_flags(obj, user))
+                        child_dict.update(get_flags(obj))
                     item['children'].append(child_dict)
                     return True
                 elif item['children']:
@@ -228,7 +230,7 @@ class XtdComment(Comment):
                 if len(reactions_dict):
                     new_dict['reactions'] = reactions_dict
             if with_flagging:
-                flags_dict = get_flags(obj, user)
+                flags_dict = get_flags(obj)
                 if len(flags_dict):
                     new_dict.update(flags_dict)
             return new_dict
@@ -382,7 +384,7 @@ class BaseReactionEnum(models.TextChoices):
 
 
 class ReactionEnum(BaseReactionEnum):
-    LIKE_IT =    "+", "+1"
+    LIKE_IT = "+", "+1"
     DISLIKE_IT = "-", "-1"
 
 

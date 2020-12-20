@@ -1,12 +1,10 @@
 import six
 
-from django.db.models import F, Prefetch
+from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
-from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils.module_loading import import_string
 
-from django_comments.models import CommentFlag
 from django_comments_xtd import get_model as get_comment_model
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
@@ -14,7 +12,6 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from django_comments_xtd import views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.api import serializers
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
@@ -57,7 +54,7 @@ class CommentList(generics.ListAPIView):
         try:
             content_type = ContentType.objects.get_by_natural_key(app, model)
         except ContentType.DoesNotExist:
-            qs = XtdComment.objects.none()
+            return XtdComment.objects.none()
         else:
             return XtdComment.get_queryset(content_type=content_type,
                                            object_pk=object_pk_arg)

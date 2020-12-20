@@ -8,7 +8,6 @@ from django.contrib.auth.views import redirect_to_login
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
-from django.db.models import F
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.template import loader
@@ -20,7 +19,7 @@ from django.views.generic import ListView
 
 
 from django_comments.views.moderation import perform_flag
-from django_comments.views.utils import next_redirect, confirmation_view
+from django_comments.views.utils import next_redirect
 
 from django_comments_xtd import (comment_was_posted, comment_will_be_posted,
                                  get_form, get_model as get_comment_model,

@@ -1,5 +1,4 @@
 from django.apps import apps
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils import formats
 from django.utils.html import escape

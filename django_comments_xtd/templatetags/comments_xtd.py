@@ -7,7 +7,6 @@ try:
 except ImportError:
     from urllib import urlencode
 
-from django.db.models import Prefetch
 from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader)
@@ -324,10 +323,12 @@ class RenderXtdCommentTreeNode(Node):
             obj = self.obj.resolve(context)
             ctype = ContentType.objects.get_for_model(obj)
             qs = get_comment_model().get_queryset(content_object=obj)
-            tree = get_comment_model().tree_from_queryset(qs,
-                                            with_flagging=self.allow_flagging,
-                                            with_feedback=self.allow_feedback,
-                                            user=context['user'])
+            tree = get_comment_model().tree_from_queryset(
+                qs,
+                with_flagging=self.allow_flagging,
+                with_feedback=self.allow_feedback,
+                user=context['user']
+            )
             context_dict['comments'] = tree
 
         if self.cvars:
@@ -338,9 +339,10 @@ class RenderXtdCommentTreeNode(Node):
             try:
                 ctype = context['comments'][0]['comment'].content_type
             except Exception:
-                raise TemplateSyntaxError("'render_xtdcomment_tree' doesn't "
-                                "have 'comments' in the context and neither "
-                                "have been provided with the clause 'with'.")
+                raise TemplateSyntaxError(
+                    "'render_xtdcomment_tree' doesn't "
+                    "have 'comments' in the context and neither "
+                    "have been provided with the clause 'with'.")
         if self.template_path:
             template_arg = self.template_path
         else:
@@ -364,9 +366,11 @@ class GetXtdCommentTreeNode(Node):
     def render(self, context):
         obj = self.obj.resolve(context)
         qs = get_comment_model().get_queryset(content_object=obj)
-        tree = get_comment_model().tree_from_queryset(qs,
-                                            with_feedback=self.with_feedback,
-                                            user=context['user'])
+        tree = get_comment_model().tree_from_queryset(
+            qs,
+            with_feedback=self.with_feedback,
+            user=context['user']
+        )
         context[self.var_name] = tree
         return ''
 
@@ -534,6 +538,7 @@ def reactions_enum_list():
     the docs to know how to extend comment reactions.
     """
     return get_reactions_enum().strlist()
+
 
 # ----------------------------------------------------------------------
 @register.filter

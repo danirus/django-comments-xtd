@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.views.generic import DateDetailView
 
-from comp.articles.models import Article
+from .models import Article
 
 
 class ArticleDetailView(DateDetailView):

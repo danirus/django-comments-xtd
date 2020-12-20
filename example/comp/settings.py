@@ -144,12 +144,13 @@ INSTALLED_APPS = (
 
     'comp',
     'comp.articles',
+    'comp.diary',
     'comp.extra.quotes',
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-# EMAIL_HOST          = "smtp.gmail.com" 
+# EMAIL_HOST          = "smtp.gmail.com"
 # EMAIL_PORT          = "587"
 # EMAIL_HOST_USER     = "username@gmail.com"
 # EMAIL_HOST_PASSWORD = ""
@@ -157,7 +158,7 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 # DEFAULT_FROM_EMAIL  = "Alice Bloggs <alice@example.com>"
 # SERVER_EMAIL        = DEFAULT_FROM_EMAIL
 
-# Fill in actual EMAIL settings above, and comment out the 
+# Fill in actual EMAIL settings above, and comment out the
 # following line to let this django demo sending emails
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -169,6 +170,8 @@ COMMENTS_XTD_CONTACT_EMAIL = 'helpdesk@example.com'
 COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
+
+COMMENTS_XTD_REACTIONS_ENUM = "comp.enums.CompReactionEnum"
 
 # Quotes can have 1-level depth nested comments.
 COMMENTS_XTD_MAX_THREAD_LEVEL = 1
@@ -190,10 +193,17 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
         'show_feedback': True,
     }
 }
-# COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
+
+COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
 
 LOGIN_URL = "/admin/login/"
 LOGIN_REDIRECT_URL = LOGIN_URL
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication'
+    ]
+}
 
 DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.sql.SQLPanel',

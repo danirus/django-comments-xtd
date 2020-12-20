@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load i18n comments_xtd %}
+
+{% block extra_css %}
+<style>
+.day-group {
+  margin: 8px 0px 16px;
+}
+
+.day-group h4 {
+  padding: 8px;
+  border-bottom: 2px solid lightblue;
+}
+
+.day-item {
+  display: flex;
+  align-items: flex-start;
+  margin: 0 0 64px;
+}
+
+.day-item       a.permalink { display: none; }
+.day-item:hover a.permalink { display: inline; }
+
+.day-item .tod {
+  flex: 0;
+  min-width: 150px;
+  padding: 0 16px 0 0;
+  text-align: right;
+  color: lightgray;
+  font-size: 1.8em;
+}
+
+.day-item .detail .body {
+  padding: 0 0 8px 16px;
+  border-left: 4px solid lightblue;
+  font-size: 1.4em;
+}
+
+.day-item .detail .comments-area {
+  padding: 8px 0 8px 16px;
+  border-left: 4px solid rgb(250, 173, 255);
+}
+
+/* -------------------------------------------------------------------- */
+/* The following are for the comments-box.                              */
+/* Move it to the corresponding file once a default design is finished. */
+/* -------------------------------------------------------------------- */
+
+.comments-box {
+  padding: 8px 16px;
+  border: 1px solid rgba(0, 0, 0, .1);
+  border-radius: 0.3rem;
+}
+
+.comments-box nav {
+  display: flex;
+
+}
+
+.comments-box .top {
+  border: 2px solid rgba(0, 0, 0, .1);
+}
+
+.comments-box nav.top ul.left-nav {
+
+}
+
+</style>
+{% endblock %}
+
+{% block menu-class-diary %}active{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row my-4">
+    <div class="col-lg-12">
+      <h2 class="text-center">
+        {% blocktranslate %}My diary on {{ day }}{% endblocktranslate %}
+      </h2>
+      <hr/>
+    </div>
+  </div>
+  <div class="row justify-content-center flex-fill">
+    <div class="col-lg-9">
+      <div class="day-group">
+        {% for item in object_list %}
+          <a name="entry-{{ item.id }}"></a>
+          <div class="day-item">
+            <div class="tod">
+              <a class="permalink" href="{{ item.get_absolute_url }}">¶</a>
+              {{ item.publish|date:"P" }}
+            </div>
+            <div class="detail">
+              <div class="body">{{ item.body }}</div>
+              {% if item.allow_comments %}
+                <div class="comments-area">
+                  {% include "diary/diary_archive_day_comments.html" %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+</div>
+{% endblock %}

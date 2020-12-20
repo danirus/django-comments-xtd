@@ -31,6 +31,9 @@ COMMENTS_XTD_FORM_CLASS = "django_comments_xtd.forms.XtdCommentForm"
 # Model to use.
 COMMENTS_XTD_MODEL = "django_comments_xtd.models.XtdComment"
 
+# Enum class for comment reactions.
+COMMENTS_XTD_REACTIONS_ENUM = "django_comments_xtd.models.ReactionEnum"
+
 # Send HTML emails.
 COMMENTS_XTD_SEND_HTML_EMAIL = True
 

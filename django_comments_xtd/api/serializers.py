@@ -69,7 +69,7 @@ class WriteCommentSerializer(serializers.Serializer):
         if value != 0:
             try:
                 parent = get_model().objects.get(pk=value)
-            except get_model().DoesNotExist as exc:
+            except get_model().DoesNotExist:
                 raise serializers.ValidationError(
                     "reply_to comment does not exist")
             else:

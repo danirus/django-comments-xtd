@@ -12,10 +12,11 @@ from django_comments.models import CommentFlag
 from django_comments.signals import comment_will_be_posted, comment_was_posted
 from rest_framework import exceptions, serializers
 
-from django_comments_xtd import signed, views
+from django_comments_xtd import get_model, signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
-                                        LIKEDIT_FLAG, DISLIKEDIT_FLAG)
+                                        LIKEDIT_FLAG, DISLIKEDIT_FLAG,
+                                        max_thread_level_for_content_type)
 from django_comments_xtd.signals import (should_request_be_authorized,
                                          confirmation_received)
 from django_comments_xtd.utils import get_app_model_options
@@ -62,6 +63,20 @@ class WriteCommentSerializer(serializers.Serializer):
                 raise serializers.ValidationError("This field is required")
             else:
                 return self.request.user.email
+        return value
+
+    def validate_reply_to(self, value):
+        if value != 0:
+            try:
+                parent = get_model().objects.get(pk=value)
+            except get_model().DoesNotExist as exc:
+                raise serializers.ValidationError(
+                    "reply_to comment does not exist")
+            else:
+                max = max_thread_level_for_content_type(parent.content_type)
+                if parent.level == max:
+                    raise serializers.ValidationError(
+                        "Max thread level reached")
         return value
 
     def validate(self, data):
@@ -124,7 +139,8 @@ class WriteCommentSerializer(serializers.Serializer):
         #  * Comment created (http 201),
         #  * Confirmation sent by mail (http 204),
         #  * Comment in moderation (http 202),
-        #  * Comment rejected (http 403).
+        #  * Comment rejected (http 403),
+        #  * Comment have bad data (http 400).
         site = get_current_site(self.request)
         resp = {
             'code': -1,

@@ -1,11 +1,19 @@
 # Change Log
 
+## [2.8.2] -
+
+    * Fixes issue #250, which reports that using the web API to post a comment
+      with a reply_to field that would break the max_thread_level should not
+      produce an exception but rather a controlled response with an appropriate
+      HTTP code.
+
 ## [2.8.1] - 2020-10-16
 
     * Fixes issue #80, that requests to change the response when clicking
       more than once on a comment confirmation link. Up until now clicking
       more than once on a comment confirmation link produced a HTTP 404
-      response. Since version 2.8.1 the response is the same as for the first click: the user is redirected to the comment's view in the page.
+      response. Since version 2.8.1 the response is the same as for the first
+      click: the user is redirected to the comment's view in the page.
       Thanks to @ppershing.
     * Fixes issue #152, about loading the `staticfiles` templatetag instead of
       `static`. Since Django v3.0 the staticfiles app requires using the

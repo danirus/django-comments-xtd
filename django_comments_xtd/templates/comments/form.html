@@ -55,14 +55,16 @@
         </div>
         {% endif %}
 
-        <div class="row form-group">
-            <div class="offset-md-3 col-md-7">
-                <div class="custom-control custom-checkbox">
-                    {{ form.followup }}
-                    <label for="id_followup{% if cid %}_{{ cid }}{% endif %}" class="custom-control-label">&nbsp;{{ form.followup.label }}</label>
+        {% if form.followup %}
+            <div class="row form-group">
+                <div class="offset-md-3 col-md-7">
+                    <div class="custom-control custom-checkbox">
+                        {{ form.followup }}
+                        <label for="id_followup{% if cid %}_{{ cid }}{% endif %}" class="custom-control-label">&nbsp;{{ form.followup.label }}</label>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
     </fieldset>
 
     <div class="row form-group">

@@ -5,6 +5,11 @@ from django_comments_xtd.models import TmpXtdComment
 from django_comments_xtd.forms import XtdCommentForm
 from django_comments_xtd.tests.models import Article
 
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
+
 
 class GetFormTestCase(TestCase):
 
@@ -40,3 +45,20 @@ class XtdCommentFormTestCase(TestCase):
 
         # it does have the new field 'followup'
         self.assertTrue("followup" in comment)
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                COMMENTS_XTD_DEFAULT_FOLLOW_UP=True)
+    def test_setting_COMMENTS_XTD_DEFAULT_FOLLOW_UP_works(self):
+                # as it's used in django_comments.views.comments
+        data = {"name": "Daniel",
+                "email": "danirus@eml.cc",
+                "followup": True,
+                "reply_to": 0, "level": 1, "order": 1,
+                "comment": "Es war einmal iene kleine..."}
+        data.update(self.form.initial)
+        form = django_comments.get_form()(self.article, data)
+        comment = form.get_comment_object()
+
+        # it does have the new field 'followup'
+        self.assertTrue("followup" in comment)
+        self.assertFalse('followup' in form)

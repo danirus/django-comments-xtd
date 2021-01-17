@@ -9,10 +9,12 @@ from django_comments_xtd.models import TmpXtdComment
 
 
 class XtdCommentForm(CommentForm):
-    followup = forms.BooleanField(required=False,
-                                  label=_("Notify me about follow-up comments"))
     reply_to = forms.IntegerField(required=True, initial=0,
                                   widget=forms.HiddenInput())
+
+    if not settings.COMMENTS_XTD_DEFAULT_FOLLOW_UP:
+        followup = forms.BooleanField(required=False,
+                                    label=_("Notify me about follow-up comments"))
 
     def __init__(self, *args, **kwargs):
         comment = kwargs.pop("comment", None)
@@ -43,9 +45,10 @@ class XtdCommentForm(CommentForm):
             max_length=settings.COMMENT_MAX_LENGTH)
         self.fields['comment'].widget.attrs.pop('cols')
         self.fields['comment'].widget.attrs.pop('rows')
-        self.fields['followup'].widget.attrs['id'] = (
-            'id_followup%s' % followup_suffix)
-        self.fields['followup'].widget.attrs['class'] = "custom-control-input"
+        if not settings.COMMENTS_XTD_DEFAULT_FOLLOW_UP:
+            self.fields['followup'].widget.attrs['id'] = (
+                'id_followup%s' % followup_suffix)
+            self.fields['followup'].widget.attrs['class'] = "custom-control-input"
 
     def get_comment_model(self):
         return TmpXtdComment
@@ -58,6 +61,12 @@ class XtdCommentForm(CommentForm):
         target = model._default_manager.get(pk=object_pk)
         data.update({'thread_id': 0, 'level': 0, 'order': 1,
                      'parent_id': self.cleaned_data['reply_to'],
-                     'followup': self.cleaned_data['followup'],
+                     'followup': self._get_followup_value(),
                      'content_object': target})
         return data
+
+    def _get_followup_value(self):
+        if settings.COMMENTS_XTD_DEFAULT_FOLLOW_UP:
+            return True
+
+        return self.cleaned_data['followup']

@@ -61,4 +61,5 @@ class XtdCommentFormTestCase(TestCase):
 
         # it does have the new field 'followup'
         self.assertTrue("followup" in comment)
+        # But we don't have it in form, it comes from the settings
         self.assertFalse('followup' in form)

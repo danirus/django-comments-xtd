@@ -149,7 +149,7 @@ INSTALLED_APPS = (
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-# EMAIL_HOST          = "smtp.gmail.com" 
+# EMAIL_HOST          = "smtp.gmail.com"
 # EMAIL_PORT          = "587"
 # EMAIL_HOST_USER     = "username@gmail.com"
 # EMAIL_HOST_PASSWORD = ""
@@ -157,7 +157,7 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 # DEFAULT_FROM_EMAIL  = "Alice Bloggs <alice@example.com>"
 # SERVER_EMAIL        = DEFAULT_FROM_EMAIL
 
-# Fill in actual EMAIL settings above, and comment out the 
+# Fill in actual EMAIL settings above, and comment out the
 # following line to let this django demo sending emails
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

@@ -195,7 +195,7 @@ export class Comment extends React.Component {
     const {
       allow_feedback, who_can_post, is_authenticated
     } = this.props.settings;
-    
+
     if (allow_feedback) {
       let feedback_id = "feedback-"+this.props.data.id;
       if(this.props.settings.show_feedback)
@@ -211,7 +211,7 @@ export class Comment extends React.Component {
   make_form_invisible(submit_status) {
     this.props.on_comment_created();
   }
-  
+
   handle_reply_click(event) {
     event.preventDefault();
     const { is_authenticated, who_can_post } = this.props.settings;
@@ -219,7 +219,7 @@ export class Comment extends React.Component {
       return window.location.href = (
         this.props.settings.login_url + "?next=" +
         this.props.settings.reply_url.replace('0', this.props.data.id)
-      );      
+      );
     }
     let component = this.state.reply_form.component;
     let visible = !this.state.reply_form.is_visible;
@@ -233,9 +233,14 @@ export class Comment extends React.Component {
   }
 
   _get_reply_link_chunk() {
+    const { level } = this.props.data;
+    const { max_thread_level } = this.props.settings;
+    if (level >= max_thread_level)
+      return null;
+
     let url = this.props.settings.reply_url.replace('0', this.props.data.id),
         reply_label = django.gettext("Reply");
-    
+
     if(this.props.settings.allow_feedback) {
       return (
         <span>&nbsp;&nbsp;<span className="text-muted">&bull;</span>&nbsp;&nbsp;
@@ -254,7 +259,7 @@ export class Comment extends React.Component {
     const rawMarkup = md.render(this.props.data.comment);
     return { __html: rawMarkup };
   }
-  
+
   render_comment_body() {
     const extra_space = (!this.props.settings.allow_feedback) ? "pb-3" : "";
     if(this.props.data.is_removed) {
@@ -277,7 +282,7 @@ export class Comment extends React.Component {
       <div>{this.state.reply_form.component}</div>
     );
   }
-  
+
   _post_feedback(flag) {
     $.ajax({
       method: 'POST',
@@ -344,7 +349,7 @@ export class Comment extends React.Component {
       $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('dispose');
     }
   }
-  
+
   componentDidMount() {
     var feedback_id = "feedback-" + this.props.data.id;
     var options = {html: true, selector: '.cfb-counter'};
@@ -356,7 +361,7 @@ export class Comment extends React.Component {
     var options = {html: true, selector: '.cfb-counter'};
     $('#'+feedback_id).tooltip(options);
   }
-  
+
   componentWillUnmount() {
     var feedback_id = "feedback-" + this.props.data.id;
     var elem = document.getElementById(feedback_id);
@@ -365,7 +370,7 @@ export class Comment extends React.Component {
       $('#'+feedback_id+' A[data-toggle="tooltip"]').tooltip('dispose');
     }
   }
-  
+
   render() {
     let comment_id = "c" + this.props.data.id;
     let user_name = this._get_username_chunk();  // Plain name or link.
@@ -388,7 +393,7 @@ export class Comment extends React.Component {
         </span>
       );
     }
-    
+
     var children = "";
     var settings = this.props.settings;
     if (this.props.data.children != null) {

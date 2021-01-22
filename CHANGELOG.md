@@ -6,6 +6,8 @@
       with a reply_to field that would break the max_thread_level should not
       produce an exception but rather a controlled response with an appropriate
       HTTP code.
+    * Fixes issue #256, about an issue in the JavaScript plugin that displays
+      the "reply" link even when the max_thread_level has been reached.
 
 ## [2.8.1] - 2020-10-16
 

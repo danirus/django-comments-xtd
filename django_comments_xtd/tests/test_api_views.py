@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from datetime import datetime
+import json
 try:
     from unittest.mock import patch
 except ImportError:
@@ -32,6 +33,20 @@ class CommentCreateTestCase(TestCase):
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October...")
         self.form = django_comments.get_form()(self.article)
+
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_CONFIRM_EMAIL=False)
+    def test_post_returns_201_response(self):
+        data = {"name": "Bob", "email": "fulanito@detal.com",
+                "followup": True, "reply_to": 0, "level": 1, "order": 1,
+                "comment": "Es war einmal eine kleine...",
+                "honeypot": ""}
+        data.update(self.form.initial)
+        response = post_comment(data)
+        self.assertEqual(response.status_code, 201)
+        data = json.loads(response.rendered_content)
+        self.assertTrue('id' in data)
+        self.assertEqual(data['id'], 1)  # id of the new created comment.
 
     def test_post_returns_2xx_response(self):
         data = {"name": "Bob", "email": "fulanito@detal.com",

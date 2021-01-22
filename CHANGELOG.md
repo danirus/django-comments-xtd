@@ -6,6 +6,8 @@
       with a reply_to field that would break the max_thread_level should not
       produce an exception but rather a controlled response with an appropriate
       HTTP code.
+    * Fixes issue #255, about the web API not returning the comment ID when
+      creating a new comment.
 
 ## [2.8.1] - 2020-10-16
 

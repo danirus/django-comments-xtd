@@ -1,11 +1,13 @@
 # Change Log
 
-## [2.8.2] -
+## [2.8.2] - 2021-01-22
 
     * Fixes issue #250, which reports that using the web API to post a comment
       with a reply_to field that would break the max_thread_level should not
       produce an exception but rather a controlled response with an appropriate
       HTTP code.
+    * Fixes issue #255, about the web API not returning the comment ID when
+      creating a new comment.
     * Fixes issue #256, about an issue in the JavaScript plugin that displays
       the "reply" link even when the max_thread_level has been reached.
 

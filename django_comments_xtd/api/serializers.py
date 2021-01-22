@@ -176,6 +176,7 @@ class WriteCommentSerializer(serializers.Serializer):
                                         request=self.request)
                 if resp['comment'].is_public:
                     resp['code'] = 201
+                    resp['id'] = new_comment.pk
                     views.notify_comment_followers(new_comment)
                 else:
                     resp['code'] = 202

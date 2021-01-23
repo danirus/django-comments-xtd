@@ -1,4 +1,3 @@
-{% load l10n %}
 {% load i18n %}
 {% load comments %}
 {% load comments_xtd %}
@@ -10,7 +9,7 @@
   <div class="media-body">
     <div class="comment pb-3">
       <h6 class="mb-1 small d-flex">
-        <div class="mr-auto">{{ item.comment.submit_date|localize }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="badge badge-secondary">{% trans "moderator" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="{% trans 'comment permalink' %}" href="{% get_comment_permalink item.comment %}">¶</a></div>
+        <div class="mr-auto">{{ item.comment.submit_date }}&nbsp;-&nbsp;{% if item.comment.url and not item.comment.is_removed %}<a href="{{ item.comment.url }}" target="_new">{% endif %}{{ item.comment.name }}{% if item.comment.url %}</a>{% endif %}{% if item.comment.user and item.comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="badge badge-secondary">{% trans "moderator" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink" title="{% trans 'comment permalink' %}" href="{% get_comment_permalink item.comment %}">¶</a></div>
         <span>
           {% if not item.comment.is_removed %}
             {% if perms.comments.can_moderate %}

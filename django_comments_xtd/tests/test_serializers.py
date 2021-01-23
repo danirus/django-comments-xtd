@@ -196,11 +196,6 @@ class ReadCommentsGetUserAvatarTestCase(TestCase):
 
 
 class RenderSubmitDateTestCase(TestCase):
-    # Test that the submit_date returned by the ReadCommentSerializer matches
-    # that one rendered with render_comment_list. The serializer is used to
-    # feed the JavaScript plugin, therefore the submit_date in the serializer
-    # can be considered as a rendered date.
-
     def setUp(self):
         self.article = Article.objects.create(title="October", slug="october",
                                               body="What I did on October...")

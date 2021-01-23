@@ -1,7 +1,9 @@
 # Change Log
 
-## [2.8.2] - 2021-01-22
+## [2.8.2] - 2021-01-24
 
+    * Fixes issue #248, about the API returning comments' submit_date in UTC
+      when the setting USE_TZ is enabled and a different TIME_ZONE is given.
     * Fixes issue #250, which reports that using the web API to post a comment
       with a reply_to field that would break the max_thread_level should not
       produce an exception but rather a controlled response with an appropriate

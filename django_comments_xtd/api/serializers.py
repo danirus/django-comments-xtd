@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils import formats
+from django.utils import formats, timezone
 from django.utils.html import escape
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext as _, activate, get_language
@@ -263,7 +263,11 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     def get_submit_date(self, obj):
         activate(get_language())
-        return formats.date_format(obj.submit_date, 'DATETIME_FORMAT',
+        if settings.USE_TZ:
+            submit_date = timezone.localtime(obj.submit_date)
+        else:
+            submit_date = obj.submit_date
+        return formats.date_format(submit_date, 'DATETIME_FORMAT',
                                    use_l10n=True)
 
     def get_comment(self, obj):

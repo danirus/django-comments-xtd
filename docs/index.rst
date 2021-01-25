@@ -19,7 +19,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.8.1, of
+    This documentation represents the current version, v2.8.2, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.7.2: https://django-comments-xtd.readthedocs.io/en/2.7.2/
@@ -97,10 +97,10 @@ Change Log
 [2.8.2] - 2021-01-24
 --------------------
 
-    * Fixes issue `#248 <https://github.com/danirus/django-comments-xtd/issues/248>`_, about the API returning comments' submit_date in UTC when the setting USE_TZ is enabled and a different TIME_ZONE is given.
-    * Fixes issue `#250 <https://github.com/danirus/django-comments-xtd/issues/250>`_, which reports that using the web API to post a comment with a reply_to field that would break the max_thread_level should not produce an exception but rather a controlled response with an appropriate HTTP code.
-    * Fixes issue `#255 <https://github.com/danirus/django-comments-xtd/issues/255>`_, about the web API not returning the comment ID when creating a new comment.
-    * Fixes issue `#256 <https://github.com/danirus/django-comments-xtd/issues/256>`_, about an issue in the JavaScript plugin that displays the "reply" link even when the max_thread_level has been reached.
+    * Fixes issue `#248 <https://github.com/danirus/django-comments-xtd/issues/248>`_, about the API returning comments' submit_date in UTC when the setting USE_TZ is enabled and a different TIME_ZONE is given. Thanks to @Loneattic.
+    * Fixes issue `#250 <https://github.com/danirus/django-comments-xtd/issues/250>`_, which reports that using the web API to post a comment with a reply_to field that would break the max_thread_level should not produce an exception but rather a controlled response with an appropriate HTTP code.  Thanks to @impythonista.
+    * Fixes issue `#255 <https://github.com/danirus/django-comments-xtd/issues/255>`_, about the web API not returning the comment ID when creating a new comment. Thanks to @mhoonjeon.
+    * Fixes issue `#256 <https://github.com/danirus/django-comments-xtd/issues/256>`_, about an issue in the JavaScript plugin that displays the "reply" link even when the max_thread_level has been reached. Thanks to @odescopi.
 
 [2.8.1] - 2020-10-16
 --------------------

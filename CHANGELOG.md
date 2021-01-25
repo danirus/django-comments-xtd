@@ -4,14 +4,16 @@
 
     * Fixes issue #248, about the API returning comments' submit_date in UTC
       when the setting USE_TZ is enabled and a different TIME_ZONE is given.
+       Thanks to @Loneattic.
     * Fixes issue #250, which reports that using the web API to post a comment
       with a reply_to field that would break the max_thread_level should not
       produce an exception but rather a controlled response with an appropriate
-      HTTP code.
+      HTTP code. Thanks to @impythonista.
     * Fixes issue #255, about the web API not returning the comment ID when
-      creating a new comment.
+      creating a new comment. Thanks to @mhoonjeon.
     * Fixes issue #256, about an issue in the JavaScript plugin that displays
       the "reply" link even when the max_thread_level has been reached.
+      Thanks to @odescopi.
 
 ## [2.8.1] - 2020-10-16
 

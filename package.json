@@ -1,6 +1,6 @@
 {
   "name": "django-comments-xtd-plugins",
-  "version": "2.8.1",
+  "version": "2.8.2",
   "description": "Provides django-comments-xtd reactjs plugin",
   "main": "app.js",
   "scripts": {

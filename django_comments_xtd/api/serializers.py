@@ -43,27 +43,29 @@ class WriteCommentSerializer(serializers.Serializer):
         super(WriteCommentSerializer, self).__init__(*args, **kwargs)
 
     def validate_name(self, value):
-        if not len(value):
-            if (
-                not len(self.request.user.get_full_name())
-                or not self.request.user.is_authenticated
-            ):
-                raise serializers.ValidationError("This field is required")
-            else:
-                return (self.request.user.get_full_name() or
-                        self.request.user.get_username())
-        return value
+        if value.strip():
+            return value.strip()
+        if self.request.user.is_authenticated:
+            name = None
+            if hasattr(self.request.user, "get_full_name"):
+                name = self.request.user.get_full_name()
+            elif hasattr(self.request.user, "get_username"):
+                name = self.request.user.get_username()
+            if name:
+                return name
+        raise serializers.ValidationError("This field is required")
 
     def validate_email(self, value):
-        if not len(value):
-            if (
-                not len(self.request.user.email) or
-                not self.request.user.is_authenticated
-            ):
-                raise serializers.ValidationError("This field is required")
-            else:
-                return self.request.user.email
-        return value
+        if value.strip():
+            return value.strip()
+        if self.request.user.is_authenticated:
+            UserModel = apps.get_model(settings.AUTH_USER_MODEL)
+            if hasattr(UserModel, "get_email_field_name"):
+                email_field = UserModel.get_email_field_name()
+                email = getattr(self.request.user, email_field, None)
+                if email:
+                    return email
+        raise serializers.ValidationError("This field is required")
 
     def validate_reply_to(self, value):
         if value != 0:

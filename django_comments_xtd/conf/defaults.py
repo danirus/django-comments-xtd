@@ -64,4 +64,4 @@ COMMENTS_XTD_API_USER_REPR = username
 # Should return an URL.
 COMMENTS_XTD_API_GET_USER_AVATAR = "django_comments_xtd.utils.get_user_avatar"
 
-COMMENTS_XTD_DEFAULT_FOLLOW_UP = False
+COMMENTS_XTD_DEFAULT_FOLLOWUP = False

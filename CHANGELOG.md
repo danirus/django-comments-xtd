@@ -1,10 +1,15 @@
 # Change Log
 
+## [2.8.3] -
+
+    * Adds new setting COMMENTS_XTD_DEFAULT_FOLLOWUP, which is used to
+      initialize the follow-up form field. By default its value is False. Thanks to @drholera. Closes ticket #206.
+
 ## [2.8.2] - 2021-01-24
 
     * Fixes issue #248, about the API returning comments' submit_date in UTC
       when the setting USE_TZ is enabled and a different TIME_ZONE is given.
-       Thanks to @Loneattic.
+      Thanks to @Loneattic.
     * Fixes issue #250, which reports that using the web API to post a comment
       with a reply_to field that would break the max_thread_level should not
       produce an exception but rather a controlled response with an appropriate

@@ -47,16 +47,18 @@ class XtdCommentFormTestCase(TestCase):
         self.assertTrue("followup" in comment)
 
     @patch.multiple('django_comments_xtd.conf.settings',
-                COMMENTS_XTD_DEFAULT_FOLLOW_UP=False)
+                    COMMENTS_XTD_DEFAULT_FOLLOWUP=False)
     def test_followup_prechecked(self):
-        # Have to update form ubject to re-initialize 'followup' checkbox with settings.
+        # Have to update form object to re-initialize 'followup' checkbox
+        # with settings.
         self.form = django_comments.get_form()(self.article)
         self.assertEqual(self.form.fields['followup'].initial, False)
 
     @patch.multiple('django_comments_xtd.conf.settings',
-            COMMENTS_XTD_DEFAULT_FOLLOW_UP=True)
+                    COMMENTS_XTD_DEFAULT_FOLLOWUP=True)
     def test_followup_preunchecked(self):
-        # Have to update form ubject to re-initialize 'followup' checkbox with settings.
+        # Have to update form object to re-initialize 'followup' checkbox
+        # with settings.
         self.form = django_comments.get_form()(self.article)
         self.assertEqual(self.form.fields['followup'].initial, True)
 

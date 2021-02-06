@@ -94,6 +94,11 @@ specific features, or check out the use cases to see how others customize it.
 Change Log
 ==========
 
+[2.8.3] -
+--------------------
+
+    * Adds new setting COMMENTS_XTD_DEFAULT_FOLLOWUP, which is used to initialise the follow-up form field. By default its value is False. Thanks to @drholera. Closes ticket `#206 <https://github.com/danirus/django-comments-xtd/issues/206>`_.
+
 [2.8.2] - 2021-01-24
 --------------------
 

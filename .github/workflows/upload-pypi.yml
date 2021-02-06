@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    strps:
+    steps:
     - uses: actions/checkout@v2
     - name: Python setup
       uses: actions/setup-python@v2

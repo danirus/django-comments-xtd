@@ -98,6 +98,7 @@ Change Log
 --------------------
 
     * Adds new setting COMMENTS_XTD_DEFAULT_FOLLOWUP, which is used to initialise the follow-up form field. By default its value is False. Thanks to @drholera. Closes ticket `#206 <https://github.com/danirus/django-comments-xtd/issues/206>`_.
+    * Fixes issue `#274 <https://github.com/danirus/django-comments-xtd/issues/274>`_, about wrong validation of fields name and email in the WriteCommentSerializer. Thanks to @dest81.
 
 [2.8.2] - 2021-01-24
 --------------------

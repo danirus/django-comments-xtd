@@ -4,6 +4,8 @@
 
     * Adds new setting COMMENTS_XTD_DEFAULT_FOLLOWUP, which is used to
       initialize the follow-up form field. By default its value is False. Thanks to @drholera. Closes ticket #206.
+    * Fixes issue #274, about wrong validation of fields name and email in the
+      WriteCommentSerializer. Thanks to @dest81.
 
 ## [2.8.2] - 2021-01-24
 

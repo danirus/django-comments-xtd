@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.8.3] -
+## [2.8.3] - 2021-02-07
 
     * Adds new setting COMMENTS_XTD_DEFAULT_FOLLOWUP, which is used to
       initialize the follow-up form field. By default its value is False. Thanks to @drholera. Closes ticket #206.

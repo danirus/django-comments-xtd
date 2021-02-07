@@ -133,8 +133,8 @@ Django will fetch them from there when rendering the article's detail page:
 
        {% block extra-js %}
        [...]
-       <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.8.2.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.8.2.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.8.3.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-2.8.3.js' %}"></script>
        {% endblock extra-js %}
 
 

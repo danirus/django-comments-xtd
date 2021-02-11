@@ -94,6 +94,11 @@ specific features, or check out the use cases to see how others customize it.
 Change Log
 ==========
 
+[2.8.4] -
+--------------------
+
+    * Fixes issue `#279 <https://github.com/danirus/django-comments-xtd/issues/279>`_, about a syntax mistake in the get_flags function, in the models.py module. Thanks to @manisar2.
+
 [2.8.3] - 2021-02-07
 --------------------
 

@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.8.4] -
+
+    * Fixes issue #279, about a syntax mistake in the get_flags function, in
+      the models.py module. Thanks to @manisar2.
+
 ## [2.8.3] - 2021-02-07
 
     * Adds new setting COMMENTS_XTD_DEFAULT_FOLLOWUP, which is used to

@@ -156,7 +156,7 @@ class XtdComment(Comment):
             if with_feedback:
                 flags_dict.update({
                     'likedit': likedit,
-                    'disliked': dislikedit,
+                    'dislikedit': dislikedit,
                     'likedit_users': likedit_users,
                     'dislikedit_users': dislikedit_users
                 })

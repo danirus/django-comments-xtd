@@ -6,12 +6,16 @@ Internationalization
 
 django-comments-xtd is i18n ready. Please, consider extending support for your language if it's not listed below. At the moment it's available only in:
 
+ * Dutch, **nl**
  * English, **en** (default language)
  * Finnish, **fi**
  * French, **fr**
- * Norwegian, **no**
- * Spanish, **es**
+ * German, **de**
  * Italian, **it**
+ * Norwegian, **no**
+ * Russian, **ru**
+ * Spanish, **es**
+
 
 
 Contributions
@@ -49,7 +53,7 @@ Edit the **comp/settings.py** module. Add the `ISO-639-1 <https://en.wikipedia.o
            ('it', 'Italian'),
            ...
        )
-                   
+
        INSTALLED_APPS = [
            ...
            'rosetta',
@@ -57,9 +61,9 @@ Edit the **comp/settings.py** module. Add the `ISO-639-1 <https://en.wikipedia.o
        ]
 
 .. note::
-   
+
    When django-rosetta is enabled in the **comp** project, the homepage shows a selector to help switch languages. It uses the ``language_tuple`` filter, located in the **comp_filters.py** module, to show the language name in both, the translated form and the original language.
-       
+
 We have to create the translation catalog for the new language. Use the `ISO-639-1 <https://en.wikipedia.org/wiki/ISO_639-1>`_ code to indicate the language. There are two catalogs to translate, one for the backend and one for the frontend.
 
 The frontend catalog is produced out of the **plugin-X.Y.Z.js** file. It's a good idea to run the ``webpack --watch`` command if you change the messages in the sources of the plugin (placed in the **js/src/** directory). This way the plugin is built automatically and the Django ``makemessages`` command will fetch the new messages accordingly.

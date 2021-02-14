@@ -1,0 +1,158 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# DLRSP <dlrsp-dev@gmail.com>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 2.8.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-02-12 15:47+0100\n"
+"PO-Revision-Date: 2021-02-13 16:01+0053\n"
+"Last-Translator: DLRSP <dlrsp-dev@gmail.com>\n"
+"Language-Team: DLRSP <dlrsp-dev@gmail.com>\n"
+"Language: it \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.9.3\n"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "This field is required."
+msgstr "Questo campo è obbligatorio"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Your comment"
+msgstr "Tuo commento"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "name"
+msgstr "nome"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Name"
+msgstr "Nome"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "mail address"
+msgstr "indirizzo mail"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Required for comment verification."
+msgstr "Necessario per verificare il commento."
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Mail"
+msgstr "Mail"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "url your name links to (optional)"
+msgstr "url collegato al tuo nome (facoltativo)"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Link"
+msgstr "Link"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Notify me about follow-up comments"
+msgstr "Notificami riguardo i successivi commenti"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Your comment will be reviewed. Thank your for your patience."
+msgstr "Il tuo commento sarà revisionato. Grazie per la tua pazienza."
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Thank you, a comment confirmation request has been sent by mail."
+msgstr ""
+"Grazie, una conferma per la richiesta di commento è stata inviata tramite "
+"mail."
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Sorry, your comment has been rejected."
+msgstr "Ci dispiace, il tuo commento è stato rigettato."
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Your comment in preview"
+msgstr "Anteprima del tuo commento"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Now"
+msgstr "Ora"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "preview"
+msgstr "anteprima"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "send"
+msgstr "invia"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Post your comment"
+msgstr "Invia il tuo commento"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "moderator"
+msgstr "moderatore"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+#, javascript-format
+msgid "%s user has flagged this comment as inappropriate."
+msgid_plural "%s users have flagged this comment as inappropriate."
+msgstr[0] "%s utente ha segnato questo commento come inappropriato."
+msgstr[1] "%s utenti hanno segnato questo commento come inappropriato."
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "I flagged it as inappropriate"
+msgstr "Marcato come inappropriato"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "flag comment as inappropriate"
+msgstr "Marca commento come inappropriato"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "remove comment"
+msgstr "rimuovi commento"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "I like it"
+msgstr "Mi piace"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "I dislike it"
+msgstr "Non mi piace"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Reply"
+msgstr "Rispondi"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+#, javascript-format
+msgid "%s comment."
+msgid_plural "%s comments."
+msgstr[0] "%s commento."
+msgstr[1] "%s commenti."
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Only registered users can post comments."
+msgstr "Solo gli utenti registrati possono commentare."
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid " Please, "
+msgstr " Perfavore, "
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "login"
+msgstr "accedi"
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+msgid "Comments are disabled for this article."
+msgstr "Commenti disabilitati per questo articolo."
+
+#: .\static\django_comments_xtd\js\plugin-2.8.3.js:1
+#, javascript-format
+msgid "There is %s new comment."
+msgid_plural "There are %s new comments."
+msgstr[0] "C'è %s nuovo commento."
+msgstr[1] "Ci sono %s nuovi commenti."

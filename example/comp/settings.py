@@ -1,7 +1,6 @@
 #-*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import django
 import os
 
 
@@ -37,6 +36,7 @@ DATABASES = {
 # system time zone.
 TIME_ZONE = 'Europe/Berlin'
 USE_TZ = True
+USE_L10N = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -48,9 +48,10 @@ LANGUAGES = (
     ('fi', 'Finnish'),
     ('fr', 'French'),
     ('de', 'German'),
+    ('it', 'Italian'),
     ('no', 'Norwegian'),
     ('ru', 'Russian'),
-    ('es', 'Spanish'),
+    ('es', 'Spanish')
 )
 
 SITE_ID = os.environ.get('SITE_ID', 1)

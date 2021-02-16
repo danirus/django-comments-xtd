@@ -1,6 +1,6 @@
 from django.apps import apps
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils import formats
+from django.utils import formats, timezone
 from django.utils.html import escape
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext as _, activate, get_language
@@ -11,10 +11,11 @@ from django_comments.models import CommentFlag
 from django_comments.signals import comment_will_be_posted, comment_was_posted
 from rest_framework import exceptions, serializers
 
-from django_comments_xtd import get_reactions_enum, signed, views
+from django_comments_xtd import get_model, get_reactions_enum, signed, views
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import (TmpXtdComment, XtdComment,
-                                        CommentReaction)
+from django_comments_xtd.models import (
+    CommentReaction, TmpXtdComment, XtdComment,
+    LIKEDIT_FLAG, DISLIKEDIT_FLAG, max_thread_level_for_content_type)
 from django_comments_xtd.signals import (should_request_be_authorized,
                                          confirmation_received)
 from django_comments_xtd.utils import get_app_model_options
@@ -41,26 +42,42 @@ class WriteCommentSerializer(serializers.Serializer):
         super(WriteCommentSerializer, self).__init__(*args, **kwargs)
 
     def validate_name(self, value):
-        if not len(value):
-            if (
-                not len(self.request.user.get_full_name())
-                or not self.request.user.is_authenticated
-            ):
-                raise serializers.ValidationError("This field is required")
-            else:
-                return (self.request.user.get_full_name() or
-                        self.request.user.get_username())
-        return value
+        if value.strip():
+            return value.strip()
+        if self.request.user.is_authenticated:
+            name = None
+            if hasattr(self.request.user, "get_full_name"):
+                name = self.request.user.get_full_name()
+            elif hasattr(self.request.user, "get_username"):
+                name = self.request.user.get_username()
+            if name:
+                return name
+        raise serializers.ValidationError("This field is required")
 
     def validate_email(self, value):
-        if not len(value):
-            if (
-                not len(self.request.user.email) or
-                not self.request.user.is_authenticated
-            ):
-                raise serializers.ValidationError("This field is required")
+        if value.strip():
+            return value.strip()
+        if self.request.user.is_authenticated:
+            UserModel = apps.get_model(settings.AUTH_USER_MODEL)
+            if hasattr(UserModel, "get_email_field_name"):
+                email_field = UserModel.get_email_field_name()
+                email = getattr(self.request.user, email_field, None)
+                if email:
+                    return email
+        raise serializers.ValidationError("This field is required")
+
+    def validate_reply_to(self, value):
+        if value != 0:
+            try:
+                parent = get_model().objects.get(pk=value)
+            except get_model().DoesNotExist:
+                raise serializers.ValidationError(
+                    "reply_to comment does not exist")
             else:
-                return self.request.user.email
+                max = max_thread_level_for_content_type(parent.content_type)
+                if parent.level == max:
+                    raise serializers.ValidationError(
+                        "Max thread level reached")
         return value
 
     def validate(self, data):
@@ -123,7 +140,8 @@ class WriteCommentSerializer(serializers.Serializer):
         #  * Comment created (http 201),
         #  * Confirmation sent by mail (http 204),
         #  * Comment in moderation (http 202),
-        #  * Comment rejected (http 403).
+        #  * Comment rejected (http 403),
+        #  * Comment have bad data (http 400).
         site = get_current_site(self.request)
         resp = {
             'code': -1,
@@ -245,7 +263,11 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     def get_submit_date(self, obj):
         activate(get_language())
-        return formats.date_format(obj.submit_date, 'DATETIME_FORMAT',
+        if settings.USE_TZ:
+            submit_date = timezone.localtime(obj.submit_date)
+        else:
+            submit_date = obj.submit_date
+        return formats.date_format(submit_date, 'DATETIME_FORMAT',
                                    use_l10n=True)
 
     def get_comment(self, obj):

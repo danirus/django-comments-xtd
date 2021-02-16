@@ -22,18 +22,48 @@
       reactions. To get aligned with issue #161, the new frontend to handle
       reactions doesn't have additional dependencies.
 
-## [2.8.1] -
+## [2.8.4] -
+
+    * Adds Italian translation (thanks to @dlrsp-dev).
+    * Fixes issue #279, about a syntax mistake in the get_flags function, in the models.py module. Thanks to @manisar2.
+
+## [2.8.3] - 2021-02-07
+
+    * Adds new setting COMMENTS_XTD_DEFAULT_FOLLOWUP, which is used to
+      initialize the follow-up form field. By default its value is False. Thanks to @drholera. Closes ticket #206.
+    * Fixes issue #274, about wrong validation of fields name and email in the
+      WriteCommentSerializer. Thanks to @dest81.
+
+## [2.8.2] - 2021-01-24
+
+    * Fixes issue #248, about the API returning comments' submit_date in UTC
+      when the setting USE_TZ is enabled and a different TIME_ZONE is given.
+      Thanks to @Loneattic.
+    * Fixes issue #250, which reports that using the web API to post a comment
+      with a reply_to field that would break the max_thread_level should not
+      produce an exception but rather a controlled response with an appropriate
+      HTTP code. Thanks to @impythonista.
+    * Fixes issue #255, about the web API not returning the comment ID when
+      creating a new comment. Thanks to @mhoonjeon.
+    * Fixes issue #256, about an issue in the JavaScript plugin that displays
+      the "reply" link even when the max_thread_level has been reached.
+      Thanks to @odescopi.
+
+## [2.8.1] - 2020-10-16
 
     * Fixes issue #80, that requests to change the response when clicking
       more than once on a comment confirmation link. Up until now clicking
       more than once on a comment confirmation link produced a HTTP 404
       response. Since version 2.8.1 the response is the same as for the first
       click: the user is redirected to the comment's view in the page.
+      Thanks to @ppershing.
     * Fixes issue #152, about loading the `staticfiles` templatetag instead of
       `static`. Since Django v3.0 the staticfiles app requires using the
-      latter.
+      latter. Thanks to @JonLevy and @mennucc.
     * Fixes issue #221, about the get_version function. Now it returns the full
       version number <major>.<minor>.<patch>. Thanks to @mckinly.
+    * Fixes issue #229, about failing to process empty honeypot field when
+      posting comments using the REST API. Thanks to @TommasoAmici.
 
 ## [2.8.0] - 2020-09-26
 

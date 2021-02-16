@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import os
 import imp
-import django
 
 
 PRJ_PATH = os.path.abspath(os.path.curdir)
@@ -32,6 +31,8 @@ DATABASES = {
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
 TIME_ZONE = 'Europe/Berlin'
+USE_TZ = False
+USE_L10N = False
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -67,8 +68,9 @@ ADMIN_MEDIA_PREFIX = '/media/'
 SECRET_KEY = 'v2824l&2-n+4zznbsk9c-ap5i)b3e8b+%*a=dxqlahm^%)68jn'
 
 MIDDLEWARE = [
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 ]
 

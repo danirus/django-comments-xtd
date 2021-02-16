@@ -325,6 +325,20 @@ The function used by default, **get_user_avatar** in ``django_comments_xtd/utils
      COMMENTS_XTD_API_GET_USER_AVATAR = "django_comments_xtd.utils.get_user_avatar"
 
 
+.. setting:: COMMENTS_XTD_DEFAULT_FOLLOWUP
+
+``COMMENTS_XTD_DEFAULT_FOLLOWUP``
+====================================
+
+**Optional**. Makes the "Notify about subsequent comments" checkbox checked/unchecked by default.
+
+An example::
+
+    COMMENTS_XTD_DEFAULT_FOLLOWUP = True
+
+Defaults to ``False``.
+
+
 .. setting:: COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED
 
 ``COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED``

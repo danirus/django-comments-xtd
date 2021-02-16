@@ -35,12 +35,12 @@ setup(
     maintainer_email="mbox@danir.us",
     url="http://pypi.python.org/pypi/django-comments-xtd",
     install_requires=[
-        'Django>=1.8',
-        'django-contrib-comments>=1.8',
-        'djangorestframework>=3.6',
+        'Django>=3.0',
+        'django-contrib-comments>=2.0',
+        'djangorestframework>=3.12',
         'docutils',
-        'six',
     ],
+    setup_requires=['wheel'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',

@@ -15,7 +15,7 @@ from django_comments_xtd import get_model, get_reactions_enum, signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
     CommentReaction, TmpXtdComment, XtdComment,
-    LIKEDIT_FLAG, DISLIKEDIT_FLAG, max_thread_level_for_content_type)
+    max_thread_level_for_content_type)
 from django_comments_xtd.signals import (should_request_be_authorized,
                                          confirmation_received)
 from django_comments_xtd.utils import get_app_model_options

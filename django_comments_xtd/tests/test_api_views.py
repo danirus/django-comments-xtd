@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from datetime import datetime
 import json
 try:
     from unittest.mock import patch
@@ -16,11 +17,11 @@ from django.test import TestCase as DjangoTestCase
 from rest_framework.test import APIRequestFactory, APITestCase
 
 from django_comments_xtd import django_comments, get_model
-from django_comments_xtd.api.views import (
-    CommentCount, CommentCreate, CommentList)
-from django_comments_xtd.models import (
-    XtdComment, publish_or_withhold_on_pre_save)
-from django_comments_xtd.tests.models import Article, Diary, MyComment
+from django_comments_xtd.conf import settings
+from django_comments_xtd.api.views import CommentCount, CommentList
+from django_comments_xtd.models import (XtdComment,
+                                        publish_or_withhold_on_pre_save)
+from django_comments_xtd.tests.models import Article, MyComment
 from django_comments_xtd.tests.utils import post_comment
 from django_comments_xtd.tests.test_models import (
     thread_test_step_1, thread_test_step_2, thread_test_step_3)

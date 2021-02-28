@@ -19,7 +19,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.8.3, of
+    This documentation represents the current version, v2.8.4, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.7.2: https://django-comments-xtd.readthedocs.io/en/2.7.2/
@@ -84,6 +84,7 @@ specific features, or check out the use cases to see how others customize it.
    webapi
    javascript
    templatetags
+   management
    migrating
    extending
    i18n
@@ -94,11 +95,12 @@ specific features, or check out the use cases to see how others customize it.
 Change Log
 ==========
 
-[2.8.4] -
+[2.8.4] - 2021-02-28
 --------------------
 
     * Adds Italian translation (thanks to @dlrsp-dev).
     * Fixes issue `#279 <https://github.com/danirus/django-comments-xtd/issues/279>`_, about a syntax mistake in the get_flags function, in the models.py module. Thanks to @manisar2.
+    * Fixes issue `#271 <https://github.com/danirus/django-comments-xtd/issues/271>`_, about an issue with django-comments-xtd data migration 0008. The fix consists of making the migration non-effective. It also requires that the django project developer runs the management command :ref:`initialize_nested_count` manually, so that the field `nested_count` of `XtdComment` gets populated with the correct value. The command is idempotent. Thanks to @jxcl.
 
 [2.8.3] - 2021-02-07
 --------------------

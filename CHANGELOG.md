@@ -22,10 +22,11 @@
       reactions. To get aligned with issue #161, the new frontend to handle
       reactions doesn't have additional dependencies.
 
-## [2.8.4] -
+## [2.8.4] - 2021-02-28
 
     * Adds Italian translation (thanks to @dlrsp-dev).
     * Fixes issue #279, about a syntax mistake in the get_flags function, in the models.py module. Thanks to @manisar2.
+    * Fixes issue #271, about an issue with django-comments-xtd data migration 0008. The fix consists of making the migration non-effective. It also requires that the django project developer runs the management command `initialize_nested_count` manually, so that the field `nested_count` of `XtdComment` gets populated with the correct value. The command is idempotent. Thanks to @jxcl.
 
 ## [2.8.3] - 2021-02-07
 

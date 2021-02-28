@@ -1,0 +1,338 @@
+.comment-list > div.narrow-comment-box { margin-top: 8px; }
+.comment-list > div.level-1,
+.comment-list > div.level-2 { margin-top: 0px; }
+.comment-list > div:first-child { margin-top: 0 }
+
+.user-avatar IMG {
+    border-radius: 3px;
+}
+
+/* ----------------------------------------------------- */
+/* narrow-comment-box is used to show a shorter comment, with a small
+ * user-avatar, the comment header (including the link to the comment, the name
+ * of the person who posted the comment, and the datetime), the comment body,
+ * and no comment footer.
+ *
+ * The .narrow-comment-box has the following layout:
+ *  |----------------------------------------------------------------|
+ *  | .header (flex, direction: row)                                 |
+ *  | |------------------------------------------------------------| |
+ *  | | .user-avatar  |  name, datetime, permalink                 | |
+ *  | |------------------------------------------------------------| |
+ *  | .body (comment content)                                        |
+ *  |----------------------------------------------------------------|
+ */
+.narrow-comment-box {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(0, 0, 0, .1);
+    border-radius: 0.3rem;
+    padding: 10px;
+}
+
+.narrow-comment-box       A.permalink { display: none }
+.narrow-comment-box:hover A.permalink { display: inline }
+
+.narrow-comment-box .header {
+    display: flex;
+    flex-direction: row;
+    font-size: 0.7rem;
+}
+
+.narrow-comment-box .user-avatar {
+    padding-right: 16px;
+}
+
+.narrow-comment-box .body {
+    font-size: 0.8rem;
+}
+
+.narrow-comment-box .body > P  { margin: .5rem; }
+.narrow-comment-box .body > P + P { margin-top: 0; }
+
+
+/* ----------------------------------------------------- */
+/* comment-box is used to show the complete comment, with a user-avatar,
+ * a comment header (with name, post datetime, and permalink), the comment
+ * content, and a comment footer (with comment reaction-buttons, and possible
+ * reply link when nested comments are allowed).
+ *
+ * The .comment-box has the following layout:
+ *  |----------------------------------------------------------------|
+ *  | .user-avatar   |  .comment (flex, direction: column)           |
+ *  |                | |-------------------------------------------| |
+ *  |                | | .header (name, datetime, permalink)       | |
+ *  |                | |-------------------------------------------| |
+ *  |                | | .body                                     | |
+ *  |                | |-------------------------------------------| |
+ *  |                | | .footer (reaction-buttons, reply-link)    | |
+ *  |                | |-------------------------------------------| |
+ *  |----------------------------------------------------------------|
+ */
+.comment-box {
+    position: relative;
+    display: flex;
+    padding: 8px 0;
+    margin-left: 16px;
+}
+
+.reply-box {
+    position: relative;
+    display: flex;
+    padding: 0;
+}
+
+.reply-box.l0 {
+    margin-left: 16px;
+}
+
+.reply-box.l0 .content {
+    /* In the case of .reply-box.l0 the 2nd child
+     * is the one that contains the btn. */
+    position: relative;
+    margin-left: 32px;
+}
+
+.comment-box.l0:before, .reply-box.l0.l1:before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 2px;
+    content: "";
+    background-color: hsl(207deg 90% 34%);
+}
+
+.level-1 {
+    display: block;
+    width: 52px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.level-2 {
+    display: block;
+    width: 52px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.comment-box.l1 .level-1:before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 52px;
+    display: block;
+    width: 2px;
+    content: "";
+    background-color: hsl(207deg 90% 54%);
+}
+
+.comment-box.l2 .level-2:before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 104px;
+    display: block;
+    width: 2px;
+    content: "";
+    background-color: hsl(207deg 90% 74%);
+}
+
+.reply-box.l0:before, .reply-box.l0.l1 .level-1:before {
+    position: absolute;
+    top: 0;
+    bottom: 50%;
+    left: 0;
+    display: block;
+    width: 2px;
+    content: "";
+    background-color: hsl(207deg 90% 34%);
+}
+
+.reply-box.l0.l1 .level-1:before {
+    left: 52px;
+    background-color: hsl(207deg 90% 54%);
+}
+
+.reply-box .line-0, .reply-box .line-1 {
+    position: absolute;
+    top: 50%;
+    left: 1px;
+    /* border-top: 2px solid rgba(0, 0, 0, .1); */
+    border-top-width: 2px;
+    border-top-style: solid;
+    transform: translateY(-50%);
+    display: block;
+    width: 52px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.reply-box .line-0 { border-color: hsl(207deg 90% 34%); }
+
+.reply-box .line-1 {
+    left: 53px;
+    width: 52px;
+    border-color: hsl(207deg 90% 54%);
+}
+
+
+.comment-box       A.permalink { display: none }
+.comment-box:hover A.permalink { display: inline }
+
+.comment-box .user-avatar {
+    position: relative;
+    z-index: 1;
+    margin-left: -17px;
+    padding-right: 16px;
+}
+
+.comment-box .user-avatar > IMG {
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+.comment-box .comment {
+    flex-grow: 1;
+}
+
+.comment-box .header {
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+}
+
+.comment-box .body {
+    padding: 4px;
+    border: 1px solid rgba(0, 0, 0, .1);
+    border-bottom: 0;
+    border-color: rgba(0, 0, 0, .1);
+    border-style: solid;
+    border-top-left-radius: 0.3rem;
+    border-top-right-radius: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.comment-box .body > P  { margin: .6rem; }
+.comment-box .body > P + P { margin-top: 0; }
+
+.comment-box .footer {
+    padding: 4px;
+    border: 1px solid rgba(0, 0, 0, .1);
+    border-top: 0;
+    border-bottom-left-radius: 0.3rem;
+    border-bottom-right-radius: 0.3rem;
+}
+
+.comment-box .footer > :first-child { margin: 0 .6rem; }
+
+.comment-box:last-of-type {
+    padding-bottom: 32px;
+}
+
+.reply-box .content {
+    display: flex;
+    justify-content: left;
+    padding: .6rem 0;
+}
+
+/* ----------------------------------------------------- */
+.comment-form {
+    margin: 16px;
+    border: 8px solid rgba(0, 0, 0, .1);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-form > H5 { margin-bottom: 0px; }
+.comment-form > P  { margin: 1.5rem 2.2rem 0.5rem; }
+.comment-form > P + P { margin-top: 0; }
+
+.comment-form form {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-gap: 1rem;
+    padding: 1.5rem 2.5rem;
+}
+
+.col1   {
+    grid-column: 1/2;
+}
+
+.col2   {
+    grid-column: 2/3;
+    padding-right: 2.5rem;
+}
+
+.col1-2 { grid-column: 1/3 }
+
+/* ----------------------------------------------------- */
+.comment-reply-form {
+    width: 100%;
+    background-color: rgba(0, 0, 0, .1);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-reply-form form {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-gap: 0.5rem;
+    padding: 0.8rem;
+}
+
+/* ----------------------------------------------------- */
+HR.comment-level-break {
+    margin: 16px 16px;
+    border-color: rgba(0, 0, 0, .1);
+}
+
+HR.comment-level-break:last-of-type {
+    margin-bottom: 48px;
+}
+
+
+/* ----------------------------------------------------- */
+label {
+    margin: auto 0;
+    text-align: right;
+    font-size: 0.9rem;
+}
+
+input, textarea {
+    font-family: "Assistant", sans-serif;
+    font-size: 0.9rem;
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: 0.25rem;
+    box-shadow: inset 0 2px 0 rgba(0,0,0,0.075);
+}
+
+textarea {
+    width: 100%;
+    padding: 8px 12px;
+}
+
+input:focus, textarea:focus {
+    outline: 0;
+    color: #555;
+    background-color: white;
+    border: 1px solid #9acffa;
+    box-shadow: 0 0 0 .2rem rgba(33,150,243,0.25);
+}
+
+input[type=text],
+input[type=email],
+input[type=password] {
+    width: 100%;
+    padding: .3rem .5rem;
+    background-color: white;
+}
+
+.helper-text {
+    margin-top: -.7rem;
+    font-size: 0.75rem;
+    color: gray;
+}

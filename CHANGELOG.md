@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.8.5] - 2021-03-02
+
+    * Fixes issue #292 with the workflow upload-pypi.yml, that caused the package bundle to be built without JavaScript files.
+
 ## [2.8.4] - 2021-02-28
 
     * Adds Italian translation (thanks to @dlrsp-dev).

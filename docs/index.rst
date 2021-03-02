@@ -19,7 +19,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.8.4, of
+    This documentation represents the current version, v2.8.5, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.7.2: https://django-comments-xtd.readthedocs.io/en/2.7.2/
@@ -94,6 +94,11 @@ specific features, or check out the use cases to see how others customize it.
 
 Change Log
 ==========
+
+[2.8.5] - 2021-03-02
+--------------------
+
+    * Fixes issue #292 with the workflow upload-pypi.yml, that caused the package bundle to be built without JavaScript files.
 
 [2.8.4] - 2021-02-28
 --------------------

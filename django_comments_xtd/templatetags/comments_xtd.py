@@ -328,14 +328,22 @@ class RenderXtdCommentTreeNode(Node):
             for vname, vobj in self.cvars:
                 context_dict[vname] = vobj.resolve(context)
         if not self.obj:
-            # Then presume 'comments' exists in the context.
-            try:
-                ctype = context['comments'][0]['comment'].content_type
-            except Exception:
+            # Then presume 'comments' exists in the context_dict or in context
+            if "comments" in context_dict:
+                comments = context_dict["comments"]
+            elif "comments" in context:
+                comments = context["comments"]
+            else:
                 raise TemplateSyntaxError("'render_xtdcomment_tree' doesn't "
                                           "have 'comments' in the context and "
                                           "neither have been provided with the "
                                           "clause 'with'.")
+            # empty list of comments
+            if not comments:
+                return ""
+
+            ctype = comments[0]['comment'].content_type
+
         if self.template_path:
             template_arg = self.template_path
         else:

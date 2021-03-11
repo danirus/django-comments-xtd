@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.8.6] -
+
+    * Fixes issue with `render_xtdcomment_tree` templatetag, thanks to @dest81. See [PR-295](https://github.com/danirus/django-comments-xtd/pull/295).
+
 ## [2.8.5] - 2021-03-02
 
     * Fixes issue #292 with the workflow upload-pypi.yml, that caused the package bundle to be built without JavaScript files.

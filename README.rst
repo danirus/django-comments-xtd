@@ -2,7 +2,7 @@ django-comments-xtd |gha-tests-badge|_
 ===================
 
 .. |gha-tests-badge| image:: https://github.com/danirus/django-comments-xtd/workflows/tests/badge.svg
-.. _gha-tests-badge: https://travis-ci.org/danirus/django-comments-xtd/actions
+.. _gha-tests-badge: https://github.com/danirus/django-comments-xtd/actions/workflows/ci-pipeline.yml
 
 A Django pluggable application that adds comments to your project.
 

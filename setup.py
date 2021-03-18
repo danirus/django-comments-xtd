@@ -37,7 +37,7 @@ setup(
     install_requires=[
         'Django>=2.2',
         'django-contrib-comments>=1.9',
-        'djangorestframework>=3.9',
+        'djangorestframework>=3.12',
         'docutils',
         'six',
     ],

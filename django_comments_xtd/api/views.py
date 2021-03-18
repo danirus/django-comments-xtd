@@ -9,6 +9,7 @@ from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.schemas.openapi import AutoSchema
 
 from django_comments_xtd import views
 from django_comments_xtd.conf import settings
@@ -99,6 +100,8 @@ class ToggleFeedbackFlag(generics.CreateAPIView, mixins.DestroyModelMixin):
     serializer_class = serializers.FlagSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
+    schema = AutoSchema(operation_id_base="Feedback")
+
     def post(self, request, *args, **kwargs):
         response = super(ToggleFeedbackFlag, self).post(request, *args,
                                                         **kwargs)
@@ -117,6 +120,8 @@ class CreateReportFlag(generics.CreateAPIView):
 
     serializer_class = serializers.FlagSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    schema = AutoSchema(operation_id_base="ReportFlag")
 
     def post(self, request, *args, **kwargs):
         return super(CreateReportFlag, self).post(request, *args, **kwargs)

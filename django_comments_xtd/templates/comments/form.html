@@ -1,11 +1,11 @@
 {% load i18n %}
 {% load comments %}
 
-<form method="POST" action="{% comment_form_target %}">
+<form method="POST" action="{% comment_form_target %}" onsubmit="post.disabled = true; return true;">
     {% csrf_token %}
     <fieldset>
-        <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}"/>
-    
+        <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}" />
+
         <div class="alert alert-danger" data-comment-element="errors" hidden>
         </div>
 

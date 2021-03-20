@@ -114,7 +114,7 @@ def commentbox_props(obj, user, request=None):
         d['request_name'] = True if not len(user.get_full_name()) else False
         d['request_email_address'] = True if not user.email else False
     else:
-        d['login_url'] = settings.LOGIN_URL,
+        d['login_url'] = settings.LOGIN_URL
         d['like_url'] = reverse("comments-xtd-like", args=(0,))
         d['dislike_url'] = reverse("comments-xtd-dislike", args=(0,))
 

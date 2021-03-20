@@ -7,7 +7,7 @@ authors = ["Daniel Rus Morales <mbox@danir.us>"]
 [tool.poetry.dependencies]
 python = "^3.4.0"
 django-contrib-comments = "^1.8.0"
-djangorestframework = "^3.6.0"
+djangorestframework = "^3.12.0"
 six = "^1.12.0"
 Django = "^2.0.0"
 docutils = "^0.14.0"

@@ -29,7 +29,7 @@ Example sites and tests work under officially Django `supported versions <https:
 Additional Dependencies:
 
 * django-contrib-comments >=1.8
-* djangorestframework >=3.9
+* djangorestframework >=3.12
 
 Checkout the Docker image `danirus/django-comments-xtd-demo <https://hub.docker.com/r/danirus/django-comments-xtd-demo/>`_.
 

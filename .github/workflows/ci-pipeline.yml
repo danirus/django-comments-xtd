@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        django: ["2.0", "2.1", "2.2", "3.0", "3.1"]
+        django: ["2.2", "3.0", "3.1"]
     steps:
       - uses: actions/checkout@v2
       - name: Python setup

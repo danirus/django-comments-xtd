@@ -19,9 +19,10 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.8.5, of
+    This documentation represents the current version, v2.9.0, of
     django-comments-xtd. For old versions of the documentation:
 
+    * v2.8.5: https://django-comments-xtd.readthedocs.io/en/2.8.5/
     * v2.7.2: https://django-comments-xtd.readthedocs.io/en/2.7.2/
     * v2.6.2: https://django-comments-xtd.readthedocs.io/en/2.6.2/
     * v2.5.1: https://django-comments-xtd.readthedocs.io/en/2.5.1/
@@ -94,6 +95,16 @@ specific features, or check out the use cases to see how others customize it.
 
 Change Log
 ==========
+
+[2.9.0] - 2021-03-20
+--------------------
+
+    * Drops support for Django 2.0 and 2.1.
+    * Requires django-contrib-comments >= 2.1, and djangorestframework >= 3.12.
+    * Fixes warning when generating the OpenAPI schema. Thanks to @ivanychev. See [PR-296](https://github.com/danirus/django-comments-xtd/pull/296).
+    * Fixes issue with `render_xtdcomment_tree` templatetag, thanks to @dest81. See [PR-295](https://github.com/danirus/django-comments-xtd/pull/295).
+    * Fixes issue `#291 <https://github.com/danirus/django-comments-xtd/issues/291>`_, about the frontend plugin not being aware of the setting COMMENTS_XTD_DEFAULT_FOLLOWUP. It also fixes the content of the `login_url` props attribute. Its value is now the content of `settings.LOGIN_URL`.
+    * Fixes issue `#284 <https://github.com/danirus/django-comments-xtd/issues/284>`_, about sending a comment twice by clicking the comment send button twice. It happened when not using the JavaScript plugin.
 
 [2.8.5] - 2021-03-02
 --------------------

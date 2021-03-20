@@ -13,7 +13,7 @@ module.exports = {
     plugin: path.resolve(SOURCE_DIR, 'index.js')
   },
   output: {
-    filename: '[name]-2.8.5.js',
+    filename: '[name]-2.9.0.js',
     path: STATIC_DIR
   },
   optimization: {

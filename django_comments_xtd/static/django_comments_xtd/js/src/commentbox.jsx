@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import * as lib from './lib.js';
 import django from 'django';
@@ -26,7 +25,7 @@ export class CommentBox extends React.Component {
   handle_comment_created() {
     this.load_comments();
   }
-  
+
   handle_preview(name, email, url, comment) {
     this.setState({
       preview: {name: name, email: email, url: url, comment: comment},
@@ -122,7 +121,7 @@ export class CommentBox extends React.Component {
         return comments[index];
       });
     };
-    
+
     for (let item of data) {
       incids.push(item.id);
       comments[item.id] = item;
@@ -189,13 +188,13 @@ export class CommentBox extends React.Component {
       }.bind(this)
     });
   }
-  
+
   componentDidMount() {
     this.load_comments();
     if(this.props.polling_interval)
       setInterval(this.load_count.bind(this), this.props.polling_interval);
   }
-  
+
   render() {
     var settings = this.props;
     var comment_counter = this.render_comment_counter();
@@ -211,7 +210,7 @@ export class CommentBox extends React.Component {
                  on_comment_created={this.handle_comment_created} />
       );
     }.bind(this));
-    
+
     return (
       <div>
         {comment_counter}

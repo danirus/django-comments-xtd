@@ -1,19 +1,16 @@
 import $ from 'jquery';
 import django from 'django';
 
-import md5 from 'md5';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Remarkable } from 'remarkable';
-
-import * as lib from './lib.js';
 
 
 export class CommentForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '', email: '', url: '', followup: false, comment: '',
+      name: '', email: '', url: '', comment: '',
+      followup: props.default_followup,
       reply_to: this.props.reply_to || 0,
       visited: {name: false, email: false, comment: false},
       errors: {name: false, email: false, comment: false},
@@ -236,7 +233,7 @@ export class CommentForm extends React.Component {
 
   handle_submit_response(status) {
     let css_class = "";
-    const 
+    const
       msg_202 = django.gettext("Your comment will be reviewed. Thank your for your patience."),
 	    msg_204 = django.gettext("Thank you, a comment confirmation request has been sent by mail."),
 	    msg_403 = django.gettext("Sorry, your comment has been rejected.");
@@ -257,7 +254,7 @@ export class CommentForm extends React.Component {
     this.reset_form();
     this.props.on_comment_created();
   }
-  
+
   handle_ajax_error(xhr, status, err) {
     if(xhr.status == 400) {
       let errors = this.state.errors;
@@ -278,10 +275,7 @@ export class CommentForm extends React.Component {
       return;
 
     const data = {
-      content_type: this.props.form.content_type,
-      object_pk: this.props.form.object_pk,
-      timestamp: this.props.form.timestamp,
-      security_hash: this.props.form.security_hash,
+      ...this.props.form,
       honeypot: '',
       comment: this.state.comment,
       name: this.state.name,
@@ -290,7 +284,7 @@ export class CommentForm extends React.Component {
       followup: this.state.followup,
       reply_to: this.state.reply_to
     };
-    
+
     $.ajax({
       method: 'POST',
       url: this.props.send_url,
@@ -305,7 +299,7 @@ export class CommentForm extends React.Component {
       error: this.handle_ajax_error
     });
   }
-  
+
   handle_preview(event) {
     event.preventDefault();
     if(!this.validate())
@@ -332,7 +326,7 @@ export class CommentForm extends React.Component {
     const rawMarkup = md.render(this.state.comment);
     return { __html: rawMarkup };
   }
-  
+
   render_preview() {
     if(!this.state.previewing)
       return "";
@@ -341,7 +335,7 @@ export class CommentForm extends React.Component {
     // Build Gravatar.
     const avatar_img = <img className="mr-3" src={this.state.avatar_url}
                             height="48" width="48"/>;
-    
+
     if(this.state.url) {
       heading_name = (<a href={this.state.url} target="_new">
                       {this.state.name}</a>);
@@ -395,7 +389,7 @@ export class CommentForm extends React.Component {
     }
     var btn_label_preview = django.gettext("preview");
     var btn_label_send = django.gettext("send");
-    
+
     return (
       <form method="POST" onSubmit={this.handle_submit}>
         <input type="hidden" name="content_type"
@@ -414,7 +408,7 @@ export class CommentForm extends React.Component {
           </div>
           {comment} {name} {mail} {url} {followup}
         </fieldset>
-        
+
         <div className={btns_row_class}>
           <div className="offset-md-3 col-md-7">
             <button type="submit" name="post"
@@ -426,7 +420,7 @@ export class CommentForm extends React.Component {
       </form>
     );
   }
-  
+
   render() {
     let preview = this.render_preview();
     let header = "";

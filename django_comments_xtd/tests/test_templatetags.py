@@ -841,3 +841,86 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
         # Connect the receiver again.
         pre_save.connect(publish_or_withhold_on_pre_save,
                          sender=model_app_label)
+
+
+# TODO: Develop this test.
+class RenderXtdCommentListTestCase(DjangoTestCase):
+    def setUp(self):
+        self.article = Article.objects.create(
+            title="September", slug="september", body="During September...")
+
+        # -> content:   cmt.id  thread_id  parent_id  level  order
+        # cm1,   # ->      1         1          1        0      1
+        # cm3,   # ->      3         1          1        1      2
+        # cm4,   # ->      4         1          1        1      3
+        # cm2,   # ->      2         2          2        0      1
+        # cm5    # ->      5         2          2        1      2
+
+        thread_test_step_1(self.article)  # Sends 2 comments.
+        thread_test_step_2(self.article)  # Sends 2 comments.
+        thread_test_step_3(self.article)  # Sends 1 comment.
+
+    def test_render_xtdcomment_list(self):
+        t = ("{% load comments_xtd %}"
+             "{% render_xtdcomment_list for object %}")
+        output = Template(t).render(Context({'object': self.article}))
+        self.assertEqual(True, True)
+
+
+class CommentCSSThreadRangeTestCase(DjangoTestCase):
+    def setUp(self):
+        self.article = Article.objects.create(
+            title="September", slug="september", body="During September...")
+
+# testcase cmt.id   parent level-0  level-1  level-2
+#  step1     1        -      c1                        <-                 cmt1
+#  step2     3        1      --       c3               <-         cmt1 to cmt1
+#  step5     8        3      --       --        c8     <- cmt1 to cmt1 to cmt1
+#  step2     4        1      --       c4               <-         cmt2 to cmt1
+#  step4     7        4      --       --        c7     <- cmt1 to cmt2 to cmt1
+#  step1     2        -      c2                        <-                 cmt2
+#  step3     5        2      --       c5               <-         cmt1 to cmt2
+#  step4     6        5      --       --        c6     <- cmt1 to cmt1 to cmt2
+#  step5     9        -      c9                        <-                 cmt9
+
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        thread_test_step_3(self.article)
+        thread_test_step_4(self.article)
+        thread_test_step_5(self.article)
+
+    def test_tag_with_comments_of_level_1(self):
+        for pk in [1, 2, 9]:
+            cm = XtdComment.objects.get(pk=pk)
+            self.assertEqual(cm.level, 0)
+            t = ("{% load comments_xtd %}"
+                "{% comment_css_thread_range object %}")
+            output = Template(t).render(Context({'object': cm}))
+            self.assertEqual(output, "l0-ini")
+
+    def test_tag_with_comment_of_level_2(self):
+        for pk in [3, 4, 5]:
+            cm = XtdComment.objects.get(pk=pk)
+            self.assertEqual(cm.level, 1)
+            t = ("{% load comments_xtd %}"
+                "{% comment_css_thread_range object %}")
+            output = Template(t).render(Context({'object': cm}))
+            self.assertEqual(output, "l0-mid l1-ini")
+
+    def test_tag_with_comment_of_level_3_eq_max_thread_level(self):
+        for pk in [6, 7, 8]:
+            cm = XtdComment.objects.get(pk=pk)
+            self.assertEqual(cm.level, 2)
+            t = ("{% load comments_xtd %}"
+                "{% comment_css_thread_range object %}")
+            output = Template(t).render(Context({'object': cm}))
+            self.assertEqual(output, "l0-mid l1-mid l2")
+
+    def test_tag_with_comment_of_level_3_eq_max_thread_level_and_prefix(self):
+        for pk in [6, 7, 8]:
+            cm = XtdComment.objects.get(pk=pk)
+            self.assertEqual(cm.level, 2)
+            t = ("{% load comments_xtd %}"
+                "{% comment_css_thread_range object 'thread-' %}")
+            output = Template(t).render(Context({'object': cm}))
+            self.assertEqual(output, "thread-0-mid thread-1-mid thread-2")

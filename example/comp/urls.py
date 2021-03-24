@@ -18,7 +18,6 @@ urlpatterns = [
     re_path(r'^$', views.HomepageView.as_view(), name='homepage'),
     re_path(r'^i18n/', include('django.conf.urls.i18n')),
     re_path(r'^articles/', include('comp.articles.urls')),
-    re_path(r'^diary/', include('comp.diary.urls')),
     re_path(r'^quotes/', include('comp.extra.quotes.urls')),
     re_path(r'^comments/', include('django_comments_xtd.urls')),
     re_path(r'^comments/$',

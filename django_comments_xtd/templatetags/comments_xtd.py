@@ -13,10 +13,13 @@ from django.template import (Library, Node, TemplateSyntaxError,
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from django_comments.templatetags import comments
+
 from django_comments_xtd.conf import settings
 from django_comments_xtd import (get_model as get_comment_model,
                                  get_reactions_enum)
 from django_comments_xtd.api import frontend
+from django_comments_xtd.models import max_thread_level_for_content_type
 from django_comments_xtd.utils import (get_app_model_options,
                                        get_current_site_id, get_html_id_suffix)
 
@@ -294,204 +297,61 @@ def get_last_xtdcomments(parser, token):
 
 
 # ----------------------------------------------------------------------
-class RenderXtdCommentTreeNode(Node):
-    def __init__(self, obj, cvars, allow_feedback=False, show_feedback=False,
-                 allow_flagging=False, template_path=None):
-        self.obj = Variable(obj) if obj else None
-        self.cvars = self.parse_cvars(cvars)
-        self.allow_feedback = allow_feedback
-        self.show_feedback = show_feedback
-        self.allow_flagging = allow_flagging
-        self.template_path = template_path
-
-    def parse_cvars(self, pairs):
-        cvars = []
-        for vname, vobj in [pair.split("=") for pair in pairs]:
-            cvars.append((vname, Variable(vobj)))
-        return cvars
-
+class RenderXtdCommentListNode(comments.RenderCommentListNode):
     def render(self, context):
-        context_dict = context.flatten()
-        for attr in ['allow_flagging', 'allow_feedback', 'show_feedback']:
-            context_dict[attr] = (getattr(self, attr, False) or
-                                  context.get(attr, False))
-
-        hide_removed = getattr(settings, 'COMMENTS_HIDE_REMOVED', True)
-        context_dict['hide_removed'] = hide_removed
-
-        if self.obj:
-            obj = self.obj.resolve(context)
-            ctype = ContentType.objects.get_for_model(obj)
-            qs = get_comment_model().get_queryset(content_object=obj)
-            tree = get_comment_model().tree_from_queryset(
-                qs,
-                with_flagging=self.allow_flagging,
-                with_feedback=self.allow_feedback,
-                user=context['user']
-            )
-            context_dict['comments'] = tree
-
-        if self.cvars:
-            for vname, vobj in self.cvars:
-                context_dict[vname] = vobj.resolve(context)
-        if not self.obj:
-            # Then presume 'comments' exists in the context.
-            try:
-                ctype = context['comments'][0]['comment'].content_type
-            except Exception:
-                raise TemplateSyntaxError(
-                    "'render_xtdcomment_tree' doesn't "
-                    "have 'comments' in the context and neither "
-                    "have been provided with the clause 'with'.")
-        if self.template_path:
-            template_arg = self.template_path
-        else:
-            template_arg = [
-                "django_comments_xtd/%s/%s/comment_tree.html" % (
-                    ctype.app_label, ctype.model),
-                "django_comments_xtd/%s/comment_tree.html" % (
-                    ctype.app_label,),
-                "django_comments_xtd/comment_tree.html"
+        ctype, object_pk = self.get_target_ctype_pk(context)
+        if object_pk:
+            template_search_list = [
+                "comments/%s/%s/list.html" % (ctype.app_label, ctype.model),
+                "comments/%s/list.html" % ctype.app_label,
+                "comments/list.html"
             ]
-        html = loader.render_to_string(template_arg, context_dict)
-        return html
+            qs = self.get_queryset(context)
+            comment_list = self.get_context_value_from_queryset(context, qs)
+            context_dict = context.flatten()
+            context_dict['comment_list'] = comment_list
 
+            # Pass max_thread_level in the context.
+            app_model = "%s.%s" % (ctype.app_label, ctype.model)
+            MTL = settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
+            mtl = MTL.get(app_model, settings.COMMENTS_XTD_MAX_THREAD_LEVEL)
+            context_dict['max_thread_level'] = mtl
 
-class GetXtdCommentTreeNode(Node):
-    def __init__(self, obj, var_name, with_feedback):
-        self.obj = Variable(obj)
-        self.var_name = var_name
-        self.with_feedback = with_feedback
+            # Pass the list to control rendering of replies.
+            context_dict['reply_stack'] = []
 
-    def render(self, context):
-        obj = self.obj.resolve(context)
-        qs = get_comment_model().get_queryset(content_object=obj)
-        tree = get_comment_model().tree_from_queryset(
-            qs,
-            with_feedback=self.with_feedback,
-            user=context['user']
-        )
-        context[self.var_name] = tree
-        return ''
-
-
-@register.tag
-def render_xtdcomment_tree(parser, token):
-    """
-    Render the nested comment tree structure posted to the given object.
-    By default uses the template ``django_comments_xtd/comments_tree.html``.
-
-    Syntax::
-
-        {% render_xtdcomment_tree [for <object>] [with vname1=<obj1>
-           vname2=<obj2>] [allow_feedback] [show_feedback] [allow_flagging]
-           [using <template>] %}
-        {% render_xtdcomment_tree with <varname>=<context-var> %}
-
-    Example usage::
-
-        {% render_xtdcomment_tree for object allow_feedback %}
-        {% render_xtdcomment_tree with comments=comment.children %}
-    """
-    obj = None
-    cvars = []
-    allow_feedback = False
-    show_feedback = False
-    allow_flagging = False
-    template_path = None
-    tokens = token.contents.split()
-    tag = tokens.pop(0)
-
-    # There must be at least a 'for <object>' or a 'with vname=obj' clause.
-    if len(tokens) < 2 or tokens[0] not in ["for", "with"]:
-        raise TemplateSyntaxError("2nd and 3rd argument in %r must be either"
-                                  " a 'for <object>' or a 'with vname=<obj>'"
-                                  " clause." % tag)
-    while tokens:
-        token = tokens.pop(0)
-        if token == "for":
-            if tokens[0] != "with":
-                obj = tokens[0]
-            else:
-                raise TemplateSyntaxError("3rd argument after 'for' in %r "
-                                          "can't be reserved word 'with'."
-                                          % tag)
-        if token == "with":
-            tail_tokens = ["allow_feedback", "show_feedback",
-                           "allow_flagging", "using"]
-            try:
-                if tokens[0] not in tail_tokens:
-                    while len(tokens) and tokens[0] not in tail_tokens:
-                        pair = tokens.pop(0)
-                        if pair.find("=") == -1:
-                            raise Exception()
-                        cvars.append(pair)
-                else:
-                    raise Exception()
-            except Exception:
-                raise TemplateSyntaxError("arguments after 'with' in %r "
-                                          "must be pairs varname=obj." % tag)
-        if token == "allow_feedback":
-            allow_feedback = True
-        if token == "show_feedback":
-            show_feedback = True
-        if token == "allow_flagging":
-            allow_flagging = True
-        if token == "using":
-            try:
-                template_path = tokens[0]
-            except IndexError:
-                raise TemplateSyntaxError("The relative path to the template "
-                                          "is missing after 'using' in %r."
-                                          % tag)
-    return RenderXtdCommentTreeNode(obj, cvars,
-                                    allow_feedback=allow_feedback,
-                                    show_feedback=show_feedback,
-                                    allow_flagging=allow_flagging,
-                                    template_path=template_path)
+            # get_app_model_options returns a dict like: {
+            #     'who_can_post': 'all' | 'users',
+            #     'allow_flagging': <boolean>,
+            #     'allow_reactions': <boolean>
+            # }
+            context_dict.update(
+                get_app_model_options(content_type=ctype.app_label)
+            )
+            liststr = loader.render_to_string(template_search_list,
+                                              context_dict)
+            return liststr
+        else:
+            return ''
 
 
 @register.tag
-def get_xtdcomment_tree(parser, token):
+def render_xtdcomment_list(parser, token):
     """
-    Add to the template context a list of XtdComment dictionaries for the
-    given object. The optional argument *with_feedback* adds a list
-    'likedit' with the users who liked the comment and a list 'dislikedit'
-    with the users who disliked the comment.
-
-    Each XtdComment dictionary has the following attributes::
-        {
-            'comment': xtdcomment object,
-            'children': [ list of child xtdcomment dicts ]
-        }
-
-    When called with_feedback each XtdComment dictionary will look like::
-        {
-            'comment': xtdcomment object,
-            'children': [ list of child xtdcomment dicts ],
-            'likedit': [user_object_a, user_object_b, ...],
-            'dislikedit': [user_object_x, user_object_y, ...],
-        }
+    Render the comment list (as returned by ``{% get_xtdcomment_list %}``)
+    through the ``comments/list.html`` template.
 
     Syntax::
-        {% get_xtdcomment_tree for [object] as [varname] [with_feedback] %}
+
+        {% render_xtdcomment_list for [object] %}
+        {% render_xtdcomment_list for [app].[model] [object_id] %}
+
     Example usage::
-        {% get_xtdcomment_tree for post as comment_list %}
+
+        {% render_xtdcomment_list for post %}
+
     """
-    try:
-        tag_name, args = token.contents.split(None, 1)
-    except ValueError:
-        raise TemplateSyntaxError("%s tag requires arguments" %
-                                  token.contents.split()[0])
-    match = re.search(r'for (\w+) as (\w+)', args)
-    if not match:
-        raise TemplateSyntaxError("%s tag had invalid arguments" % tag_name)
-    obj, var_name = match.groups()
-    if args.strip().endswith('with_feedback'):
-        with_feedback = True
-    else:
-        with_feedback = False
-    return GetXtdCommentTreeNode(obj, var_name, with_feedback)
+    return RenderXtdCommentListNode.handle_token(parser, token)
 
 
 # ----------------------------------------------------------------------
@@ -595,6 +455,114 @@ def can_receive_comments_from(obj, user):
         return True
     else:
         return False
+
+
+# ----------------------------------------------------------------------
+@register.simple_tag(takes_context=True)
+def comment_css_thread_range(context, comment, prefix="l"):
+    """
+    Returns a string of CSS selectors that render vertical lines to represent
+    comment threads. When comment level matches the max_thread_level there is
+    no vertical line, as comments in the max_thread_level can not receive
+    replies.
+
+    Returns a concatenated string of f'{prefix}{i}' for i in range(level + 1).
+    When the given comment has level=2, and the maximum thread level is 2:
+
+        `{% comment_css_thread_range comment %}`
+
+    produces the string: "l0-mid l1-mid l2".
+    """
+    max_thread_level = context.get('max_thread_level', None)
+    if not max_thread_level:
+        ctype = ContentType.objects.get_for_model(comment.content_object)
+        max_thread_level = max_thread_level_for_content_type(ctype)
+
+    result = ""
+    for i in range(comment.level + 1):
+        if i == comment.level:
+            if comment.level == max_thread_level:
+                result += f"{prefix}{i} "
+            else:
+                result += f"{prefix}{i}-ini "
+        else:
+            result += f"{prefix}{i}-mid "
+    return result.rstrip()
+
+
+@register.filter(is_safe=True)
+def reply_css_thread_range(level, prefix="l"):
+    """
+    Returns a string of CSS selectors that render vertical lines to represent
+    comment threads. When comment level matches the max_thread_level there is
+    no vertical line, as comments in the max_thread_level can not receive
+    replies.
+
+    Returns a concatenated string of f'{prefix}{i}' for i in range(level + 1).
+    If the given comment object has level=1, using the template tag as:
+
+        `{{ comment.level|comment_reply_css_thread_range }}`
+
+    produces the string: "l0 l1".
+    """
+    result = ""
+    for i in range(level + 1):
+        result += f"{prefix}{i} "
+    return mark_safe(result.rstrip())
+
+
+@register.filter(is_safe=True)
+def indent_divs(level, prefix="level-"):
+    """
+    Returns a concatenated string of "<div class="{prefix}{i}"></div>"
+    for i in range(1, level + 1).
+
+    When called as {{ 2|indent_divs }} produces the string:
+
+        '<div class="level-1"></div>
+         <div class="level-2"></div>'
+    """
+    result = ""
+    for i in range(1, level + 1):
+        result += f'<div class="{prefix}{i}"></div>'
+    return mark_safe(result)
+
+
+@register.filter(is_safe=True)
+def hline_div(level, prefix="line-"):
+    """
+    Returns a DIV that renders a horizontal line connecting the vertical
+    comment thread line with the comment reply box.
+
+    When called as {{ comment.level|hline_div }} produces the string:
+
+        '<div class="line-{comment.level}"></div>'
+    """
+    return mark_safe(f'<div class="{prefix}{level}"></div>')
+
+
+@register.filter
+def get_top_comment(reply_stack):
+    return reply_stack[-1]
+
+
+@register.filter
+def pop_comments_lte(reply_stack, level_lte=0):
+    comments_lte = []
+    try:
+        while True:
+            comment = reply_stack.pop()
+            if comment.level < level_lte:
+                break
+            comments_lte.append(comment)
+    finally:
+        return comments_lte
+
+
+@register.simple_tag(takes_context=True)
+def push_comment(context, comment):
+    context['reply_stack'].append(comment)
+    return ""
 
 
 # ----------------------------------------------------------------------

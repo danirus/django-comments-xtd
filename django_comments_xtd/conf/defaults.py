@@ -47,8 +47,7 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'default': {
         'who_can_post': 'all',  # Valid values: "users", "all"
         'allow_flagging': False,
-        'allow_feedback': False,
-        'show_feedback': False,
+        'allow_reactions': False
     }
 }
 

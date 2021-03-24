@@ -1,0 +1,25 @@
+{% load i18n %}
+{% load comments_xtd %}
+
+<div
+  id="reply-to-{{ comment.id }}"
+  class="reply-box {{ comment.level|reply_css_thread_range }}"
+>
+  {{ comment.level|indent_divs }}
+  {{ comment.level|hline_div }}
+  <div class="content">
+  <section class="reply-form">
+    <form id="reply-form-{{ comment.id }}" method="post" autocomplete="off">
+    <div class="col1-2">
+      <textarea required="" rows="1" name="comment" placeholder="Your reply" maxlength="3000"></textarea>
+    </div>
+    <div class="col2 hide">
+      <div class="inline-left">
+        <button class="primary small" type="submit" name="post">send</button>&nbsp;
+        <button class="secondary small" name="preview">preview</button>
+      </div>
+    </div>
+    </form>
+  </section>
+  </div>
+</div>

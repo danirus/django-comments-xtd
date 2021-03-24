@@ -2,32 +2,96 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<div id="comments" class="media-list">
+<div
+  id="comments"
+  class="comment-list"
+  {% if allow_reactions %}
+    data-type="reactions-def"
+    data-reactions="{% reactions_enum_list %}"
+    {% if user.is_authenticated %}
+      data-reactions-url="{% url 'comments-xtd-api-react' %}"
+    {% endif %}
+    data-reactions-row-length="4"
+    data-reactions-header-title="{% trans 'Pick your reaction' %}"
+    data-pos-bottom="30"
+    data-pos-left="-7"
+  {% endif %}
+>
   {% for comment in comment_list %}
-  <div class="media pb-2">
-    <a name="c{{ comment.id }}"></a>
-    {{ comment.user_email|xtd_comment_gravatar }}
-    <div class="media-body">
-      <div class="comment pb-3">
-        <h6 class="mb-1 small d-flex">
-          <div class="mr-auto">{{ comment.submit_date }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>
-        </h6>
-        <div class="content">
+    {% comment %}
+      # Before rendering the comment, check the reply_stack to find out
+      # whether a reply-box has to be rendered.
+    {% endcomment %}
+    {% if reply_stack %}
+      {% with top_comment=reply_stack|get_top_comment %}
+        {% if comment.level <= top_comment.level %}
+          {% for object in reply_stack|pop_comments_lte:comment.level %}
+            {% include "django_comments_xtd/nested_reply.html" with comment=object %}
+          {% endfor %}
+          {% push_comment comment %}
+        {% elif comment.level > top_comment.level and comment.level < max_thread_level %}
+          {% push_comment comment %}
+        {% endif %}
+      {% endwith %}
+    {% else %}
+      {% push_comment comment %}
+    {% endif %}
+
+    <div
+      id="c{{ comment.id }}"
+      class="comment-box {% comment_css_thread_range comment %}"
+    >
+      {{ comment.level|indent_divs }}
+      <div class="user-avatar">
+        {{ comment.user_email|xtd_comment_gravatar:'36,identicon' }}
+      </div>
+      <div class="comment">
+        <div class="header">
+          {% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
+        </div>
+        <div class="body">
           {% if comment.is_removed %}
-          <p class="text-muted">{% trans "This comment has been removed." %}</p>
+            <p class="text-muted">
+              {% trans "This comment has been removed." %}
+            </p>
           {% else %}
-          <div class="content">
-            {% include "includes/django_comments_xtd/comment_content.html" with content=comment.comment %}
-          </div>
+            {{ comment.comment|linebreaks|escape }}
+          {% endif %}
+        </div>
+        <div class="footer">
+          {% if allow_reactions and not comment.is_removed %}
+            {% if comment.reactions and comment.reactions.counter %}
+              <div class="reactions">
+                {% include "includes/django_comments_xtd/comment_reactions.html" %}
+              </div>
+            {% endif %}
+            <div>
+              <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="#">{% translate "React" %}</a>
+            </div>
           {% endif %}
           {% if comment.allow_thread and not comment.is_removed %}
-          <a class="small mutedlink" href="{{ comment.get_reply_url }}">
-            {% trans "Reply" %}
-          </a>
+            <div>
+              <a data-type="reply-form" data-comment="{{ comment.id }}" class="small" href="{{ comment.get_reply_url }}">{% translate "Reply" %}</a>
+            </div>
+          {% endif %}
+          {% if comment.nested_count %}
+            <div>
+              <a data-type="fold-replies" data-comment="{{ comment.id }}" class="small" href="#">{% blocktranslate with count=comment.nested_count%}Fold {{ count }} replies{% endblocktranslate %}</a>
+            </div>
           {% endif %}
         </div>
       </div>
     </div>
-  </div>
+
+    {% if forloop.last %}
+      {% comment %}
+        # After rendering the last comment, render the reply form for the
+        # rest of comments still queued in the reply_stack.
+      {% endcomment %}
+      {% for object in reply_stack|pop_comments_lte %}
+        {% include "django_comments_xtd/nested_reply.html" with comment=object %}
+      {% endfor %}
+    {% endif %}
+
   {% endfor %}
 </div>

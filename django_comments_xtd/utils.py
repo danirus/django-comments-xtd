@@ -72,8 +72,7 @@ def get_app_model_options(comment=None, content_type=None):
     default = {
         'who_can_post': 'all',  # Valid values: "users", "all"
         'allow_flagging': False,
-        'allow_feedback': False,
-        'show_feedback': False,
+        'allow_reactions': False
     }
     if 'default' in settings.COMMENTS_XTD_APP_MODEL_OPTIONS:
         # The developer overwrite the default settings. Check whether

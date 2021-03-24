@@ -1,0 +1,44 @@
+:root, HTML {
+    box-sizing: border-box;
+    font-size: 20px;
+    margin: 0 auto;
+    padding: 0;
+    height: 100%;
+    color: #333;
+  }
+
+  *,
+  ::before,
+  ::after {
+    box-sizing: inherit;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    /* font-family: "Noticia Text", serif; */
+    font-family: "Assistant", sans-serif;
+    color: #444;
+  }
+  h1 { font-size: 1.8rem; margin: 1.5rem 0 }
+  h2 { font-size: 1.6rem; margin: 1.4rem 0 }
+  h3 { font-size: 1.4rem; margin: 1.3rem 0 }
+  h4 { font-size: 1.3rem; margin: 1.2rem 0 }
+  h5 { font-size: 1.2rem; margin: 1.1rem 0 }
+  h6 { font-size: 1.1rem; margin: 1rem 0 }
+
+  li h1, li h2, li h3, li h4, li h5, li h6 {
+    margin: 0.5rem;
+    font-weight: 600;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    height: 100%;
+    font-weight: 400;
+    font-family: "Assistant", sans-serif;
+  }
+
+  li + li {
+    margin-top: 0.3em;
+  }

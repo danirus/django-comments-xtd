@@ -145,7 +145,6 @@ INSTALLED_APPS = (
 
     'comp',
     'comp.articles',
-    'comp.diary',
     'comp.extra.quotes',
 )
 

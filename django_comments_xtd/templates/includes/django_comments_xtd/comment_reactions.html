@@ -1,0 +1,25 @@
+<div
+    class="active-reactions"
+    data-pos-bottom="{{ reaction_pos_bottom }}"
+    data-pos-left="{{ reaction_pos_left }}"
+>
+  {% for reaction in comment.reactions.list %}
+    {% if reaction.counter > 0 %}
+      <span
+        class="reaction"
+        data-reaction="{{ reaction.value }}"
+      >
+        <div class="reactions-tooltip">
+          <div class="arrow"></div>
+          <p>
+            {{ reaction.authors|join:', ' }} reacted with {{ reaction.label }}
+          </p>
+        </div>
+        <a
+          class="small text-primary"
+          data-toggle="reactions-tooltip"
+        >{{ reaction.counter }}<span class="emoji">&{{ reaction.icon }};</span></a>
+      </span>
+    {% endif %}
+  {% endfor %}
+</div>

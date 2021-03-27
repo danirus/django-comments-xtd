@@ -26,7 +26,9 @@
       {% with top_comment=reply_stack|get_top_comment %}
         {% if comment.level <= top_comment.level %}
           {% for object in reply_stack|pop_comments_lte:comment.level %}
-            {% include "django_comments_xtd/nested_reply.html" with comment=object %}
+            {% if object.allow_thread and not object.is_removed %}
+              {% include "includes/django_comments_xtd/reply_button.html" with comment=object %}
+            {% endif %}
           {% endfor %}
           {% push_comment comment %}
         {% elif comment.level > top_comment.level and comment.level < max_thread_level %}
@@ -69,11 +71,6 @@
               <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="#">{% translate "React" %}</a>
             </div>
           {% endif %}
-          {% if comment.allow_thread and not comment.is_removed %}
-            <div>
-              <a data-type="reply-form" data-comment="{{ comment.id }}" class="small" href="{{ comment.get_reply_url }}">{% translate "Reply" %}</a>
-            </div>
-          {% endif %}
           {% if comment.nested_count %}
             <div>
               <a data-type="fold-replies" data-comment="{{ comment.id }}" class="small" href="#">{% blocktranslate with count=comment.nested_count%}Fold {{ count }} replies{% endblocktranslate %}</a>
@@ -89,7 +86,9 @@
         # rest of comments still queued in the reply_stack.
       {% endcomment %}
       {% for object in reply_stack|pop_comments_lte %}
-        {% include "django_comments_xtd/nested_reply.html" with comment=object %}
+        {% if object.allow_thread and not object.is_removed %}
+          {% include "includes/django_comments_xtd/reply_button.html" with comment=object %}
+        {% endif %}
       {% endfor %}
     {% endif %}
 

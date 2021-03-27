@@ -1,4 +1,5 @@
 {% extends "django_comments_xtd/base.html" %}
+
 {% load i18n %}
 {% load comments %}
 {% load comments_xtd %}
@@ -6,34 +7,42 @@
 {% block title %}{% trans "Comment reply" %}{% endblock %}
 
 {% block content %}
-<div class="container">
-  <div class="mb-4">
-    <h3 class="text-center">{% trans "Reply to comment" %}</h3>
-    <hr/>
-  </div>
-  <div class="row">
-    <div class="offset-md-1 col-md-10">
-      <div class="media">
-        <div class="mr-3">{{ comment.user_email|xtd_comment_gravatar }}</div>
-        <div class="media-body">
-          <div class="comment pb-3">
-            <h6 class="mb-1 small">
-              {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-              {% if comment.user_url %}
-              <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                {{ comment.user_name }}{% if comment.user_url %}</a>{% endif %}
-            </h6>
-            <p>{{ comment.comment }}</p>
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% trans "Reply to comment" %}</h2>
+      <h6 class="text-center pb24">
+        {% translate "Comment sent to:" %}<br/>
+        <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+      </h6>
+    </div>
+    <div class="central-column">
+      <div class="dcx pb32">
+        <div id="c{{ comment.id }}" class="comment-box l0-ini">
+          <div class="user-avatar">
+            {{ comment.user_email|xtd_comment_gravatar:'36,identicon' }}
+          </div>
+          <div class="comment">
+            <div class="header">
+              {% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
+            </div>
+            <div class="body">
+              {{ comment.comment|linebreaks|escape }}
+            </div>
+            <div class="footer"></div>
+          </div>
+        </div>
+
+        <div class="reply-box l0">
+          <div class="line-0"></div>
+          <div class="content">
+            <section class="reply-form active">
+              {% include "comments/form.html" %}
+            </section>
           </div>
         </div>
       </div>
-      <div class="card mt-4 mb-5">
-        <div class="card-body">
-          <h4 class="card-title text-center pb-3">{% trans "Post your comment" %}</h4>
-          {% include "comments/form.html" %}
-        </div>
-      </div>
     </div>
-  </div>
-</div>
+  </article>
+</main>
 {% endblock %}

@@ -41,8 +41,12 @@ class XtdCommentForm(CommentForm):
             widget=forms.Textarea(attrs={'placeholder': _('Your comment'),
                                          'class': 'form-control'}),
             max_length=settings.COMMENT_MAX_LENGTH)
-        self.fields['comment'].widget.attrs.pop('cols')
-        self.fields['comment'].widget.attrs.pop('rows')
+        if (
+            not len(kwargs.get('data', {})) or
+            not len(kwargs['data'].get('comment', ''))
+        ):
+            self.fields['comment'].widget.attrs.pop('rows')
+            self.fields['comment'].widget.attrs.pop('cols')
         self.fields['followup'].widget.attrs['id'] = (
             'id_followup%s' % followup_suffix)
         self.fields['followup'].widget.attrs['class'] = "custom-control-input"

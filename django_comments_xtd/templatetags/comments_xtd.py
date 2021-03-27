@@ -499,7 +499,7 @@ def reply_css_thread_range(level, prefix="l"):
     replies.
 
     Returns a concatenated string of f'{prefix}{i}' for i in range(level + 1).
-    If the given comment object has level=1, using the template tag as:
+    If the given comment object has level=1, using the filter as:
 
         `{{ comment.level|comment_reply_css_thread_range }}`
 
@@ -563,6 +563,11 @@ def pop_comments_lte(reply_stack, level_lte=0):
 def push_comment(context, comment):
     context['reply_stack'].append(comment)
     return ""
+
+
+@register.filter
+def get_comment(comment_id: str):
+    return get_comment_model().objects.get(pk=int(comment_id))
 
 
 # ----------------------------------------------------------------------

@@ -215,7 +215,9 @@
 }
 
 .dcx .comment-box .header {
-    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 8px 4px 8px;
     font-size: 0.8rem;
 }
 
@@ -372,5 +374,5 @@
 }
 
 .dcx .helper-text.error { color: red }
-
 .dcx .small { font-size: 0.75rem }
+.dcx .bold { font-weight: bold }

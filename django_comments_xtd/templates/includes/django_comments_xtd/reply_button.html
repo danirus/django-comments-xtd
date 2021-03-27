@@ -1,0 +1,17 @@
+{% load i18n %}
+{% load comments_xtd %}
+
+<div
+  id="reply-to-{{ comment.id }}"
+  class="reply-box {{ comment.level|reply_css_thread_range }}"
+>
+  {{ comment.level|indent_divs }}
+  {{ comment.level|hline_div }}
+  <div class="content">
+    <section class="reply-form">
+      <form id="reply-form-{{ comment.id }}" method="post" action="{% url 'comments-xtd-reply' comment.id %}">{% csrf_token %}
+        <button type="submit" class="secondary small">Write a reply</button>
+      </form>
+    </section>
+  </div>
+</div>

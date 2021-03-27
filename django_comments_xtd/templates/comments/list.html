@@ -39,46 +39,7 @@
       {% push_comment comment %}
     {% endif %}
 
-    <div
-      id="c{{ comment.id }}"
-      class="comment-box {% comment_css_thread_range comment %}"
-    >
-      {{ comment.level|indent_divs }}
-      <div class="user-avatar">
-        {{ comment.user_email|xtd_comment_gravatar:'36,identicon' }}
-      </div>
-      <div class="comment">
-        <div class="header">
-          {% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
-        </div>
-        <div class="body">
-          {% if comment.is_removed %}
-            <p class="text-muted">
-              {% trans "This comment has been removed." %}
-            </p>
-          {% else %}
-            {{ comment.comment|linebreaks|escape }}
-          {% endif %}
-        </div>
-        <div class="footer">
-          {% if allow_reactions and not comment.is_removed %}
-            {% if comment.reactions and comment.reactions.counter %}
-              <div class="reactions">
-                {% include "includes/django_comments_xtd/comment_reactions.html" %}
-              </div>
-            {% endif %}
-            <div>
-              <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="#">{% translate "React" %}</a>
-            </div>
-          {% endif %}
-          {% if comment.nested_count %}
-            <div>
-              <a data-type="fold-replies" data-comment="{{ comment.id }}" class="small" href="#">{% blocktranslate with count=comment.nested_count%}Fold {{ count }} replies{% endblocktranslate %}</a>
-            </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
+    {% include "includes/django_comments_xtd/comment.html" %}
 
     {% if forloop.last %}
       {% comment %}

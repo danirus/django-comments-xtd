@@ -19,7 +19,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.9.0, of
+    This documentation represents the current version, v2.9.1, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.8.5: https://django-comments-xtd.readthedocs.io/en/2.8.5/
@@ -95,6 +95,11 @@ specific features, or check out the use cases to see how others customize it.
 
 Change Log
 ==========
+
+[2.9.1] - 2021-04-25
+--------------------
+
+    * Fixes issue when the 'sent' view does not receive a 'c' query string parameter. See [PR-305](https://github.com/danirus/django-comments-xtd/pull/305). Thanks to @dest81.
 
 [2.9.0] - 2021-03-20
 --------------------

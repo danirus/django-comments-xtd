@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.9.1] - 2021-04-14
+
+    * Fixes issue when the 'sent' view does not receive a 'c' query string parameter. See [PR-305](https://github.com/danirus/django-comments-xtd/pull/305). Thanks to @dest81.
+
 ## [2.9.0] - 2021-03-20
 
     * Drops support for Django 2.0 and 2.1.

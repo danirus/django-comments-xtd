@@ -849,22 +849,49 @@ class RenderXtdCommentListTestCase(DjangoTestCase):
         self.article = Article.objects.create(
             title="September", slug="september", body="During September...")
 
-        # -> content:   cmt.id  thread_id  parent_id  level  order
-        # cm1,   # ->      1         1          1        0      1
-        # cm3,   # ->      3         1          1        1      2
-        # cm4,   # ->      4         1          1        1      3
-        # cm2,   # ->      2         2          2        0      1
-        # cm5    # ->      5         2          2        1      2
+    def _create_comments(self):
+#  step   id   parent level-0  level-1  level-2
+#    1     1      -      c1                        <-                 cmt1
+#    2     3      1      --       c3               <-         cmt1 to cmt1
+#    5     8      3      --       --        c8     <- cmt1 to cmt1 to cmt1
+#    2     4      1      --       c4               <-         cmt2 to cmt1
+#    4     7      4      --       --        c7     <- cmt1 to cmt2 to cmt1
+#    1     2      -      c2                        <-                 cmt2
+#    3     5      2      --       c5               <-         cmt1 to cmt2
+#    4     6      5      --       --        c6     <- cmt1 to cmt1 to cmt2
+#    5     9      -      c9                        <-                 cmt9
+        thread_test_step_1(self.article)
+        thread_test_step_2(self.article)
+        thread_test_step_3(self.article)
+        thread_test_step_4(self.article)
+        thread_test_step_5(self.article)
 
-        thread_test_step_1(self.article)  # Sends 2 comments.
-        thread_test_step_2(self.article)  # Sends 2 comments.
-        thread_test_step_3(self.article)  # Sends 1 comment.
+    def _assert_all_comments_are_published(self):
+        t = "{% load comments comments_xtd %}"
+        t += "{% render_xtdcomment_list for object %}"
+        output = Template(t).render(Context({'object': self.article,
+                                             'user': AnonymousUser()}))
+        self.assertEqual(output.count('<a name="c'), 9)
+        try:
+            pos_c1 = output.index('<a name="c1"></a>')
+            pos_c3 = output.index('<a name="c3"></a>')
+            pos_c8 = output.index('<a name="c8"></a>')
+            pos_c4 = output.index('<a name="c4"></a>')
+            pos_c7 = output.index('<a name="c7"></a>')
+            pos_c2 = output.index('<a name="c2"></a>')
+            pos_c5 = output.index('<a name="c5"></a>')
+            pos_c6 = output.index('<a name="c6"></a>')
+            pos_c9 = output.index('<a name="c9"></a>')
+        except ValueError as exc:
+            self.fail(exc)
+        else:
+            self.assertTrue(pos_c1 < pos_c3 < pos_c8 <
+                            pos_c4 < pos_c7 < pos_c2 <
+                            pos_c5 < pos_c6 < pos_c9)
 
     def test_render_xtdcomment_list(self):
-        t = ("{% load comments_xtd %}"
-             "{% render_xtdcomment_list for object %}")
-        output = Template(t).render(Context({'object': self.article}))
-        self.assertEqual(True, True)
+        self._create_comments()
+        self._assert_all_comments_are_published()
 
 
 class CommentCSSThreadRangeTestCase(DjangoTestCase):

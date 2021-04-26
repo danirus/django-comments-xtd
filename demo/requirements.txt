@@ -1,0 +1,11 @@
+django>=3.1,<3.2
+djangorestframework>=3.12,<3.13
+django-avatar>=5.0,<5.1
+django-contrib-comments>=2.1,<2.2
+django-debug-toolbar>=3.2,<3.3
+django-extensions>=3.1,<3.2
+django-manifest-loader>=1.0,<1.1
+django-rosetta>=0.9,<0.10
+ipython
+ipdb
+

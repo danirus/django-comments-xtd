@@ -16,30 +16,34 @@ def run_tests(*args):
 test.run_tests = run_tests
 
 
+readme = ""
+with open("README.rst", "r") as readme_file:
+    readme = readme_file.read()
+
+
+requirements = []
+with open("requirements.txt", "r") as req_file:
+    for item in req_file:
+        requirements.append(item)
+
+
 setup(
     name="django-comments-xtd",
     version="3.0.0",
     packages=find_packages(),
     include_package_data=True,
     license="MIT",
-    description=("Django Comments Framework extension app with thread "
+    description=("Django comments framework extension app with thread "
                  "support, follow up notifications and email "
                  "confirmations."),
-    long_description=("A reusable Django app that extends django-contrib-"
-                      "comments Framework with thread support, following up "
-                      "notifications and comments that only hits the "
-                      "database after users confirm them by email."),
+    long_description=readme,
+    long_description_content_type="text/x-rst",
     author="Daniel Rus Morales",
     author_email="mbox@danir.us",
     maintainer="Daniel Rus Morales",
     maintainer_email="mbox@danir.us",
     url="http://pypi.python.org/pypi/django-comments-xtd",
-    install_requires=[
-        'Django>=3.0',
-        'django-contrib-comments>=2.0',
-        'djangorestframework>=3.12',
-        'docutils',
-    ],
+    install_requires=requirements,
     setup_requires=['wheel'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

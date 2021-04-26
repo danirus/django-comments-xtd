@@ -1,0 +1,16 @@
+{% if user.name %}Hi {{ user.name }},{% else %}Hi,{% endif %}
+
+You or someone in behalf of you have requested to change your registration email address at https://{{ site.domain }}
+
+The current email address is: {{ user.email|safe }}
+The new email address will be: {{ new_email|safe  }}
+
+If you do not wish to make the change, please ignore this message or report an incident to {{ contact|safe }}. Otherwise click on the link below to confirm the change.
+
+https://{{ site.domain }}{{ confirmation_url }}
+
+If clicking does no work, you can also copy and paste the address into your browser's address window.
+
+--
+Kind regards,
+{{ site }}

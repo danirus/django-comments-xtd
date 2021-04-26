@@ -2,18 +2,15 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<div
-  id="c{{ comment.id }}"
-  class="comment-box {% comment_css_thread_range comment %}"
->
-  {{ comment.level|indent_divs }}
+<div id="c{{ comment.id }}" class="comment-box {% if show_nested %}{% comment_css_thread_range comment %}{% endif %}">
+  {% if show_nested %}{{ comment.level|indent_divs }}{% endif %}
   <div class="user-avatar">
     {{ comment.user_email|xtd_comment_gravatar:'36,identicon' }}
   </div>
   <div class="comment">
     <div class="header">
       <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>
-      <div><a class="bold" href="/report"><span class="emoji">…</span></a></div>
+      <div>{% if show_nested %}<a class="bold" href="/report"><span class="emoji">…</span></a>{% endif %}</div>
     </div>
     <div class="body">
       {% if comment.is_removed %}
@@ -25,17 +22,21 @@
       {% endif %}
     </div>
     <div class="footer">
-      {% if allow_reactions and not comment.is_removed %}
-        {% if comment.reactions and comment.reactions.counter %}
-          <div class="reactions">
-            {% include "includes/django_comments_xtd/comment_reactions.html" %}
+      {% if not comment.is_removed %}
+        {% if allow_reactions or show_reactions %}
+          {% if comment.reactions.count > 0 %}
+            <div class="reactions">
+              {% include "includes/django_comments_xtd/comment_reactions.html" %}
+            </div>
+          {% endif %}
+        {% endif %}
+        {% if allow_reactions %}
+          <div>
+            <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}">{% translate "React" %}</a>
           </div>
         {% endif %}
-        <div>
-          <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="#">{% translate "React" %}</a>
-        </div>
       {% endif %}
-      {% if comment.nested_count %}
+      {% if show_nested and comment.nested_count %}
         <div>
           <a data-type="fold-replies" data-comment="{{ comment.id }}" class="small" href="#">{% blocktranslate with count=comment.nested_count%}Fold {{ count }} replies{% endblocktranslate %}</a>
         </div>

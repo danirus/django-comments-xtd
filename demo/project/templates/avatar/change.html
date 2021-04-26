@@ -1,0 +1,70 @@
+{% extends "users/account_base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load avatar_tags %}
+
+{% block nav-edit-photo %}<span class="small">{% translate "Edit photo" %}</span>{% endblock %}
+
+{% block sub_content %}
+<div class="container md mt32">
+  <div class="row">
+    <div class="column">
+      <h3>{% translate "Edit photo" %}</h3>
+      {% if not avatars %}
+        <p>
+          {% translate "You haven't uploaded an avatar yet. Please upload one now." %}
+        </p>
+      {% else %}
+        <div class="grid-form fgrow">
+          <form method="POST" id="avatar_form" action="{% url 'edit-avatar' %}" onSubmit="return submit_avatar_form()">
+
+            {% if messages %}
+              {% for msg in messages %}
+                <div class="col1-2 alert alert-{{ msg.tags }} text-center text-{{ msg.tags }}">{{ msg }}</div>
+              {% endfor %}
+            {% endif %}
+
+            {% csrf_token %}
+            {# next field 'choices' is for DeleteAvatarForm #}
+            <input type="hidden" name="choices" />
+            <div class="col1-2 avatar-list">
+              {{ primary_avatar_form.choice }}
+            </div>
+            <div class="col1-2">
+              <div class="inline-centered">
+                <button class="small primary" name="action" value="save" type="submit">
+                  {% translate "use as your new default" %}
+                </button>
+                &nbsp;
+                <button class="small secondary" name="action" value="delete" type="submit">
+                  {% translate "delete photo" %}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      {% endif %}
+
+      <div class="grid-form fgrow bt1">
+        <form enctype="multipart/form-data" method="POST" id="upload_avatar_form" action="{% url 'edit-avatar' %}">
+          {% csrf_token %}
+          <label class="col1" for="{{ upload_avatar_form.avatar.id_for_label }}">{% translate "Upload new image" %}</label>
+          <div class="col2">{{ upload_avatar_form.avatar }}</div>
+          <div class="col2">
+            <div class="inline-left">
+              <button class="small primary" name="action" value="upload" type="submit">
+                {% translate "Upload" %}
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{% static 'users/js/avatar.js' %}"></script>
+{% endblock %}

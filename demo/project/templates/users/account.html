@@ -1,0 +1,20 @@
+{% extends "users/account_base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load avatar_tags %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;Account{% endblock %}
+
+{% block nav-account-class %}active{% endblock %}
+
+{% block sub_content %}
+<div class="container md mt32">
+  <div class="row">
+    <div class="column">
+      <h3>{% trans "Contributions" %}</h3>
+      <p>You have contributed to the talk with the following comments:</p>
+    </div>
+  </div>
+</div>
+{% endblock sub_content %}

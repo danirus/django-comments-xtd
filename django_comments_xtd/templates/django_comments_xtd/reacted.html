@@ -1,8 +1,33 @@
-{% extends "comments/base.html" %}
-{% load i18n %}
+{% extends "django_comments_xtd/base.html" %}
 
-{% block title %}{% trans "You reacted to the comment" %}{% endblock %}
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{% trans "Thanks for reacting to the comment" %}{% endblock %}
 
 {% block content %}
-  <h1>{% trans "Thanks for taking the time to participate." %}</h1>
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% trans "Thanks for taking the time to participate." %}</h2>
+      <h6 class="text-center pb24">
+        {% translate "Your reaction is already shown in the comment." %}
+      </h6>
+    </div>
+
+    {% if comment %}
+      <div class="central-column">
+        <div class="dcx">
+          {% with allow_flagging=False allow_reactions=False show_reactions=True show_nested=False %}
+            {% include "includes/django_comments_xtd/comment.html"  %}
+          {% endwith %}
+        </div>
+        <h6 class="text-center">
+          <a href="{% get_comment_permalink comment %}">{% translate "Go back to the comment's page." %}</a>
+        </h6>
+      </div>
+    {% endif %}
+  </article>
+</main>
 {% endblock %}

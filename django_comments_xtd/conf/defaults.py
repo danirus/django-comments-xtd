@@ -71,3 +71,7 @@ COMMENTS_XTD_API_USER_REPR = username
 COMMENTS_XTD_API_GET_USER_AVATAR = "django_comments_xtd.utils.get_user_avatar"
 
 COMMENTS_XTD_DEFAULT_FOLLOWUP = False
+
+# How many reaction buttons can be displayed
+# in a row before it breaks into another row.
+COMMENTS_XTD_REACTIONS_ROW_LENGTH = 4

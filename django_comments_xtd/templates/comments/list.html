@@ -7,7 +7,7 @@
   class="comment-list"
   {% if allow_reactions %}
     data-type="reactions-def"
-    data-reactions="{% reactions_enum_list %}"
+    data-reactions="{% reactions_enum_strlist %}"
     {% if user.is_authenticated %}
       data-reactions-url="{% url 'comments-xtd-api-react' %}"
     {% endif %}

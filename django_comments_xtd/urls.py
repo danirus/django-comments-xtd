@@ -14,6 +14,9 @@ urlpatterns = [
 
     # Remap comments-flag to check allow-flagging is enabled.
     re_path(r'^flag/(\d+)/$', views.flag, name='comments-flag'),
+    # New flags in addition to those provided by django-contrib-comments.
+    re_path(r'^react/(\d+)/$', views.react, name='comments-xtd-react'),
+    re_path(r'^reacted/$', views.react_done, name='comments-xtd-react-done'),
 
     # API handlers.
     re_path(r'^api/comment/$', api.CommentCreate.as_view(),

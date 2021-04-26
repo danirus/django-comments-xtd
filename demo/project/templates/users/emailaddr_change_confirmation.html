@@ -1,0 +1,18 @@
+<p>{% if user.name %}Hi {{ user.name }},{% else %}Hi,{% endif %}</p>
+
+<p>You or someone in behalf of you have requested to change your registration email address at: https://{{ site.domain }}</p>
+
+<p>
+The current email address is: <code>{{ user.email|safe }}</code><br/>
+The new email address will be: <code>{{ new_email|safe  }}</code>
+</p>
+
+<p>If you do not wish to make the change, please ignore this message or report an incident to {{ contact|safe }}. Otherwise click on the link below to confirm the change.</p>
+
+<p><a href="https://{{ site.domain }}{{ confirmation_url }}">https://{{ site.domain }}{{ confirmation_url|slice:":40" }}...</a></p>
+
+<p>If clicking does no work, you can also copy and paste the address into your browser's address window.</p>
+
+<p>--<br/>
+Kind regards,<br/>
+{{ site }}</p>

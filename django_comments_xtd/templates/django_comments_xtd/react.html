@@ -1,63 +1,44 @@
 {% extends "django_comments_xtd/base.html" %}
+
 {% load i18n %}
 {% load comments_xtd %}
 
 {% block title %}{% trans "React to comment" %}{% endblock %}
 
-{% block header %}
-<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
-{% endblock %}
-
 {% block content %}
-<p class="lead text-center">{% trans "What is your reaction to this comment?" %}</p>
-<div class="row">
-  <div class="offset-lg-1 col-lg-10">
-    <div class="card mb-4">
-      <div class="card-body">
-        <div class="media">
-          <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
-              width="48" height="48" class="mr-3">
-          <div class="media-body">
-            <h6 class="mb-1 small">
-              {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-              {% if comment.user_url %}
-              <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                {{ comment.user_name }}
-                {% if comment.user_url %}
-              </a>{% endif %}
-            </h6>
-            <p>{{ comment.comment }}</p>
-          </div>
-        </div>
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% translate "How do you react to this comment?" %}</h2>
+      <h6 class="text-center pb24">
+        {% translate "Comment sent to:" %}<br/>
+        <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+      </h6>
+    </div>
+    <div class="central-column">
+      <div class="dcx">
+        {% with allow_flagging=False allow_reactions=False show_reactions=True show_nested=False %}
+          {% include "includes/django_comments_xtd/comment.html"  %}
+        {% endwith %}
+
+        <section class="reaction-form">
+          <h5 class="text-center">Reaction choices</h5>
+          {% if user_reactions %}
+            <p class="text-center">{% translate "Pressed buttons correspond to your active reactions to this comment." %}</p>
+          {% endif %}
+          <form method="POST" autocomplete="off" action="{% comment_reaction_form_target comment %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'comments-xtd-react-done' %}" />
+            {% render_reactions_buttons user_reactions %}
+            {% if user_reactions %}
+              <h6 class="text-center">{% translate "Click on a button to select or deselect your reaction." %}</h6>
+            {% else %}
+              <h6 class="text-center">{% translate "Click on a button to select your reaction." %}</h6>
+            {% endif %}
+          </form>
+        </section>
       </div>
     </div>
-    {% with object_absolute_url=comment.content_object.get_absolute_url %}
-    {% if object_absolute_url %}
-    <p class="text-center">
-      {% trans "Posted to "%}&nbsp;<a href="{{ object_absolute_url }}">{{ comment.content_object }}</a>
-    </p>
-    {% endif %}
-    {% endwith %}
-    <div class="visible-lg-block visible-md-block">
-      <hr/>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="offset-lg-1 col-lg-10">
-    <div class="well well-lg">
-      <form action="." method="post" class="form-horizontal">{% csrf_token %}
-        <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
-        <div class="form-group">
-          <div class="text-center">
-            {% for reaction in reaction_types %}
-              <span>{{ reaction.value }} - {{ reaction.label }}</span>
-            {% endfor %}
-            <a class="btn btn-secondary" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+  </article>
+</main>
 {% endblock %}

@@ -1,3 +1,0 @@
--r requirements.pip
-coverage
-mock

@@ -9,15 +9,13 @@ from django_comments_xtd import get_model as get_comment_model
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from django_comments_xtd.conf import settings
 from django_comments_xtd.api import serializers
 from django_comments_xtd.models import (TmpXtdComment, XtdComment,
                                         CommentReaction)
-from django_comments_xtd.utils import (get_app_model_options,
-                                       get_current_site_id)
+from django_comments_xtd.utils import check_option, get_current_site_id
 
 
 class CommentCreate(generics.CreateAPIView):
@@ -89,20 +87,6 @@ class CommentCount(generics.GenericAPIView):
         return Response({'count': self.get_queryset().count()})
 
 
-def check_allow_feedback_option(comment):
-    is_allowed = get_app_model_options(comment=comment)['allow_feedback']
-    if not is_allowed:
-        message = "This comment does not accept reactions."
-        if settings.DEBUG:
-            ct = ContentType.objects.get_for_model(comment.content_object)
-            message = ("Comments posted to instances of '%s.%s' are not "
-                       "explicitly allowed to receive reactions. "
-                       "Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
-                       "setting." % (ct.app_label, ct.model))
-        raise PermissionDenied(detail=message,
-                               code=status.HTTP_403_FORBIDDEN)
-
-
 class CreateReportFlag(generics.CreateAPIView):
     """Create 'removal suggestion' flags."""
 
@@ -112,7 +96,7 @@ class CreateReportFlag(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         comment = get_object_or_404(get_comment_model(),
                                     pk=int(request.data['comment']))
-        check_allow_feedback_option(comment)
+        check_option(comment, "allow_flagging")
         return super(CreateReportFlag, self).post(request, *args, **kwargs)
 
     def perform_create(self, serializer):
@@ -142,7 +126,7 @@ class PostCommentReaction(mixins.CreateModelMixin,
     def post(self, request, *args, **kwargs):
         comment = get_object_or_404(get_comment_model(),
                                     pk=int(request.data['comment']))
-        check_allow_feedback_option(comment)
+        check_option(comment, "allow_reactions")
         self.create(request, *args, **kwargs)
         # Create a new response object with the list of reactions the
         # comment has received. If other users sent reactions they all will

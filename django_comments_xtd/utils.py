@@ -18,6 +18,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.crypto import salted_hmac
 
+from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
+
 from django_comments_xtd.conf import settings
 
 
@@ -59,6 +62,7 @@ def send_mail(subject, body, from_email, recipient_list,
                    fail_silently, html)
 
 
+# --------------------------------------------------------------------
 def get_app_model_options(comment=None, content_type=None):
     """
     Get the app_model_option from COMMENTS_XTD_APP_MODEL_OPTIONS.
@@ -98,6 +102,33 @@ def get_app_model_options(comment=None, content_type=None):
         return default
 
 
+option_msgs = {
+    'allow_flagging': {
+        'PROD': "This typo of comments are not allowed to be flagged.",
+        'DEBUG': "Comments posted to instances of '%s.%s' are not "
+                 "explicitly allowed to be flagged. Check the "
+                 "COMMENTS_XTD_APP_MODEL_OPTIONS setting."
+    },
+    'allow_reactions': {
+        'PROD': "This typo of comment are not allowed to receive reactions.",
+        'DEBUG': "Comments posted to instances of '%s.%s' are not "
+                 "explicitly allowed to receive reactions. Check the "
+                 "COMMENTS_XTD_APP_MODEL_OPTIONS setting."
+    }
+}
+
+
+def check_option(comment, option):
+    is_allowed = get_app_model_options(comment=comment)[option]
+    if not is_allowed:
+        message = option_msgs[option]['PROD']
+        if settings.DEBUG:
+            ct = ContentType.objects.get_for_model(comment.content_object)
+            message = option_msgs[option]['DEBUG'] % (ct.app_label, ct.model)
+        raise PermissionDenied(detail=message, code=status.HTTP_403_FORBIDDEN)
+
+
+# --------------------------------------------------------------------
 def get_current_site_id(request=None):
     """ it's a shortcut """
     return getattr(get_current_site(request), 'pk', 1)  # fallback value

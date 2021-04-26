@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from django_comments_xtd.templatetags.comments_xtd import get_reaction_enum
 import six
 
 from django.apps import apps
@@ -18,17 +19,17 @@ from django.views.defaults import bad_request
 from django.views.generic import ListView
 
 
+from django_comments.signals import comment_was_posted, comment_will_be_posted
 from django_comments.views.moderation import perform_flag
-from django_comments.views.utils import next_redirect
+from django_comments.views.utils import next_redirect, confirmation_view
 
-from django_comments_xtd import (comment_was_posted, comment_will_be_posted,
-                                 get_form, get_model as get_comment_model,
-                                 signals, signed)  #  module.
+from django_comments_xtd import (get_form, get_model as get_comment_model,
+                                 get_reactions_enum, signals, signed)
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import (TmpXtdComment,
+from django_comments_xtd.models import (CommentReaction, TmpXtdComment,
                                         MaxThreadLevelExceededException)
-from django_comments_xtd.utils import (get_current_site_id, send_mail,
-                                       get_app_model_options)
+from django_comments_xtd.utils import (check_option, get_current_site_id,
+                                       get_app_model_options, send_mail)
 
 
 XtdComment = get_comment_model()
@@ -246,9 +247,6 @@ def notify_comment_followers(comment):
             signed.dumps(instance, compress=True,
                          extra_key=settings.COMMENTS_XTD_SALT))
 
-    # model = apps.get_model(comment.content_type.app_label,
-    #                        comment.content_type.model)
-    # target = model._default_manager.get(pk=comment.object_pk)
     subject = _("new comment posted")
     text_message_template = loader.get_template(
         "django_comments_xtd/email_followup_comment.txt")
@@ -363,16 +361,13 @@ def flag(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
-    if not get_app_model_options(comment=comment)['allow_flagging']:
-        ctype = ContentType.objects.get_for_model(comment.content_object)
-        raise Http404("Comments posted to instances of '%s.%s' are not "
-                      "explicitly allowed to receive 'removal suggestion' "
-                      "flags. Check the COMMENTS_XTD_APP_MODEL_OPTIONS "
-                      "setting." % (ctype.app_label, ctype.model))
+    check_option(comment, "allow_flagging")
+
     # Flag on POST.
     if request.method == 'POST':
         perform_flag(request, comment)
-        return next_redirect(request, fallback=next or 'comments-flag-done',
+        return next_redirect(request,
+                             fallback=next or 'comments-xtd-react-done',
                              c=comment.pk)
 
     # Render a form on GET
@@ -381,6 +376,81 @@ def flag(request, comment_id, next=None):
             'comment': comment,
             'next': next
         })
+
+
+@csrf_protect
+@login_required
+def react(request, comment_id, next=None):
+    """
+    A registered user reacts to a comment. Confirmation on GET, action on POST.
+
+    Templates: :template:`django_comments_xtd/react.html`,
+    Context:
+        comment
+            the `comments.comment` object the user reacted to.
+    """
+    comment = get_object_or_404(get_comment_model(), pk=comment_id,
+                                site__pk=get_current_site_id(request))
+    check_option(comment, "allow_reactions")
+    # Flag on POST
+    if request.method == 'POST':
+        perform_react(request, comment)
+        return next_redirect(request,
+                             fallback=next or 'comments-xtd-react-done',
+                             c=comment.pk)
+    # Render a form on GET
+    else:
+        user_reactions = []
+        cr_qs = CommentReaction.objects.filter(comment=comment,
+                                               authors=request.user)
+        for cmt_reaction in cr_qs:
+            user_reactions.append(get_reactions_enum()(cmt_reaction.reaction))
+        return render(request, 'django_comments_xtd/react.html', {
+            'comment': comment,
+            'user_reactions': user_reactions,
+            'next': next
+        })
+
+
+def perform_react(request, comment):
+    """Save the user reaction and send the signal comment_got_a_reaction."""
+    created = False
+    cr_qs = CommentReaction.objects.filter(reaction=request.POST['reaction'],
+                                           comment=comment)
+    if cr_qs.filter(authors=request.user).count() == 1:
+        if cr_qs[0].counter == 1:
+            cr_qs.delete()
+        else:
+            cr_qs.update(counter=F('counter') - 1)
+            cr_qs[0].authors.remove(request.user)
+    else:
+        cmt_reaction, created = CommentReaction.objects.get_or_create(
+            reaction=request.POST['reaction'],
+            comment=comment
+        )
+        cmt_reaction.authors.add(request.user)
+        cmt_reaction.counter += 1
+        cmt_reaction.save()
+    signals.comment_got_a_reaction.send(
+        sender=comment.__class__,
+        comment=comment,
+        reaction=request.POST['reaction'],
+        created=created,
+        request=request
+    )
+
+
+def react_done(request):
+    """Displays a "User reacted to this comment" success page."""
+    comment_pk = request.GET.get("c", None)
+    if comment_pk:
+        comment = get_object_or_404(get_comment_model(), pk=comment_pk,
+                                    site__pk=get_current_site_id(request))
+    else:
+        comment = None
+    return render(request, 'django_comments_xtd/reacted.html', {
+        "comment": comment
+    })
 
 
 class XtdCommentListView(ListView):

@@ -1,0 +1,15 @@
+{% for item in reactions %}
+  {% if forloop.counter0|divisibleby:break_every %}
+    {% if forloop.counter0 == 0 %}<div class="text-center">
+    {% else %}</div><div class="text-center">{% endif %}
+  {% endif %}
+
+  <button
+    type="submit" name="reaction" value="{{ item.value }}"
+    class="secondary {% if item in user_reactions %}active{% endif %}"
+  >
+    <span class="emoji">&{{ item.icon }};</span>&nbsp;&nbsp;{{ item.label }}
+  </button>
+
+  {% if forloop.last %}</div>{% endif %}
+{% endfor %}

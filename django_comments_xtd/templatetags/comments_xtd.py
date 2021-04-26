@@ -13,12 +13,13 @@ from django.template import (Library, Node, TemplateSyntaxError,
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+
 from django_comments.templatetags import comments
 
-from django_comments_xtd.conf import settings
 from django_comments_xtd import (get_model as get_comment_model,
                                  get_reactions_enum)
 from django_comments_xtd.api import frontend
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import max_thread_level_for_content_type
 from django_comments_xtd.utils import (get_app_model_options,
                                        get_current_site_id, get_html_id_suffix)
@@ -315,10 +316,11 @@ class RenderXtdCommentListNode(comments.RenderCommentListNode):
             app_model = "%s.%s" % (ctype.app_label, ctype.model)
             MTL = settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
             mtl = MTL.get(app_model, settings.COMMENTS_XTD_MAX_THREAD_LEVEL)
-            context_dict['max_thread_level'] = mtl
-
-            # Pass the list to control rendering of replies.
-            context_dict['reply_stack'] = []
+            context_dict.update({
+                'max_thread_level': mtl,
+                'reply_stack': [],  # List to control reply rendering.
+                'show_nested': True
+            })
 
             # get_app_model_options returns a dict like: {
             #     'who_can_post': 'all' | 'users',
@@ -388,7 +390,28 @@ def get_commentbox_props(parser, token):
 
 # ----------------------------------------------------------------------
 @register.simple_tag
-def reactions_enum_list():
+def comment_reaction_form_target(comment):
+    """
+    Get the target URL for the comment reaction form.
+
+    Example::
+
+        <form action="{% comment_reaction_form_target comment %}" method="post">
+    """
+    return reverse("comments-xtd-react", args=(comment.id,))
+
+
+@register.inclusion_tag('includes/django_comments_xtd/reactions_buttons.html')
+def render_reactions_buttons(user_reactions):
+    return {
+        'reactions': get_reactions_enum(),
+        'user_reactions': user_reactions,
+        'break_every': settings.COMMENTS_XTD_REACTIONS_ROW_LENGTH
+    }
+
+
+@register.simple_tag
+def reactions_enum_strlist():
     """
     Returns a string representing the list of available comment reactions.
 
@@ -398,6 +421,18 @@ def reactions_enum_list():
     the docs to know how to extend comment reactions.
     """
     return get_reactions_enum().strlist()
+
+
+@register.filter
+def authors_list(cmt_reaction):
+    return [settings.COMMENTS_XTD_API_USER_REPR(author)
+            for author in cmt_reaction.authors.all()]
+
+
+@register.filter
+def get_reaction_enum(cmt_reaction):
+    """Returns the ReactionEnum corresponding to the given CommentReaction."""
+    return get_reactions_enum()(cmt_reaction.reaction)
 
 
 # ----------------------------------------------------------------------

@@ -9,7 +9,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render, resolve_url
 from django.template import loader
 from django.urls import reverse
@@ -159,14 +159,22 @@ comment_was_posted.connect(on_comment_was_posted, sender=TmpXtdComment)
 
 def sent(request, using=None):
     comment_pk = request.GET.get("c", None)
+    if not comment_pk:
+        return HttpResponseBadRequest("Comment doesn't exist")
+
     try:
         comment_pk = int(comment_pk)
         comment = XtdComment.objects.get(pk=comment_pk)
     except (TypeError, ValueError, XtdComment.DoesNotExist):
-        value = signing.loads(comment_pk)
-        ctype, object_pk = value.split(":")
-        model = apps.get_model(*ctype.split(".", 1))
-        target = model._default_manager.using(using).get(pk=object_pk)
+
+        try:
+            value = signing.loads(comment_pk)
+            ctype, object_pk = value.split(":")
+            model = apps.get_model(*ctype.split(".", 1))
+            target = model._default_manager.using(using).get(pk=object_pk)
+        except Exception:
+            return HttpResponseBadRequest("Comment doesn't exist")
+
         template_arg = ["django_comments_xtd/posted.html",
                         "comments/posted.html"]
         return render(request, template_arg, {'target': target})

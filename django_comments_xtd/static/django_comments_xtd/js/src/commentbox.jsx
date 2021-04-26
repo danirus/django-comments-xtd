@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import * as lib from './lib.js';
 import django from 'django';

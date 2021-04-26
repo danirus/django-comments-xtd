@@ -10,6 +10,7 @@ from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.schemas.openapi import AutoSchema
 
 from django_comments_xtd.conf import settings
 from django_comments_xtd.api import serializers
@@ -92,6 +93,8 @@ class CreateReportFlag(generics.CreateAPIView):
 
     serializer_class = serializers.FlagSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    schema = AutoSchema(operation_id_base="ReportFlag")
 
     def post(self, request, *args, **kwargs):
         comment = get_object_or_404(get_comment_model(),

@@ -98,6 +98,7 @@ def commentbox_props(obj, user, request=None):
             "timestamp": form['timestamp'].value(),
             "security_hash": form['security_hash'].value()
         },
+        "default_followup": settings.COMMENTS_XTD_DEFAULT_FOLLOWUP,
         "html_id_suffix": get_html_id_suffix(obj),
         "max_thread_level": max_thread_level_for_content_type(ctype),
     }
@@ -113,7 +114,7 @@ def commentbox_props(obj, user, request=None):
         d['request_name'] = True if not len(user.get_full_name()) else False
         d['request_email_address'] = True if not user.email else False
     else:
-        d['login_url'] = "/admin/login/"
+        d['login_url'] = settings.LOGIN_URL
         d['like_url'] = reverse("comments-xtd-like", args=(0,))
         d['dislike_url'] = reverse("comments-xtd-dislike", args=(0,))
 

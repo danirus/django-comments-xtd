@@ -70,6 +70,9 @@ COMMENTS_XTD_API_USER_REPR = username
 # Should return an URL.
 COMMENTS_XTD_API_GET_USER_AVATAR = "django_comments_xtd.utils.get_user_avatar"
 
+
+# Makes the "Notify me about followup comments" checkbox in the
+# comment form checked (True) or unchecked (False) by default.
 COMMENTS_XTD_DEFAULT_FOLLOWUP = False
 
 # How many reaction buttons can be displayed

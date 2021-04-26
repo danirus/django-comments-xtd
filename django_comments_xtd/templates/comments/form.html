@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load comments %}
 
-<form method="POST" autocomplete="off" action="{% comment_form_target %}">
+<form method="POST" autocomplete="off" onsubmit="post.disabled = true; return true;" action="{% comment_form_target %}">
   {% csrf_token %}
   <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}" />
   {% for field in form %}

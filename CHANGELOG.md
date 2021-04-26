@@ -1,6 +1,6 @@
 # Change Log
 
-## [3.0.0] -
+# [3.0.0] -
 
     * Fixes issue #194, about setting COMMENTS_HIDE_REMOVED and the new setting
       COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED. Up until v3.0.0 removed comments
@@ -21,6 +21,23 @@
       user reactions. In addition there is new frontend code to handle user
       reactions. To get aligned with issue #161, the new frontend to handle
       reactions doesn't have additional dependencies.
+
+## [2.9.1] - 2021-04-14
+
+    * Fixes issue when the 'sent' view does not receive a 'c' query string parameter. See [PR-305](https://github.com/danirus/django-comments-xtd/pull/305). Thanks to @dest81.
+
+## [2.9.0] - 2021-03-20
+
+    * Drops support for Django 2.0 and 2.1.
+    * Requires django-contrib-comments >= 2.1, and djangorestframework >= 3.12.
+    * Fixes warning when generating the OpenAPI schema. Thanks to @ivanychev. Seee[PR-296](https://github.com/danirus/django-comments-xtd/pull/296).
+    * Fixes issue with `render_xtdcomment_tree` templatetag, thanks to @dest81. See [PR-295](https://github.com/danirus/django-comments-xtd/pull/295).
+    * Fixes issue #291, about the frontend plugin not being aware of the setting COMMENTS_XTD_DEFAULT_FOLLOWUP. It also fixes the content of the `login_url` props attribute. Its value is now the content of `settings.LOGIN_URL`.
+    * Fixes issue #284, about sending a comment twice by clicking the comment send button twice. It happened when not using the JavaScript plugin.
+
+## [2.8.5] - 2021-03-02
+
+    * Fixes issue #292 with the workflow upload-pypi.yml, that caused the package bundle to be built without JavaScript files.
 
 ## [2.8.4] - 2021-02-28
 

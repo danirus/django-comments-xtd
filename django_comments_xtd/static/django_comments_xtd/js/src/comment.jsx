@@ -2,7 +2,6 @@ import $ from 'jquery';
 import django from 'django';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Remarkable } from 'remarkable';
 
 import { CommentForm } from './commentform.jsx';

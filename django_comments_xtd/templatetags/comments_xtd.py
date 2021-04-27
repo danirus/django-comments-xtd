@@ -324,8 +324,9 @@ class RenderXtdCommentListNode(comments.RenderCommentListNode):
 
             # get_app_model_options returns a dict like: {
             #     'who_can_post': 'all' | 'users',
-            #     'allow_flagging': <boolean>,
-            #     'allow_reactions': <boolean>
+            #     'allow_comment_flagging': <boolean>,
+            #     'allow_comment_reactions': <boolean>,
+            #     'allow_object_reactions': <boolean>
             # }
             context_dict.update(
                 get_app_model_options(content_type=ctype.app_label)

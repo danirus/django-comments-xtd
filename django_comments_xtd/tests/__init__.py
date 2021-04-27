@@ -27,5 +27,5 @@ def run_tests():
         runner = get_runner(settings,
                             "django.test.simple.DjangoTestSuiteRunner")
     test_suite = runner(verbosity=2, interactive=True, failfast=False)
-    results = test_suite.run_tests(["django_comments_xtd"])
+    results = test_suite.run_tests(["django_comments_xtd.tests.test_templatetags.RenderXtdCommentListTestCase"])
     return results

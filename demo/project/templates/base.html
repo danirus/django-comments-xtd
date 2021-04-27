@@ -25,12 +25,15 @@
         </div>
         <nav class="menu">
           {% if user.is_authenticated %}
+            {% if user.is_staff %}
+              <a href="{% url 'admin:index' %}">Admin</a>
+            {% endif %}
             <a class="{% block nav-account-class %}{% endblock %}" href="{% url 'account' %}">Account</a>
           {% else %}
             <a class="{% block nav-login-class %}{% endblock %}" href="{% url 'login' %}">Login</a>
           {% endif %}
           <a class="{% block nav-stories-class %}{% endblock %}" href="{% url 'stories' %}">Stories</a>
-          <a class="{% block nav-quotes-class %}{% endblock %}" href="quotes.html">Quotes</a>
+          <a class="{% block nav-quotes-class %}{% endblock %}" href="{% url 'quotes' %}">Quotes</a>
           {% if 'rosetta' in settings.INSTALLED_APPS %}
             <form id="langform" hidden>
               {% csrf_token %}<input type="text" id="language" name="language" /><input type="text" name="next" />

@@ -68,10 +68,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 CONFIRMATION_CHOICES = (
-    ("B", "Blocked"),
-    ("S", "Sign Up"),
-    ("R", "Reset Pwd"),
-    ("C", "Cancel Account"),
     ("E", "Change E-Mail"),
 )
 

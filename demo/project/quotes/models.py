@@ -12,7 +12,7 @@ class PublicManager(models.Manager):
     """Returns published quotes that are not in the future."""
 
     def published(self):
-        return self.get_queryset().filter(publish__lte=timezone.now())
+        return self.get_queryset().filter(published_time__lte=timezone.now())
 
 
 class Quote(models.Model):
@@ -24,24 +24,25 @@ class Quote(models.Model):
     author = models.CharField('author', max_length=255)
     url_source = models.URLField('url source', blank=True, null=True)
     allow_comments = models.BooleanField('allow comments', default=True)
-    publish = models.DateTimeField('publish', default=timezone.now)
+    published_time = models.DateTimeField('published time',
+                                          default=timezone.now)
 
     objects = PublicManager()
 
     class Meta:
         db_table = 'comp_quotes'
-        ordering = ('-publish',)
+        ordering = ('-published_time',)
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('quotes-quote-detail', kwargs={'slug': self.slug})
+        return reverse('quote-detail', kwargs={'slug': self.slug})
 
 
 class QuoteCommentModerator(SpamModerator):
     email_notification = True
-    auto_moderate_field = 'publish'
+    auto_moderate_field = 'published_time'
     moderate_after = 365
 
 

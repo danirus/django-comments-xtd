@@ -77,14 +77,14 @@
 
           {% endif %}
         </div>
-      </div>
 
-      {% if form.reply_to.value == "0" %}
-        <section class="comment-form">
-          <h5 class="text-center">Your comment</h5>
-          {% include "comments/form.html" %}
-        </section>
-      {% endif %}
+        {% if form.reply_to.value == "0" %}
+          <section class="comment-form">
+            <h5 class="text-center">Your comment</h5>
+            {% include "comments/form.html" %}
+          </section>
+        {% endif %}
+      </div>
     </div>
   </article>
 </main>

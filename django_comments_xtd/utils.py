@@ -3,10 +3,7 @@
 
 from copy import copy
 import hashlib
-try:
-    import Queue as queue  # python2
-except ImportError:
-    import queue as queue  # python3
+import queue as queue
 import threading
 try:
     from urllib.parse import urlencode
@@ -70,13 +67,14 @@ def get_app_model_options(comment=None, content_type=None):
     If a comment is given, the content_type is extracted from it. Otherwise,
     the content_type kwarg has to be provided. The funcion checks whether there
     is a matching dictionary for the app_label.model of the content_type, and
-    returns it. It returns the default otherwise: { 'who_can_post': 'all',
-    'allow_flagging': False, 'allow_feedback': False, 'show_feedback': False }.
+    returns it. Otherwise it returns the default from:
+        `django_comments_xtd.defaults.COMMENTS_XTD_APP_MODEL_OPTIONS`.
     """
     default = {
         'who_can_post': 'all',  # Valid values: "users", "all"
-        'allow_flagging': False,
-        'allow_reactions': False
+        'allow_comment_flagging': False,
+        'allow_comment_reactions': False,
+        'allow_object_reactions': False
     }
     if 'default' in settings.COMMENTS_XTD_APP_MODEL_OPTIONS:
         # The developer overwrite the default settings. Check whether

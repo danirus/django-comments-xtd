@@ -17,6 +17,7 @@
     border-radius: 0.25rem;
     background-color: transparent;
     font-size: .8rem;
+    line-height: 1.4;
 }
 
 .dropdown .option-selected:hover {
@@ -65,7 +66,7 @@
     background-color: white;
     border-radius: 0.25rem;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
-    top: 100%;
+    top: 110%;
     /* left: 0; */
     right: 0;
     z-index: 99;

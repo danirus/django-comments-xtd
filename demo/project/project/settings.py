@@ -192,9 +192,9 @@ COMMENTS_XTD_SEND_HTML_EMAIL = True
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'default': {
         'who_can_post': 'all',  # Valid values: "users", "all".
-        'comment_flagging': True,
-        'comment_reactions': True,
-        'object_reactions': True,
+        'allow_comment_flagging': True,
+        'allow_comment_reactions': True,
+        'allow_object_reactions': True,
     }
 }
 

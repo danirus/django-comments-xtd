@@ -46,8 +46,9 @@ COMMENTS_XTD_THREADED_EMAILS = True
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'default': {
         'who_can_post': 'all',  # Valid values: "users", "all"
-        'allow_flagging': False,
-        'allow_reactions': False
+        'allow_comment_flagging': False,
+        'allow_comment_reactions': False,
+        'allow_object_reactions': False
     }
 }
 

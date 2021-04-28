@@ -186,8 +186,11 @@ COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
 
+COMMENTS_XTD_API_USER_REPR = lambda user: user.name
+
 COMMENTS_XTD_SALT = os.environ.get('COMMENTS_XTD_SALT', 1).encode('utf-8')
 COMMENTS_XTD_SEND_HTML_EMAIL = True
+COMMENTS_XTD_MAX_THREAD_LEVEL = 1
 
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'default': {
@@ -197,6 +200,9 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
         'allow_object_reactions': True,
     }
 }
+
+COMMENTS_XTD_REACTIONS_ENUM = "project.enums.ReactionEnum"
+
 
 # Depending on the action the users.edit_avatar view redirects to
 # 'avatar.views.add', 'avatar.views.change', or 'avatar.views.delete'.

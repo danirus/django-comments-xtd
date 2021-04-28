@@ -8,7 +8,9 @@
 {% block title %}{{ block.super }}&nbsp;&bull;&nbsp;quotes{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/comments.css' %}">{% endblock %}
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/comments.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/reactions.css' %}">
+{% endblock %}
 
 {% block nav-quotes-class %}active{% endblock %}
 

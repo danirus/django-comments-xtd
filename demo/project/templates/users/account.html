@@ -2,9 +2,16 @@
 
 {% load i18n %}
 {% load static %}
+{% load comments %}
+{% load comments_xtd %}
 {% load avatar_tags %}
 
 {% block title %}{{ block.super }}&nbsp;&bull;&nbsp;Account{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/comments.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/reactions.css' %}">
+{% endblock %}
 
 {% block nav-account-class %}active{% endblock %}
 
@@ -13,7 +20,40 @@
   <div class="row">
     <div class="column">
       <h3>{% trans "Contributions" %}</h3>
-      <p>You have contributed to the talk with the following comments:</p>
+      <h6 class="text-center">You have contributed to this website's conversation with the following comments.</h6>
+      {% for comment in comments %}
+        <div class="mt32">
+          {% translate "Posted to:" %} <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>.
+          {% if comment.level > 0 %}
+            &nbsp;{% translate "In response to another comment." %}
+          {% endif %}
+          {% if comment.nested_count %}
+            &nbsp;{% blocktranslate count number_of_responses=comment.nested_count %}It has one response.{% plural %}It has {{ number_of_responses }} responses.{% endblocktranslate %}
+          {% endif %}
+        </div>
+        <div class="dcx ml32">
+          <div class="comment-box without-avatar" id="c{{ comment.id}}">
+            <div class="comment">
+              <div class="header">
+                <div>{{ comment.submit_date }}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>
+              </div>
+              <div class="body">{{ comment.comment|linebreaks|escape }}</div>
+              <div class="footer"></div>
+            </div>
+          </div>
+          {% if comment.reactions.count > 0 %}
+            <div class="ml8 small">
+              {% for reaction in comment.reactions.all %}
+                {% with reaction_enum=reaction|get_reaction_enum %}
+                  <div>
+                    {{ reaction|authors_list|join:', ' }} reacted with <span class="emoji">&{{ reaction_enum.icon }}</span>.
+                  </div>
+                {% endwith %}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
     </div>
   </div>
 </div>

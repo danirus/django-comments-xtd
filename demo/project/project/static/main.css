@@ -1,6 +1,6 @@
 :root, HTML {
     box-sizing: border-box;
-    font-size: 18px;
+    font-size: 20px;
     margin: 0 auto;
     padding: 0;
     height: 100%;
@@ -257,7 +257,7 @@ a > * {
 
 main {
   flex: 1 0 auto;
-  padding: 1em;
+  padding: 1em 1em 2em;
 }
 
 .subtitle {
@@ -668,6 +668,8 @@ input.error:focus, textarea.error:focus,
 .text-center { text-align: center; }
 .text-right { text-align: right; }
 
+.ml8 { margin-left: 8px }
+.ml32 { margin-left: 32px }
 .mt32 { margin-top: 32px }
 .pb24 { padding-bottom: 24px }
 .pb32 { padding-bottom: 32px }

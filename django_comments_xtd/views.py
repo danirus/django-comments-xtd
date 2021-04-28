@@ -369,7 +369,7 @@ def flag(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
-    check_option(comment, "allow_flagging")
+    check_option(comment, "allow_comment_flagging")
 
     # Flag on POST.
     if request.method == 'POST':
@@ -399,7 +399,7 @@ def react(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
-    check_option(comment, "allow_reactions")
+    check_option(comment, "allow_comment_reactions")
     # Flag on POST
     if request.method == 'POST':
         perform_react(request, comment)

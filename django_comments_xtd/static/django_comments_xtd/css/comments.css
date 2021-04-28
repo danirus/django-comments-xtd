@@ -76,6 +76,10 @@
     margin-left: 16px;
 }
 
+.dcx .comment-box.without-avatar {
+    margin-left: 0px;
+}
+
 .dcx .level-1 {
     display: block;
     width: 52px;

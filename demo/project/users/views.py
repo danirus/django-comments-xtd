@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
+from django.db.models import Q
 from django.http.response import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -15,7 +16,7 @@ from django.views.defaults import bad_request
 
 from avatar import views as avatar_views
 
-from django_comments_xtd import signed
+from django_comments_xtd import signed, get_model
 
 from . import forget_me, remember_me
 from .decorators import not_authenticated
@@ -103,23 +104,20 @@ def user_logout(request):
 
 @login_required
 def user_account(request):
-    return render(request, 'users/account.html')
+    or_condition = Q(user=request.user) | Q(user_email=request.user.email)
+    comments = get_model().objects.filter(or_condition).order_by("submit_date")
+    return render(request, 'users/account.html', {'comments': comments})
 
 
 @login_required
-def edit_user(request,
-              email_form_msg="",
-              pdata_form_msg="",
-              avatar_form_msg=""):
+def edit_user(request, email_form_msg="", pdata_form_msg=""):
     email_form = EmailForm(user=request.user)
     pdata_form = PersonalDataForm(user=request.user)
     return render(request, 'users/edit_account.html', {
         'email_form': email_form,
         'email_form_msg': email_form_msg,
         'pdata_form': pdata_form,
-        'pdata_form_msg': pdata_form_msg,
-        # 'avatar_form': avatar_form,
-        'avatar_form_msg': avatar_form_msg
+        'pdata_form_msg': pdata_form_msg
     })
 
 

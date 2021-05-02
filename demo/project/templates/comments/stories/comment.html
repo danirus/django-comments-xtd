@@ -1,10 +1,13 @@
 {% load i18n %}
 {% load comments %}
 {% load comments_xtd %}
+{% load dcx_demo_tags %}
 
 <div id="c{{ comment.id }}" class="comment-box {% if show_nested %}{% comment_css_thread_range comment %}{% endif %}">
   {% if show_nested %}{{ comment.level|indent_divs }}{% endif %}
-  <div class="thread-space"></div>
+  <div class="user-avatar">
+    {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}
+  </div>
   <div class="comment">
     <div class="header">
       <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>

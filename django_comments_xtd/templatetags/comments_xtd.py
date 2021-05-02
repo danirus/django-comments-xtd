@@ -1,11 +1,5 @@
 import json
-import hashlib
 import re
-
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
 
 from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, TemplateSyntaxError,
@@ -14,7 +8,8 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 
-from django_comments.templatetags import comments
+from django_comments.templatetags.comments import (BaseCommentNode,
+                                                   RenderCommentListNode)
 
 from django_comments_xtd import (get_model as get_comment_model,
                                  get_reactions_enum)
@@ -28,277 +23,57 @@ from django_comments_xtd.utils import (get_app_model_options,
 register = Library()
 
 
-# ----------------------------------------------------------------------
-class XtdCommentCountNode(Node):
-    """Store the number of XtdComments for the given list of app.models"""
+class RenderXtdCommentListNode(RenderCommentListNode):
+    """Render the comment list directly."""
+
+    @classmethod
+    def handle_token(cls, parser, token):
+        """Class method to parse render_xtdcomment_list and return a Node."""
+        tokens = token.split_contents()
+        if tokens[1] != 'for':
+            raise TemplateSyntaxError("Second argument in %r tag must be 'for'"
+                                      % tokens[0])
+
+        # {% render_xtdcomment_list for obj %}
+        if len(tokens) == 3:
+            return cls(object_expr=parser.compile_filter(tokens[2]))
+
+        # {% render_cxtdomment_list for app.model pk %}
+        elif len(tokens) == 4:
+            return cls(
+                ctype=BaseCommentNode.lookup_content_type(tokens[2], tokens[0]),
+                object_pk_expr=parser.compile_filter(tokens[3])
+            )
+
+        # {% render_xtdcomment_list for [obj | app.model pk] [using tmpl] %}
+        elif len(tokens) > 4:
+            try:
+                template_path = tokens[-1]
+                num_tokens_between = tokens.index("using") - tokens.index("for")
+                if  num_tokens_between == 2:
+                    # {% render_xtdcomment_list for object using tmpl}
+                    return cls(object_expr=parser.compile_filter(tokens[2]),
+                               template_path=template_path)
+                elif num_tokens_between == 3:
+                    # {% render_xtdcomment_list for app.model pk using tmpl}
+                    tag_t, app_t = tokens[0], tokens[2]
+                    ctype = BaseCommentNode.lookup_content_type(app_t, tag_t)
+                    return cls(ctype=ctype,
+                               object_pk_expr=parser.compile_filter(tokens[3]),
+                               template_path=template_path)
+            except IndexError:
+                msg = ("Wrong syntax in %r tag. Valid syntaxes are: "
+                       "{% render_xtdcomment_list for [object] [using "
+                       "<template>] %} or {% render_xtdcomment_list for "
+                       "[app].[model] [obj_id] [using <tmpl>] %}")
+                raise TemplateSyntaxError(msg % tokens[0])
+
+    def __init__(self, *args, **kwargs):
+        self.template_path = None
+        if "template_path" in kwargs:
+            self.template_path = kwargs.pop("template_path")
+        super().__init__(*args, **kwargs)
 
-    def __init__(self, as_varname, content_types):
-        """Class method to parse get_xtdcomment_list and return a Node."""
-        self.as_varname = as_varname
-        self.qs = get_comment_model().objects.for_content_types(content_types)
-        self.qs = self.qs.filter(is_public=True)
-        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
-            self.qs = self.qs.filter(is_removed=False)
-
-    def render(self, context):
-        site_id = getattr(settings, "SITE_ID", None)
-        if not site_id and ('request' in context):
-            site_id = get_current_site_id(context['request'])
-        context[self.as_varname] = self.qs.filter(site=site_id).count()
-        return ''
-
-
-@register.tag
-def get_xtdcomment_count(parser, token):
-    """
-    Gets the comment count for the given params and populates the template
-    context with a variable containing that value, whose name is defined by the
-    'as' clause.
-
-    Syntax::
-
-        {% get_xtdcomment_count as var for app.model [app.model] %}
-
-    Example usage::
-
-        {% get_xtdcomment_count as comments_count for blog.story blog.quote %}
-
-    """
-    tokens = token.contents.split()
-
-    if tokens[1] != 'as':
-        raise TemplateSyntaxError("2nd. argument in %r tag must be 'for'" %
-                                  tokens[0])
-
-    as_varname = tokens[2]
-
-    if tokens[3] != 'for':
-        raise TemplateSyntaxError("4th. argument in %r tag must be 'for'" %
-                                  tokens[0])
-
-    content_types = _get_content_types(tokens[0], tokens[4:])
-    return XtdCommentCountNode(as_varname, content_types)
-
-
-# ----------------------------------------------------------------------
-class WhoCanPostNode(Node):
-    """Stores the who_can_post value from COMMENTS_XTD_APP_MODEL_OPTION"""
-
-    def __init__(self, content_type, as_varname):
-        self.content_type = content_type
-        self.as_varname = as_varname
-
-    def render(self, context):
-        context[self.as_varname] = get_app_model_options(
-            content_type=self.content_type)['who_can_post']
-        return ''
-
-
-@register.tag
-def get_who_can_post(parser, token):
-    """
-    Gets the comment count for the given params and populates the template
-    context with a variable containing that value, whose name is defined by the
-    'as' clause.
-
-    Syntax::
-
-        {% get_who_can_post for app.model as var %}
-
-    Example usage::
-
-        {% get_who_can_post for articles.article as who_can_post %}
-
-    """
-    tokens = token.contents.split()
-
-    if tokens[1] != 'for':
-        raise TemplateSyntaxError("2nd. argument in %r tag must be 'for'" %
-                                  tokens[0])
-
-    if tokens[3] != 'as':
-        raise TemplateSyntaxError("4th. argument in %r tag must be 'as'" %
-                                  tokens[0])
-
-    content_type = _get_content_types(tokens[0], [tokens[2]])
-    as_varname = tokens[4]
-    return WhoCanPostNode(content_type, as_varname)
-
-
-# ----------------------------------------------------------------------
-class BaseLastXtdCommentsNode(Node):
-    """Base class to deal with the last N XtdComments for a list of app.model"""
-
-    def __init__(self, count, content_types, template_path=None):
-        """Class method to parse get_xtdcomment_list and return a Node."""
-        try:
-            self.count = int(count)
-        except Exception:
-            self.count = Variable(count)
-
-        self.content_types = content_types
-        self.template_path = template_path
-
-
-class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
-    def render(self, context):
-        if not isinstance(self.count, int):
-            self.count = int(self.count.resolve(context))
-
-        site_id = getattr(settings, "SITE_ID", None)
-        if not site_id and ('request' in context):
-            site_id = get_current_site_id(context['request'])
-
-        qs = get_comment_model().objects.for_content_types(
-            self.content_types, site=site_id)
-
-        qs = qs.filter(is_public=True)
-        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
-            qs = qs.filter(is_removed=False)
-
-        qs = qs.order_by('submit_date')[:self.count]
-
-        strlist = []
-        context_dict = context.flatten()
-        for xtd_comment in qs:
-            if self.template_path:
-                template_arg = self.template_path
-            else:
-                template_arg = [
-                    "django_comments_xtd/%s/%s/comment.html" % (
-                        xtd_comment.content_type.app_label,
-                        xtd_comment.content_type.model),
-                    "django_comments_xtd/%s/comment.html" % (
-                        xtd_comment.content_type.app_label,),
-                    "django_comments_xtd/comment.html"
-                ]
-            context_dict['comment'] = xtd_comment
-            strlist.append(loader.render_to_string(template_arg, context_dict))
-        return ''.join(strlist)
-
-
-class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
-    def __init__(self, count, as_varname, content_types):
-        super(GetLastXtdCommentsNode, self).__init__(count, content_types)
-        self.as_varname = as_varname
-
-    def render(self, context):
-        if not isinstance(self.count, int):
-            self.count = int(self.count.resolve(context))
-
-        site_id = getattr(settings, "SITE_ID", None)
-        if not site_id and ('request' in context):
-            site_id = get_current_site_id(context['request'])
-
-        qs = get_comment_model().objects.for_content_types(
-                self.content_types, site=site_id)
-
-        qs = qs.filter(is_public=True)
-        if getattr(settings, 'COMMENTS_HIDE_REMOVED', True):
-            qs = qs.filter(is_removed=False)
-
-        qs = qs.order_by('submit_date')[:self.count]
-
-        context[self.as_varname] = qs
-        return ''
-
-
-def _get_content_types(tagname, tokens):
-    content_types = []
-    for token in tokens:
-        try:
-            app, model = token.split('.')
-            content_types.append(
-                ContentType.objects.get(app_label=app, model=model))
-        except ValueError:
-            raise TemplateSyntaxError(
-                "Argument %s in %r must be in the format 'app.model'" % (
-                    token, tagname))
-        except ContentType.DoesNotExist:
-            raise TemplateSyntaxError(
-                "ContentType '%s.%s' used for tag %r doesn't exist" % (
-                    app, model, tagname))
-    return content_types
-
-
-@register.tag
-def render_last_xtdcomments(parser, token):
-    """
-    Render the last N XtdComments through the
-      ``django_comments_xtd/comment.html`` template
-
-    Syntax::
-
-        {% render_last_xtdcomments N for app.model [app.model] using template %}
-
-    Example usage::
-
-        {% render_last_xtdcomments 5 for blog.story blog.quote using "t.html" %}
-    """
-    tokens = token.contents.split()
-    try:
-        count = tokens[1]
-    except ValueError:
-        raise TemplateSyntaxError(
-            "Second argument in %r tag must be a integer" % tokens[0])
-
-    if tokens[2] != 'for':
-        raise TemplateSyntaxError(
-            "Third argument in %r tag must be 'for'" % tokens[0])
-
-    try:
-        token_using = tokens.index("using")
-        content_types = _get_content_types(tokens[0], tokens[3:token_using])
-        try:
-            template = tokens[token_using + 1].strip('" ')
-        except IndexError:
-            raise TemplateSyntaxError("Last argument in %r tag must be a "
-                                      "relative template path" % tokens[0])
-    except ValueError:
-        content_types = _get_content_types(tokens[0], tokens[3:])
-        template = None
-
-    return RenderLastXtdCommentsNode(count, content_types, template)
-
-
-@register.tag
-def get_last_xtdcomments(parser, token):
-    """
-    Get the last N XtdComments.
-
-    Syntax::
-
-        {% get_last_xtdcomments N as var for app.model [app.model] %}
-
-    Example usage::
-
-        {% get_last_xtdcomments 5 as last_comments for blog.story blog.quote %}
-
-    """
-    tokens = token.contents.split()
-
-    try:
-        count = int(tokens[1])
-    except ValueError:
-        raise TemplateSyntaxError(
-            "Second argument in %r tag must be a integer" % tokens[0])
-
-    if tokens[2] != 'as':
-        raise TemplateSyntaxError(
-            "Third argument in %r tag must be 'as'" % tokens[0])
-
-    as_varname = tokens[3]
-
-    if tokens[4] != 'for':
-        raise TemplateSyntaxError(
-            "Fifth argument in %r tag must be 'for'" % tokens[0])
-
-    content_types = _get_content_types(tokens[0], tokens[5:])
-    return GetLastXtdCommentsNode(count, as_varname, content_types)
-
-
-# ----------------------------------------------------------------------
-class RenderXtdCommentListNode(comments.RenderCommentListNode):
     def render(self, context):
         ctype, object_pk = self.get_target_ctype_pk(context)
         if object_pk:
@@ -331,8 +106,10 @@ class RenderXtdCommentListNode(comments.RenderCommentListNode):
             context_dict.update(
                 get_app_model_options(content_type=ctype.app_label)
             )
-            liststr = loader.render_to_string(template_search_list,
-                                              context_dict)
+            liststr = loader.render_to_string(
+                self.template_path or template_search_list,
+                context_dict
+            )
             return liststr
         else:
             return ''
@@ -346,8 +123,8 @@ def render_xtdcomment_list(parser, token):
 
     Syntax::
 
-        {% render_xtdcomment_list for [object] %}
-        {% render_xtdcomment_list for [app].[model] [object_id] %}
+        {% render_xtdcomment_list for [object] [using <template>] %}
+        {% render_xtdcomment_list for [app].[model] [obj_id] [using <tmpl>] %}
 
     Example usage::
 
@@ -434,63 +211,6 @@ def authors_list(cmt_reaction):
 def get_reaction_enum(cmt_reaction):
     """Returns the ReactionEnum corresponding to the given CommentReaction."""
     return get_reactions_enum()(cmt_reaction.reaction)
-
-
-# ----------------------------------------------------------------------
-@register.filter
-def xtd_comment_gravatar_url(email, size=48, avatar='identicon'):
-    """
-    This is the parameter of the production avatar.
-    The first parameter is the way of generating the
-    avatar and the second one is the size.
-    The way os generating has mp/identicon/monsterid/wavatar/retro/hide.
-    """
-    return ("//www.gravatar.com/avatar/%s?%s&d=%s" %
-            (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
-             urlencode({'s': str(size)}), avatar))
-
-
-# ----------------------------------------------------------------------
-@register.filter
-def xtd_comment_gravatar(email, config='48,identicon'):
-    size, avatar = config.split(',')
-    url = xtd_comment_gravatar_url(email, size, avatar)
-    return mark_safe('<img src="%s" height="%s" width="%s">' %
-                     (url, size, size))
-
-
-# ----------------------------------------------------------------------
-@register.filter
-def comments_xtd_api_list_url(obj):
-    ctype = ContentType.objects.get_for_model(obj)
-    ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
-    return reverse('comments-xtd-api-list', kwargs={'content_type': ctype_slug,
-                                                    'object_pk': obj.id})
-
-
-# ----------------------------------------------------------------------
-@register.filter
-def has_permission(user_obj, str_permission):
-    try:
-        return user_obj.has_perm(str_permission)
-    except Exception as exc:
-        raise exc
-
-
-# ----------------------------------------------------------------------
-@register.filter
-def can_receive_comments_from(obj, user):
-    ct = ContentType.objects.get_for_model(obj)
-    app_label = '%s.%s' % (ct.app_label, ct.model)
-    options = get_app_model_options(content_type=app_label)
-    who_can_post = options['who_can_post']
-    if (
-            who_can_post == 'all' or
-            (who_can_post == 'users' and user.is_authenticated)
-    ):
-        return True
-    else:
-        return False
 
 
 # ----------------------------------------------------------------------
@@ -583,14 +303,13 @@ def get_top_comment(reply_stack):
 
 
 @register.filter
-def pop_comments_lte(reply_stack, level_lte=0):
+def pop_comments_gte(reply_stack, level_lte=0):
     comments_lte = []
     try:
-        while True:
-            comment = reply_stack.pop()
-            if comment.level < level_lte:
+        for index in range(len(reply_stack) - 1, -1, -1):
+            if reply_stack[index].level < level_lte:
                 break
-            comments_lte.append(comment)
+            comments_lte.append(reply_stack.pop(index))
     finally:
         return comments_lte
 

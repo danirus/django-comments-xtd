@@ -32,7 +32,7 @@
           {% endif %}
         </div>
         <div class="dcx ml32">
-          <div class="comment-box without-avatar" id="c{{ comment.id}}">
+          <div class="comment-box ml0" id="c{{ comment.id}}">
             <div class="comment">
               <div class="header">
                 <div>{{ comment.submit_date }}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>
@@ -42,15 +42,20 @@
             </div>
           </div>
           {% if comment.reactions.count > 0 %}
-            <div class="ml8 small">
+            <ul class="mx0 my0 small">
               {% for reaction in comment.reactions.all %}
                 {% with reaction_enum=reaction|get_reaction_enum %}
-                  <div>
-                    {{ reaction|authors_list|join:', ' }} reacted with <span class="emoji">&{{ reaction_enum.icon }}</span>.
-                  </div>
+                  <li class="my0">
+                    {% blocktranslate with r_icon=reaction_enum.icon count r_counter=reaction.counter %}
+                    One person reacted with <span class="emoji">&{{ r_icon }}</span>
+                    {% plural %}
+                    {{ r_counter }} people reacted with <span class="emoji">&{{ r_icon }}</span>
+                    {% endblocktranslate %}
+                    ({{ reaction|authors_list|join:', ' }})
+                  </li>
                 {% endwith %}
               {% endfor %}
-            </div>
+            </ul>
           {% endif %}
         </div>
       {% endfor %}

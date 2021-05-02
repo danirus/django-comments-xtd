@@ -1,5 +1,13 @@
+import hashlib
+from urllib.parse import urlencode
+
+from django.contrib.auth import get_user_model
 from django.template import Library
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+
+from avatar.templatetags.avatar_tags import avatar
+from avatar.utils import cache_result
 
 
 register = Library()
@@ -59,3 +67,28 @@ def language_tuple(value):
     except KeyError:
         return value
 language_tuple.is_safe = True
+
+
+def get_gravatar_url(email, size=48, avatar='identicon'):
+    """
+    This is the parameter of the production avatar.
+    The first parameter is the way of generating the
+    avatar and the second one is the size.
+    The way os generating has mp/identicon/monsterid/wavatar/retro/hide.
+    """
+    return ("//www.gravatar.com/avatar/%s?%s&d=%s" %
+            (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
+             urlencode({'s': str(size)}), avatar))
+
+
+@cache_result
+@register.simple_tag
+def get_user_avatar_or_gravatar(email, config='48,identicon'):
+    size, gravatar_type = config.split(',')
+    try:
+        user = get_user_model().objects.get(email=email)
+        return avatar(user, size)
+    except get_user_model().DoesNotExist:
+        url = get_gravatar_url(email, size, gravatar_type)
+        return mark_safe('<img src="%s" height="%s" width="%s">' %
+                        (url, size, size))

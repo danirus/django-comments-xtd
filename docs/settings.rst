@@ -370,7 +370,7 @@ This setting has to be considered in combination with :setting:`COMMENTS_HIDE_RE
 Case 1
 ------
 
-When Parent's app setting ``COMMENTS_HIDE_REMOVED`` is ``True``, removing a comment has the effect of hiding it and its nested comments:
+When parent's app setting ``COMMENTS_HIDE_REMOVED`` is ``True``, removing a comment has the effect of hiding it and its nested comments:
 
   .. code-block::
 
@@ -398,7 +398,7 @@ In case 2 :setting:`COMMENTS_HIDE_REMOVED` is ``False``, but :setting:`XTD_COMME
 Case 3
 ------
 
-In case 3 the behaviour is to avoid publishing or withholding nested comments when parents are removed or approved. So removing comment 1 will not affect its nested comments:
+In case 3 the behaviour is to avoid publishing or withholding nested comments when parents are approved or removed. So removing comment 1 will not affect its nested comments:
 
   .. code-block::
 

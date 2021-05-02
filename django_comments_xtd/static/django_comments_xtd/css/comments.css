@@ -76,7 +76,7 @@
     margin-left: 16px;
 }
 
-.dcx .comment-box.without-avatar {
+.dcx .comment-box.ml0 {
     margin-left: 0px;
 }
 
@@ -201,6 +201,12 @@
 
 .dcx .comment-box       A.permalink { display: none }
 .dcx .comment-box:hover A.permalink { display: inline }
+
+.dcx .comment-box .thread-space {
+    position: relative;
+    z-index: 1;
+    padding-right: 16px;
+}
 
 .dcx .comment-box .user-avatar {
     position: relative;

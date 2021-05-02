@@ -12,7 +12,7 @@
       data-reactions-url="{% url 'comments-xtd-api-react' %}"
     {% endif %}
     data-reactions-row-length="4"
-    data-reactions-header-title="{% translate 'Pick your reaction' %}"
+    data-reactions-header-title="{% trans 'Pick your reaction' %}"
     data-pos-bottom="30"
     data-pos-left="-7"
   {% endif %}
@@ -25,7 +25,7 @@
     {% if reply_stack %}
       {% with top_comment=reply_stack|get_top_comment %}
         {% if comment.level <= top_comment.level %}
-          {% for object in reply_stack|pop_comments_gte:comment.level %}
+          {% for object in reply_stack|pop_comments_lte:comment.level %}
             {% if object.allow_thread and not object.is_removed %}
               {% include "includes/django_comments_xtd/reply_button.html" with comment=object %}
             {% endif %}
@@ -39,16 +39,14 @@
       {% push_comment comment %}
     {% endif %}
 
-    {% block comment %}
-      {% include "includes/django_comments_xtd/comment.html" %}
-    {% endblock %}
+    {% include "my_comments/comment.html" %}
 
     {% if forloop.last %}
       {% comment %}
         # After rendering the last comment, render the reply form for the
         # rest of comments still queued in the reply_stack.
       {% endcomment %}
-      {% for object in reply_stack|pop_comments_gte %}
+      {% for object in reply_stack|pop_comments_lte %}
         {% if object.allow_thread and not object.is_removed %}
           {% include "includes/django_comments_xtd/reply_button.html" with comment=object %}
         {% endif %}

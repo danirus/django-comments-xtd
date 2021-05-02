@@ -16,6 +16,7 @@
           {% trans "This comment has been removed." %}
         </p>
       {% else %}
+        <h5 id="title-{{ comment.id }}">{{ comment.title }}</h5>
         {{ comment.comment|linebreaks|escape }}
       {% endif %}
     </div>

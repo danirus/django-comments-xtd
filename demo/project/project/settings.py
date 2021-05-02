@@ -190,7 +190,12 @@ COMMENTS_XTD_API_USER_REPR = lambda user: user.name
 
 COMMENTS_XTD_SALT = os.environ.get('COMMENTS_XTD_SALT', 1).encode('utf-8')
 COMMENTS_XTD_SEND_HTML_EMAIL = True
-COMMENTS_XTD_MAX_THREAD_LEVEL = 1
+
+COMMENTS_XTD_MAX_THREAD_LEVEL = 1  # For 'stories.story' and 'shop.articles'.
+
+COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
+    'quotes.quote': 2
+}
 
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'default': {
@@ -203,6 +208,12 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 
 COMMENTS_XTD_REACTIONS_ENUM = "project.enums.ReactionEnum"
 
+AVATAR_PROVIDERS = [
+    'avatar.providers.PrimaryAvatarProvider',
+    'avatar.providers.GravatarAvatarProvider',
+]
+
+AVATAR_GRAVATAR_DEFAULT = "identicon"
 
 # Depending on the action the users.edit_avatar view redirects to
 # 'avatar.views.add', 'avatar.views.change', or 'avatar.views.delete'.

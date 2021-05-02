@@ -199,187 +199,6 @@ class GetXtdCommentCountTestCase(DjangoTestCase):
                          sender=model_app_label)
 
 
-class RenderLastXtdCommentsTestCase(DjangoTestCase):
-    def setUp(self):
-        self.article = Article.objects.create(
-            title="September", slug="september", body="During September...")
-        self.day_in_diary = Diary.objects.create(body="About Today...")
-
-    def test_render_last_xtdcomments(self):
-        # Send some nested comments to the article.
-        thread_test_step_1(self.article)  # Sends 2 comments.
-        thread_test_step_2(self.article)  # Sends 2 comments.
-        thread_test_step_3(self.article)  # Sends 1 comment.
-        # -> content:   cmt.id  thread_id  parent_id  level  order
-        # cm1,   # ->      1         1          1        0      1
-        # cm3,   # ->      3         1          1        1      2
-        # cm4,   # ->      4         1          1        1      3
-        # cm2,   # ->      2         2          2        0      1
-        # cm5    # ->      5         2          2        1      2
-        # And send another comment to the diary.
-        add_comment_to_diary_entry(self.day_in_diary)
-
-        t = ("{% load comments_xtd %}"
-             "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
-        output = Template(t).render(Context())
-
-        self.assertEqual(output.count('<a name='), 5)
-        self.assertEqual(output.count('<a name="c6">'), 1)
-        self.assertEqual(output.count('<a name="c5">'), 1)
-        self.assertEqual(output.count('<a name="c4">'), 1)
-        self.assertEqual(output.count('<a name="c3">'), 1)
-        self.assertEqual(output.count('<a name="c2">'), 1)
-        # We added 6 comments, and we render the last 5, so
-        # the first one must not be rendered in the output.
-        self.assertEqual(output.count('<a name="c1">'), 0)
-
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_XTD_MODEL=_xtd_model)
-    def test_render_last_customized_comments(self):
-        # Send nested comments using the MyComment model.
-        thread_test_step_1(self.article, model=MyComment, title="title1")
-        thread_test_step_2(self.article, model=MyComment, title="title2")
-        thread_test_step_3(self.article, model=MyComment, title="title3")
-        # Also send a comment of type MyComment to the diary.
-        add_comment_to_diary_entry(self.day_in_diary, model=MyComment,
-                                   title="title4")
-
-        # render_last_xtdcomments should also render comments of the
-        # model MyComment, defined in COMMENTS_XTD_MODEL setting.
-        t = ("{% load comments_xtd %}"
-             "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
-        output = Template(t).render(Context())
-
-        self.assertEqual(output.count('<a name='), 5)
-        self.assertEqual(output.count('<a name="c6">'), 1)
-        self.assertEqual(output.count('<a name="c5">'), 1)
-        self.assertEqual(output.count('<a name="c4">'), 1)
-        self.assertEqual(output.count('<a name="c3">'), 1)
-        self.assertEqual(output.count('<a name="c2">'), 1)
-        # We added 6 comments, and we render the last 5, so
-        # the first one must not be rendered in the output.
-        self.assertEqual(output.count('<a name="c1">'), 0)
-
-    @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
-    def test_render_last_xtdcomment_for_one_site(self):
-        site2 = Site.objects.create(domain='site2.com', name='site2.com')
-        # Send some nested comments to the article in the site1.
-        thread_test_step_1(self.article)  # Sends 2 comments.
-        thread_test_step_2(self.article)  # Sends 2 comments.
-        thread_test_step_3(self.article)  # Sends 1 comment.
-        # And send another comment to the diary.
-        add_comment_to_diary_entry(self.day_in_diary)  # Sends 1 comment.
-
-        # Send some nested comments to the article in the site2.
-        thread_test_step_1(self.article, site=site2)
-        # render_last_xtdcomments should be able to list only the comments
-        # posted to the active site.
-        t = ("{% load comments_xtd %}"
-             "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
-        output = Template(t).render(Context())
-
-        # In  the output we will see only the comments sent to site2,
-        # which have comment IDs 7 and 8.
-        self.assertEqual(output.count('<a name='), 2)
-        self.assertEqual(output.count('<a name="c8">'), 1)
-        self.assertEqual(output.count('<a name="c7">'), 1)
-
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_HIDE_REMOVED=True,
-                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
-    def test_render_last_xtdcomments_for_HIDE_REMOVED_case_1(self):
-        thread_test_step_1(self.article)
-        thread_test_step_2(self.article)
-        # Previous two lines create the following comments:
-        #  content ->    cmt.id  thread_id  parent_id  level  order
-        #   cm1,   ->     1         1          1        0      1
-        #   cm3,   ->     3         1          1        1      2
-        #   cm4,   ->     4         1          1        1      3
-        #   cm2,   ->     2         2          2        0      1
-        cm1 = XtdComment.objects.get(pk=1)
-        cm1.is_removed = True
-        cm1.save()
-        # After removing cm1, both cm3 and cm4 have is_public=False.
-        # Therefore the list of comments should contain only cm2.
-        t = ("{% load comments_xtd %}"
-             "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
-        output = Template(t).render(Context())
-        self.assertEqual(output.count('<a name='), 1)
-        self.assertEqual(output.count('<a name="c1">'), 0)
-        self.assertEqual(output.count('<a name="c3">'), 0)
-        self.assertEqual(output.count('<a name="c4">'), 0)
-        self.assertEqual(output.count('<a name="c2">'), 1)
-
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_HIDE_REMOVED=False,
-                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
-    def test_render_last_xtdcomments_for_HIDE_REMOVED_case_2(self):
-        thread_test_step_1(self.article)
-        thread_test_step_2(self.article)
-        # These two lines create the following comments:
-        # (  # content ->    cmt.id  thread_id  parent_id  level  order
-        #     cm1,   # ->     1         1          1        0      1
-        #     cm3,   # ->     3         1          1        1      2
-        #     cm4,   # ->     4         1          1        1      3
-        #     cm2,   # ->     2         2          2        0      1
-        # ) = XtdComment.objects.all()
-        #
-        cm1 = XtdComment.objects.get(pk=1)
-        cm1.is_removed = True
-        cm1.save()
-        # After removing the cm1, both cm3 and cm4 have is_public=False,
-        # as COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED is True. Therefore the
-        # count should return 2 -> (cm1, cm2). cm1 is not hidden due to
-        # COMMENTS_HIDE_REMOVED being False (a message will be displayed
-        # saying that the comment has been removed, but the message won't be
-        # removed from the queryset).
-        t = ("{% load comments_xtd %}"
-             "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
-        output = Template(t).render(Context())
-        self.assertEqual(output.count('<a name='), 2)
-        self.assertEqual(output.count('<a name="c1">'), 1)
-        self.assertEqual(output.count('<a name="c3">'), 0)
-        self.assertEqual(output.count('<a name="c4">'), 0)
-        self.assertEqual(output.count('<a name="c2">'), 1)
-
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_HIDE_REMOVED=False,
-                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False)
-    def test_render_last_xtdcomments_for_HIDE_REMOVED_case_3(self):
-        model_app_label = get_model()._meta.label
-        # The function publish_or_withhold_on_pre_save is only called if
-        # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True.
-        pre_save.disconnect(publish_or_withhold_on_pre_save,
-                            sender=model_app_label)
-        thread_test_step_1(self.article)
-        thread_test_step_2(self.article)
-        # These two lines create the following comments:
-        # (  # content ->    cmt.id  thread_id  parent_id  level  order
-        #     cm1,   # ->     1         1          1        0      1
-        #     cm3,   # ->     3         1          1        1      2
-        #     cm4,   # ->     4         1          1        1      3
-        #     cm2,   # ->     2         2          2        0      1
-        # ) = XtdComment.objects.all()
-
-        cm1 = XtdComment.objects.get(pk=1)
-        cm1.is_removed = True
-        cm1.save()
-
-        # After removing the cm1, both cm3 and cm4 remain visible,
-        # as COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED is False.
-        t = ("{% load comments_xtd %}"
-             "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
-        output = Template(t).render(Context())
-        self.assertEqual(output.count('<a name='), 4)
-        self.assertEqual(output.count('<a name="c1">'), 1)
-        self.assertEqual(output.count('<a name="c3">'), 1)
-        self.assertEqual(output.count('<a name="c4">'), 1)
-        self.assertEqual(output.count('<a name="c2">'), 1)
-        # Re-connect the function for the following tests.
-        pre_save.connect(publish_or_withhold_on_pre_save,
-                         sender=model_app_label)
-
-
 class GetLastXtdCommentsTestCase(DjangoTestCase):
     def setUp(self):
         self.article = Article.objects.create(
@@ -582,16 +401,25 @@ class GetLastXtdCommentsTestCase(DjangoTestCase):
                          sender=model_app_label)
 
 
-class XtdCommentsTreeTestCase(DjangoTestCase):
+class RenderXtdCommentListTestCase(DjangoTestCase):
     def setUp(self):
         self.article = Article.objects.create(
             title="September", slug="september", body="During September...")
-        self.day_in_diary = Diary.objects.create(body="About Today...")
 
     def _create_comments(self, use_custom_model=False):
+        #  step   id   parent level-0  level-1  level-2
+        #    1     1      -      c1                     <- cm1
+        #    2     3      1      --       c3            <-  cm1 to cm1
+        #    5     8      3      --       --       c8   <-   cm1 to cm1 to cm1
+        #    2     4      1      --       c4            <-  cm2 to cm1
+        #    4     7      4      --       --       c7   <-   cm1 to cm2 to cm1
+        #    1     2      -      c2                     <- cm2
+        #    3     5      2      --       c5            <-  cm1 to cm2
+        #    4     6      5      --       --       c6   <-   cm1 to cm1 to cm2
+        #    5     9      -      c9                     <- cm9
         kwargs = {}
         if use_custom_model:
-            kwargs = { "model": MyComment, "title": "title1" }
+            kwargs = {"model": MyComment, "title": "title1"}
         thread_test_step_1(self.article, **kwargs)
         thread_test_step_2(self.article, **kwargs)
         thread_test_step_3(self.article, **kwargs)
@@ -599,35 +427,25 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
         thread_test_step_5(self.article, **kwargs)
 
     def _assert_all_comments_are_published(self, use_custom_model=False):
-        t = "{% load comments_xtd %}"
-        if use_custom_model:  # Add the special template.
-            t += ("{% render_xtdcomment_tree for object "
-                  "using my_comments/comment_tree.html %}")
+        t = "{% load comments comments_xtd %}"
+        if use_custom_model:
+            t += ("{% render_xtdcomment_list for object "
+                  "using my_comments/list.html %}")
         else:
-            t += "{% render_xtdcomment_tree for object %}"
+            t += "{% render_xtdcomment_list for object %}"
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<a name='), 9)
-# testcase cmt.id   parent level-0  level-1  level-2
-#  step1     1        -      c1                        <-                 cmt1
-#  step2     3        1      --       c3               <-         cmt1 to cmt1
-#  step5     8        3      --       --        c8     <- cmt1 to cmt1 to cmt1
-#  step2     4        1      --       c4               <-         cmt2 to cmt1
-#  step4     7        4      --       --        c7     <- cmt1 to cmt2 to cmt1
-#  step1     2        -      c2                        <-                 cmt2
-#  step3     5        2      --       c5               <-         cmt1 to cmt2
-#  step4     6        5      --       --        c6     <- cmt1 to cmt1 to cmt2
-#  step5     9        -      c9                        <-                 cmt9
+        self.assertEqual(output.count('<div id="c'), 9)
         try:
-            pos_c1 = output.index('<a name="c1"></a>')
-            pos_c3 = output.index('<a name="c3"></a>')
-            pos_c8 = output.index('<a name="c8"></a>')
-            pos_c4 = output.index('<a name="c4"></a>')
-            pos_c7 = output.index('<a name="c7"></a>')
-            pos_c2 = output.index('<a name="c2"></a>')
-            pos_c5 = output.index('<a name="c5"></a>')
-            pos_c6 = output.index('<a name="c6"></a>')
-            pos_c9 = output.index('<a name="c9"></a>')
+            pos_c1 = output.index('<div id="c1"')
+            pos_c3 = output.index('<div id="c3"')
+            pos_c8 = output.index('<div id="c8"')
+            pos_c4 = output.index('<div id="c4"')
+            pos_c7 = output.index('<div id="c7"')
+            pos_c2 = output.index('<div id="c2"')
+            pos_c5 = output.index('<div id="c5"')
+            pos_c6 = output.index('<div id="c6"')
+            pos_c9 = output.index('<div id="c9"')
         except ValueError as exc:
             self.fail(exc)
         else:
@@ -655,22 +473,23 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
                                 title_c4 < title_c7 < title_c2 <
                                 title_c5 < title_c6 < title_c9)
 
-    def test_render_xtdcomment_tree(self):
+
+    def test_render_xtdcomment_list(self):
         self._create_comments()
         self._assert_all_comments_are_published()
 
     def _assert_only_comment_2_and_3_and_their_children_are_published(self):
         t = ("{% load comments_xtd %}"
-             "{% render_xtdcomment_tree for object %}")
+             "{% render_xtdcomment_list for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<a name='), 4)
+        self.assertEqual(output.count('<div id="c'), 4)
         # Only the following comments must be displayed, the other ones must
         # have been withheld when setting the comment 1 is_public to False.
-        pos_c2 = output.index('<a name="c2"></a>')
-        pos_c5 = output.index('<a name="c5"></a>')
-        pos_c6 = output.index('<a name="c6"></a>')
-        pos_c9 = output.index('<a name="c9"></a>')
+        pos_c2 = output.index('<div id="c2"')
+        pos_c5 = output.index('<div id="c5"')
+        pos_c6 = output.index('<div id="c6"')
+        pos_c9 = output.index('<div id="c9"')
         self.assertTrue(pos_c2 > 0)
         self.assertTrue(pos_c5 > 0)
         self.assertTrue(pos_c6 > 0)
@@ -715,7 +534,7 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
         self.assertEqual(MyComment.objects.count(), 9)
 
     @patch.multiple('django.conf.settings', SITE_ID=2)
-    def test_render_xtdcomment_tree_for_one_site(self):
+    def test_render_xtdcomment_list_for_one_site(self):
         site2 = Site.objects.create(domain='site2.com', name='site2.com')
         self.assertEqual(get_current_site_id(), 2)
         thread_test_step_1(self.article)
@@ -729,16 +548,16 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
         #  step2      2          6          3
         #  step1      2          4          -
         t = ("{% load comments_xtd %}"
-             "{% render_xtdcomment_tree for object %}")
+             "{% render_xtdcomment_list for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<a name='), 4)
+        self.assertEqual(output.count('<div id='), 4)
         # Only the following comments must be displayed, the other ones must
         # have been withheld when setting the comment 1 is_public to False.
-        pos_c3 = output.index('<a name="c3"></a>')
-        pos_c5 = output.index('<a name="c5"></a>')
-        pos_c6 = output.index('<a name="c6"></a>')
-        pos_c4 = output.index('<a name="c4"></a>')
+        pos_c3 = output.index('<div id="c3"')
+        pos_c5 = output.index('<div id="c5"')
+        pos_c6 = output.index('<div id="c6"')
+        pos_c4 = output.index('<div id="c4"')
         self.assertTrue(pos_c3 > 0)
         self.assertTrue(pos_c5 > 0)
         self.assertTrue(pos_c6 > 0)
@@ -751,10 +570,10 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
 #  step3     5        2      --       c5               <-         cmt1 to cmt2
 #  step4     6        5      --       --        c6     <- cmt1 to cmt1 to cmt2
 #  step5     9        -      c9                        <-                 cmt9
-    @patch.multiple('django_comments_xtd.conf.settings',
+    @patch.multiple('django.conf.settings',
                     COMMENTS_HIDE_REMOVED=True,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
-    def test_render_xtdcomment_tree_for_HIDE_REMOVED_case_1(self):
+    def test_render_xtdcomment_list_for_HIDE_REMOVED_case_1(self):
         self._create_comments()
         # As the comment over the method shows, when COMMENTS_HIDE_REMOVE is
         # True, removing the comment 1 removes the comment from the listing and
@@ -765,14 +584,14 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
         # Make changes in comments_xtd.py so that comments are removed from the
         # queryset when COMMENTS_HIDE_REMOVED is True.
         t = ("{% load comments_xtd %}"
-             "{% render_xtdcomment_tree for object %}")
+             "{% render_xtdcomment_list for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<a name='), 4)
-        pos_c2 = output.index('<a name="c2"></a>')
-        pos_c5 = output.index('<a name="c5"></a>')
-        pos_c6 = output.index('<a name="c6"></a>')
-        pos_c9 = output.index('<a name="c9"></a>')
+        self.assertEqual(output.count('<div id='), 4)
+        pos_c2 = output.index('<div id="c2"')
+        pos_c5 = output.index('<div id="c5"')
+        pos_c6 = output.index('<div id="c6"')
+        pos_c9 = output.index('<div id="c9"')
         self.assertTrue(pos_c2 > 0)
         self.assertTrue(pos_c5 > 0)
         self.assertTrue(pos_c6 > 0)
@@ -786,10 +605,10 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
 #  step3     5        2      --       c5               <-         cmt1 to cmt2
 #  step4     6        5      --       --        c6     <- cmt1 to cmt1 to cmt2
 #  step5     9        -      c9                        <-                 cmt9
-    @patch.multiple('django_comments_xtd.conf.settings',
+    @patch.multiple('django.conf.settings',
                     COMMENTS_HIDE_REMOVED=False,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
-    def test_render_xtdcomment_tree_for_HIDE_REMOVED_case_2(self):
+    def test_render_xtdcomment_list_for_HIDE_REMOVED_case_2(self):
         self._create_comments()
         # As the comment above the method shows, when
         # XTD_COMMENTS_PUBLISH_OR_WITHHOLD_NESTED is True and
@@ -799,15 +618,15 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
         cm1.is_removed = True
         cm1.save()
         t = ("{% load comments_xtd %}"
-             "{% render_xtdcomment_tree for object %}")
+             "{% render_xtdcomment_list for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<a name='), 5)
-        pos_c1 = output.index('<a name="c1"></a>')
-        pos_c2 = output.index('<a name="c2"></a>')
-        pos_c5 = output.index('<a name="c5"></a>')
-        pos_c6 = output.index('<a name="c6"></a>')
-        pos_c9 = output.index('<a name="c9"></a>')
+        self.assertEqual(output.count('<div id="c'), 5)
+        pos_c1 = output.index('<div id="c1"')
+        pos_c2 = output.index('<div id="c2"')
+        pos_c5 = output.index('<div id="c5"')
+        pos_c6 = output.index('<div id="c6"')
+        pos_c9 = output.index('<div id="c9"')
         self.assertTrue(pos_c1 > 0)
         self.assertTrue(pos_c2 > 0)
         self.assertTrue(pos_c5 > 0)
@@ -826,7 +645,7 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
 #  step3     5        2      --       c5               <-         cmt1 to cmt2
 #  step4     6        5      --       --        c6     <- cmt1 to cmt1 to cmt2
 #  step5     9        -      c9                        <-                 cmt9
-    @patch.multiple('django_comments_xtd.conf.settings',
+    @patch.multiple('django.conf.settings',
                     COMMENTS_HIDE_REMOVED=False,
                     COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False)
     def test_render_xtdcomment_tree_for_HIDE_REMOVED_case_3(self):
@@ -843,55 +662,6 @@ class XtdCommentsTreeTestCase(DjangoTestCase):
                          sender=model_app_label)
 
 
-# TODO: Develop this test.
-class RenderXtdCommentListTestCase(DjangoTestCase):
-    def setUp(self):
-        self.article = Article.objects.create(
-            title="September", slug="september", body="During September...")
-
-    def _create_comments(self):
-#  step   id   parent level-0  level-1  level-2
-#    1     1      -      c1                        <-                 cmt1
-#    2     3      1      --       c3               <-         cmt1 to cmt1
-#    5     8      3      --       --        c8     <- cmt1 to cmt1 to cmt1
-#    2     4      1      --       c4               <-         cmt2 to cmt1
-#    4     7      4      --       --        c7     <- cmt1 to cmt2 to cmt1
-#    1     2      -      c2                        <-                 cmt2
-#    3     5      2      --       c5               <-         cmt1 to cmt2
-#    4     6      5      --       --        c6     <- cmt1 to cmt1 to cmt2
-#    5     9      -      c9                        <-                 cmt9
-        thread_test_step_1(self.article)
-        thread_test_step_2(self.article)
-        thread_test_step_3(self.article)
-        thread_test_step_4(self.article)
-        thread_test_step_5(self.article)
-
-    def _assert_all_comments_are_published(self):
-        t = "{% load comments comments_xtd %}"
-        t += "{% render_xtdcomment_list for object %}"
-        output = Template(t).render(Context({'object': self.article,
-                                             'user': AnonymousUser()}))
-        self.assertEqual(output.count('<a name="c'), 9)
-        try:
-            pos_c1 = output.index('<a name="c1"></a>')
-            pos_c3 = output.index('<a name="c3"></a>')
-            pos_c8 = output.index('<a name="c8"></a>')
-            pos_c4 = output.index('<a name="c4"></a>')
-            pos_c7 = output.index('<a name="c7"></a>')
-            pos_c2 = output.index('<a name="c2"></a>')
-            pos_c5 = output.index('<a name="c5"></a>')
-            pos_c6 = output.index('<a name="c6"></a>')
-            pos_c9 = output.index('<a name="c9"></a>')
-        except ValueError as exc:
-            self.fail(exc)
-        else:
-            self.assertTrue(pos_c1 < pos_c3 < pos_c8 <
-                            pos_c4 < pos_c7 < pos_c2 <
-                            pos_c5 < pos_c6 < pos_c9)
-
-    def test_render_xtdcomment_list(self):
-        self._create_comments()
-        self._assert_all_comments_are_published()
 
 
 class CommentCSSThreadRangeTestCase(DjangoTestCase):

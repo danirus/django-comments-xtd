@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load comments %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;stories{% endblock %}
+
+{% block nav-stories-class %}active{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">List of stories</h2>
+    <div class="inline-centered">
+      {% if object_list %}
+        <ul>
+          {% for story in object_list %}
+            {% get_comment_count for story as comment_count %}
+            <li>
+              <a href="{{ story.get_absolute_url }}">{{ story.title }}</a>
+              <span class="small">{{ story.published_time|date:"d-F-Y" }}</span>
+              {% if comment_count %}
+                <span class="small">- {{ comment_count }} comment{{ comment_count|pluralize }}</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <h5>There are no published stories yet.</h5>
+      {% endif %}
+    </div>
+  </article>
+</main>
+{% endblock %}

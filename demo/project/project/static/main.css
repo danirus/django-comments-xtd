@@ -637,9 +637,6 @@ input.error:focus, textarea.error:focus,
 /* ------- no-bullet --------- */
 
 .no-bullet UL {
-  /* display: flex;
-  justify-content: center;
-  flex-wrap: wrap; */
   margin: 0;
   padding: 0;
 }
@@ -667,6 +664,9 @@ input.error:focus, textarea.error:focus,
 
 .text-center { text-align: center; }
 .text-right { text-align: right; }
+
+.mx0 { margin-left: 0; margin-right: 0 }
+.my0 { margin-top: 0; margin-bottom: 0 }
 
 .ml8 { margin-left: 8px }
 .ml32 { margin-left: 32px }

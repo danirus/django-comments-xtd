@@ -28,3 +28,4 @@ example/env
 .venv
 .idea
 demo/project/avatars
+demo/project/project/settings_local.py

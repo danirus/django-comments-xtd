@@ -10,7 +10,9 @@
   <div class="content">
     <section class="reply-form">
       <form id="reply-form-{{ comment.id }}" method="post" action="{% url 'comments-xtd-reply' comment.id %}">{% csrf_token %}
-        <button type="submit" class="secondary small">Write a reply</button>
+        <div class="col1-2">
+          <button type="submit" class="secondary small">Write a reply</button>
+        </div>
       </form>
     </section>
   </div>

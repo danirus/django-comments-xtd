@@ -191,10 +191,11 @@ COMMENTS_XTD_API_USER_REPR = lambda user: user.name
 COMMENTS_XTD_SALT = os.environ.get('COMMENTS_XTD_SALT', 1).encode('utf-8')
 COMMENTS_XTD_SEND_HTML_EMAIL = True
 
-COMMENTS_XTD_MAX_THREAD_LEVEL = 1  # For 'stories.story' and 'shop.articles'.
+# Level 3 is the maximum supported (limited by CSS classes).
+COMMENTS_XTD_MAX_THREAD_LEVEL = 3  # For 'stories.story' and 'shop.articles'.
 
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
-    'quotes.quote': 2
+    'quotes.quote': 3  # So 4 levels: from 0 to 3.
 }
 
 COMMENTS_XTD_APP_MODEL_OPTIONS = {

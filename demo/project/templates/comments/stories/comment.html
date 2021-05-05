@@ -3,7 +3,7 @@
 {% load comments_xtd %}
 {% load dcx_demo_tags %}
 
-<div id="c{{ comment.id }}" class="comment-box {% if show_nested %}{% comment_css_thread_range comment %}{% endif %}">
+<div id="c{{ comment.id }}" class="comment-box-img {% if show_nested %}{% comment_css_thread_range comment %}{% endif %}">
   {% if show_nested %}{{ comment.level|indent_divs }}{% endif %}
   <div class="user-avatar">
     {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}

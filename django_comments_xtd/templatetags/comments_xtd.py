@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader)
 from django.urls import reverse
+from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
 
 
@@ -16,8 +17,7 @@ from django_comments_xtd import (get_model as get_comment_model,
 from django_comments_xtd.api import frontend
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import max_thread_level_for_content_type
-from django_comments_xtd.utils import (get_app_model_options,
-                                       get_current_site_id, get_html_id_suffix)
+from django_comments_xtd.utils import get_app_model_options, get_html_id_suffix
 
 
 register = Library()
@@ -99,13 +99,23 @@ class RenderXtdCommentListNode(RenderCommentListNode):
 
             # get_app_model_options returns a dict like: {
             #     'who_can_post': 'all' | 'users',
-            #     'allow_comment_flagging': <boolean>,
-            #     'allow_comment_reactions': <boolean>,
-            #     'allow_object_reactions': <boolean>
+            #     'check_input_allowed': 'string path to function',
+            #     'comment_flagging_enabled': <boolean>,
+            #     'comment_reactions_enabled': <boolean>,
+            #     'object_reactions_enabled': <boolean>
             # }
-            context_dict.update(
-                get_app_model_options(content_type=ctype.app_label)
-            )
+            options = get_app_model_options(content_type=app_model)
+            check_input_allowed_str = options.pop('check_input_allowed')
+            check_func = import_string(check_input_allowed_str)
+            target_obj = ctype.get_object_for_this_type(pk=object_pk)
+
+            # Call the function that checks whether comments input
+            # is still allowed on the given target_object. And add
+            # the resulting boolean to the template context.
+            #
+            options['is_input_allowed'] = check_func(target_obj)
+            context_dict.update(options)
+
             liststr = loader.render_to_string(
                 self.template_path or template_search_list,
                 context_dict
@@ -123,8 +133,9 @@ def render_xtdcomment_list(parser, token):
 
     Syntax::
 
-        {% render_xtdcomment_list for [object] [using <template>] %}
-        {% render_xtdcomment_list for [app].[model] [obj_id] [using <tmpl>] %}
+        {% render_xtdcomment_list for [object] [...] %}
+        {% render_xtdcomment_list for [app].[model] [obj_id] [...] %}
+        {% render_xtdcomment_list for ... [using <tmpl>] %}
 
     Example usage::
 

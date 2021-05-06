@@ -201,9 +201,15 @@ COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'default': {
         'who_can_post': 'all',  # Valid values: "users", "all".
-        'allow_comment_flagging': True,
-        'allow_comment_reactions': True,
-        'allow_object_reactions': True,
+        'comment_flagging_enabled': True,
+        'comment_reactions_enabled': True,
+        'object_reactions_enabled': True,
+    },
+    'quotes.quote': {
+        'check_input_allowed': 'quotes.models.check_comments_input_allowed'
+    },
+    'stories.story': {
+        'check_input_allowed': 'stories.models.check_comments_input_allowed'
     }
 }
 

@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -35,3 +37,17 @@ class Story(models.Model):
                     'month': int(self.published_time.strftime('%m').lower()),
                     'day': self.published_time.day,
                     'slug': self.slug})
+
+
+def check_comments_input_allowed(obj):
+    """
+    Return False if obj's published_time is older than 2 years.
+    """
+    obj_date = obj.published_time.date()
+    obj_time = obj.published_time.time()
+    in2years_date = date(obj_date.year + 2, obj_date.month, obj_date.day)
+    in2years = timezone.make_aware(datetime.combine(in2years_date, obj_time))
+    if timezone.now() > in2years:
+        return False
+    else:
+        return True

@@ -45,10 +45,20 @@ COMMENTS_XTD_THREADED_EMAILS = True
 # Define what commenting features a pair app_label.model can have.
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'default': {
-        'who_can_post': 'all',  # Valid values: "users", "all"
-        'allow_comment_flagging': False,
-        'allow_comment_reactions': False,
-        'allow_object_reactions': False
+        'who_can_post': 'all',  # Valid values: "users", "all",
+        # Function to determine whether new comments,
+        # reactions, etc. should be allowed for a given object.
+        'check_input_allowed': 'django_comments_xtd.utils.check_input_allowed',
+
+        # Whether to display a link to flag a comment as inappropriate.
+        'comment_flagging_enabled': False,
+
+        # Whether to allow users to submit reactions on comments.
+        'comment_reactions_enabled': False,
+
+        # Whether to allow users to submit reactions on any object
+        # registered as a content type.
+        'object_reactions_enabled': False
     }
 }
 

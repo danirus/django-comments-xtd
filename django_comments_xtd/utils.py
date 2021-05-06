@@ -19,6 +19,7 @@ from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 
 from django_comments_xtd.conf import settings
+from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_OPTIONS
 
 
 mail_sent_queue = queue.Queue()
@@ -65,26 +66,24 @@ def get_app_model_options(comment=None, content_type=None):
     Get the app_model_option from COMMENTS_XTD_APP_MODEL_OPTIONS.
 
     If a comment is given, the content_type is extracted from it. Otherwise,
-    the content_type kwarg has to be provided. The funcion checks whether there
-    is a matching dictionary for the app_label.model of the content_type, and
+    the content_type kwarg has to be provided. Checks whether there is a matching dictionary for the app_label.model of the content_type, and
     returns it. Otherwise it returns the default from:
-        `django_comments_xtd.defaults.COMMENTS_XTD_APP_MODEL_OPTIONS`.
+
+        `django_comments_xtd.conf.defaults.COMMENTS_XTD_APP_MODEL_OPTIONS`.
+
     """
-    default = {
-        'who_can_post': 'all',  # Valid values: "users", "all"
-        'allow_comment_flagging': False,
-        'allow_comment_reactions': False,
-        'allow_object_reactions': False
-    }
-    if 'default' in settings.COMMENTS_XTD_APP_MODEL_OPTIONS:
+    defaults_options = COMMENTS_XTD_APP_MODEL_OPTIONS
+    settings_options = settings.COMMENTS_XTD_APP_MODEL_OPTIONS
+    model_app_options = {}
+    if 'default' in settings_options:
         # The developer overwrite the default settings. Check whether
         # the developer added all the expected keys in the dictionary.
         has_missing_key = False
-        for k in default.keys():
-            if k not in settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default']:
-                has_missing_key = True
-        if not has_missing_key:
-            default = copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default'])
+        for k in defaults_options['default'].keys():
+            if k not in settings_options['default']:
+                model_app_options[k] = defaults_options['default'][k]
+            else:
+                model_app_options[k] = settings_options['default'][k]
 
     if comment:
         content_type = ContentType.objects.get_for_model(comment.content_object)
@@ -92,38 +91,55 @@ def get_app_model_options(comment=None, content_type=None):
     elif content_type:
         key = content_type
     else:
-        return default
+        return defaults_options['default']
     try:
-        default.update(settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key])
-        return default
+        model_app_options.update(settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key])
+        return model_app_options
     except Exception:
-        return default
+        return model_app_options
 
 
 option_msgs = {
-    'allow_flagging': {
-        'PROD': "This typo of comments are not allowed to be flagged.",
+    'comment_flagging_enabled': {
+        'PROD': "This type of comments are not allowed to be flagged.",
         'DEBUG': "Comments posted to instances of '%s.%s' are not "
                  "explicitly allowed to be flagged. Check the "
                  "COMMENTS_XTD_APP_MODEL_OPTIONS setting."
     },
-    'allow_reactions': {
-        'PROD': "This typo of comment are not allowed to receive reactions.",
+    'comment_reactions_enabled': {
+        'PROD': "This type of comment are not allowed to receive reactions.",
         'DEBUG': "Comments posted to instances of '%s.%s' are not "
                  "explicitly allowed to receive reactions. Check the "
                  "COMMENTS_XTD_APP_MODEL_OPTIONS setting."
+    },
+    'object_reactions_enabled': {
+        'PROD': "This type of object are not allowed to receive reactions.",
+        'DEBUG': "Instances of '%s.%s' are not explicitly allowed to receive "
+                 "reactions. Check the COMMENTS_XTD_APP_MODEL_OPTIONS setting."
     }
 }
 
 
 def check_option(comment, option):
-    is_allowed = get_app_model_options(comment=comment)[option]
-    if not is_allowed:
+    ret_option = get_app_model_options(comment=comment)[option]
+    if not ret_option:
         message = option_msgs[option]['PROD']
         if settings.DEBUG:
             ct = ContentType.objects.get_for_model(comment.content_object)
             message = option_msgs[option]['DEBUG'] % (ct.app_label, ct.model)
         raise PermissionDenied(detail=message, code=status.HTTP_403_FORBIDDEN)
+
+
+def check_input_allowed(object):
+    """
+    This is a generic function called with the object being commented.
+    It's defined as the default in 'COMMENTS_XTD_APP_MODEL_OPTIONS'.
+
+    If you want to disallow comments input to your 'app.model' instances under
+    a given conditions, rewrite this function in your code and modify the
+    'COMMENTS_XTD_APP_MODEL_OPTIONS' in your settings.
+    """
+    return True
 
 
 # --------------------------------------------------------------------

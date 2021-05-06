@@ -167,8 +167,8 @@ class DisallowedCommentReactionTests(TestCase):
     def test_post_reaction_as_anonymous_user_results_in_403(self):
         # This test is also in the class above: AllowedCommentReactionTests.
         # And it is exactly the same as in both cases, whether the
-        # allow_feedback flag is True or False, the authentication is checked
-        # before hand.
+        # 'comment_reactions_enabled' flag is True or False, the
+        # authentication is checked before hand.
         data = {'comment': self.comment.id, 'reaction': self.renum.LIKE_IT}
         anonymous_user = AnonymousUser()
         response = send_reaction("post", data, auth_user=anonymous_user)
@@ -176,9 +176,9 @@ class DisallowedCommentReactionTests(TestCase):
 
     def test_create_LIKE_IT_reaction(self):
         # This test is also in the class above: AllowedCommentReactionTests.
-        # As 'allow_feedback' is False for model 'tests.article', posting
-        # a reaction to a comment posted to a 'tests.article' results in
-        # a HTTP 403 (No permission).
+        # As 'comment_reactions_enabled' is False for model 'tests.article',
+        # posting a reaction to a comment posted to a 'tests.article' results
+        # in a HTTP 403 (No permission).
         data = {'comment': self.comment.id, 'reaction': self.renum.LIKE_IT}
         response = send_reaction("post", data, auth_user=self.user)
         self.assertEqual(response.status_code, 403)
@@ -186,9 +186,9 @@ class DisallowedCommentReactionTests(TestCase):
 
     def test_create_DISLIKE_IT_reaction(self):
         # This test is also in the class above: AllowedCommentReactionTests.
-        # As 'allow_feedback' is False for model 'tests.article', posting
-        # a reaction to a comment posted to a 'tests.article' results in
-        # a HTTP 403 (No permission).
+        # As 'comment_reactions_enabled' is False for model 'tests.article',
+        # posting a reaction to a comment posted to a 'tests.article' results
+        # in a HTTP 403 (No permission).
         data = {'comment': self.comment.id, 'reaction': self.renum.DISLIKE_IT}
         response = send_reaction("post", data, auth_user=self.user)
         self.assertEqual(response.status_code, 403)
@@ -196,7 +196,7 @@ class DisallowedCommentReactionTests(TestCase):
 
 
 # This class tests flagging comments posted to a diary entry.
-# The model 'tests.diary' has the 'allow_flagging' = True in
+# The model 'tests.diary' has the 'comment_flagging_enabled' = True in
 # tests.settings, so flagging is allowed.
 class AllowedCreateReportFlagTests(TestCase):
     def setUp(self):

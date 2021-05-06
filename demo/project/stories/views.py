@@ -1,7 +1,12 @@
 from django.urls import reverse
-from django.views.generic import DateDetailView
+from django.views.generic import DateDetailView, ListView
 
-from .models import Story
+from .models import Story, check_comments_input_allowed
+
+
+class StoryListView(ListView):
+    def get_queryset(self):
+        return Story.objects.published()
 
 
 class StoryDetailView(DateDetailView):
@@ -11,5 +16,9 @@ class StoryDetailView(DateDetailView):
 
     def get_context_data(self, **kwargs):
         context = super(StoryDetailView, self).get_context_data(**kwargs)
-        context.update({'next': reverse('comments-xtd-sent')})
+        obj = context.get('object')
+        context.update({
+            'next': reverse('comments-xtd-sent'),
+            'is_comment_input_allowed': check_comments_input_allowed(obj)
+        })
         return context

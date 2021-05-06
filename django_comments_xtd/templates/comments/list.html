@@ -5,7 +5,7 @@
 <div
   id="comments"
   class="comment-list"
-  {% if allow_comment_reactions %}
+  {% if comment_reactions_enabled %}
     data-type="reactions-def"
     data-reactions="{% reactions_enum_strlist %}"
     {% if user.is_authenticated %}

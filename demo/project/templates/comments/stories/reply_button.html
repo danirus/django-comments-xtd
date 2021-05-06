@@ -3,19 +3,21 @@
 
 <div
   id="reply-to-{{ comment.id }}"
-  class="reply-box-img {{ comment.level|reply_css_thread_range }}"
+  class="{% if not is_input_allowed %}not-{% endif %}reply-box-img {{ comment.level|reply_css_thread_range }}"
 >
-  {{ comment.level|indent_divs }}
-  {{ comment.level|hline_div }}
-  <div class="content">
-    <section class="reply-form">
-      <form id="reply-form-{{ comment.id }}" method="post" action="{% url 'comments-xtd-reply' comment.id %}">{% csrf_token %}
-        <div class="col1-2">
-          <div class="inline-left">
-            <button type="submit" class="secondary small">Write a reply</button>
+  {% if is_input_allowed %}
+    {{ comment.level|indent_divs }}
+    {{ comment.level|hline_div }}
+    <div class="content">
+      <section class="reply-form">
+        <form id="reply-form-{{ comment.id }}" method="post" action="{% url 'comments-xtd-reply' comment.id %}">{% csrf_token %}
+          <div class="col1-2">
+            <div class="inline-left">
+              <button type="submit" class="secondary small">Write a reply</button>
+            </div>
           </div>
-        </div>
-      </form>
-    </section>
-  </div>
+        </form>
+      </section>
+    </div>
+  {% endif %}
 </div>

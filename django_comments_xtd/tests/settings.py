@@ -126,13 +126,14 @@ COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {'tests.diary': 0}
 
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     'tests.diary': {
-        'allow_flagging': True,
-        'allow_feedback': True,
-        'show_feedback': True,
+        'comment_flagging_enabled': True,
+        'comment_reactions_enabled': True,
+        'object_reactions_enabled': True
     },
     'tests.article': {
-        'allow_flagging': False,
-        'allow_feedback': False
+        'comment_flagging_enabled': False,
+        'comment_reactions_enabled': False,
+        'object_reactions_enabled': False
     }
 }
 

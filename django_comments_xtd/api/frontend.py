@@ -22,14 +22,14 @@ def commentbox_props(obj, user, request=None):
     The returned JSON object contains the following attributes::
         {
             comment_count: <int>,  // Count of comments posted to the object.
-            allow_comments: <bool>,  // Whether to allow comments to this post.
+            input_allowed: <bool>,  // Whether to allow comments to this post.
             current_user: <str as "user_id:user_name">,
             is_authenticated: <bool>,  // Whether current_user is authenticated.
             request_name: <bool>,  // True when auth user has no actual name.
             request_email_address: <bool>,  // True when auth user has no email.
-            allow_flagging: false,
-            allow_feedback: false,
-            show_feedback: false,
+            comment_flagging_enabled: false,
+            comment_reactions_enabled: false,
+            object_reactions_enabled: false,
             can_moderate: <bool>,  // Whether current_user can moderate.
             polling_interval: 2000, // Check for new comments every 2 seconds.
             feedback_url: <api-url-to-send-like/dislike-feedback>,
@@ -69,15 +69,15 @@ def commentbox_props(obj, user, request=None):
     options = get_app_model_options(content_type=ctype_key)
     d = {
         "comment_count": queryset.count(),
-        "allow_comments": True,
+        "input_allowed": True,
         "current_user": "0:Anonymous",
         "request_name": False,
         "request_email_address": False,
         "is_authenticated": False,
         "who_can_post": options['who_can_post'],
-        "allow_flagging": False,
-        "allow_feedback": False,
-        "show_feedback": False,
+        "comment_flagging_enabled": options['comment_flagging_enabled'],
+        "comment_reactions_enabled": options['comment_reactions_enabled'],
+        "object_reactions_enabled": options['object_reactions_enabled'],
         "can_moderate": False,
         "polling_interval": 2000,
         "feedback_url": _reverse("comments-xtd-api-feedback"),

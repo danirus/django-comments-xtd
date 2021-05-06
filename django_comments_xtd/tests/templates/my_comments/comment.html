@@ -4,7 +4,6 @@
 
 <div id="c{{ comment.id }}" class="comment-box {% if show_nested %}{% comment_css_thread_range comment %}{% endif %}">
   {% if show_nested %}{{ comment.level|indent_divs }}{% endif %}
-  <div class="thread-space"></div>
   <div class="comment">
     <div class="header">
       <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>
@@ -22,14 +21,14 @@
     </div>
     <div class="footer">
       {% if not comment.is_removed %}
-        {% if allow_comment_reactions %}
+        {% if comment_reactions_enabled %}
           {% if comment.reactions.count > 0 %}
             <div class="reactions">
               {% include "includes/django_comments_xtd/comment_reactions.html" %}
             </div>
           {% endif %}
         {% endif %}
-        {% if allow_comment_reactions %}
+        {% if comment_reactions_enabled %}
           <div>
             <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}">{% translate "React" %}</a>
           </div>

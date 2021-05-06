@@ -369,7 +369,7 @@ def flag(request, comment_id, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
-    check_option(comment, "allow_comment_flagging")
+    check_option(comment, "comment_flagging_enabled")
 
     # Flag on POST.
     if request.method == 'POST':

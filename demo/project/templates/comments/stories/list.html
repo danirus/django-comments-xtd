@@ -17,6 +17,10 @@
     data-pos-left="-7"
   {% endif %}
 >
+  {% if is_paginated %}
+    {% include "comments/stories/pagination.html" %}
+  {% endif %}
+
   {% for comment in comment_list %}
     {% comment %}
       # Before rendering the comment, check the reply_stack to find out
@@ -56,4 +60,8 @@
     {% endif %}
 
   {% endfor %}
+
+  {% if is_paginated %}
+    {% include "comments/stories/pagination.html" %}
+  {% endif %}
 </div>

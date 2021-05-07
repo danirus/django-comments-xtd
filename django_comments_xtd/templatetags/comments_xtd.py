@@ -2,12 +2,14 @@ import json
 import re
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.paginator import InvalidPage, Paginator
+from django.http import Http404
 from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader)
 from django.urls import reverse
 from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
-
+from django.utils.translation import gettext as _
 
 from django_comments.templatetags.comments import (BaseCommentNode,
                                                    RenderCommentListNode)
@@ -74,6 +76,35 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             self.template_path = kwargs.pop("template_path")
         super().__init__(*args, **kwargs)
 
+    def paginate_queryset(self, queryset, context):
+        request = context.get('request', None)
+        num_orphans = settings.COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS
+        page_size = settings.COMMENTS_XTD_ITEMS_PER_PAGE
+        qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+        paginator = Paginator(queryset, page_size, orphans=num_orphans)
+        page = (request and request.GET.get(qs_param, None)) or 1
+        try:
+            page_number = int(page)
+        except ValueError:
+            if page == 'last':
+                page_number = paginator.num_pages
+            else:
+                raise Http404(_('Page is not “last”, nor can it '
+                                'be converted to an int.'))
+        try:
+            page = paginator.page(page_number)
+            return {
+                'paginator': paginator,
+                'page_obj': page,
+                'is_paginated': page.has_other_pages(),
+                'comment_list': page.object_list
+            }
+        except InvalidPage as exc:
+            raise Http404(_('Invalid page (%(page_number)s): %(message)s') % {
+                'page_number': page_number,
+                'message': str(exc)
+            })
+
     def render(self, context):
         ctype, object_pk = self.get_target_ctype_pk(context)
         if object_pk:
@@ -83,15 +114,18 @@ class RenderXtdCommentListNode(RenderCommentListNode):
                 "comments/list.html"
             ]
             qs = self.get_queryset(context)
-            comment_list = self.get_context_value_from_queryset(context, qs)
+            qs = self.get_context_value_from_queryset(context, qs)
             context_dict = context.flatten()
-            context_dict['comment_list'] = comment_list
+            # context_dict['comment_list'] = comment_list
+            context_dict.update(self.paginate_queryset(qs, context))
 
             # Pass max_thread_level in the context.
             app_model = "%s.%s" % (ctype.app_label, ctype.model)
+            qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
             MTL = settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
             mtl = MTL.get(app_model, settings.COMMENTS_XTD_MAX_THREAD_LEVEL)
             context_dict.update({
+                'comments_page_qs_param': qs_param,
                 'max_thread_level': mtl,
                 'reply_stack': [],  # List to control reply rendering.
                 'show_nested': True

@@ -11,7 +11,7 @@
   <div class="comment">
     <div class="header">
       <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>
-      {% if comment_flagging_enabled %}<div class="small"><a href="{% url 'comments-flag' comment.id %}">report</a></div>{% endif %}
+      {% if comment_flagging_enabled and is_input_allowed %}<div class="small"><a href="{% url 'comments-flag' comment.id %}">report</a></div>{% endif %}
     </div>
     <div class="body">
       {% if comment.is_removed %}
@@ -31,7 +31,7 @@
             </div>
           {% endif %}
         {% endif %}
-        {% if comment_reactions_enabled %}
+        {% if comment_reactions_enabled and is_input_allowed %}
           <div>
             <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}">{% translate "React" %}</a>
           </div>

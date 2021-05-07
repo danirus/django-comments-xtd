@@ -89,3 +89,13 @@ COMMENTS_XTD_DEFAULT_FOLLOWUP = False
 # How many reaction buttons can be displayed
 # in a row before it breaks into another row.
 COMMENTS_XTD_REACTIONS_ROW_LENGTH = 4
+
+# Put up to the given number of comments in the last page to avoid
+# creating another page containing only these amount of comments.
+COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS = 10
+
+# Number of comments per page.
+COMMENTS_XTD_ITEMS_PER_PAGE = 25
+
+# Name of the query string parameter containing the page number.
+COMMENTS_XTD_PAGE_QUERY_STRING_PARAM = "cpage"

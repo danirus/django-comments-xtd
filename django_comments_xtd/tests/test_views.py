@@ -319,6 +319,8 @@ class ReplyCommentTestCase(TestCase):
                                   submit_date=datetime.now(),
                                   parent_id=2)
 
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_MAX_THREAD_LEVEL=2)
     def test_not_allow_threaded_reply_raises_403(self):
         response = self.client.get(reverse("comments-xtd-reply",
                                            kwargs={"cid": 3}))

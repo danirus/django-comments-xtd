@@ -106,9 +106,16 @@ class XtdComment(Comment):
             max_order = qc_eq_thread.aggregate(Max('order'))['order__max']
             self.order = max_order + 1
 
-        qc_eq_thread.filter(Q(pk=parent.pk) | Q(level__lt=parent.level,
-                                                order__lt=parent.order))\
-                    .update(nested_count=F('nested_count') + 1)
+        if self.id != parent.id:
+            parent_ids = []
+            while True:
+                parent_ids.append(parent.pk)
+                if parent.id == parent.parent_id:
+                    break
+                parent = qc_eq_thread.get(pk=parent.parent_id)
+            if parent_ids:
+                qc_eq_thread.filter(pk__in=parent_ids)\
+                            .update(nested_count=F('nested_count') + 1)
 
     def get_reply_url(self):
         return reverse("comments-xtd-reply", kwargs={"cid": self.pk})

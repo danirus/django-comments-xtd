@@ -2,7 +2,7 @@ import json
 import re
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.paginator import InvalidPage, Paginator
+from django.core.paginator import InvalidPage, PageNotAnInteger
 from django.http import Http404
 from django.template import (Library, Node, TemplateSyntaxError,
                              Variable, loader)
@@ -14,15 +14,58 @@ from django.utils.translation import gettext as _
 from django_comments.templatetags.comments import (BaseCommentNode,
                                                    RenderCommentListNode)
 
-from django_comments_xtd import (get_model as get_comment_model,
-                                 get_reactions_enum)
+from django_comments_xtd import get_model, get_reactions_enum
 from django_comments_xtd.api import frontend
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import max_thread_level_for_content_type
+from django_comments_xtd.paginator import CommentsPaginator
 from django_comments_xtd.utils import get_app_model_options, get_html_id_suffix
 
 
 register = Library()
+
+
+def paginate_queryset(queryset, context):
+    """
+    Returns dict with pagination data for the given queryset and context.
+    """
+    request = context.get('request', None)
+    num_orphans = settings.COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS
+    page_size = settings.COMMENTS_XTD_ITEMS_PER_PAGE
+    qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    if page_size == 0:
+        return {
+            'paginator': None,
+            'page_obj': None,
+            'is_paginated': False,
+            'cpage_qs_param': qs_param,
+            'comment_list': queryset
+        }
+
+    paginator = CommentsPaginator(queryset, page_size, orphans=num_orphans)
+    page = (request and request.GET.get(qs_param, None)) or 1
+    try:
+        page_number = int(page)
+    except ValueError:
+        if page == 'last':
+            page_number = paginator.num_pages
+        else:
+            raise Http404(_('Page is not “last”, nor can it '
+                            'be converted to an int.'))
+    try:
+        page = paginator.page(page_number)
+        return {
+            'paginator': paginator,
+            'page_obj': page,
+            'is_paginated': page.has_other_pages(),
+            'cpage_qs_param': qs_param,
+            'comment_list': page.object_list
+        }
+    except InvalidPage as exc:
+        raise Http404(_('Invalid page (%(page_number)s): %(message)s') % {
+            'page_number': page_number,
+            'message': str(exc)
+        })
 
 
 class RenderXtdCommentListNode(RenderCommentListNode):
@@ -76,35 +119,6 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             self.template_path = kwargs.pop("template_path")
         super().__init__(*args, **kwargs)
 
-    def paginate_queryset(self, queryset, context):
-        request = context.get('request', None)
-        num_orphans = settings.COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS
-        page_size = settings.COMMENTS_XTD_ITEMS_PER_PAGE
-        qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
-        paginator = Paginator(queryset, page_size, orphans=num_orphans)
-        page = (request and request.GET.get(qs_param, None)) or 1
-        try:
-            page_number = int(page)
-        except ValueError:
-            if page == 'last':
-                page_number = paginator.num_pages
-            else:
-                raise Http404(_('Page is not “last”, nor can it '
-                                'be converted to an int.'))
-        try:
-            page = paginator.page(page_number)
-            return {
-                'paginator': paginator,
-                'page_obj': page,
-                'is_paginated': page.has_other_pages(),
-                'comment_list': page.object_list
-            }
-        except InvalidPage as exc:
-            raise Http404(_('Invalid page (%(page_number)s): %(message)s') % {
-                'page_number': page_number,
-                'message': str(exc)
-            })
-
     def render(self, context):
         ctype, object_pk = self.get_target_ctype_pk(context)
         if object_pk:
@@ -116,8 +130,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             qs = self.get_queryset(context)
             qs = self.get_context_value_from_queryset(context, qs)
             context_dict = context.flatten()
-            # context_dict['comment_list'] = comment_list
-            context_dict.update(self.paginate_queryset(qs, context))
+            context_dict.update(paginate_queryset(qs, context))
 
             # Pass max_thread_level in the context.
             app_model = "%s.%s" % (ctype.app_label, ctype.model)
@@ -177,6 +190,41 @@ def render_xtdcomment_list(parser, token):
 
     """
     return RenderXtdCommentListNode.handle_token(parser, token)
+
+
+@register.simple_tag
+def get_xtdcomment_permalink(comment, page_number=None, anchor_pattern=None):
+    """
+    Get the permalink for a comment, optionally specifying the format of the
+    named anchor to be appended to the end of the URL.
+
+    Example::
+        {% get_xtdcomment_permalink comment page_obj.number "#c%(id)s" %}
+    """
+    if anchor_pattern:
+        cm_abs_url = comment.get_absolute_url(anchor_pattern)
+    else:
+        cm_abs_url = comment.get_absolute_url()
+    try:
+        hash_pos = cm_abs_url.find("#")
+        cm_anchor = cm_abs_url[hash_pos:]
+        cm_abs_url = cm_abs_url[:hash_pos]
+    except ValueError as exc:
+        cm_anchor = ""
+
+    if not page_number:
+        page_number = 1
+    else:
+        try:
+            page_number = int(page_number)
+        except (TypeError, ValueError):
+            raise PageNotAnInteger(_('That page number is not an integer'))
+
+    if page_number > 1:
+        qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+        return f"{cm_abs_url}?{qs_param}={page_number}{cm_anchor}"
+    else:
+        return f"{cm_abs_url}{cm_anchor}"
 
 
 # ----------------------------------------------------------------------
@@ -367,7 +415,7 @@ def push_comment(context, comment):
 
 @register.filter
 def get_comment(comment_id: str):
-    return get_comment_model().objects.get(pk=int(comment_id))
+    return get_model().objects.get(pk=int(comment_id))
 
 
 # ----------------------------------------------------------------------

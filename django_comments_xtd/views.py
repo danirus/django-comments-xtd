@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from django_comments_xtd.templatetags.comments_xtd import get_reaction_enum
 import six
 
 from django.apps import apps
@@ -7,21 +6,27 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.views import shortcut
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
-from django.http import Http404, HttpResponseForbidden, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render, resolve_url
+from django.http import (Http404, HttpResponseForbidden,
+                         HttpResponseBadRequest, HttpResponseRedirect)
+from django.shortcuts import get_object_or_404, render, resolve_url
 from django.template import loader
 from django.urls import reverse
+from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
 from django.views.defaults import bad_request
 from django.views.generic import ListView
 
 
 from django_comments.signals import comment_was_posted, comment_will_be_posted
+from django_comments.views.comments import CommentPostBadRequest
 from django_comments.views.moderation import perform_flag
-from django_comments.views.utils import next_redirect, confirmation_view
+from django_comments.views.utils import next_redirect
 
 from django_comments_xtd import (get_form, get_model as get_comment_model,
                                  get_reactions_enum, signals, signed)
@@ -29,10 +34,136 @@ from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (CommentReaction, TmpXtdComment,
                                         MaxThreadLevelExceededException)
 from django_comments_xtd.utils import (check_option, get_current_site_id,
-                                       get_app_model_options, send_mail)
+                                       get_app_model_options, redirect_to,
+                                       send_mail)
 
 
 XtdComment = get_comment_model()
+
+
+@csrf_protect
+@require_POST
+def post(request, next=None, using=None):
+    """
+    Post a comment.
+
+    HTTP POST is required. If ``POST['submit'] == "preview"`` or if there are
+    errors a preview template, ``comments/preview.html``, will be rendered.
+
+    This function is copied from the original in django-comments. It extends
+    it to check whether the comment form has a field with the name indicated in
+    the setting COMMENTS_XTD_PAGE_QUERY_STRING_PARAM. If so it is added to the
+    context passed to the template as `page_number`, which corresponds to the
+    comment's page number in which the comment has been displayed.
+    """
+    # Fill out some initial data fields from an authenticated user, if present
+    data = request.POST.copy()
+    if request.user.is_authenticated:
+        if not data.get('name', ''):
+            data["name"] = (request.user.get_full_name() or
+                            request.user.get_username())
+        if not data.get('email', ''):
+            data["email"] = request.user.email
+
+    # Look up the object we're trying to comment about
+    ctype = data.get("content_type")
+    object_pk = data.get("object_pk")
+    if ctype is None or object_pk is None:
+        return CommentPostBadRequest(
+            "Missing content_type or object_pk field.")
+    try:
+        model = apps.get_model(*ctype.split(".", 1))
+        target = model._default_manager.using(using).get(pk=object_pk)
+    except TypeError:
+        return CommentPostBadRequest(
+            "Invalid content_type value: %r" % escape(ctype))
+    except AttributeError:
+        return CommentPostBadRequest(
+            "The given content-type %r does not resolve to a valid model." %
+            escape(ctype))
+    except ObjectDoesNotExist:
+        return CommentPostBadRequest(
+            "No object matching content-type %r and object PK %r exists." % (
+                escape(ctype), escape(object_pk)))
+    except (ValueError, ValidationError) as e:
+        return CommentPostBadRequest(
+            "Attempting to get content-type %r and object PK %r raised %s" % (
+                escape(ctype), escape(object_pk), e.__class__.__name__))
+
+    # Do we want to preview the comment?
+    preview = "preview" in data
+
+    # Construct the comment form
+    form = get_form()(target, data=data)
+
+    # Check security information
+    if form.security_errors():
+        return CommentPostBadRequest(
+            "The comment form failed security verification: %s" %
+            escape(str(form.security_errors())))
+
+    cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    cpage = request.POST.get(cpage_qs_param, None)
+
+    # If there are errors or if we requested a preview show the comment
+    if form.errors or preview:
+        template_list = [
+            # These first two exist for purely historical reasons.
+            # Django v1.0 and v1.1 allowed the underscore format for
+            # preview templates, so we have to preserve that format.
+            "comments/%s_%s_preview.html" % (model._meta.app_label,
+                                             model._meta.model_name),
+            "comments/%s_preview.html" % model._meta.app_label,
+            # Now the usual directory based template hierarchy.
+            "comments/%s/%s/preview.html" % (model._meta.app_label,
+                                             model._meta.model_name),
+            "comments/%s/preview.html" % model._meta.app_label,
+            "comments/preview.html",
+        ]
+        return render(request, template_list, {
+                "comment": form.data.get("comment", ""),
+                "form": form,
+                "next": data.get("next", next),
+                "page_number": cpage,
+                "cpage_qs_param": cpage_qs_param
+            },
+        )
+
+    # Otherwise create the comment
+    comment = form.get_comment_object(site_id=get_current_site(request).id)
+    comment.ip_address = request.META.get("REMOTE_ADDR", None) or None
+    comment.page_number = cpage
+    if request.user.is_authenticated:
+        comment.user = request.user
+
+    # Signal that the comment is about to be saved
+    responses = comment_will_be_posted.send(
+        sender=comment.__class__,
+        comment=comment,
+        request=request
+    )
+
+    for (receiver, response) in responses:
+        if response is False:
+            return CommentPostBadRequest(
+                "comment_will_be_posted receiver %r killed the comment" %
+                receiver.__name__)
+
+    # Save the comment and signal that it was saved
+    comment.save()
+    comment_was_posted.send(
+        sender=comment.__class__,
+        comment=comment,
+        request=request
+    )
+
+    kwargs = {
+        "c": comment._get_pk_val(),
+        settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM: cpage
+    }
+    return next_redirect(request, fallback=next or 'comments-comment-done',
+                         **kwargs)
+
 
 
 def get_moderated_tmpl(cmt):
@@ -87,8 +218,8 @@ def _create_comment(tmp_comment):
     """
     Creates a XtdComment from a TmpXtdComment.
     """
+    tmp_comment.pop('page_number', None)
     comment = XtdComment(**tmp_comment)
-    # comment.is_public = True
     comment.save()
     return comment
 
@@ -180,8 +311,8 @@ def sent(request, using=None):
         return render(request, template_arg, {'target': target})
     else:
         if (
-                request.is_ajax() and comment.user and
-                comment.user.is_authenticated
+            request.is_ajax() and comment.user and
+            comment.user.is_authenticated
         ):
             if comment.is_public:
                 template_arg = [
@@ -197,7 +328,7 @@ def sent(request, using=None):
             return render(request, template_arg, {'comment': comment})
         else:
             if comment.is_public:
-                return redirect(comment)
+                return redirect_to(comment, request=request)
             else:
                 moderated_tmpl = get_moderated_tmpl(comment)
                 return render(request, moderated_tmpl, {'comment': comment})
@@ -215,8 +346,10 @@ def confirm(request, key,
     # in such a case, as per suggested in ticket #80, we return
     # the comment's URL, as if the comment is just confirmed.
     comment = _get_comment_if_exists(tmp_comment)
+    page_number = tmp_comment.pop("page_number", None)
+
     if comment is not None:
-        return redirect(comment)
+        return redirect_to(comment, page_number=page_number)
 
     # Send signal that the comment confirmation has been received.
     responses = signals.confirmation_received.send(sender=TmpXtdComment,
@@ -236,7 +369,7 @@ def confirm(request, key,
                       {'comment': comment})
     else:
         notify_comment_followers(comment)
-        return redirect(comment)
+        return redirect_to(comment, page_number=page_number)
 
 
 def notify_comment_followers(comment):
@@ -304,6 +437,9 @@ def reply(request, cid):
     form = get_form()(comment.content_object, comment=comment)
     next = request.GET.get("next", reverse("comments-xtd-sent"))
 
+    cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    cpage = request.POST.get(cpage_qs_param, None)
+
     template_arg = [
         "django_comments_xtd/%s/%s/reply.html" % (
             comment.content_type.app_label,
@@ -312,8 +448,15 @@ def reply(request, cid):
             comment.content_type.app_label,),
         "django_comments_xtd/reply.html"
     ]
-    return render(request, template_arg,
-                  {"comment": comment, "form": form, "cid": cid, "next": next})
+    print("reply POST view: page_number =", cpage)
+    return render(request, template_arg, {
+        "comment": comment,
+        "form": form,
+        "cid": cid,
+        "next": next,
+        "page_number": cpage,
+        "cpage_qs_param": cpage_qs_param
+    })
 
 
 def mute(request, key):
@@ -375,7 +518,7 @@ def flag(request, comment_id, next=None):
     if request.method == 'POST':
         perform_flag(request, comment)
         return next_redirect(request,
-                             fallback=next or 'comments-xtd-react-done',
+                             fallback=next or 'comments-flag-done',
                              c=comment.pk)
 
     # Render a form on GET
@@ -388,7 +531,7 @@ def flag(request, comment_id, next=None):
 
 @csrf_protect
 @login_required
-def react(request, comment_id, next=None):
+def react(request, comment_id, cpage=1, next=None):
     """
     A registered user reacts to a comment. Confirmation on GET, action on POST.
 
@@ -405,7 +548,7 @@ def react(request, comment_id, next=None):
         perform_react(request, comment)
         return next_redirect(request,
                              fallback=next or 'comments-xtd-react-done',
-                             c=comment.pk)
+                             c=comment.pk, cpage=cpage)
     # Render a form on GET
     else:
         user_reactions = []
@@ -451,13 +594,15 @@ def perform_react(request, comment):
 def react_done(request):
     """Displays a "User reacted to this comment" success page."""
     comment_pk = request.GET.get("c", None)
+    comment_page = request.GET.get("cpage", 1)
     if comment_pk:
         comment = get_object_or_404(get_comment_model(), pk=comment_pk,
                                     site__pk=get_current_site_id(request))
     else:
         comment = None
     return render(request, 'django_comments_xtd/reacted.html', {
-        "comment": comment
+        "comment": comment,
+        "page_number": int(comment_page)
     })
 
 
@@ -500,3 +645,21 @@ class XtdCommentListView(ListView):
                     prange = prange[-(self.page_range):]
             context['page_range'] = prange
         return context
+
+
+def comment_in_page(request, content_type_id, object_id):
+    response = shortcut(request, content_type_id, object_id)
+    qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    page = request and request.GET.get(qs_param, None) or 1
+    try:
+        page_number = int(page)
+    except ValueError:
+        if page == 'last':
+            return HttpResponseRedirect(f"{response.url}?{qs_param}={page}")
+        else:
+            raise Http404(_('Page is not “last”, nor can it '
+                            'be converted to an int.'))
+    if page_number > 1:
+        return HttpResponseRedirect(f"{response.url}?{qs_param}={page}")
+    else:
+        return HttpResponseRedirect(response.url)

@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.utils.module_loading import import_string
 
 
@@ -17,6 +18,10 @@ def get_form():
 def get_reactions_enum():
     from django_comments_xtd.conf import settings
     return import_string(settings.COMMENTS_XTD_REACTIONS_ENUM)
+
+
+def get_form_target():
+    return reverse("comments-xtd-post")
 
 
 VERSION = (3, 0, 0, 'a', 0)  # following PEP 440

@@ -7,6 +7,7 @@
   {% for field in form %}
   {% if field.is_hidden %}{{ field }}{% endif %}
   {% endfor %}
+  <input type="hidden" name="{{ cpage_qs_param }}" value="{{ page_number }}" />
   <div class="hide">{{ form.honeypot }}</div>
 
   <div class="col1-2">

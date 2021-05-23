@@ -13,6 +13,7 @@ except ImportError:
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
+from django.http.response import HttpResponseRedirect
 from django.utils.crypto import salted_hmac
 
 from rest_framework import status
@@ -158,3 +159,20 @@ def get_user_avatar(comment):
     path = hashlib.md5(comment.user_email.lower().encode('utf-8')).hexdigest()
     param = urlencode({'s': 48})
     return "//www.gravatar.com/avatar/%s?%s&d=identicon" % (path, param)
+
+
+def redirect_to(comment, request=None, page_number=None):
+    cm_abs_url = comment.get_absolute_url()
+    cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    cpage = request.GET.get(cpage_qs_param, None) if request else page_number
+    if cpage:
+        try:
+            hash_pos = cm_abs_url.find("#")
+            cm_anchor = cm_abs_url[hash_pos:]
+            cm_abs_url = cm_abs_url[:hash_pos]
+        except ValueError:
+            cm_anchor = ""
+        url = f"{cm_abs_url}?{cpage_qs_param}={cpage}{cm_anchor}"
+        return HttpResponseRedirect(url)
+    else:
+        return HttpResponseRedirect(cm_abs_url)

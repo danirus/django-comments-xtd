@@ -2,7 +2,6 @@
 
 {% load i18n %}
 {% load static %}
-{% load comments %}
 {% load comments_xtd %}
 {% load avatar_tags %}
 
@@ -35,7 +34,7 @@
           <div class="comment-box ml0" id="c{{ comment.id}}">
             <div class="comment">
               <div class="header">
-                <div>{{ comment.submit_date }}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>
+                <div>{{ comment.submit_date }}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment %}">¶</a></div>
               </div>
               <div class="body">{{ comment.comment|linebreaks|escape }}</div>
               <div class="footer"></div>

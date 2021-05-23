@@ -6,6 +6,7 @@ from django_comments_xtd import api, views
 
 
 urlpatterns = [
+    re_path(r'^post/$', views.post, name='comments-xtd-post'),
     re_path(r'^sent/$', views.sent, name='comments-xtd-sent'),
     re_path(r'^confirm/(?P<key>[^/]+)/$', views.confirm,
             name='comments-xtd-confirm'),
@@ -17,6 +18,10 @@ urlpatterns = [
     # New flags in addition to those provided by django-contrib-comments.
     re_path(r'^react/(\d+)/$', views.react, name='comments-xtd-react'),
     re_path(r'^reacted/$', views.react_done, name='comments-xtd-react-done'),
+
+    # Remap comments-url-redirect to add query string with page number.
+    # re_path(r'^cr/(\d+)/(.+)/$', views.comment_in_page,
+    #         name='comments-url-redirect'),
 
     # API handlers.
     re_path(r'^api/comment/$', api.CommentCreate.as_view(),

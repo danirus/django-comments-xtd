@@ -90,11 +90,11 @@ COMMENTS_XTD_DEFAULT_FOLLOWUP = False
 # in a row before it breaks into another row.
 COMMENTS_XTD_REACTIONS_ROW_LENGTH = 4
 
-# Put up to the given number of comments in the last page to avoid
+# Display up to the given number of comments in the last page to avoid
 # creating another page containing only these amount of comments.
 COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS = 10
 
-# Number of comments per page.
+# Number of comments per page. When <=0 pagination is disabled.
 COMMENTS_XTD_ITEMS_PER_PAGE = 25
 
 # Name of the query string parameter containing the page number.

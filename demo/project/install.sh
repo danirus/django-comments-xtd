@@ -24,7 +24,7 @@ fi
 
 #------------------------------
 echo "Loading fixture files... "
-fixtures=(users sites stories quotes)
+fixtures=(users sites stories quotes comments)
 for file in ${fixtures[@]}; do
     python manage.py loaddata ${FIXTURESPATH}/${file}.json || check_ret
 done

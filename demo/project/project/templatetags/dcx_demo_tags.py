@@ -2,6 +2,7 @@ import hashlib
 from urllib.parse import urlencode
 
 from django.contrib.auth import get_user_model
+from django.http import Http404
 from django.template import Library
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -86,9 +87,14 @@ def get_gravatar_url(email, size=48, avatar='identicon'):
 def get_user_avatar_or_gravatar(email, config='48,identicon'):
     size, gravatar_type = config.split(',')
     try:
+        size_number = int(size)
+    except ValueError:
+        raise Http404(_('The given size is not a number: %s' % repr(size)))
+
+    try:
         user = get_user_model().objects.get(email=email)
-        return avatar(user, size)
+        return avatar(user, size_number)
     except get_user_model().DoesNotExist:
-        url = get_gravatar_url(email, size, gravatar_type)
-        return mark_safe('<img src="%s" height="%s" width="%s">' %
-                        (url, size, size))
+        url = get_gravatar_url(email, size_number, gravatar_type)
+        return mark_safe('<img src="%s" height="%d" width="%d">' %
+                        (url, size_number, size_number))

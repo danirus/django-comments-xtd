@@ -645,6 +645,13 @@
     max-width: 735px;
 }
 
+.pagination {
+    padding: 24px 0;
+}
+
+.step-links > * {
+    padding: 0 8px;
+}
 /* ----------------------------------------------------- */
 .dcx label {
     margin: auto 0;

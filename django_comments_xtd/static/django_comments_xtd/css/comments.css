@@ -117,6 +117,17 @@
     }
 }
 
+.dcx .comment-box.l0-ini:after {
+    position: absolute;
+    content: "";
+    top: 7px;
+    left: -4px;
+    width: 11px;
+    height: 11px;
+    border-radius: 6px;
+    background-color: hsl(207deg 90% 34%);
+}
+
 .dcx .comment-box.l0-ini:before, .dcx .comment-box-img.l0-ini:before,
 .dcx .comment-box.l0-mid:before, .dcx .comment-box-img.l0-mid:before {
     position: absolute;
@@ -131,6 +142,17 @@
 .dcx .comment-box.l0-ini:before,
 .dcx .comment-box-img.l0-ini:before {
     top: 16px
+}
+
+.dcx .comment-box.l1-ini .level-1:after {
+    position: absolute;
+    content: "";
+    top: 7px;
+    left: 20px;
+    width: 11px;
+    height: 11px;
+    border-radius: 6px;
+    background-color: hsl(207deg 90% 54%);
 }
 
 .dcx .comment-box.l1-ini .level-1:before,
@@ -165,6 +187,17 @@
     .dcx .comment-box-img.l1-mid .level-1:before {
         left: 24px
     }
+}
+
+.dcx .comment-box.l2-ini .level-2:after {
+    position: absolute;
+    content: "";
+    top: 7px;
+    left: 44px;
+    width: 11px;
+    height: 11px;
+    border-radius: 6px;
+    background-color: hsl(207deg 90% 74%);
 }
 
 .dcx .comment-box.l2-ini .level-2:before,

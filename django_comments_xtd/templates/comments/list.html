@@ -17,6 +17,10 @@
     data-pos-left="-7"
   {% endif %}
 >
+  {% if is_paginated %}
+    {% include "comments/pagination.html" %}
+  {% endif %}
+
   {% for comment in comment_list %}
     {% comment %}
       # Before rendering the comment, check the reply_stack to find out
@@ -40,7 +44,9 @@
     {% endif %}
 
     {% block comment %}
-      {% include "includes/django_comments_xtd/comment.html" %}
+      {% with page_number=page_obj.number show_nested=True %}
+        {% include "includes/django_comments_xtd/comment.html" %}
+      {% endwith %}
     {% endblock %}
 
     {% if forloop.last %}
@@ -56,4 +62,8 @@
     {% endif %}
 
   {% endfor %}
+
+  {% if is_paginated %}
+    {% include "comments/pagination.html" %}
+  {% endif %}
 </div>

@@ -18,10 +18,23 @@
 
     {% if comment %}
       <div class="central-column">
-        <div class="dcx">
-          {% with allow_flagging=False allow_reactions=False show_reactions=True show_nested=False %}
-            {% include "includes/django_comments_xtd/comment.html"  %}
-          {% endwith %}
+        <div class="dcx pb32">
+          <div id="c{{ comment.id }}" class="comment-box">
+            <div class="comment">
+              <div class="header">
+                <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment page_number %}">¶</a></div>
+              </div>
+              <div class="body">
+                {{ comment.comment|linebreaks|escape }}
+              </div>
+              <div class="footer">
+                <div class="reactions">
+                  {% include "includes/django_comments_xtd/comment_reactions.html" %}
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
         <h6 class="text-center">
           <a href="{% get_xtdcomment_permalink comment page_number %}">{% translate "Go back to the comment's page." %}</a>

@@ -9,17 +9,29 @@
 <main>
   <article>
     <div class="container">
-      <h2 class="text-center">{% translate "How do you react to this comment?" %}</h2>
+      <h2 class="text-center">{% translate "Share your reaction to this comment" %}</h2>
       <h6 class="text-center pb24">
         {% translate "Comment sent to:" %}<br/>
         <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
       </h6>
     </div>
     <div class="central-column">
-      <div class="dcx">
-        {% with allow_flagging=False allow_reactions=False show_reactions=True show_nested=False %}
-          {% include "includes/django_comments_xtd/comment.html"  %}
-        {% endwith %}
+      <div class="dcx pb32">
+        <div id="c{{ comment.id }}" class="comment-box">
+          <div class="comment">
+            <div class="header">
+              <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment page_number %}">¶</a></div>
+            </div>
+            <div class="body">
+              {{ comment.comment|linebreaks|escape }}
+            </div>
+            <div class="footer">
+              <div class="reactions">
+                {% include "includes/django_comments_xtd/comment_reactions.html" %}
+              </div>
+            </div>
+          </div>
+        </div>
 
         <section class="reaction-form">
           <h5 class="text-center">Reaction choices</h5>
@@ -28,7 +40,7 @@
           {% endif %}
           <form method="POST" autocomplete="off" action="{% comment_reaction_form_target comment %}">
             {% csrf_token %}
-            <input type="hidden" name="next" value="{% url 'comments-xtd-react-done' %}" />
+            <input type="hidden" name="{{ cpage_qs_param }}" value="{{ page_number }}" />
             {% render_reactions_buttons user_reactions %}
             {% if user_reactions %}
               <h6 class="text-center">{% translate "Click on a button to select or deselect your reaction." %}</h6>

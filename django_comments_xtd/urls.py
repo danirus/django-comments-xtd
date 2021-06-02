@@ -20,8 +20,8 @@ urlpatterns = [
     re_path(r'^reacted/$', views.react_done, name='comments-xtd-react-done'),
 
     # Remap comments-url-redirect to add query string with page number.
-    # re_path(r'^cr/(\d+)/(.+)/$', views.comment_in_page,
-    #         name='comments-url-redirect'),
+    re_path(r'^cr/(\d+)/(.+)/$', views.comment_in_page,
+            name='comments-url-redirect'),
 
     # API handlers.
     re_path(r'^api/comment/$', api.CommentCreate.as_view(),

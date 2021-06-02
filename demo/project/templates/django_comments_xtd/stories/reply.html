@@ -1,0 +1,49 @@
+{% extends "django_comments_xtd/base.html" %}
+
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+{% load dcx_demo_tags %}
+
+{% block title %}{% trans "Comment reply" %}{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% trans "Reply to comment" %}</h2>
+      <h6 class="text-center pb24">
+        {% translate "Comment sent to:" %}<br/>
+        <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+      </h6>
+    </div>
+    <div class="central-column">
+      <div class="dcx pb32">
+        <div id="c{{ comment.id }}" class="comment-box-img l0-ini">
+          <div class="user-avatar">
+            {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}
+          </div>
+          <div class="comment">
+            <div class="header">
+              <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment page_number %}">¶</a></div>
+            </div>
+            <div class="body">
+              {{ comment.comment|linebreaks|escape }}
+            </div>
+            <div class="footer"></div>
+          </div>
+        </div>
+
+        <div class="reply-box-img l0">
+          <div class="line-0"></div>
+          <div class="content">
+            <section class="reply-form active">
+              {% include "comments/form.html" %}
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</main>
+{% endblock %}

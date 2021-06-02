@@ -1,0 +1,92 @@
+{% extends "django_comments_xtd/base.html" %}
+
+{% load i18n %}
+{% load comments_xtd %}
+{% load dcx_demo_tags %}
+
+{% block title %}{% trans "Preview your comment" %}{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">{% trans "Preview your comment" %}</h2>
+    <h6 class="text-center pb24">
+      {% translate "Comment sent to:" %}<br/>
+      <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+    </h6>
+
+    <div class="central-column">
+      <div class="dcx">
+        <div class="comment-list">
+          {% if form.reply_to.value == "0" %}
+            <div class="comment-box-img">
+              <div class="user-avatar">
+                {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}
+              </div>
+              <div class="comment">
+                <div class="header">
+                  {% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}
+                </div>
+                <div class="body">
+                  {{ form.cleaned_data.comment|linebreaks|escape }}
+                </div>
+                <div class="footer"></div>
+              </div>
+            </div>
+          {% else %}
+            {% with parent=form.reply_to.value|get_comment %}
+              <div class="comment-box-img l0-ini">
+                <div class="user-avatar">
+                  {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}
+                </div>
+                <div class="comment">
+                  <div class="header">
+                    <div>{% if parent.url %}<a href="{{ parent.url }}" target="_new">{{ parent.name }}</a>{% else %}{{ parent.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ parent.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink parent page_number %}">¶</a></div>
+                  </div>
+                  <div class="body">
+                    {{ parent.comment|linebreaks|escape }}
+                  </div>
+                  <div class="footer"></div>
+                </div>
+              </div>
+            {% endwith %}
+
+            <div class="comment-box-img l0-mid">
+              <div class="level-1"></div>
+              <div class="user-avatar">
+                {% get_user_avatar_or_gravatar form.cleaned_data.email "36,identicon" %}
+              </div>
+              <div class="comment">
+                <div class="header">
+                  {% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}
+                </div>
+                <div class="body">
+                  {{ form.cleaned_data.comment|linebreaks|escape }}
+                </div>
+                <div class="footer"></div>
+              </div>
+            </div>
+
+            <div class="reply-box-img l0">
+              <div class="line-0"></div>
+              <div class="content">
+                <section class="reply-form active">
+                  {% include "comments/form.html" %}
+                </section>
+              </div>
+            </div>
+
+          {% endif %}
+        </div>
+
+        {% if form.reply_to.value == "0" %}
+          <section class="comment-form">
+            <h5 class="text-center">Your comment</h5>
+            {% include "comments/form.html" %}
+          </section>
+        {% endif %}
+      </div>
+    </div>
+  </article>
+</main>
+{% endblock %}

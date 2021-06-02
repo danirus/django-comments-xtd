@@ -108,13 +108,6 @@ def post(request, next=None, using=None):
     # If there are errors or if we requested a preview show the comment
     if form.errors or preview:
         template_list = [
-            # These first two exist for purely historical reasons.
-            # Django v1.0 and v1.1 allowed the underscore format for
-            # preview templates, so we have to preserve that format.
-            "comments/%s_%s_preview.html" % (model._meta.app_label,
-                                             model._meta.model_name),
-            "comments/%s_preview.html" % model._meta.app_label,
-            # Now the usual directory based template hierarchy.
             "comments/%s/%s/preview.html" % (model._meta.app_label,
                                              model._meta.model_name),
             "comments/%s/preview.html" % model._meta.app_label,
@@ -448,7 +441,6 @@ def reply(request, cid):
             comment.content_type.app_label,),
         "django_comments_xtd/reply.html"
     ]
-    print("reply POST view: page_number =", cpage)
     return render(request, template_arg, {
         "comment": comment,
         "form": form,
@@ -531,7 +523,7 @@ def flag(request, comment_id, next=None):
 
 @csrf_protect
 @login_required
-def react(request, comment_id, cpage=1, next=None):
+def react(request, comment_id, next=None):
     """
     A registered user reacts to a comment. Confirmation on GET, action on POST.
 
@@ -542,13 +534,21 @@ def react(request, comment_id, cpage=1, next=None):
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
-    check_option(comment, "allow_comment_reactions")
+    check_option(comment, "comment_reactions_enabled")
+
+    cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    cpage = request.GET.get(cpage_qs_param, None)
+
     # Flag on POST
     if request.method == 'POST':
         perform_react(request, comment)
+        kwargs = {
+            "c": comment.pk,
+            cpage_qs_param: cpage or request.POST.get(cpage_qs_param, None)
+        }
         return next_redirect(request,
                              fallback=next or 'comments-xtd-react-done',
-                             c=comment.pk, cpage=cpage)
+                             **kwargs)
     # Render a form on GET
     else:
         user_reactions = []
@@ -556,10 +556,13 @@ def react(request, comment_id, cpage=1, next=None):
                                                authors=request.user)
         for cmt_reaction in cr_qs:
             user_reactions.append(get_reactions_enum()(cmt_reaction.reaction))
+
         return render(request, 'django_comments_xtd/react.html', {
             'comment': comment,
             'user_reactions': user_reactions,
-            'next': next
+            'next': next,
+            "page_number": cpage,
+            "cpage_qs_param": cpage_qs_param
         })
 
 
@@ -594,7 +597,8 @@ def perform_react(request, comment):
 def react_done(request):
     """Displays a "User reacted to this comment" success page."""
     comment_pk = request.GET.get("c", None)
-    comment_page = request.GET.get("cpage", 1)
+    cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    cpage = request.GET.get(cpage_qs_param, 1)
     if comment_pk:
         comment = get_object_or_404(get_comment_model(), pk=comment_pk,
                                     site__pk=get_current_site_id(request))
@@ -602,7 +606,7 @@ def react_done(request):
         comment = None
     return render(request, 'django_comments_xtd/reacted.html', {
         "comment": comment,
-        "page_number": int(comment_page)
+        "page_number": int(cpage)
     })
 
 

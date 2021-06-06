@@ -610,7 +610,7 @@ Edit ``blog/post_detail.html`` to make it look like follows:
        </div>
 
        {% get_comment_count for object as comment_count %}
-       <div class="py-4 text-center>
+       <div class="py-4 text-center">
          <a href="{% url 'blog:post-list' %}">Back to the post list</a>
          &nbsp;&sdot;&nbsp;
          {{ comment_count }} comment{{ comment_count|pluralize }}

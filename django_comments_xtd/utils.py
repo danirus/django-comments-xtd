@@ -1,7 +1,6 @@
 # Idea borrowed from Selwin Ong post:
 # http://ui.co.id/blog/asynchronous-send_mail-in-django
 
-from copy import copy
 import hashlib
 import queue as queue
 import threading
@@ -19,8 +18,10 @@ from django.utils.crypto import salted_hmac
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 
+from django_comments_xtd import get_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_OPTIONS
+from django_comments_xtd.paginator import CommentsPaginator
 
 
 mail_sent_queue = queue.Queue()
@@ -176,3 +177,49 @@ def redirect_to(comment, request=None, page_number=None):
         return HttpResponseRedirect(url)
     else:
         return HttpResponseRedirect(cm_abs_url)
+
+
+def get_comment_page_number(request, content_type_id, object_id, comment_id):
+    """
+    Returns the page number in which the `comment_id` is listed.
+    """
+    num_orphans = settings.COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS
+    page_size = settings.COMMENTS_XTD_ITEMS_PER_PAGE
+    if page_size == 0:
+        return 1  # Pagination is disabled.
+
+    # Replicate the logic in django_comments/templatetags/comments.py,
+    # BaseCommentNode.get_queryset method.
+
+    site_id = getattr(settings, "SITE_ID", None)
+    if not site_id:
+        site_id = get_current_site_id(request)
+
+    qs = get_model().objects.filter(
+        content_type_id=content_type_id,
+        object_pk=object_id,
+        site__pk=site_id)
+
+    # The is_public and is_removed fields are implementation details of the
+    # built-in comment model's spam filtering system, so they might not
+    # be present on a custom comment model subclass. If they exist, we
+    # should filter on them.
+    field_names = [f.name for f in get_model()._meta.fields]
+    if 'is_public' in field_names:
+        qs = qs.filter(is_public=True)
+    if (
+        getattr(settings, 'COMMENTS_HIDE_REMOVED', True)
+        and 'is_removed' in field_names
+    ):
+        qs = qs.filter(is_removed=False)
+
+    if 'user' in field_names:
+        qs = qs.select_related('user')
+
+    comment_id = int(comment_id)
+    paginator = CommentsPaginator(qs, page_size, orphans=num_orphans)
+    for page_number in range(1, paginator.num_pages):
+        page = paginator.page(page_number)
+        if comment_id in [cm.id for cm in page.object_list]:
+            return page_number
+    raise Exception("Comment %d not listed in any page." % comment_id)

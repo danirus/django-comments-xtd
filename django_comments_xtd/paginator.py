@@ -79,7 +79,12 @@ class CommentsPaginator(Paginator):
 
     @cached_property
     def in_page(self):
-        """Calculate the variable number of comments displayed in each page."""
+        """
+        Calculate the variable number of comments displayed in each page.
+
+        Returns a list. Each index item represents the number of comments to
+        display in the page index + 1.
+        """
         ptotal = 0  # Page total number of comments.
         in_page = []
         cgroups = [cm.nested_count + 1

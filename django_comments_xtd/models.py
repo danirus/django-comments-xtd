@@ -68,6 +68,12 @@ class XtdComment(Comment):
     nested_count = models.IntegerField(default=0, db_index=True)
     objects = XtdCommentManager()
 
+    def get_absolute_url(self, anchor_pattern="#c%(id)s"):
+        return reverse(
+            "comments-url-redirect",
+            args=(self.content_type_id, self.object_pk, self.pk)
+        ) + (anchor_pattern % self.__dict__)
+
     def save(self, *args, **kwargs):
         is_new = self.pk is None
         super(Comment, self).save(*args, **kwargs)

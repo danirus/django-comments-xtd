@@ -14,12 +14,11 @@ from django.utils.translation import gettext as _
 from django_comments.templatetags.comments import (BaseCommentNode,
                                                    RenderCommentListNode)
 
-from django_comments_xtd import get_model, get_reactions_enum
+from django_comments_xtd import get_model, get_reactions_enum, utils
 from django_comments_xtd.api import frontend
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import max_thread_level_for_content_type
 from django_comments_xtd.paginator import CommentsPaginator
-from django_comments_xtd.utils import get_app_model_options, get_html_id_suffix
 
 
 register = Library()
@@ -151,7 +150,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             #     'comment_reactions_enabled': <boolean>,
             #     'object_reactions_enabled': <boolean>
             # }
-            options = get_app_model_options(content_type=app_model)
+            options = utils.get_app_model_options(content_type=app_model)
             check_input_allowed_str = options.pop('check_input_allowed')
             check_func = import_string(check_input_allowed_str)
             target_obj = ctype.get_object_for_this_type(pk=object_pk)
@@ -192,7 +191,7 @@ def render_xtdcomment_list(parser, token):
     return RenderXtdCommentListNode.handle_token(parser, token)
 
 
-@register.simple_tag
+@register.simple_tag()
 def get_xtdcomment_permalink(comment, page_number=None, anchor_pattern=None):
     """
     Get the permalink for a comment, optionally specifying the format of the
@@ -421,4 +420,4 @@ def get_comment(comment_id: str):
 # ----------------------------------------------------------------------
 @register.inclusion_tag('django_comments_xtd/only_users_can_post.html')
 def render_only_users_can_post_template(object):
-    return {'html_id_suffix': get_html_id_suffix(object)}
+    return {'html_id_suffix': utils.get_html_id_suffix(object)}

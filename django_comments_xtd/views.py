@@ -158,17 +158,17 @@ def post(request, next=None, using=None):
 
 def get_moderated_tmpl(cmt):
     return [
-        "django_comments_xtd/%s/%s/moderated.html" % (
-            cmt.content_type.app_label, cmt.content_type.model),
-        "django_comments_xtd/%s/moderated.html" % cmt.content_type.app_label,
-        "django_comments_xtd/moderated.html"
+        "comments/%s/%s/moderated.html" % (cmt.content_type.app_label,
+                                           cmt.content_type.model),
+        "comments/%s/moderated.html" % cmt.content_type.app_label,
+        "comments/moderated.html"
     ]
 
 
 def send_email_confirmation_request(
     comment, key, site,
-    text_template="django_comments_xtd/email_confirmation_request.txt",
-    html_template="django_comments_xtd/email_confirmation_request.html"
+    text_template="comments/email_confirmation_request.txt",
+    html_template="comments/email_confirmation_request.html"
 ):
     """Send email requesting comment confirmation"""
     subject = _("comment confirmation request")
@@ -296,8 +296,7 @@ def sent(request, using=None):
         except Exception:
             return HttpResponseBadRequest("Comment doesn't exist")
 
-        template_arg = ["django_comments_xtd/posted.html",
-                        "comments/posted.html"]
+        template_arg = "comments/posted.html"
         return render(request, template_arg, {'target': target})
     else:
         if (
@@ -306,12 +305,12 @@ def sent(request, using=None):
         ):
             if comment.is_public:
                 template_arg = [
-                    "django_comments_xtd/%s/%s/comment.html" % (
+                    "comments/%s/%s/comment.html" % (
                         comment.content_type.app_label,
                         comment.content_type.model),
-                    "django_comments_xtd/%s/comment.html" % (
+                    "comments/%s/comment.html" % (
                         comment.content_type.app_label,),
-                    "django_comments_xtd/comment.html"
+                    "comments/comment.html"
                 ]
             else:
                 template_arg = get_moderated_tmpl(comment)
@@ -325,7 +324,7 @@ def sent(request, using=None):
 
 
 def confirm(request, key,
-            template_discarded="django_comments_xtd/discarded.html"):
+            template_discarded="comments/discarded.html"):
     try:
         tmp_comment = signed.loads(str(key),
                                    extra_key=settings.COMMENTS_XTD_SALT)
@@ -380,10 +379,10 @@ def notify_comment_followers(comment):
 
     subject = _("new comment posted")
     text_message_template = loader.get_template(
-        "django_comments_xtd/email_followup_comment.txt")
+        "comments/email_followup_comment.txt")
     if settings.COMMENTS_XTD_SEND_HTML_EMAIL:
         html_message_template = loader.get_template(
-            "django_comments_xtd/email_followup_comment.html")
+            "comments/email_followup_comment.html")
 
     for email, (name, key) in six.iteritems(followers):
         mute_url = reverse('comments-xtd-mute', args=[key.decode('utf-8')])
@@ -431,12 +430,10 @@ def reply(request, cid):
     cpage = request.POST.get(cpage_qs_param, None)
 
     template_arg = [
-        "django_comments_xtd/%s/%s/reply.html" % (
-            comment.content_type.app_label,
-            comment.content_type.model),
-        "django_comments_xtd/%s/reply.html" % (
-            comment.content_type.app_label,),
-        "django_comments_xtd/reply.html"
+        "comments/%s/%s/reply.html" % (comment.content_type.app_label,
+                                       comment.content_type.model),
+        "comments/%s/reply.html" % (comment.content_type.app_label,),
+        "comments/reply.html"
     ]
     return render(request, template_arg, {
         "comment": comment,
@@ -478,13 +475,10 @@ def mute(request, key):
     target = model._default_manager.get(pk=tmp_comment.object_pk)
 
     template_arg = [
-        "django_comments_xtd/%s/%s/muted.html" % (
-            tmp_comment.content_type.app_label,
-            tmp_comment.content_type.model),
-        "django_comments_xtd/%s/muted.html" % (
-            tmp_comment.content_type.app_label,),
-        "django_comments_xtd/muted.html"
-    ]
+        "comments/%s/%s/muted.html" % (tmp_comment.content_type.app_label,
+                                       tmp_comment.content_type.model),
+        "comments/%s/muted.html" % (tmp_comment.content_type.app_label,),
+        "comments/muted.html"]
     return render(request, template_arg, {"content_object": target})
 
 
@@ -524,7 +518,7 @@ def react(request, comment_id, next=None):
     """
     A registered user reacts to a comment. Confirmation on GET, action on POST.
 
-    Templates: :template:`django_comments_xtd/react.html`,
+    Templates: :template:`comments/react.html`,
     Context:
         comment
             the `comments.comment` object the user reacted to.
@@ -554,7 +548,7 @@ def react(request, comment_id, next=None):
         for cmt_reaction in cr_qs:
             user_reactions.append(get_reactions_enum()(cmt_reaction.reaction))
 
-        return render(request, 'django_comments_xtd/react.html', {
+        return render(request, 'comments/react.html', {
             'comment': comment,
             'user_reactions': user_reactions,
             'next': next,
@@ -601,51 +595,10 @@ def react_done(request):
                                     site__pk=utils.get_current_site_id(request))
     else:
         comment = None
-    return render(request, 'django_comments_xtd/reacted.html', {
+    return render(request, 'comments/reacted.html', {
         "comment": comment,
         "page_number": int(cpage)
     })
-
-
-class XtdCommentListView(ListView):
-    page_range = 5
-    content_types = None  # List of "app_name.model_name" strings.
-    template_name = "django_comments_xtd/comment_list.html"
-
-    def get_content_types(self):
-        if self.content_types is None:
-            return None
-        content_types = []
-        for entry in self.content_types:
-            app, model = entry.split('.')
-            content_types.append(
-                ContentType.objects.get(app_label=app, model=model)
-            )
-        return content_types
-
-    def get_queryset(self):
-        content_types = self.get_content_types()
-        if content_types is None:
-            return None
-        return XtdComment.objects.for_content_types(
-            content_types,
-            site=utils.get_current_site_id(self.request)
-        )\
-            .filter(is_removed=False)\
-            .order_by('submit_date')
-
-    def get_context_data(self, **kwargs):
-        context = super(XtdCommentListView, self).get_context_data(**kwargs)
-        if 'paginator' in context:
-            index = context['page_obj'].number - 1
-            prange = [n for n in context['paginator'].page_range]
-            if len(prange) > self.page_range:
-                if len(prange[index:]) >= self.page_range:
-                    prange = prange[index:(index + self.page_range)]
-                else:
-                    prange = prange[-(self.page_range):]
-            context['page_range'] = prange
-        return context
 
 
 def comment_in_page(request, content_type_id, object_id, comment_id):

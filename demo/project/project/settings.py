@@ -195,7 +195,7 @@ COMMENTS_XTD_SEND_HTML_EMAIL = True
 COMMENTS_XTD_MAX_THREAD_LEVEL = 3  # For 'stories.story' and 'shop.articles'.
 
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
-    'quotes.quote': 3  # So 4 levels: from 0 to 3.
+    'quotes.quote': 1  # So 4 levels: from 0 to 3.
 }
 
 COMMENTS_XTD_APP_MODEL_OPTIONS = {

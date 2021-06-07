@@ -6,19 +6,11 @@ except ImportError:
 
 from django.template import Context, loader
 
-try:
-    from django_comments import get_model
-    from django_comments.signals import (comment_will_be_posted,
-                                         comment_was_flagged)
-    from django_comments.models import CommentFlag
-    from django_comments.moderation import Moderator, CommentModerator
-except ImportError:
-    from django.contrib.comments import get_model
-    from django.contrib.comments.signals import (comment_will_be_posted,
-                                                 comment_was_flagged)
-    from django.contrib.comments.models import CommentFlag
-    from django.contrib.comments.moderation import Moderator, CommentModerator
-
+from django_comments import get_model
+from django_comments.signals import (comment_will_be_posted,
+                                     comment_was_flagged)
+from django_comments.models import CommentFlag
+from django_comments.moderation import Moderator, CommentModerator
 
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import BlackListedDomain, TmpXtdComment
@@ -61,8 +53,7 @@ class XtdCommentModerator(CommentModerator):
             return
         recipient_list = [manager_tuple[1]
                           for manager_tuple in settings.MANAGERS]
-        t = loader.get_template('django_comments_xtd/'
-                                'removal_notification_email.txt')
+        t = loader.get_template('comments/removal_notification_email.txt')
         c = {'comment': comment,
              'content_object': content_object,
              'current_site': get_current_site(request),

@@ -271,7 +271,7 @@ def comment_reaction_form_target(comment):
     return reverse("comments-xtd-react", args=(comment.id,))
 
 
-@register.inclusion_tag('includes/django_comments_xtd/reactions_buttons.html')
+@register.inclusion_tag('comments/reactions_buttons.html')
 def render_reactions_buttons(user_reactions):
     return {
         'reactions': get_reactions_enum(),
@@ -418,6 +418,6 @@ def get_comment(comment_id: str):
 
 
 # ----------------------------------------------------------------------
-@register.inclusion_tag('django_comments_xtd/only_users_can_post.html')
+@register.inclusion_tag('comments/only_users_can_post.html')
 def render_only_users_can_post_template(object):
     return {'html_id_suffix': utils.get_html_id_suffix(object)}

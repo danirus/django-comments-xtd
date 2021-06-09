@@ -12,12 +12,16 @@ from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 
 from django_comments_xtd import views
+from django_comments_xtd import get_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.api import serializers
 from django_comments_xtd.models import (
-    TmpXtdComment, XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+    TmpXtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
 )
 from django_comments_xtd.utils import get_current_site_id
+
+
+XtdComment = get_model()
 
 
 class CommentCreate(generics.CreateAPIView):

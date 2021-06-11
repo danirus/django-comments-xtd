@@ -13,8 +13,8 @@ from django.contrib.sites.models import Site
 from django.test import TestCase
 
 from django_comments_xtd import django_comments
+from django_comments_xtd import get_model
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import XtdComment
 from django_comments_xtd.tests.models import Article
 from django_comments_xtd.tests.utils import post_comment
 
@@ -24,6 +24,8 @@ app_model_options_mock = {
         'who_can_post': 'users'
     }
 }
+
+XtdComment = get_model()
 
 
 class CommentCreateTestCase(TestCase):

@@ -30,7 +30,7 @@
       {% with top_comment=reply_stack|get_top_comment %}
         {% if comment.level <= top_comment.level %}
           {% for object in reply_stack|pop_comments_gte:comment.level %}
-            {% if object.allow_thread and not object.is_removed %}
+            {% if object.allow_thread %}
               {% include "comments/stories/reply_button.html" with comment=object %}
             {% endif %}
           {% endfor %}
@@ -55,7 +55,7 @@
         # rest of comments still queued in the reply_stack.
       {% endcomment %}
       {% for object in reply_stack|pop_comments_gte %}
-        {% if object.allow_thread and not object.is_removed %}
+        {% if object.allow_thread %}
           {% include "comments/stories/reply_button.html" with comment=object %}
         {% endif %}
       {% endfor %}

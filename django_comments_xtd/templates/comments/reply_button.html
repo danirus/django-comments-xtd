@@ -3,9 +3,9 @@
 
 <div
   id="reply-to-{{ comment.id }}"
-  class="{% if not is_input_allowed %}not-{% endif %}reply-box {{ comment.level|reply_css_thread_range }}"
+  class="{% if not is_input_allowed or comment.is_removed %}not-{% endif %}reply-box {{ comment.level|reply_css_thread_range }}"
 >
-  {% if is_input_allowed %}
+  {% if is_input_allowed and not comment.is_removed %}
     {{ comment.level|indent_divs }}
     {{ comment.level|hline_div }}
     <div class="content">

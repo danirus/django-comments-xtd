@@ -4,11 +4,11 @@ Signals relating to django-comments-xtd.
 from django.dispatch import Signal
 
 # Sent just after a comment has been verified.
-confirmation_received = Signal(providing_args=["comment", "request"])
+confirmation_received = Signal()
 
 
 # Sent just after a user has muted a comments thread.
-comment_thread_muted = Signal(providing_args=["comment", "request"])
+comment_thread_muted = Signal()
 
 
 # Sent before the data in the REST POST comment form is validated.
@@ -16,9 +16,8 @@ comment_thread_muted = Signal(providing_args=["comment", "request"])
 # to the CommentSecurityForm fields 'timestamp' and 'security_hash'. The
 # intention is to combine a receiver with a django-rest-framework
 # authentication class, and return True when the request.auth is not None.
-should_request_be_authorized = Signal(providing_args=["comment", "request"])
+should_request_be_authorized = Signal()
 
 
 # Sent after a comment got a reaction.
-comment_got_a_reaction = Signal(providing_args=["comment", "reaction",
-                                                "created", "request"])
+comment_got_a_reaction = Signal()

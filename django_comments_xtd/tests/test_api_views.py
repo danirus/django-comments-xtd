@@ -16,7 +16,8 @@ from django.test import TestCase as DjangoTestCase
 
 from rest_framework.test import APIRequestFactory, APITestCase
 
-from django_comments_xtd import django_comments, get_model
+import django_comments
+from django_comments_xtd import get_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.api.views import CommentCount, CommentList
 from django_comments_xtd.models import (XtdComment,

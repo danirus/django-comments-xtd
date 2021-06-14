@@ -1,11 +1,9 @@
 from __future__ import unicode_literals
 
 from datetime import datetime
+from unittest.mock import patch
+
 import pytz
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
@@ -15,7 +13,7 @@ from django.urls import reverse
 
 from rest_framework.test import APIClient
 
-from django_comments_xtd import django_comments
+import django_comments
 from django_comments_xtd.api.serializers import ReadCommentSerializer
 from django_comments_xtd.models import XtdComment
 from django_comments_xtd.signals import should_request_be_authorized

@@ -7,11 +7,11 @@
   <div class="comment">
     <div class="header">
       <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment page_number %}">¶</a></div>
-      {% if comment_flagging_enabled and is_input_allowed %}<div class="small"><a href="{% url 'comments-flag' comment.id %}">report</a></div>{% endif %}
+      {% if not comment.is_removed and comment_flagging_enabled and is_input_allowed %}<div class="small"><a href="{% url 'comments-flag' comment.id %}">report</a></div>{% endif %}
     </div>
     <div class="body">
       {% if comment.is_removed %}
-        <p class="text-muted">
+        <p class="muted">
           {% trans "This comment has been removed." %}
         </p>
       {% else %}
@@ -23,7 +23,7 @@
         {% if comment_reactions_enabled %}
           {% if comment.reactions.count > 0 %}
             <div class="reactions">
-              {% include "includes/django_comments_xtd/comment_reactions.html" %}
+              {% include "comments/comment_reactions.html" %}
             </div>
           {% endif %}
         {% endif %}

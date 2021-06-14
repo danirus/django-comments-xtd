@@ -179,6 +179,7 @@ REST_FRAMEWORK = {
 
 COMMENTS_APP = "django_comments_xtd"
 
+COMMENTS_HIDE_REMOVED = False
 COMMENTS_XTD_CONFIRM_EMAIL = True   # Set to False to disable confirmation
 COMMENTS_XTD_FROM_EMAIL = 'staff@example.com'
 COMMENTS_XTD_CONTACT_EMAIL = 'staff@example.com'

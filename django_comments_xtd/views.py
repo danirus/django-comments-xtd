@@ -5,7 +5,6 @@ from django.apps import apps
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.views import shortcut
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.sites.shortcuts import get_current_site
@@ -20,8 +19,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.defaults import bad_request
-from django.views.generic import ListView
-
 
 from django_comments.signals import comment_was_posted, comment_will_be_posted
 from django_comments.views.comments import CommentPostBadRequest
@@ -29,7 +26,10 @@ from django_comments.views.moderation import perform_flag
 from django_comments.views.utils import next_redirect
 
 from django_comments_xtd import (get_form, get_model as get_comment_model,
-                                 get_reactions_enum, signals, signed, utils)
+                                 get_reactions_enum, signals, signed)
+from django_comments_xtd.utils import (send_mail, get_app_model_options,
+                                       redirect_to, get_current_site_id,
+                                       check_option, get_comment_page_number)
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (CommentReaction, TmpXtdComment,
                                         MaxThreadLevelExceededException)
@@ -188,8 +188,8 @@ def send_email_confirmation_request(
     else:
         html_message = None
 
-    utils.send_mail(subject, text_message, settings.COMMENTS_XTD_FROM_EMAIL,
-                    [comment.user_email, ], html=html_message)
+    send_mail(subject, text_message, settings.COMMENTS_XTD_FROM_EMAIL,
+              [comment.user_email, ], html=html_message)
 
 
 def _get_comment_if_exists(comment):
@@ -231,8 +231,7 @@ def on_comment_will_be_posted(sender, comment, request, **kwargs):
 
     ct = comment.get("content_type")
     ct_str = "%s.%s" % (ct.app_label, ct.model)
-    options = utils.get_app_model_options(content_type=ct_str)
-
+    options = get_app_model_options(content_type=ct_str)
     if not user_is_authenticated and options['who_can_post'] == 'users':
         # Reject comment.
         return False
@@ -317,7 +316,7 @@ def sent(request, using=None):
             return render(request, template_arg, {'comment': comment})
         else:
             if comment.is_public:
-                return utils.redirect_to(comment, request=request)
+                return redirect_to(comment, request=request)
             else:
                 moderated_tmpl = get_moderated_tmpl(comment)
                 return render(request, moderated_tmpl, {'comment': comment})
@@ -338,7 +337,7 @@ def confirm(request, key,
     page_number = tmp_comment.pop("page_number", None)
 
     if comment is not None:
-        return utils.redirect_to(comment, page_number=page_number)
+        return redirect_to(comment, page_number=page_number)
 
     # Send signal that the comment confirmation has been received.
     responses = signals.confirmation_received.send(sender=TmpXtdComment,
@@ -358,7 +357,7 @@ def confirm(request, key,
                       {'comment': comment})
     else:
         notify_comment_followers(comment)
-        return utils.redirect_to(comment, page_number=page_number)
+        return redirect_to(comment, page_number=page_number)
 
 
 def notify_comment_followers(comment):
@@ -396,8 +395,8 @@ def notify_comment_followers(comment):
             html_message = html_message_template.render(message_context)
         else:
             html_message = None
-        utils.send_mail(subject, text_message, settings.COMMENTS_XTD_FROM_EMAIL,
-                        [email, ], html=html_message)
+        send_mail(subject, text_message, settings.COMMENTS_XTD_FROM_EMAIL,
+                  [email, ], html=html_message)
 
 
 def reply(request, cid):
@@ -412,7 +411,7 @@ def reply(request, cid):
 
     ct_str = "%s.%s" % (comment.content_type.app_label,
                         comment.content_type.model)
-    options = utils.get_app_model_options(content_type=ct_str)
+    options = get_app_model_options(content_type=ct_str)
 
     if (
         not request.user.is_authenticated and
@@ -494,8 +493,8 @@ def flag(request, comment_id, next=None):
             The id of the comment the user is flagging.
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
-                                site__pk=utils.get_current_site_id(request))
-    utils.check_option(comment, "comment_flagging_enabled")
+                                site__pk=get_current_site_id(request))
+    check_option(comment, "comment_flagging_enabled")
 
     # Flag on POST.
     if request.method == 'POST':
@@ -524,8 +523,8 @@ def react(request, comment_id, next=None):
             the `comments.comment` object the user reacted to.
     """
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
-                                site__pk=utils.get_current_site_id(request))
-    utils.check_option(comment, "comment_reactions_enabled")
+                                site__pk=get_current_site_id(request))
+    check_option(comment, "comment_reactions_enabled")
 
     cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     cpage = request.GET.get(cpage_qs_param, None)
@@ -592,7 +591,7 @@ def react_done(request):
     cpage = request.GET.get(cpage_qs_param, 1)
     if comment_pk:
         comment = get_object_or_404(get_comment_model(), pk=comment_pk,
-                                    site__pk=utils.get_current_site_id(request))
+                                    site__pk=get_current_site_id(request))
     else:
         comment = None
     return render(request, 'comments/reacted.html', {
@@ -607,8 +606,8 @@ def comment_in_page(request, content_type_id, object_id, comment_id):
     page = request and request.GET.get(qs_param, None) or None
 
     if not page:  # Create a CommentsPaginator and get the page of the comment.
-        page = utils.get_comment_page_number(request, content_type_id,
-                                             object_id, comment_id)
+        page = get_comment_page_number(request, content_type_id,
+                                       object_id, comment_id)
 
     try:
         page_number = int(page)

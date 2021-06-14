@@ -121,11 +121,12 @@
     position: absolute;
     content: "";
     top: 7px;
-    left: -4px;
-    width: 11px;
-    height: 11px;
+    left: -5px;
+    width: 12px;
+    height: 12px;
     border-radius: 6px;
-    background-color: hsl(207deg 90% 34%);
+    border: 2px solid hsl(207deg 90% 34%);
+    background-color: #ffffff;
 }
 
 .dcx .comment-box.l0-ini:before, .dcx .comment-box-img.l0-ini:before,
@@ -148,11 +149,12 @@
     position: absolute;
     content: "";
     top: 7px;
-    left: 20px;
-    width: 11px;
-    height: 11px;
+    left: 19px;
+    width: 12px;
+    height: 12px;
     border-radius: 6px;
-    background-color: hsl(207deg 90% 54%);
+    border: 2px solid hsl(207deg 90% 54%);
+    background-color: #ffffff;
 }
 
 .dcx .comment-box.l1-ini .level-1:before,
@@ -193,11 +195,12 @@
     position: absolute;
     content: "";
     top: 7px;
-    left: 44px;
-    width: 11px;
-    height: 11px;
+    left: 43px;
+    width: 12px;
+    height: 12px;
     border-radius: 6px;
-    background-color: hsl(207deg 90% 74%);
+    border: 2px solid hsl(207deg 90% 74%);
+    background-color: #ffffff;
 }
 
 .dcx .comment-box.l2-ini .level-2:before,
@@ -451,38 +454,37 @@
 .dcx .not-reply-box.l0.l1:before, .dcx .not-reply-box-img.l0.l1:before,
 .dcx .not-reply-box.l0.l1.l2:before, .dcx .not-reply-box-img.l0.l1.l2:before {
     position: absolute;
-    display: block;
-    margin-left: -4px;
-    margin-top: -9px;
-    width: 9px;
-    height: 9px;
-    border-radius: 9px;
     content: "";
-    background-color: hsl(207deg 90% 34%);
+    margin-left: -5px;
+    margin-top: -4px;
+    width: 12px;
+    height: 2px;
+    border: 2px solid hsl(207deg 90% 34%);
 }
 
 .dcx .not-reply-box-img.l0:before {
-    margin-left: 12px;
+    margin-left: 11px;
 }
 
 .dcx .not-reply-box.l0.l1:before,
 .dcx .not-reply-box-img.l0.l1:before {
-    margin-left: 20px;
-    background-color: hsl(207deg 90% 54%);
+    margin-left: 19px;
+    border: 2px solid hsl(207deg 90% 54%);
 }
 
 .dcx .not-reply-box-img.l0.l1:before {
-    margin-left: 64px;
+    margin-left: 63px;
 }
 
 .dcx .not-reply-box.l0.l1.l2:before,
 .dcx .not-reply-box-img.l0.l1.l2:before {
-    margin-left: 44px;
-    background-color: hsl(207deg 90% 74%);
+    margin-left: 43px;
+    border: 2px solid hsl(207deg 90% 74%);
+    background-color: #ffffff;
 }
 
 .dcx .not-reply-box-img.l0.l1.l2:before {
-    margin-left: 116px;
+    margin-left: 115px;
 }
 
 @media screen and (max-width: 839px) {

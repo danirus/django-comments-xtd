@@ -4,60 +4,51 @@
 
 {% block title %}{% trans "Flag comment" %}{% endblock %}
 
-{% block header %}
-<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
-{% endblock %}
-
 {% block content %}
-<div class="mb-4">
-  <h3 class="text-center">{% trans "Flag this comment?" %}</h3>
-  <hr/>
-</div>
-<p class="lead text-center">{% trans "Click on the flag button to mark the following comment as inappropriate." %}</p>
-<div class="row">
-  <div class="offset-md-1 col-md-10">
-    <div class="card mb-4">
-      <div class="card-body">
-        <div class="media pb-2">
-          <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
-               width="48" height="48" class="mr-3">
-          <div class="media-body">
-            <h6 class="mb-1 small">
-              {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-              {% if comment.user_url %}
-              <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                {{ comment.user_name }}
-                {% if comment.user_url %}
-              </a>{% endif %}
-            </h6>
-            <p>{{ comment.comment }}</p>
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% translate "Flag this comment?" %}</h2>
+      <h6 class="text-center pb24">
+        {% translate "Comment sent to:" %}<br/>
+        <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+      </h6>
+    </div>
+    <div class="central-column">
+      <div class="dcx pb32">
+        <div id="c{{ comment.id }}" class="comment-box">
+          <div class="comment">
+            <div class="header">
+              <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment page_number %}">¶</a></div>
+            </div>
+            <div class="body">
+              {{ comment.comment|linebreaks|escape }}
+            </div>
+            <div class="footer">
+              <div class="reactions">
+                {% include "comments/comment_reactions.html" %}
+              </div>
+            </div>
           </div>
         </div>
+
+        <section>
+          <h6 class="text-center">{% translate "Click on the flag button to mark the following comment as inappropriate." %}</h6>
+          <form action="." method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
+            <div class="inline-centered text-center">
+              <button type="submit" class="primary" name="submit" value="flag">
+                {% translate "Flag" %}
+              </button>&nbsp;
+              <a class="btn secondary" href="{{ comment.get_absolute_url }}">
+                {% translate "cancel" %}
+              </a>
+            </div>
+          </form>
+        </section>
       </div>
     </div>
-    {% with object_absolute_url=comment.content_object.get_absolute_url %}
-    {% if object_absolute_url %}
-    <p class="text-center">
-      {% trans "Posted to "%}&nbsp;<a href="{{ object_absolute_url }}">{{ comment.content_object }}</a>
-    </p>
-    {% endif %}
-    {% endwith %}
-    <div class="visible-md-block">
-      <hr/>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="offset-md-1 col-md-10">
-    <form action="." method="post">{% csrf_token %}
-      <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
-      <div class="form-group">
-        <div class="text-center">
-          <input type="submit" name="submit" class="btn btn-danger" value="{% trans "Flag" %}"/>
-          <a class="btn btn-secondary" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
+  </article>
+</main>
 {% endblock %}

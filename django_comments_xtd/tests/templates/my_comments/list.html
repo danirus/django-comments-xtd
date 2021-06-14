@@ -26,8 +26,8 @@
       {% with top_comment=reply_stack|get_top_comment %}
         {% if comment.level <= top_comment.level %}
           {% for object in reply_stack|pop_comments_lte:comment.level %}
-            {% if object.allow_thread and not object.is_removed %}
-              {% include "includes/django_comments_xtd/reply_button.html" with comment=object %}
+            {% if object.allow_thread %}
+              {% include "comments/reply_button.html" with comment=object %}
             {% endif %}
           {% endfor %}
           {% push_comment comment %}
@@ -47,8 +47,8 @@
         # rest of comments still queued in the reply_stack.
       {% endcomment %}
       {% for object in reply_stack|pop_comments_lte %}
-        {% if object.allow_thread and not object.is_removed %}
-          {% include "includes/django_comments_xtd/reply_button.html" with comment=object %}
+        {% if object.allow_thread %}
+          {% include "comments/reply_button.html" with comment=object %}
         {% endif %}
       {% endfor %}
     {% endif %}

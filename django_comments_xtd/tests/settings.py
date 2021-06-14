@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import os
-import imp
 
 
 PRJ_PATH = os.path.abspath(os.path.curdir)
@@ -93,11 +92,7 @@ TEMPLATES = [
     }
 ]
 
-try:
-    imp.find_module('django_comments')
-    django_comments = 'django_comments'
-except ImportError:
-    django_comments = 'django.contrib.comments'
+django_comments = 'django_comments'
 
 INSTALLED_APPS = [
     'django.contrib.auth',

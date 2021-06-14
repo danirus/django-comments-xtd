@@ -556,14 +556,13 @@ class ThreadStep6TestCase(ArticleBaseTestCase):
 
 def add_comment_to_diary_entry(diary_entry):
     diary_ct = ContentType.objects.get(app_label="tests", model="diary")
-    if not "site" in kwargs:
-        kwargs["site"] = Site.objects.get(pk=1)
-    model.objects.create(content_type=diary_ct,
-                         object_pk=diary_entry.id,
-                         content_object=diary_entry,
-                         comment="cmt to day in diary",
-                         submit_date=datetime.now(),
-                         **kwargs)
+    site = Site.objects.get(pk=1)
+    get_model().objects.create(content_type=diary_ct,
+                               object_pk=diary_entry.id,
+                               content_object=diary_entry,
+                               site=site,
+                               comment="cmt to day in diary",
+                               submit_date=datetime.now())
 
 
 class DiaryBaseTestCase(DjangoTestCase):

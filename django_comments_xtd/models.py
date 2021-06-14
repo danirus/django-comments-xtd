@@ -6,7 +6,7 @@ from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
 from django.core import signing
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django_comments.managers import CommentManager
 from django_comments.models import Comment, CommentFlag

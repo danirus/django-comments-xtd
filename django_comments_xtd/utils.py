@@ -74,18 +74,18 @@ def get_app_model_options(comment=None, content_type=None):
         `django_comments_xtd.conf.defaults.COMMENTS_XTD_APP_MODEL_OPTIONS`.
 
     """
-    defaults_options = COMMENTS_XTD_APP_MODEL_OPTIONS
-    settings_options = settings.COMMENTS_XTD_APP_MODEL_OPTIONS
-    model_app_options = {}
+    defaults_options = dict.copy(COMMENTS_XTD_APP_MODEL_OPTIONS)
+    settings_options = dict.copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS)
     if 'default' in settings_options:
-        # The developer overwrite the default settings. Check whether
-        # the developer added all the expected keys in the dictionary.
-        has_missing_key = False
+        defaults_options['default'].update(settings_options.pop('default'))
+
+    model_app_options = {}
+    for app_model in settings_options.keys():
         for k in defaults_options['default'].keys():
-            if k not in settings_options['default']:
+            if k not in settings_options[app_model]:
                 model_app_options[k] = defaults_options['default'][k]
             else:
-                model_app_options[k] = settings_options['default'][k]
+                model_app_options[k] = settings_options[app_model][k]
 
     if comment:
         content_type = ContentType.objects.get_for_model(comment.content_object)
@@ -218,7 +218,7 @@ def get_comment_page_number(request, content_type_id, object_id, comment_id):
 
     comment_id = int(comment_id)
     paginator = CommentsPaginator(qs, page_size, orphans=num_orphans)
-    for page_number in range(1, paginator.num_pages):
+    for page_number in range(1, paginator.num_pages + 1):
         page = paginator.page(page_number)
         if comment_id in [cm.id for cm in page.object_list]:
             return page_number

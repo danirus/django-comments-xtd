@@ -23,26 +23,30 @@ class XtdCommentForm(CommentForm):
             followup_suffix = ('_%d' % comment.pk)
         else:
             followup_suffix = ''
+
         super(CommentForm, self).__init__(*args, **kwargs)
-        self.fields['name'] = forms.CharField(
-            label=_("Name"),
-            widget=forms.TextInput(attrs={'placeholder': _('name'),
-                                          'class': 'form-control'}))
-        self.fields['email'] = forms.EmailField(
-            label=_("Mail"), help_text=_("Required for comment verification"),
-            widget=forms.TextInput(attrs={'placeholder': _('mail address'),
-                                          'class': 'form-control'}))
-        self.fields['url'] = forms.URLField(
-            label=_("Link"), required=False,
-            widget=forms.TextInput(attrs={
+
+        self.fields['name'].label = _("Name")
+        self.fields['name'].widget = forms.TextInput(
+            attrs={'placeholder': _('name'), 'class': 'form-control'})
+
+        self.fields['email'].label = _("Mail")
+        self.fields['email'].help_text = _("Required for comment verification")
+        self.fields['email'].widget = forms.TextInput(
+            attrs={'placeholder': _('mail address'), 'class': 'form-control'})
+
+        self.fields['url'].label = _("Link")
+        self.fields['url'].required = False
+        self.fields['url'].widget = forms.TextInput(attrs={
                 'placeholder': _('url your name links to (optional)'),
-                'class': 'form-control'}))
-        self.fields['comment'] = forms.CharField(
-            widget=forms.Textarea(attrs={'placeholder': _('Your comment'),
-                                         'class': 'form-control'}),
-            max_length=settings.COMMENT_MAX_LENGTH)
+                'class': 'form-control'})
+
+        self.fields['comment'].widget = forms.Textarea(
+            attrs={'placeholder': _('Your comment'), 'class': 'form-control'})
+        self.fields['comment'].max_length = settings.COMMENT_MAX_LENGTH
         self.fields['comment'].widget.attrs.pop('cols')
         self.fields['comment'].widget.attrs.pop('rows')
+
         self.fields['followup'].widget.attrs['id'] = (
             'id_followup%s' % followup_suffix)
         self.fields['followup'].widget.attrs['class'] = "custom-control-input"

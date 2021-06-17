@@ -33,7 +33,7 @@
           </div>
         {% endif %}
       {% endif %}
-      {% if show_nested and comment.level == 0 and comment.nested_count %}
+      {% if show_nested and comment.level == 0 and comment.nested_count and not comment.is_removed %}
         <div>
           <a data-type="fold-replies" data-comment="{{ comment.id }}" class="small" href="#">{% blocktranslate with count=comment.nested_count%}Fold {{ count }} replies{% endblocktranslate %}</a>
         </div>

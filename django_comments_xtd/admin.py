@@ -23,8 +23,7 @@ class XtdCommentsAdmin(CommentsAdmin):
     )
     date_hierarchy = 'submit_date'
     ordering = ('thread_id', 'order')
-    search_fields = ['object_pk', 'user__username', 'user_name', 'user_email',
-                     'comment']
+    search_fields = ['id', 'object_pk', 'user_name', 'user_email', 'comment']
 
     def thread_level(self, obj):
         rep = '|'

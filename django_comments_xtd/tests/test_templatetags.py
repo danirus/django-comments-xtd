@@ -323,6 +323,8 @@ class CommentCSSThreadRangeTestCase(DjangoTestCase):
             output = Template(t).render(Context({'object': cm}))
             self.assertEqual(output, "l0-mid l1-ini")
 
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_MAX_THREAD_LEVEL=2)
     def test_tag_with_comment_of_level_3_eq_max_thread_level(self):
         for pk in [6, 7, 8]:
             cm = XtdComment.objects.get(pk=pk)
@@ -332,6 +334,8 @@ class CommentCSSThreadRangeTestCase(DjangoTestCase):
             output = Template(t).render(Context({'object': cm}))
             self.assertEqual(output, "l0-mid l1-mid l2")
 
+    @patch.multiple('django_comments_xtd.conf.settings',
+                    COMMENTS_XTD_MAX_THREAD_LEVEL=2)
     def test_tag_with_comment_of_level_3_eq_max_thread_level_and_prefix(self):
         for pk in [6, 7, 8]:
             cm = XtdComment.objects.get(pk=pk)

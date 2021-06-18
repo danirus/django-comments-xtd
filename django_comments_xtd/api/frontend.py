@@ -53,11 +53,6 @@ def commentbox_props(obj, user, request=None):
             html_id_suffix: <html_element_id_suffix>
         }
     """
-
-    def _reverse(*args, **kwargs):
-        """do not inject request to avoid http:// urls on https:// only sites"""
-        return reverse(*args, **kwargs)
-
     form = CommentSecurityForm(obj)
     ctype = ContentType.objects.get_for_model(obj)
     queryset = XtdComment.objects.filter(content_type=ctype,
@@ -65,8 +60,8 @@ def commentbox_props(obj, user, request=None):
                                          site__pk=get_current_site_id(request),
                                          is_public=True)
     ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
-    ctype_key = "%s.%s" % (ctype.app_label, ctype.model)
-    options = get_app_model_options(content_type=ctype_key)
+    app_model = "%s.%s" % (ctype.app_label, ctype.model)
+    options = get_app_model_options(content_type=app_model)
     d = {
         "comment_count": queryset.count(),
         "input_allowed": True,
@@ -80,18 +75,18 @@ def commentbox_props(obj, user, request=None):
         "object_reactions_enabled": options['object_reactions_enabled'],
         "can_moderate": False,
         "polling_interval": 2000,
-        "feedback_url": _reverse("comments-xtd-api-feedback"),
-        "delete_url": _reverse("comments-delete", args=(0,)),
-        "reply_url": _reverse("comments-xtd-reply", kwargs={'cid': 0}),
-        "flag_url": _reverse("comments-flag", args=(0,)),
-        "list_url": _reverse('comments-xtd-api-list',
+        "react_url": reverse("comments-xtd-api-react"),
+        "delete_url": reverse("comments-delete", args=(0,)),
+        "reply_url": reverse("comments-xtd-reply", kwargs={'cid': 0}),
+        "flag_url": reverse("comments-flag", args=(0,)),
+        "list_url": reverse('comments-xtd-api-list',
+                            kwargs={'content_type': ctype_slug,
+                                    'object_pk': obj.id}),
+        "count_url": reverse('comments-xtd-api-count',
                              kwargs={'content_type': ctype_slug,
                                      'object_pk': obj.id}),
-        "count_url": _reverse('comments-xtd-api-count',
-                              kwargs={'content_type': ctype_slug,
-                                      'object_pk': obj.id}),
-        "send_url": _reverse("comments-xtd-api-create"),
-        "preview_url": _reverse("comments-xtd-api-preview"),
+        "send_url": reverse("comments-xtd-api-create"),
+        "preview_url": reverse("comments-xtd-api-preview"),
         "form": {
             "content_type": form['content_type'].value(),
             "object_pk": form['object_pk'].value(),

@@ -310,8 +310,8 @@ def get_reaction_enum(cmt_reaction):
 def comment_css_thread_range(context, comment, prefix="l"):
     """
     Returns a string of CSS selectors that render vertical lines to represent
-    comment threads. When comment level matches the max_thread_level there is
-    no vertical line, as comments in the max_thread_level can not receive
+    comment threads. When comment's level matches the max_thread_level there
+    is no vertical line as comments in the max_thread_level can not receive
     replies.
 
     Returns a concatenated string of f'{prefix}{i}' for i in range(level + 1).

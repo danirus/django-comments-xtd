@@ -12,11 +12,15 @@
       data-reactions-url="{% url 'comments-xtd-api-react' %}"
     {% endif %}
     data-reactions-row-length="4"
-    data-reactions-header-title="{% trans 'Pick your reaction' %}"
+    data-reactions-header-title="{% translate 'Pick your reaction' %}"
     data-pos-bottom="30"
     data-pos-left="-7"
   {% endif %}
 >
+  {% if is_paginated %}
+    {% include "comments/pagination.html" %}
+  {% endif %}
+
   {% for comment in comment_list %}
     {% comment %}
       # Before rendering the comment, check the reply_stack to find out
@@ -25,7 +29,7 @@
     {% if reply_stack %}
       {% with top_comment=reply_stack|get_top_comment %}
         {% if comment.level <= top_comment.level %}
-          {% for object in reply_stack|pop_comments_lte:comment.level %}
+          {% for object in reply_stack|pop_comments_gte:comment.level %}
             {% if object.allow_thread %}
               {% include "comments/reply_button.html" with comment=object %}
             {% endif %}
@@ -39,14 +43,18 @@
       {% push_comment comment %}
     {% endif %}
 
-    {% include "my_comments/comment.html" %}
+    {% block comment %}
+      {% with page_number=page_obj.number show_nested=True %}
+        {% include "my_comments/comment.html" %}
+      {% endwith %}
+    {% endblock %}
 
     {% if forloop.last %}
       {% comment %}
         # After rendering the last comment, render the reply form for the
         # rest of comments still queued in the reply_stack.
       {% endcomment %}
-      {% for object in reply_stack|pop_comments_lte %}
+      {% for object in reply_stack|pop_comments_gte %}
         {% if object.allow_thread %}
           {% include "comments/reply_button.html" with comment=object %}
         {% endif %}
@@ -54,4 +62,8 @@
     {% endif %}
 
   {% endfor %}
+
+  {% if is_paginated %}
+    {% include "comments/pagination.html" %}
+  {% endif %}
 </div>

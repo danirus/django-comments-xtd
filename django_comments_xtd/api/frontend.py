@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
+from django.utils.module_loading import import_string
 
 from django_comments.forms import CommentSecurityForm
 from rest_framework.response import Response
@@ -27,14 +28,15 @@ def commentbox_props(obj, user, request=None):
             is_authenticated: <bool>,  // Whether current_user is authenticated.
             request_name: <bool>,  // True when auth user has no actual name.
             request_email_address: <bool>,  // True when auth user has no email.
-            comment_flagging_enabled: false,
-            comment_reactions_enabled: false,
-            object_reactions_enabled: false,
+            is_authenticated: <bool>,
+            who_can_post: 'users' | 'all',
+            comment_flagging_enabled: <bool>,
+            comment_reactions_enabled: <bool>,
+            object_reactions_enabled: <bool>,
             can_moderate: <bool>,  // Whether current_user can moderate.
             polling_interval: 2000, // Check for new comments every 2 seconds.
-            feedback_url: <api-url-to-send-like/dislike-feedback>,
+            react_url: <api-url-to-send-reactions-to-comments>,
             delete_url: <api-url-for-moderators-to-remove-comment>,
-            login_url: settings.LOGIN_URL,
             reply_url: <api-url-to-reply-comments>,
             flag_url: <api-url-to-suggest-comment-removal>,
             list_url: <api-url-to-list-comments>,
@@ -48,9 +50,8 @@ def commentbox_props(obj, user, request=None):
                 security_hash: <value>
             },
             login_url: <only_when_user_is_not_authenticated>,
-            like_url: <only_when_user_is_not_authenticated>,
-            dislike_url: <only_when_user_is_not_authenticated>,
-            html_id_suffix: <html_element_id_suffix>
+            html_id_suffix: <html_element_id_suffix>,
+            max_thread_level: max_thread_level for the content type of the obj.
         }
     """
     form = CommentSecurityForm(obj)
@@ -62,9 +63,11 @@ def commentbox_props(obj, user, request=None):
     ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
     app_model = "%s.%s" % (ctype.app_label, ctype.model)
     options = get_app_model_options(content_type=app_model)
+    check_input_allowed_str = options.pop('check_input_allowed')
+    check_func = import_string(check_input_allowed_str)
     d = {
         "comment_count": queryset.count(),
-        "input_allowed": True,
+        "input_allowed": check_func(obj),
         "current_user": "0:Anonymous",
         "request_name": False,
         "request_email_address": False,
@@ -78,7 +81,7 @@ def commentbox_props(obj, user, request=None):
         "react_url": reverse("comments-xtd-api-react"),
         "delete_url": reverse("comments-delete", args=(0,)),
         "reply_url": reverse("comments-xtd-reply", kwargs={'cid': 0}),
-        "flag_url": reverse("comments-flag", args=(0,)),
+        "flag_url": reverse("comments-xtd-api-flag"),
         "list_url": reverse('comments-xtd-api-list',
                             kwargs={'content_type': ctype_slug,
                                     'object_pk': obj.id}),
@@ -97,11 +100,7 @@ def commentbox_props(obj, user, request=None):
         "html_id_suffix": get_html_id_suffix(obj),
         "max_thread_level": max_thread_level_for_content_type(ctype),
     }
-    try:
-        user_is_authenticated = user.is_authenticated()
-    except TypeError:  # Django >= 1.11
-        user_is_authenticated = user.is_authenticated
-    if user and user_is_authenticated:
+    if user and user.is_authenticated:
         d['current_user'] = "%d:%s" % (
             user.pk, settings.COMMENTS_XTD_API_USER_REPR(user))
         d['is_authenticated'] = True
@@ -110,8 +109,6 @@ def commentbox_props(obj, user, request=None):
         d['request_email_address'] = True if not user.email else False
     else:
         d['login_url'] = settings.LOGIN_URL
-        d['like_url'] = reverse("comments-xtd-like", args=(0,))
-        d['dislike_url'] = reverse("comments-xtd-dislike", args=(0,))
 
     return d
 

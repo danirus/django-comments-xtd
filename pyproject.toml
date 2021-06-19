@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "django-comments-xtd"
+version = "3.0.0"
+description = "Django Comments Framework extension app with thread support, follow up notifications and email confirmations."
+authors = ["Daniel Rus Morales <mbox@danir.us>"]
+
+[tool.poetry.dependencies]
+python = "^3.6.0"
+django-contrib-comments = "^2.0.0"
+djangorestframework = "^3.12.0"
+six = "^1.12.0"
+Django = "^3.0.0"
+
+[tool.poetry.dev-dependencies]
+coverage = "^4.5.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

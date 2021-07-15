@@ -83,9 +83,6 @@ class WriteCommentSerializer(serializers.Serializer):
     def validate(self, data):
         ctype = data.get("content_type")
         object_pk = data.get("object_pk")
-        if ctype is None or object_pk is None:
-            return serializers.ValidationError("Missing content_type or "
-                                               "object_pk field.")
         try:
             model = apps.get_model(*ctype.split(".", 1))
             target = model._default_manager.get(pk=object_pk)
@@ -93,13 +90,13 @@ class WriteCommentSerializer(serializers.Serializer):
         except (AttributeError, TypeError, LookupError):
             raise serializers.ValidationError("Invalid content_type value: %r"
                                               % escape(ctype))
-        except model.ObjectDoesNotExist:
+        except model.DoesNotExist:
             raise serializers.ValidationError(
-                "No object matching content-type %r and object PK %r exists."
+                "No object matching content-type %r and object PK %r."
                 % (escape(ctype), escape(object_pk)))
         except (ValueError, serializers.ValidationError) as e:
             raise serializers.ValidationError(
-                "Attempting to get content-type %r and object PK %r exists "
+                "Attempting to get content-type %r and object PK %r "
                 "raised %s" % (escape(ctype), escape(object_pk),
                                e.__class__.__name__))
         else:
@@ -125,13 +122,13 @@ class WriteCommentSerializer(serializers.Serializer):
                     "security_hash": secform['security_hash'].value()
                 })
                 break
-        self.form = get_form()(target, data=data)
 
-        # Check security information.
-        if self.form.security_errors():
-            raise exceptions.PermissionDenied()
-        if self.form.errors:
-            raise serializers.ValidationError(self.form.errors)
+        self.form = get_form()(target, data=data)
+        if not self.form.is_valid():
+            # Check only security information as the rest
+            # of the fields have already been validated.
+            if self.form.security_errors():
+                raise exceptions.PermissionDenied()
         return data
 
     def save(self):
@@ -204,19 +201,6 @@ class FlagSerializer(serializers.ModelSerializer):
         return data
 
 
-class ReadFlagsField(serializers.RelatedField):
-    def to_representation(self, value):
-        if value.flag == CommentFlag.SUGGEST_REMOVAL:
-            flag = "removal"
-        else:
-            raise Exception('Unexpected value for flag: %s' % value.flag)
-        return {
-            "flag": flag,
-            "user": settings.COMMENTS_XTD_API_USER_REPR(value.user),
-            "id": value.user.id
-        }
-
-
 class ReadReactionsField(serializers.RelatedField):
     def to_representation(self, value):
         reaction_item = get_reactions_enum()(value.reaction)
@@ -238,7 +222,6 @@ class ReadReactionsField(serializers.RelatedField):
 class ReadCommentSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(max_length=50, read_only=True)
     user_url = serializers.CharField(read_only=True)
-    user_moderator = serializers.SerializerMethodField()
     user_avatar = serializers.SerializerMethodField()
     submit_date = serializers.SerializerMethodField()
     parent_id = serializers.IntegerField(default=0, read_only=True)
@@ -247,15 +230,14 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     comment = serializers.SerializerMethodField()
     allow_reply = serializers.SerializerMethodField()
     permalink = serializers.SerializerMethodField()
-    flags = ReadFlagsField(many=True, read_only=True)
+    flags = serializers.SerializerMethodField()
     reactions = ReadReactionsField(many=True, read_only=True)
 
     class Meta:
         model = XtdComment
-        fields = ('id', 'user_name', 'user_url', 'user_moderator',
-                  'user_avatar', 'permalink', 'comment', 'submit_date',
-                  'parent_id', 'level', 'is_removed', 'allow_reply',
-                  'flags', 'reactions')
+        fields = ('id', 'user_name', 'user_url', 'user_avatar', 'permalink',
+                  'comment', 'submit_date', 'parent_id', 'level', 'is_removed',
+                  'allow_reply', 'flags', 'reactions')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs['context']['request']
@@ -276,15 +258,6 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         else:
             return obj.comment
 
-    def get_user_moderator(self, obj):
-        try:
-            if obj.user and obj.user.has_perm('django_comments.can_moderate'):
-                return True
-            else:
-                return False
-        except Exception:
-            return None
-
     def get_allow_reply(self, obj):
         return obj.allow_thread()
 
@@ -294,14 +267,18 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     def get_permalink(self, obj):
         return obj.get_absolute_url()
 
+    def get_flags(self, obj):
+        qs = obj.flags.filter(flag=CommentFlag.SUGGEST_REMOVAL)
+        flags = []
+        for flag in qs:
+            flags.append({
+                "flag": "removal",
+                "user": settings.COMMENTS_XTD_API_USER_REPR(flag.user),
+                "id": flag.user.id
+            })
+        return flags
 
 class WriteCommentReactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentReaction
         fields = ('reaction', 'comment',)
-
-    def validate(self, data):
-        # Validate reaction.
-        if data['reaction'] not in get_reactions_enum():
-            raise serializers.ValidationError("Invalid reaction.")
-        return data

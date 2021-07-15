@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import importlib
 import re
 
 from unittest.mock import patch
@@ -22,11 +23,11 @@ request_factory = RequestFactory()
 
 
 send_mail = ''  # string to send_mail function to patch
-try:
-    import imp
-    imp.find_module('django_comments')
+
+
+if importlib.util.find_spec("django_comments"):
     send_mail = 'django_comments.moderation.send_mail'
-except ImportError:
+else:
     send_mail = 'django.contrib.comments.moderation.send_mail'
 
 

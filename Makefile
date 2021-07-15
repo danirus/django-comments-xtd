@@ -4,7 +4,7 @@
 coverage:  ## Run tests with coverage.
 	coverage erase
 	coverage run --include=django_comments_xtd/* \
-				 --omit=django_comments_xtd/migrations/* -m pytest -ra
+		--omit=django_comments_xtd/migrations/* -m pytest -ra
 	coverage report -m
 
 deps:  ## Install dependencies.

@@ -1,7 +1,4 @@
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from unittest.mock import patch
 from datetime import datetime
 
 from django.db.models.signals import pre_save

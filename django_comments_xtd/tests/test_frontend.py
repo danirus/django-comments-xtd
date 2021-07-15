@@ -1,6 +1,6 @@
 from django_comments_xtd.models import max_thread_level_for_content_type
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import AnonymousUser, Permission, User
+from django.contrib.auth.models import AnonymousUser, Permission
 from django.urls import reverse
 
 from django_comments.models import Comment
@@ -9,23 +9,6 @@ import pytest
 from django_comments_xtd import utils
 from django_comments_xtd.api import frontend
 from django_comments_xtd.conf import settings
-
-from django_comments_xtd.tests.models import Article
-
-
-@pytest.mark.django_db
-@pytest.fixture()
-def an_article():
-    """Creates an article that can receive comments."""
-    return Article.objects.create(title="September", slug="september",
-                                  body="During September...")
-
-@pytest.mark.django_db
-@pytest.fixture()
-def an_user():
-    """Add a user to the DB."""
-    return User.objects.create_user("joe", "joe@example.com", "joepwd",
-                                    first_name="Joe", last_name="Bloggs")
 
 
 @pytest.mark.django_db

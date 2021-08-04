@@ -1,11 +1,8 @@
-from __future__ import unicode_literals
-
-from datetime import datetime
 import json
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from datetime import datetime
+from unittest.mock import patch
+
+import pytest
 
 from django.db.models.signals import pre_save
 from django.contrib.auth.models import User
@@ -390,3 +387,27 @@ class CommentListTestCase(APITestCase):
         # Re-connect the function for the following tests.
         pre_save.connect(publish_or_withhold_on_pre_save,
                          sender=model_app_label)
+
+
+@pytest.mark.django_db
+def test_CommentList_handles_no_ContentType():
+    kwargs = {'content_type': 'this-that', 'object_pk': '1'}
+    request = factory.get(reverse('comments-xtd-api-list', kwargs=kwargs))
+    view = CommentList.as_view()
+    response = view(request, **kwargs)
+    assert response.status_code == 200
+    assert response.rendered_content == b'[]'
+
+
+@pytest.mark.django_db
+def test_CommentCount_settings_has_no_SITE_ID(monkeypatch):
+    # Remove 'SITE_ID' from settings module, to test that method 'get_queryset'
+    # in CommentCount class uses function 'utils.get_current_site_id' to get
+    # the site_id.
+    monkeypatch.delattr(settings, name='SITE_ID')
+    kwargs = {"content_type": "tests-article", "object_pk": "1"}
+    request = factory.get(reverse('comments-xtd-api-count', kwargs=kwargs))
+    view = CommentCount.as_view()
+    response = view(request, **kwargs)
+    assert response.status_code == 200
+    assert response.rendered_content == b'{"count":0}'

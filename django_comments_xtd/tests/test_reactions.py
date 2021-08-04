@@ -140,6 +140,22 @@ class AllowedCommentReactionTests(TestCase):
         comment_reaction = CommentReaction.objects.get(**data)
         self.assertEqual(comment_reaction.counter, 2)
 
+    def test_create_two_LIKE_IT_reaction_and_remove_one(self):
+        self.test_create_LIKE_IT_reaction()
+        data = {'comment': self.comment.id, 'reaction': self.renum.LIKE_IT}
+        cm_rct_1 = CommentReaction.objects.get(**data)
+        self.assertEqual(cm_rct_1.counter, 1)
+        alice = User.objects.create_user("alice", "alice@tal.net", "pwd")
+        response = send_reaction("post", data, auth_user=alice)
+        self.assertEqual(response.status_code, 201)
+        cm_rct_2 = CommentReaction.objects.get(**data)
+        self.assertEqual(cm_rct_2.counter, 2)
+        response = send_reaction("post", data, auth_user=self.user)
+        self.assertEqual(response.status_code, 200)
+        cm_rct_3 = CommentReaction.objects.get(**data)
+        self.assertEqual(cm_rct_3.counter, 1)
+        self.assertTrue(cm_rct_1.pk == cm_rct_2.pk == cm_rct_3.pk)
+
 
 class DisallowedCommentReactionTests(TestCase):
     """Scenario to test posting reactions in a disallowed scenario."""

@@ -297,14 +297,6 @@ class ReadCommentsGetUserAvatarTestCase(TestCase):
                                   user=alice,
                                   submit_date=datetime.now())
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_XTD_API_GET_USER_AVATAR=funcpath)
-    def test_setting_COMMENTS_XTD_API_GET_USER_AVATAR_works(self):
-        qs = XtdComment.objects.all()
-        ser = ReadCommentSerializer(qs, context={"request": None}, many=True)
-        self.assertEqual(ser.data[0]['user_avatar'], '/fake/avatar/joe')
-        self.assertEqual(ser.data[1]['user_avatar'], '/fake/avatar/alice')
-
 
 class RenderSubmitDateTestCase(TestCase):
     def setUp(self):

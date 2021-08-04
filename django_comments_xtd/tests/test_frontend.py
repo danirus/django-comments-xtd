@@ -52,7 +52,6 @@ def test_comment_box_props_with_object_and_user(an_user, an_article):
                                          kwargs={'content_type': ctype_slug,
                                                  'object_pk': an_article.id})
     assert props['send_url'] == reverse('comments-xtd-api-create')
-    assert props['preview_url'] == reverse("comments-xtd-api-preview")
     assert props['default_followup'] == settings.COMMENTS_XTD_DEFAULT_FOLLOWUP
     assert props['html_id_suffix'] == utils.get_html_id_suffix(an_article)
     assert props['max_thread_level'] == max_thread_level_for_content_type(ctype)

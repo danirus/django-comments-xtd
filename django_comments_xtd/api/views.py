@@ -106,19 +106,6 @@ class CreateReportFlag(generics.CreateAPIView):
         perform_flag(self.request, serializer.validated_data['comment'])
 
 
-@api_view(["POST"])
-def preview_user_avatar(request):
-    """Fetch the image associated with the user previewing the comment."""
-    temp_comment = TmpXtdComment({
-        'user': None,
-        'user_email': request.data['email']
-    })
-    if request.user.is_authenticated:
-        temp_comment['user'] = request.user
-    get_user_avatar = import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)
-    return Response({'url': get_user_avatar(temp_comment)})
-
-
 class PostCommentReaction(mixins.CreateModelMixin,
                           generics.GenericAPIView):
     """Create and delete comment reactions."""

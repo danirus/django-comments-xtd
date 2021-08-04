@@ -38,8 +38,6 @@ urlpatterns = [
     # API handlers.
     re_path(r'^api/comment/$', api.CommentCreate.as_view(),
             name='comments-xtd-api-create'),
-    re_path(r'^api/preview/$', api.preview_user_avatar,
-            name='comments-xtd-api-preview'),
     re_path(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[-\w]+)/$',
             api.CommentList.as_view(), name='comments-xtd-api-list'),
     re_path(

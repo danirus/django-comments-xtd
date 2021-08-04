@@ -222,7 +222,6 @@ class ReadReactionsField(serializers.RelatedField):
 class ReadCommentSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(max_length=50, read_only=True)
     user_url = serializers.CharField(read_only=True)
-    user_avatar = serializers.SerializerMethodField()
     submit_date = serializers.SerializerMethodField()
     parent_id = serializers.IntegerField(default=0, read_only=True)
     level = serializers.IntegerField(read_only=True)
@@ -235,8 +234,8 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = XtdComment
-        fields = ('id', 'user_name', 'user_url', 'user_avatar', 'permalink',
-                  'comment', 'submit_date', 'parent_id', 'level', 'is_removed',
+        fields = ('id', 'user_name', 'user_url', 'permalink', 'comment',
+                  'submit_date', 'parent_id', 'level', 'is_removed',
                   'allow_reply', 'flags', 'reactions')
 
     def __init__(self, *args, **kwargs):
@@ -260,9 +259,6 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     def get_allow_reply(self, obj):
         return obj.allow_thread()
-
-    def get_user_avatar(self, obj):
-        return import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)(obj)
 
     def get_permalink(self, obj):
         return obj.get_absolute_url()

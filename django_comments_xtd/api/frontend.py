@@ -89,7 +89,6 @@ def commentbox_props(obj, user, request=None):
                              kwargs={'content_type': ctype_slug,
                                      'object_pk': obj.id}),
         "send_url": reverse("comments-xtd-api-create"),
-        "preview_url": reverse("comments-xtd-api-preview"),
         "form": {
             "content_type": form['content_type'].value(),
             "object_pk": form['object_pk'].value(),

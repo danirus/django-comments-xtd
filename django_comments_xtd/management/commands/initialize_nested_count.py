@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         total = 0
-        using = options['using'] or ['default']
+        using = options['using'][1:] or ['default']
 
         for db_conn in using:
             try:

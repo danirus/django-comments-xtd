@@ -1,4 +1,5 @@
 from io import StringIO
+
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -10,7 +11,7 @@ from django_comments_xtd.tests.test_models import (
 )
 
 
-class InitializeNesteCoundCmdTest(TestCase):
+class InitializeNestedCountCmdTestCase(TestCase):
     def setUp(self):
         self.article_1 = Article.objects.create(
             title="September", slug="september", body="During September...")
@@ -57,3 +58,8 @@ class InitializeNesteCoundCmdTest(TestCase):
         call_command('initialize_nested_count', stdout=out)
         self.assertIn("Updated 9 XtdComment object(s).", out.getvalue())
         self.check_nested_count()
+
+    def test_raises_ConnectionDoesNotExist(self):
+        out = StringIO()
+        call_command('initialize_nested_count', "using", "taldb", stdout=out)
+        self.assertIn("DB connection 'taldb' does not exist.", out.getvalue())

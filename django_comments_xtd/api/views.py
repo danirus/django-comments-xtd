@@ -24,15 +24,7 @@ class CommentCreate(generics.CreateAPIView):
     serializer_class = serializers.WriteCommentSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            response = super(CommentCreate, self).post(request, *args, **kwargs)
-        else:
-            if 'non_field_errors' in serializer.errors:
-                response_msg = serializer.errors['non_field_errors'][0]
-            else:
-                response_msg = [k for k in six.iterkeys(serializer.errors)]
-            return Response(response_msg, status=400)
+        response = super(CommentCreate, self).post(request, *args, **kwargs)
         if self.resp_dict['code'] == 201:  # The comment has been created.
             response.data.update({
                 'id': self.resp_dict['comment']['xtd_comment'].id

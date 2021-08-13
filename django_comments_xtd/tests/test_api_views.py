@@ -90,8 +90,9 @@ class CommentCreateTestCase(DjangoTestCase):
                 "honeypot": ""}
         data.update(self.form.initial)
         response = post_comment(data)
+
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.rendered_content, b'"User not authenticated"')
+        self.assertIn(b'"User not authenticated"', response.rendered_content)
         self.assertEqual(self.mock_mailer.call_count, 0)
 
     def post_parent_comment(self):

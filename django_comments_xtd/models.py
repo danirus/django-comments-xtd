@@ -136,8 +136,6 @@ class XtdComment(Comment):
         reactions = OrderedDict([(k, {}) for k in get_reactions_enum()])
         # First add the existing reactions sorted by reaction value.
         for item in self.reactions.order_by('reaction'):
-            if item.counter == 0:
-                continue
             total_counter += item.counter
             reaction = get_reactions_enum()(item.reaction)
             authors = [

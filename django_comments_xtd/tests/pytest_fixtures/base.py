@@ -9,11 +9,12 @@ import pytest
 
 from django_comments.models import CommentFlag
 from django_comments_xtd.models import CommentReaction, XtdComment
+
 from django_comments_xtd.tests.models import Article
 
 
 @pytest.mark.django_db
-@pytest.fixture()
+@pytest.fixture
 def an_article():
     """Creates an article that can receive comments."""
     return Article.objects.create(title="September", slug="september",
@@ -35,7 +36,7 @@ def an_articles_comment(an_article):
 
 
 @pytest.mark.django_db
-@pytest.fixture()
+@pytest.fixture
 def an_user():
     """Add a user to the DB."""
     return User.objects.create_user("joe", "joe@example.com", "joepwd",

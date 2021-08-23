@@ -2,15 +2,23 @@ from unittest.mock import patch
 from datetime import datetime
 
 from django.db.models.signals import pre_save
+from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.test import TestCase as DjangoTestCase
+import pytest
 
-from django_comments_xtd import get_model
-from django_comments_xtd.models import (XtdComment,
+from django_comments.models import Comment, CommentFlag
+
+from django_comments_xtd import get_form, get_model, get_reactions_enum
+from django_comments_xtd.conf import settings
+from django_comments_xtd.models import (BlackListedDomain, XtdComment,
                                         MaxThreadLevelExceededException,
                                         publish_or_withhold_on_pre_save)
+from django_comments_xtd.moderation import moderator, SpamModerator
+
 from django_comments_xtd.tests.models import Article, Diary, MyComment
+from django_comments_xtd.tests.test_views import post_article_comment
 
 
 class ArticleBaseTestCase(DjangoTestCase):
@@ -678,3 +686,143 @@ class PublishOrWithholdNestedComments_2_TestCase(ArticleBaseTestCase):
         cm4 = MyComment.objects.get(pk=4)
         self.assertFalse(cm4.is_public)
         self.assertFalse(cm4.is_removed)
+
+
+@pytest.mark.django_db
+def test_get_reply_url(an_articles_comment):
+    reply_url = an_articles_comment.get_reply_url()
+    assert reply_url == f"/comments/reply/{an_articles_comment.pk}/"
+
+
+@pytest.mark.django_db
+def test_get_queryset_returns_none():
+    qs = XtdComment.get_queryset(content_type=None, object_pk=None,
+                                 content_object=None)
+    assert qs is None
+
+
+@pytest.mark.django_db
+def test_get_queryset_with_content_object(an_article, an_articles_comment):
+    qs = XtdComment.get_queryset(content_object=an_article)
+    assert qs[0] == an_articles_comment
+
+
+@pytest.mark.django_db
+def test_tree_from_queryset(an_article, an_user):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    ct_comments = ContentType.objects.get_for_model(Comment)
+    can_moderate = Permission.objects.get(codename='can_moderate',
+                                          content_type=ct_comments)
+    an_user.user_permissions.add(can_moderate)
+    assert an_user.has_perm('django_comments.can_moderate') == True
+
+    # Flag comment 11, to force the
+    # method `get_flags` to cover its code.
+    c11 = XtdComment.objects.get(pk=11)
+    CommentFlag.objects.create(user=an_user, comment=c11,
+                            flag=CommentFlag.SUGGEST_REMOVAL)
+
+    qs = XtdComment.tree_from_queryset(
+        XtdComment.objects.all(),
+        with_flagging=True,
+        with_feedback=True,
+        user=an_user
+    )
+    assert len(qs) == 3
+
+    c1, c1_children = qs[0]['comment'], qs[0]['children']
+    assert c1.pk == 1
+    assert len(c1_children) == 2
+
+    c3, c3_children = c1_children[0]['comment'], c1_children[0]['children']
+    assert c3.pk == 3
+    assert len(c3_children) == 1
+
+    c8, c8_children = c3_children[0]['comment'], c3_children[0]['children']
+    assert c8.pk == 8
+    assert len(c8_children) == 1
+
+    c11, c11_children = c8_children[0]['comment'], c8_children[0]['children']
+    assert c11.pk == 11
+    assert len(c11_children) == 0
+    # Check the flag set on comment 11.
+    c11_flagged = c8_children[0]['flagged']
+    c11_flagged_count = c8_children[0]['flagged_count']
+    assert len(c11_flagged) == 1
+    assert c11_flagged[0] == settings.COMMENTS_XTD_API_USER_REPR(an_user)
+    assert c11_flagged_count == 1
+
+    c4, c4_children = c1_children[1]['comment'], c1_children[1]['children']
+    assert c4.pk == 4
+    assert len(c4_children) == 1
+
+    c7, c7_children = c4_children[0]['comment'], c4_children[0]['children']
+    assert c7.pk == 7
+    assert len(c7_children) == 1
+
+    c10, c10_children = c7_children[0]['comment'], c7_children[0]['children']
+    assert c10.pk == 10
+    assert len(c10_children) == 0
+
+    c2, c2_children = qs[1]['comment'], qs[1]['children']
+    assert c2.pk == 2
+    assert len(c2_children) == 1
+
+    c5, c5_children = c2_children[0]['comment'], c2_children[0]['children']
+    assert c5.pk == 5
+    assert len(c5_children) == 1
+
+    c6, c6_children = c5_children[0]['comment'], c5_children[0]['children']
+    assert c6.pk == 6
+    assert len(c6_children) == 0
+
+    c9, c9_children = qs[2]['comment'], qs[2]['children']
+    assert c9.pk == 9
+    assert len(c9_children) == 0
+
+
+# ---------------------------------------------------------------------
+# Test BlackListedDomain.
+
+class ArticleCommentModerator(SpamModerator):
+    pass
+
+@pytest.mark.django_db
+def test_blacklisted_domain(an_article, an_user):
+    domain = BlackListedDomain.objects.create(domain="example.com")
+    moderator.register(Article, ArticleCommentModerator)
+    form = get_form()(an_article)
+    data = {"name": "Bob", "email": f"bob@{domain}", "followup": True,
+            "reply_to": 0, "level": 1, "order": 1,
+            "comment": "Es war einmal eine kleine..."}
+    data.update(form.initial)
+    response = post_article_comment(data, an_article, None)
+    assert response.status_code == 400  # It would be 302 otherwise.
+    moderator.unregister(Article)
+
+
+# ---------------------------------------------------------------------
+# Test BlackListedDomain.
+
+def test_BaseReactionEnum_strlist():
+    string_list = get_reactions_enum().strlist()
+    assert string_list == '+,+1,#128077;-,-1,#128078'

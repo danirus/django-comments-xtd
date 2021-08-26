@@ -94,7 +94,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             try:
                 template_path = tokens[-1]
                 num_tokens_between = tokens.index("using") - tokens.index("for")
-                if  num_tokens_between == 2:
+                if num_tokens_between == 2:
                     # {% render_xtdcomment_list for object using tmpl}
                     return cls(object_expr=parser.compile_filter(tokens[2]),
                                template_path=template_path)
@@ -208,7 +208,7 @@ def get_xtdcomment_permalink(comment, page_number=None, anchor_pattern=None):
         hash_pos = cm_abs_url.find("#")
         cm_anchor = cm_abs_url[hash_pos:]
         cm_abs_url = cm_abs_url[:hash_pos]
-    except ValueError as exc:
+    except ValueError:
         cm_anchor = ""
 
     if not page_number:

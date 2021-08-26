@@ -68,7 +68,8 @@ def get_app_model_options(comment=None, content_type=None):
     Get the app_model_option from COMMENTS_XTD_APP_MODEL_OPTIONS.
 
     If a comment is given, the content_type is extracted from it. Otherwise,
-    the content_type kwarg has to be provided. Checks whether there is a matching dictionary for the app_label.model of the content_type, and
+    the content_type kwarg has to be provided. Checks whether there is a
+    matching dictionary for the app_label.model of the content_type, and
     returns it. Otherwise it returns the default from:
 
         `django_comments_xtd.conf.defaults.COMMENTS_XTD_APP_MODEL_OPTIONS`.

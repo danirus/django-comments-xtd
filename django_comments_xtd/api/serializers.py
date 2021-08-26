@@ -2,7 +2,6 @@ from django.apps import apps
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils import formats, timezone
 from django.utils.html import escape
-from django.utils.module_loading import import_string
 from django.utils.translation import ugettext as _, activate, get_language
 
 from django_comments import get_form
@@ -273,6 +272,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
                 "id": flag.user.id
             })
         return flags
+
 
 class WriteCommentReactionSerializer(serializers.ModelSerializer):
     class Meta:

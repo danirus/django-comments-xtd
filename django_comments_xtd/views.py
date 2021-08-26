@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import six
 
 from django.apps import apps
+from django.db.models import F
 from django.db.utils import NotSupportedError
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
@@ -154,7 +155,6 @@ def post(request, next=None, using=None):
     }
     return next_redirect(request, fallback=next or 'comments-comment-done',
                          **kwargs)
-
 
 
 def get_moderated_tmpl(cmt):

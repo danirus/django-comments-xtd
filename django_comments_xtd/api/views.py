@@ -19,6 +19,9 @@ from django_comments_xtd.models import (TmpXtdComment, XtdComment,
 from django_comments_xtd.utils import check_option, get_current_site_id
 
 
+XtdComment = get_model()
+
+
 class CommentCreate(generics.CreateAPIView):
     """Create a comment."""
     serializer_class = serializers.WriteCommentSerializer

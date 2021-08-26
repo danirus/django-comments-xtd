@@ -31,6 +31,8 @@ app_model_options_mock = {
     }
 }
 
+XtdComment = get_model()
+
 
 factory = APIRequestFactory()
 

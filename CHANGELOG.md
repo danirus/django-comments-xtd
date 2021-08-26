@@ -22,6 +22,13 @@
       reactions. To get aligned with issue #161, the new frontend to handle
       reactions doesn't have additional dependencies.
 
+
+## [2.9.2] - 2021-06-19
+
+    * Fixes issue with nested_count XtdComment's attribute being wrongly computed when comment threads are more than 2 level deep and have more than 1 thread. See [PR-312](https://github.com/danirus/django-comments-xtd/pull/312).
+    * Resolves limitation in API views. Avoid using explicit XtdComment model and rather use the `get_model` function to allow using customized comment models with API. See [PR-313](https://github.com/danirus/django-comments-xtd/pull/313). Thanks to @r4fek.
+    * Enhance comment form initialization, so that original fields are not override but rather only some of its attributes. See [PR-315](https://github.com/danirus/django-comments-xtd/pull/315). Thanks to @dest81.
+
 ## [2.9.1] - 2021-04-14
 
     * Fixes issue when the 'sent' view does not receive a 'c' query string parameter. See [PR-305](https://github.com/danirus/django-comments-xtd/pull/305). Thanks to @dest81.

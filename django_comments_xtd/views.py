@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import six
 
 from django.apps import apps
+from django.db.utils import NotSupportedError
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
@@ -369,6 +370,19 @@ def notify_comment_followers(comment):
     previous_comments = XtdComment.objects\
                                   .filter(**kwargs)\
                                   .exclude(user_email=comment.user_email)
+
+    def feed_followers(gen):
+        for instance in gen:
+            followers[instance.user_email] = (
+                instance.user_name,
+                signed.dumps(instance, compress=True,
+                             extra_key=settings.COMMENTS_XTD_SALT))
+
+    try:
+        gen = previous_comments.distinct('user_email').order_by('user_email')
+        feed_followers(gen)
+    except NotSupportedError:
+        feed_followers(previous_comments)
 
     for instance in previous_comments:
         followers[instance.user_email] = (

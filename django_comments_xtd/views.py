@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import six
 
 from django.apps import apps
+from django.db.utils import NotSupportedError
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
@@ -255,15 +256,25 @@ def notify_comment_followers(comment):
                                   .filter(**kwargs)\
                                   .exclude(user_email=comment.user_email)
 
+    def feed_followers(gen):
+        for instance in gen:
+            followers[instance.user_email] = (
+                instance.user_name,
+                signed.dumps(instance, compress=True,
+                             extra_key=settings.COMMENTS_XTD_SALT))
+
+    try:
+        gen = previous_comments.distinct('user_email').order_by('user_email')
+        feed_followers(gen)
+    except NotSupportedError:
+        feed_followers(previous_comments)
+
     for instance in previous_comments:
         followers[instance.user_email] = (
             instance.user_name,
             signed.dumps(instance, compress=True,
                          extra_key=settings.COMMENTS_XTD_SALT))
 
-    # model = apps.get_model(comment.content_type.app_label,
-    #                        comment.content_type.model)
-    # target = model._default_manager.get(pk=comment.object_pk)
     subject = _("new comment posted")
     text_message_template = loader.get_template(
         "django_comments_xtd/email_followup_comment.txt")

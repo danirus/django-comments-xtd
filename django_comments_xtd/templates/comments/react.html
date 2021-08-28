@@ -9,9 +9,9 @@
 <main>
   <article>
     <div class="container">
-      <h2 class="text-center">{% translate "Share your reaction to this comment" %}</h2>
+      <h2 class="text-center">{% trans "Share your reaction to this comment" %}</h2>
       <h6 class="text-center pb24">
-        {% translate "Comment sent to:" %}<br/>
+        {% trans "Comment sent to:" %}<br/>
         <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
       </h6>
     </div>
@@ -36,16 +36,16 @@
         <section class="reaction-form">
           <h5 class="text-center">Reaction choices</h5>
           {% if user_reactions %}
-            <p class="text-center">{% translate "Pressed buttons correspond to your active reactions to this comment." %}</p>
+            <p class="text-center">{% trans "Pressed buttons correspond to your active reactions to this comment." %}</p>
           {% endif %}
           <form method="POST" autocomplete="off" action="{% comment_reaction_form_target comment %}">
             {% csrf_token %}
             <input type="hidden" name="{{ cpage_qs_param }}" value="{{ page_number }}" />
             {% render_reactions_buttons user_reactions %}
             {% if user_reactions %}
-              <h6 class="text-center">{% translate "Click on a button to select or deselect your reaction." %}</h6>
+              <h6 class="text-center">{% trans "Click on a button to select or deselect your reaction." %}</h6>
             {% else %}
-              <h6 class="text-center">{% translate "Click on a button to select your reaction." %}</h6>
+              <h6 class="text-center">{% trans "Click on a button to select your reaction." %}</h6>
             {% endif %}
           </form>
         </section>

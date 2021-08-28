@@ -10,17 +10,17 @@
   <div class="container md">
     <div class="row">
       <div class="column">
-        <h2>{% translate "Register" %}</h2>
+        <h2>{% trans "Register" %}</h2>
         <p>
           Thanks for confirming your email address. Your user account has been created. Please, assign a password to your new account before you can login.
         </p>
-        <h3>{% translate "Protect your account" %}<h3>
+        <h3>{% trans "Protect your account" %}<h3>
         <div class="grid-form">
           <form method="POST" autocomplete="off">
             {% csrf_token %}{{ form.email }}
 
             <label class="col1" for="{{ form.password.id_for_label }}">
-              {% translate form.password.label %}
+              {% trans form.password.label %}
             </label>
             <div class="col2 {% if 'password' in form.errors %}error{% endif %}">
               {{ form.password }}

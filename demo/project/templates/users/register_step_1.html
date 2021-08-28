@@ -10,17 +10,17 @@
   <div class="container md">
     <div class="row">
       <div class="column">
-        <h2>{% translate "Register" %}</h2>
+        <h2>{% trans "Register" %}</h2>
         <p>
           Sign up to send comments and reactions to this website without having to confirm each contribution by email. Having your own account allows you to post media content in comments. It also gives you the capacity to send your reaction to stories, quotes and shop articles, as long as to react to comments.
         </p>
-        <h3>{% translate "User registration form" %}<h3>
+        <h3>{% trans "User registration form" %}<h3>
         <div class="grid-form">
           <form method="POST" autocomplete="off">
             {% csrf_token %}
 
             <label class="col1" for="{{ form.email.id_for_label }}">
-              {% translate form.email.label %}
+              {% trans form.email.label %}
             </label>
             <div class="col2 {% if 'email' in form.errors %}error{% endif %}">
               {{ form.email }}
@@ -32,7 +32,7 @@
             {% endif %}
 
             <label class="col1" for="{{ form.name.id_for_label }}">
-              {% translate form.name.label %}
+              {% trans form.name.label %}
             </label>
             <div class="col2 {% if 'name' in form.errors %}error{% endif %}">
               {{ form.name }}
@@ -44,7 +44,7 @@
             {% endif %}
 
             <label class="col1" for="{{ form.url.id_for_label }}">
-              {% translate form.url.label %}
+              {% trans form.url.label %}
             </label>
             <div class="col2 {% if 'url' in form.errors %}error{% endif %}">
               {{ form.url }}

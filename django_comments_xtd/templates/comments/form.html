@@ -35,7 +35,7 @@
     {% if 'email' in form.errors %}
       <div class="col2 helper-text error">{{ form.email.help_text }}</div>
     {% else %}
-      <div class="col2 helper-text">{% url 'login' as login_url %}{% blocktranslate %}Required for comment verification. Otherwise <a href="{{ login_url }}">login</a>.{% endblocktranslate %}</div>
+      <div class="col2 helper-text">{% url 'login' as login_url %}{% blocktrans %}Required for comment verification. Otherwise <a href="{{ login_url }}">login</a>.{% endblocktrans %}</div>
     {% endif %}
   {% endif %}
 

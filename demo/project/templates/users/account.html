@@ -22,12 +22,12 @@
       <h6 class="text-center">You have contributed to this website's conversation with the following comments.</h6>
       {% for comment in comments %}
         <div class="mt32">
-          {% translate "Posted to:" %} <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>.
+          {% trans "Posted to:" %} <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>.
           {% if comment.level > 0 %}
-            &nbsp;{% translate "In response to another comment." %}
+            &nbsp;{% trans "In response to another comment." %}
           {% endif %}
           {% if comment.nested_count %}
-            &nbsp;{% blocktranslate count number_of_responses=comment.nested_count %}It has one response.{% plural %}It has {{ number_of_responses }} responses.{% endblocktranslate %}
+            &nbsp;{% blocktrans count number_of_responses=comment.nested_count %}It has one response.{% plural %}It has {{ number_of_responses }} responses.{% endblocktrans %}
           {% endif %}
         </div>
         <div class="dcx ml32">
@@ -45,11 +45,11 @@
               {% for reaction in comment.reactions.all %}
                 {% with reaction_enum=reaction|get_reaction_enum %}
                   <li class="my0">
-                    {% blocktranslate with r_icon=reaction_enum.icon count r_counter=reaction.counter %}
+                    {% blocktrans with r_icon=reaction_enum.icon count r_counter=reaction.counter %}
                     One person reacted with <span class="emoji">&{{ r_icon }}</span>
                     {% plural %}
                     {{ r_counter }} people reacted with <span class="emoji">&{{ r_icon }}</span>
-                    {% endblocktranslate %}
+                    {% endblocktrans %}
                     ({{ reaction|authors_list|join:', ' }})
                   </li>
                 {% endwith %}

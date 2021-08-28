@@ -22,17 +22,17 @@
             {% csrf_token %}
             {% if form.errors %}
               <div class="col1-2 alert alert-error text-error">
-                {% translate form.non_field_errors.0 %}
+                {% trans form.non_field_errors.0 %}
               </div>
             {% endif %}
 
             <label class="col1" for="{{ form.email.id_for_label }}">
-              {% translate form.email.label %}
+              {% trans form.email.label %}
             </label>
             <div class="col2">{{ form.email }}</div>
 
             <label class="col1" for="{{ form.password.id_for_label }}">
-              {% translate form.password.label %}
+              {% trans form.password.label %}
             </label>
             <div class="col2">{{ form.password }}</div>
 

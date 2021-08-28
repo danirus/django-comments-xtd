@@ -8,9 +8,9 @@
 <main>
   <article>
     <div class="container">
-      <h2 class="text-center">{% translate "Flag this comment?" %}</h2>
+      <h2 class="text-center">{% trans "Flag this comment?" %}</h2>
       <h6 class="text-center pb24">
-        {% translate "Comment sent to:" %}<br/>
+        {% trans "Comment sent to:" %}<br/>
         <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
       </h6>
     </div>
@@ -33,16 +33,16 @@
         </div>
 
         <section>
-          <h6 class="text-center">{% translate "Click on the flag button to mark the following comment as inappropriate." %}</h6>
+          <h6 class="text-center">{% trans "Click on the flag button to mark the following comment as inappropriate." %}</h6>
           <form action="." method="post">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
             <div class="inline-centered text-center">
               <button type="submit" class="primary" name="submit" value="flag">
-                {% translate "Flag" %}
+                {% trans "Flag" %}
               </button>&nbsp;
               <a class="btn secondary" href="{{ comment.get_absolute_url }}">
-                {% translate "cancel" %}
+                {% trans "cancel" %}
               </a>
             </div>
           </form>

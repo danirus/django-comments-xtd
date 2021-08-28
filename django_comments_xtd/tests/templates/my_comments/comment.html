@@ -30,13 +30,13 @@
         {% endif %}
         {% if comment_reactions_enabled %}
           <div>
-            <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}?{{ cpage_qs_param }}={{ page_obj.number }}">{% translate "React" %}</a>
+            <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}?{{ cpage_qs_param }}={{ page_obj.number }}">{% trans "React" %}</a>
           </div>
         {% endif %}
       {% endif %}
       {% if show_nested and comment.level == 0 and comment.nested_count %}
         <div>
-          <a data-type="fold-replies" data-comment="{{ comment.id }}" class="small" href="#">{% blocktranslate with count=comment.nested_count%}Fold {{ count }} replies{% endblocktranslate %}</a>
+          <a data-type="fold-replies" data-comment="{{ comment.id }}" class="small" href="#">{% blocktrans with count=comment.nested_count%}Fold {{ count }} replies{% endblocktrans %}</a>
         </div>
       {% endif %}
     </div>

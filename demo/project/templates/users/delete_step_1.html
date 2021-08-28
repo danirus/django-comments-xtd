@@ -3,16 +3,16 @@
 {% load i18n %}
 {% load static %}
 
-{% block nav-delete-account %}<span class="small">{% translate "Delete account" %}</span>{% endblock %}
+{% block nav-delete-account %}<span class="small">{% trans "Delete account" %}</span>{% endblock %}
 
 {% block sub_content %}
 <div class="container md mt32">
   <div class="row">
     <div class="column">
       <h3>{% trans "Delete account" %}</h3>
-      {% blocktranslate %}
+      {% blocktrans %}
         <p>Your contributions are very much appreciated and deleting them might break a chain of comments, therefore they will be preserved after you delete your account. However if you don't want to display your name associated with your contributions you can choose to anonymized them so that the name displayed can not be associated with yours.</p>
-      {% endblocktranslate %}
+      {% endblocktrans %}
       <div class="grid-form xmargin fgrow">
         <form method="POST">
           {% csrf_token %}
@@ -25,7 +25,7 @@
           {% endif %}
 
           <label class="col1" for="{{ form.anonymize.id_for_label }}">
-            {% translate form.anonymize.label %}
+            {% trans form.anonymize.label %}
           </label>
           <div class="col2 no-bullet">
             {{ form.anonymize }}

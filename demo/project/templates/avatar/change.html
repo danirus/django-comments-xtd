@@ -4,16 +4,16 @@
 {% load static %}
 {% load avatar_tags %}
 
-{% block nav-edit-photo %}<span class="small">{% translate "Edit photo" %}</span>{% endblock %}
+{% block nav-edit-photo %}<span class="small">{% trans "Edit photo" %}</span>{% endblock %}
 
 {% block sub_content %}
 <div class="container md mt32">
   <div class="row">
     <div class="column">
-      <h3>{% translate "Edit photo" %}</h3>
+      <h3>{% trans "Edit photo" %}</h3>
       {% if not avatars %}
         <p>
-          {% translate "You haven't uploaded an avatar yet. Please upload one now." %}
+          {% trans "You haven't uploaded an avatar yet. Please upload one now." %}
         </p>
       {% else %}
         <div class="grid-form fgrow">
@@ -34,11 +34,11 @@
             <div class="col1-2">
               <div class="inline-centered">
                 <button class="small primary" name="action" value="save" type="submit">
-                  {% translate "use as your new default" %}
+                  {% trans "use as your new default" %}
                 </button>
                 &nbsp;
                 <button class="small secondary" name="action" value="delete" type="submit">
-                  {% translate "delete photo" %}
+                  {% trans "delete photo" %}
                 </button>
               </div>
             </div>
@@ -49,12 +49,12 @@
       <div class="grid-form fgrow bt1">
         <form enctype="multipart/form-data" method="POST" id="upload_avatar_form" action="{% url 'edit-avatar' %}">
           {% csrf_token %}
-          <label class="col1" for="{{ upload_avatar_form.avatar.id_for_label }}">{% translate "Upload new image" %}</label>
+          <label class="col1" for="{{ upload_avatar_form.avatar.id_for_label }}">{% trans "Upload new image" %}</label>
           <div class="col2">{{ upload_avatar_form.avatar }}</div>
           <div class="col2">
             <div class="inline-left">
               <button class="small primary" name="action" value="upload" type="submit">
-                {% translate "Upload" %}
+                {% trans "Upload" %}
               </button>
             </div>
           </div>

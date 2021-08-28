@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;{% translate "Login" %}{% endblock %}
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;{% trans "Login" %}{% endblock %}
 
 {% block nav-login-class %}active{% endblock %}
 
@@ -12,7 +12,7 @@
   <div class="container md">
     <div class="row">
       <div class="column">
-        <h2>{% translate "Log in" %}</h2>
+        <h2>{% trans "Log in" %}</h2>
         <p>
           Your registration is complete. You can now log in using the form below.
         </p>
@@ -25,17 +25,17 @@
             {% csrf_token %}
             {% if form.errors %}
               <div class="col1-2 alert alert-error text-error">
-                {% translate form.non_field_errors.0 %}
+                {% trans form.non_field_errors.0 %}
               </div>
             {% endif %}
 
             <label class="col1" for="{{ form.email.id_for_label }}">
-              {% translate form.email.label %}
+              {% trans form.email.label %}
             </label>
             <div class="col2">{{ form.email }}</div>
 
             <label class="col1" for="{{ form.password.id_for_label }}">
-              {% translate form.password.label %}
+              {% trans form.password.label %}
             </label>
             <div class="col2">{{ form.password }}</div>
 

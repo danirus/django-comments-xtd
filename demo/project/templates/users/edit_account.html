@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block nav-edit-user %}<span class="small">{% translate "Edit profile" %}</span>{% endblock %}
+{% block nav-edit-user %}<span class="small">{% trans "Edit profile" %}</span>{% endblock %}
 
 {% block sub_content %}
 <div class="container md mt32">
@@ -20,7 +20,7 @@
           <div id="email_form_msg" class="col1-2 text-center alert hide"></div>
           {% endif %}
           {% csrf_token %}
-          <label class="col1" for="{{ email_form.email.id_for_label }}">{% translate "Email address" %}</label>
+          <label class="col1" for="{{ email_form.email.id_for_label }}">{% trans "Email address" %}</label>
           <div class="col2">{{ email_form.email }}</div>
           <div class="col2">
             <div class="inline-left">

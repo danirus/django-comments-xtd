@@ -1,9 +1,5 @@
 from django import VERSION
-try:
-    from django.contrib.sites.shortcuts import get_current_site
-except ImportError:
-    from django.contrib.sites.models import get_current_site
-
+from django.contrib.sites.shortcuts import get_current_site
 from django.template import Context, loader
 
 from django_comments import get_model
@@ -88,15 +84,14 @@ class SpamModerator(XtdCommentModerator):
     filtering service.
     """
     def allow(self, comment, content_object, request):
-        try:
-            domain = comment.user_email.split('@', 1)[1]
-        except IndexError:
+        # There is no way the comment.user_email does not get validated.
+        # Whether coming from anonymous user or registered user.
+        # So it has to contain an '@' attribute.
+        domain = comment.user_email.split('@', 1)[1]
+        if(BlackListedDomain.objects.filter(domain=domain).count()):
             return False
-        else:
-            if(BlackListedDomain.objects.filter(domain=domain).count()):
-                return False
-            return super(SpamModerator, self).allow(comment, content_object,
-                                                    request)
+        return super(SpamModerator, self).allow(comment, content_object,
+                                                request)
 
 
 class XtdModerator(Moderator):

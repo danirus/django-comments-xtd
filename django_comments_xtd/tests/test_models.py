@@ -807,17 +807,31 @@ class ArticleCommentModerator(SpamModerator):
     pass
 
 @pytest.mark.django_db
-def test_blacklisted_domain(an_article, an_user):
+def test_blacklisted_domain_is_blocked(an_article, an_user):
     domain = BlackListedDomain.objects.create(domain="example.com")
     moderator.register(Article, ArticleCommentModerator)
     form = get_form()(an_article)
-    data = {"name": "Bob", "email": f"bob@{domain}", "followup": True,
+    data = {"name": "Joe", "email": f"joe@{domain}", "followup": True,
             "reply_to": 0, "level": 1, "order": 1,
             "comment": "Es war einmal eine kleine..."}
     data.update(form.initial)
-    response = post_article_comment(data, an_article, None)
+    response = post_article_comment(data, an_article, auth_user=an_user)
     assert response.status_code == 400  # It would be 302 otherwise.
     moderator.unregister(Article)
+    assert XtdComment.objects.count() == 0
+
+@pytest.mark.django_db
+def test_non_blacklisted_domain_pass(an_article, an_user):
+    moderator.register(Article, ArticleCommentModerator)
+    form = get_form()(an_article)
+    data = {"name": "Joe", "email": f"joe@example.com", "followup": True,
+            "reply_to": 0, "level": 1, "order": 1,
+            "comment": "Es war einmal eine kleine..."}
+    data.update(form.initial)
+    response = post_article_comment(data, an_article, auth_user=an_user)
+    assert response.status_code == 302
+    moderator.unregister(Article)
+    assert XtdComment.objects.count() == 1
 
 
 # ---------------------------------------------------------------------

@@ -1,7 +1,6 @@
 import collections
 from datetime import datetime
 import pytest
-import time
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
@@ -214,3 +213,11 @@ def test_paginator_example_3(an_article):
     counter = collections.Counter(comment_list)
     assert counter[2] == 9
     assert counter[3] == 9
+
+
+@pytest.mark.django_db
+def test_paginator_allow_empty_first_page():
+    qs = XtdComment.objects.all()
+    paginator = CommentsPaginator(qs, 10, orphans=3,
+                                  allow_empty_first_page=False)
+    assert paginator.num_pages == 0

@@ -48,7 +48,7 @@ Example 2:
 Example 3:
   Comment IDs of level 0:  [ 1,  2, 3]
   Their `nested_count`:    [24,  8, 8]
-  Computed comments/page:  [24,    18]
+  Computed comments/page:  [25,    18]
 
   Comment 1 has 24 nested comments, it doesn't exceed per_page (25). Adding
   all the rest (18) would represent 43 comments which exceed per_page + orphans

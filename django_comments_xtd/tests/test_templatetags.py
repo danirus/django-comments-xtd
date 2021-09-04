@@ -1,14 +1,21 @@
+import collections
+from datetime import datetime
 from unittest.mock import patch
 
 from django.db.models.signals import pre_save
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
+from django.http.response import Http404
 from django.template import Context, Template
 from django.test import TestCase as DjangoTestCase
+import pytest
 
 from django_comments_xtd import get_model
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (XtdComment,
                                         publish_or_withhold_on_pre_save)
+from django_comments_xtd.templatetags import comments_xtd
 from django_comments_xtd.utils import get_current_site_id
 
 from django_comments_xtd.tests.models import Article, MyComment
@@ -344,3 +351,118 @@ class CommentCSSThreadRangeTestCase(DjangoTestCase):
                 "{% comment_css_thread_range object 'thread-' %}")
             output = Template(t).render(Context({'object': cm}))
             self.assertEqual(output, "thread-0-mid thread-1-mid thread-2")
+
+
+def setup_paginator_example_1(an_article):
+    """Set up the Example 1 (detailed in the paginator.py __docs__)."""
+    article_ct = ContentType.objects.get(app_label="tests", model="article")
+    site = Site.objects.get(pk=1)
+    attrs = {
+        "content_type": article_ct,
+        "object_pk": an_article.pk,
+        "content_object": an_article,
+        "site": site,
+        "comment": f"another comment to article {an_article.pk}",
+        "submit_date": datetime.now()
+    }
+
+    # Create 8 comments at level 0.
+    for cm_level_0 in range(8):
+        get_model().objects.create(**attrs)
+
+    cmts_level_0 = get_model().objects.all()
+
+    # Add the following number of child comments to the previous cmts_level_0.
+    children_number = [10, 10, 10, 10, 10, 10, 5, 4]
+    for index, cmt_level_0 in enumerate(cmts_level_0):
+        for child in range(children_number[index]):
+            XtdComment.objects.create(**attrs, parent_id=cmt_level_0.pk)
+
+
+@pytest.mark.django_db
+def test_paginate_queryset(an_article):
+    setup_paginator_example_1(an_article)
+    queryset = get_model().objects.all()
+    d = comments_xtd.paginate_queryset(queryset, {})
+    d_expected_keys = ['paginator', 'page_obj', 'is_paginated',
+                     'cpage_qs_param', 'comment_list']
+    for key in d_expected_keys:
+        assert key in d
+
+    assert d['paginator'] != None
+    assert d['page_obj'].object_list.count() == 22
+    assert d['is_paginated'] == True
+    assert d['cpage_qs_param'] == settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    assert d['comment_list'] == d['page_obj'].object_list
+
+
+@pytest.mark.django_db
+def test_paginate_queryset_with_pagination_disabled(an_article, monkeypatch):
+    setup_paginator_example_1(an_article)
+    monkeypatch.setattr(comments_xtd.settings,
+                        'COMMENTS_XTD_ITEMS_PER_PAGE', 0)
+    queryset = get_model().objects.all()
+    d = comments_xtd.paginate_queryset(queryset, {})
+    d_expected_keys = ['paginator', 'page_obj', 'is_paginated',
+                     'cpage_qs_param', 'comment_list']
+    for key in d_expected_keys:
+        assert key in d
+
+    assert d['paginator'] == None
+    assert d['page_obj'] == None
+    assert d['is_paginated'] == False
+    assert d['cpage_qs_param'] == settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    assert d['comment_list'] == queryset
+
+
+class FakeRequest:
+    def __init__(self, page_number=0):
+        self.page_number = page_number
+
+    def get_property(self):
+        return {
+            'cpage': self.page_number
+        }
+    GET = property(get_property)
+
+
+@pytest.mark.django_db
+def test_paginate_queryset_raises_ValueError(an_article):
+    setup_paginator_example_1(an_article)
+    queryset = get_model().objects.all()
+    with pytest.raises(Http404):
+        comments_xtd.paginate_queryset(queryset, {'request': FakeRequest("x")})
+
+
+@pytest.mark.django_db
+def test_paginate_queryset_raises_ValueError_when_page_is_last(an_article):
+    setup_paginator_example_1(an_article)
+    queryset = get_model().objects.all()
+    d = comments_xtd.paginate_queryset(queryset, {
+        'request': FakeRequest("last")
+    })
+    d_expected_keys = ['paginator', 'page_obj', 'is_paginated',
+                     'cpage_qs_param', 'comment_list']
+    for key in d_expected_keys:
+        assert key in d
+
+    assert d['paginator'] != None
+    assert d['page_obj'] != None
+    assert d['page_obj'].object_list.count() == 33
+    assert d['is_paginated'] == True
+    assert d['cpage_qs_param'] == settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+    comment_list_ids = [cm.parent_id for cm in d['comment_list']]
+    assert set(comment_list_ids) == set([5, 6, 7, 8])
+    counter = collections.Counter(comment_list_ids)
+    assert counter[5] == 11
+    assert counter[6] == 11
+    assert counter[7] == 6
+    assert counter[8] == 5
+
+
+@pytest.mark.django_db
+def test_paginate_queryset_raises_InvalidPage(an_article):
+    setup_paginator_example_1(an_article)
+    queryset = get_model().objects.all()
+    with pytest.raises(Http404):
+        comments_xtd.paginate_queryset(queryset, {'request': FakeRequest("4")})

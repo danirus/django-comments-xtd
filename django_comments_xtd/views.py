@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-import six
 
 from django.apps import apps
 from django.db.models import F
@@ -397,7 +396,7 @@ def notify_comment_followers(comment):
         html_message_template = loader.get_template(
             "comments/email_followup_comment.html")
 
-    for email, (name, key) in six.iteritems(followers):
+    for email, (name, key) in followers.items():
         mute_url = reverse('comments-xtd-mute', args=[key.decode('utf-8')])
         message_context = {'user_name': name,
                            'comment': comment,

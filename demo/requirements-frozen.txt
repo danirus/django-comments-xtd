@@ -28,7 +28,6 @@ ptyprocess==0.7.0
 Pygments==2.8.1
 pytz==2021.1
 requests==2.25.1
-six==1.15.0
 sqlparse==0.4.1
 toml==0.10.2
 traitlets==5.0.5

@@ -1,5 +1,3 @@
-import six
-
 from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
@@ -32,7 +30,7 @@ class CommentCreate(generics.CreateAPIView):
             if 'non_field_errors' in serializer.errors:
                 response_msg = serializer.errors['non_field_errors'][0]
             else:
-                response_msg = [k for k in six.iterkeys(serializer.errors)]
+                response_msg = [k for k in serializer.errors.keys()]
             return Response(response_msg, status=400)
         if self.resp_dict['code'] == 201:  # The comment has been created.
             response.data.update({

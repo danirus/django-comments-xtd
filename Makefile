@@ -1,10 +1,11 @@
-.DEFAULT_GOAL := help
+	.DEFAULT_GOAL := help
 .PHONY: coverage deps help lint test tox
 
 coverage:  ## Run tests with coverage.
 	coverage erase
 	coverage run --include=django_comments_xtd/* \
-		--omit=django_comments_xtd/migrations/* -m pytest -ra
+		--omit=django_comments_xtd/migrations/* \
+		--omit=django_comments_xtd/tests/* -m pytest -ra
 	coverage report -m
 
 deps:  ## Install dependencies.

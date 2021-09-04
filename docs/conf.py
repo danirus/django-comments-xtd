@@ -48,7 +48,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'django-comments-xtd'
-copyright = u'2021, Daniel Rus Morales'
+copyright = u'2021, Daniela Rus Morales'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -186,7 +186,7 @@ htmlhelp_basename = 'django-comments-xtddoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'django-comments-xtd.tex', u'django-comments-xtd Documentation',
-   u'Daniel Rus Morales', 'manual'),
+   u'Daniela Rus Morales', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -219,7 +219,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'django-comments-xtd', u'django-comments-xtd Documentation',
-     [u'Daniel Rus Morales'], 1)
+     [u'Daniela Rus Morales'], 1)
 ]
 
 

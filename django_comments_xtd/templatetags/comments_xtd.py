@@ -82,7 +82,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         if len(tokens) == 3:
             return cls(object_expr=parser.compile_filter(tokens[2]))
 
-        # {% render_cxtdomment_list for app.model pk %}
+        # {% render_xtdcomment_list for app.model pk %}
         elif len(tokens) == 4:
             return cls(
                 ctype=BaseCommentNode.lookup_content_type(tokens[2], tokens[0]),
@@ -90,27 +90,26 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             )
 
         # {% render_xtdcomment_list for [obj | app.model pk] [using tmpl] %}
-        elif len(tokens) > 4:
-            try:
-                template_path = tokens[-1]
-                num_tokens_between = tokens.index("using") - tokens.index("for")
-                if num_tokens_between == 2:
-                    # {% render_xtdcomment_list for object using tmpl}
-                    return cls(object_expr=parser.compile_filter(tokens[2]),
-                               template_path=template_path)
-                elif num_tokens_between == 3:
-                    # {% render_xtdcomment_list for app.model pk using tmpl}
-                    tag_t, app_t = tokens[0], tokens[2]
-                    ctype = BaseCommentNode.lookup_content_type(app_t, tag_t)
-                    return cls(ctype=ctype,
-                               object_pk_expr=parser.compile_filter(tokens[3]),
-                               template_path=template_path)
-            except IndexError:
-                msg = ("Wrong syntax in %r tag. Valid syntaxes are: "
-                       "{% render_xtdcomment_list for [object] [using "
-                       "<template>] %} or {% render_xtdcomment_list for "
-                       "[app].[model] [obj_id] [using <tmpl>] %}")
-                raise TemplateSyntaxError(msg % tokens[0])
+        elif len(tokens) > 4 and len(tokens) < 7:
+            template_path = tokens[-1]
+            num_tokens_between = tokens.index("using") - tokens.index("for")
+            if num_tokens_between == 2:
+                # {% render_xtdcomment_list for object using tmpl}
+                return cls(object_expr=parser.compile_filter(tokens[2]),
+                            template_path=template_path)
+            elif num_tokens_between == 3:
+                # {% render_xtdcomment_list for app.model pk using tmpl}
+                tag_t, app_t = tokens[0], tokens[2]
+                ctype = BaseCommentNode.lookup_content_type(app_t, tag_t)
+                return cls(ctype=ctype,
+                            object_pk_expr=parser.compile_filter(tokens[3]),
+                            template_path=template_path)
+        else:
+            msg = ("Wrong syntax in %r tag. Valid syntaxes are: "
+                   "{%% render_xtdcomment_list for [object] [using "
+                   "<template>] %%} or {%% render_xtdcomment_list for "
+                   "[app].[model] [obj_id] [using <tmpl>] %%}")
+            raise TemplateSyntaxError(msg % tokens[0])
 
     def __init__(self, *args, **kwargs):
         self.template_path = None
@@ -119,56 +118,61 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         super().__init__(*args, **kwargs)
 
     def render(self, context):
-        ctype, object_pk = self.get_target_ctype_pk(context)
-        if object_pk:
-            template_search_list = [
-                "comments/%s/%s/list.html" % (ctype.app_label, ctype.model),
-                "comments/%s/list.html" % ctype.app_label,
-                "comments/list.html"
-            ]
-            qs = self.get_queryset(context)
-            qs = self.get_context_value_from_queryset(context, qs)
-            context_dict = context.flatten()
-            context_dict.update(paginate_queryset(qs, context))
+        try:
+            ctype, object_pk = self.get_target_ctype_pk(context)
+        except AttributeError:
+            # in get_target_ctype_pk the call to FilterExpression.resolve does
+            # not raise VariableDoesNotExist, however in a latter step an
+            # AttributeError is raised when the object_expr does not exist
+            # in the context. Therefore, this except raises when used as:
+            # {% render_xtdcomment_list for var_not_in_context %}
+            return ""
+        template_search_list = [
+            "comments/%s/%s/list.html" % (ctype.app_label, ctype.model),
+            "comments/%s/list.html" % ctype.app_label,
+            "comments/list.html"
+        ]
+        qs = self.get_queryset(context)
+        qs = self.get_context_value_from_queryset(context, qs)
+        context_dict = context.flatten()
+        context_dict.update(paginate_queryset(qs, context))
 
-            # Pass max_thread_level in the context.
-            app_model = "%s.%s" % (ctype.app_label, ctype.model)
-            qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
-            MTL = settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
-            mtl = MTL.get(app_model, settings.COMMENTS_XTD_MAX_THREAD_LEVEL)
-            context_dict.update({
-                'comments_page_qs_param': qs_param,
-                'max_thread_level': mtl,
-                'reply_stack': [],  # List to control reply rendering.
-                'show_nested': True
-            })
+        # Pass max_thread_level in the context.
+        app_model = "%s.%s" % (ctype.app_label, ctype.model)
+        qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+        MTL = settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
+        mtl = MTL.get(app_model, settings.COMMENTS_XTD_MAX_THREAD_LEVEL)
+        context_dict.update({
+            'comments_page_qs_param': qs_param,
+            'max_thread_level': mtl,
+            'reply_stack': [],  # List to control reply rendering.
+            'show_nested': True
+        })
 
-            # get_app_model_options returns a dict like: {
-            #     'who_can_post': 'all' | 'users',
-            #     'check_input_allowed': 'string path to function',
-            #     'comment_flagging_enabled': <boolean>,
-            #     'comment_reactions_enabled': <boolean>,
-            #     'object_reactions_enabled': <boolean>
-            # }
-            options = utils.get_app_model_options(content_type=app_model)
-            check_input_allowed_str = options.pop('check_input_allowed')
-            check_func = import_string(check_input_allowed_str)
-            target_obj = ctype.get_object_for_this_type(pk=object_pk)
+        # get_app_model_options returns a dict like: {
+        #     'who_can_post': 'all' | 'users',
+        #     'check_input_allowed': 'string path to function',
+        #     'comment_flagging_enabled': <boolean>,
+        #     'comment_reactions_enabled': <boolean>,
+        #     'object_reactions_enabled': <boolean>
+        # }
+        options = utils.get_app_model_options(content_type=app_model)
+        check_input_allowed_str = options.pop('check_input_allowed')
+        check_func = import_string(check_input_allowed_str)
+        target_obj = ctype.get_object_for_this_type(pk=object_pk)
 
-            # Call the function that checks whether comments input
-            # is still allowed on the given target_object. And add
-            # the resulting boolean to the template context.
-            #
-            options['is_input_allowed'] = check_func(target_obj)
-            context_dict.update(options)
+        # Call the function that checks whether comments input
+        # is still allowed on the given target_object. And add
+        # the resulting boolean to the template context.
+        #
+        options['is_input_allowed'] = check_func(target_obj)
+        context_dict.update(options)
 
-            liststr = loader.render_to_string(
-                self.template_path or template_search_list,
-                context_dict
-            )
-            return liststr
-        else:
-            return ''
+        liststr = loader.render_to_string(
+            self.template_path or template_search_list,
+            context_dict
+        )
+        return liststr
 
 
 @register.tag
@@ -200,16 +204,18 @@ def get_xtdcomment_permalink(comment, page_number=None, anchor_pattern=None):
     Example::
         {% get_xtdcomment_permalink comment page_obj.number "#c%(id)s" %}
     """
-    if anchor_pattern:
-        cm_abs_url = comment.get_absolute_url(anchor_pattern)
-    else:
-        cm_abs_url = comment.get_absolute_url()
     try:
+        if anchor_pattern:
+            cm_abs_url = comment.get_absolute_url(anchor_pattern)
+        else:
+            cm_abs_url = comment.get_absolute_url()
+
+
         hash_pos = cm_abs_url.find("#")
         cm_anchor = cm_abs_url[hash_pos:]
         cm_abs_url = cm_abs_url[:hash_pos]
-    except ValueError:
-        cm_anchor = ""
+    except:
+        return comment.get_absolute_url()
 
     if not page_number:
         page_number = 1
@@ -245,15 +251,18 @@ def get_commentbox_props(parser, token):
     Returns a JSON object with the initial props for the CommentBox component.
 
     See api.frontend.commentbox_props for full details on the props.
+
+    Example::
+        {% get_commentbox_props for comment %}
     """
     try:
         tag_name, args = token.contents.split(None, 1)
     except ValueError:
-        raise TemplateSyntaxError("%s tag requires arguments" %
+        raise TemplateSyntaxError("%r tag requires arguments" %
                                   token.contents.split()[0])
     match = re.search(r'for (\w+)', args)
     if not match:
-        raise TemplateSyntaxError("%s tag had invalid arguments" % tag_name)
+        raise TemplateSyntaxError("%r tag had invalid arguments" % tag_name)
     obj = match.groups()[0]
     return GetCommentBoxPropsNode(obj)
 

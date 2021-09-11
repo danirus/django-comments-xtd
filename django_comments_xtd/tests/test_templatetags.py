@@ -1,13 +1,15 @@
 import collections
 from datetime import datetime
+import json
 from unittest.mock import patch
 
 from django.db.models.signals import pre_save
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
+from django.core.paginator import PageNotAnInteger
 from django.http.response import Http404
-from django.template import Context, Template
+from django.template import Context, Template, TemplateSyntaxError
 from django.test import TestCase as DjangoTestCase
 import pytest
 
@@ -466,3 +468,193 @@ def test_paginate_queryset_raises_InvalidPage(an_article):
     queryset = get_model().objects.all()
     with pytest.raises(Http404):
         comments_xtd.paginate_queryset(queryset, {'request': FakeRequest("4")})
+
+
+@pytest.mark.django_db
+def test_render_xtdcomment_list_raises_IndexError(an_article):
+    t = ("{% load comments_xtd %}"
+         "{% render_xtdcomment_list %}")
+    with pytest.raises(IndexError):
+        Template(t).render(Context({'object': an_article}))
+
+
+@pytest.mark.django_db
+def test_render_xtdcomment_list_raises_TemplateSyntaxError(an_article):
+    t = ("{% load comments_xtd %}"
+         "{% render_xtdcomment_list four object %}")
+    with pytest.raises(TemplateSyntaxError):
+        Template(t).render(Context({'object': an_article}))
+
+
+def setup_small_comments_thread(an_article):
+# testcase cmt.id   parent level-0  level-1  level-2
+#  step1     1        -      c1                        <-                 cmt1
+#  step2     3        1      --       c3               <-         cmt1 to cmt1
+#  step5     8        3      --       --        c8     <- cmt1 to cmt1 to cmt1
+#  step2     4        1      --       c4               <-         cmt2 to cmt1
+#  step4     7        4      --       --        c7     <- cmt1 to cmt2 to cmt1
+#  step1     2        -      c2                        <-                 cmt2
+#  step3     5        2      --       c5               <-         cmt1 to cmt2
+#  step4     6        5      --       --        c6     <- cmt1 to cmt1 to cmt2
+#  step5     9        -      c9                        <-                 cmt9
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+
+@pytest.mark.django_db
+def test_render_xtdcomment_list_for_app_model_pk(an_article):
+    setup_small_comments_thread(an_article)
+    t = ("{% load comments_xtd %}"
+         "{% render_xtdcomment_list for tests.article 1 %}")
+    output = Template(t).render(Context({'object': an_article,
+                                         'user': AnonymousUser()}))
+    assert output.count('<div id="c') == 9
+    pos_c1 = output.index('<div id="c1"')
+    pos_c3 = output.index('<div id="c3"')
+    pos_c8 = output.index('<div id="c8"')
+    pos_c4 = output.index('<div id="c4"')
+    pos_c7 = output.index('<div id="c7"')
+    pos_c2 = output.index('<div id="c2"')
+    pos_c5 = output.index('<div id="c5"')
+    pos_c6 = output.index('<div id="c6"')
+    pos_c9 = output.index('<div id="c9"')
+    assert (pos_c1 < pos_c3 < pos_c8 <
+            pos_c4 < pos_c7 < pos_c2 <
+            pos_c5 < pos_c6 < pos_c9)
+
+
+@pytest.mark.django_db
+def test_render_xtdcomment_list_for_app_model_pk_using_tmpl(an_article):
+    setup_small_comments_thread(an_article)
+    t = ("{% load comments_xtd %}"
+         "{% render_xtdcomment_list"
+         "   for tests.article 1 using my_comments/list.html"
+         "%}")
+    output = Template(t).render(Context({'object': an_article,
+                                         'user': AnonymousUser()}))
+    assert output.count('<div id="c') == 9
+    pos_c1 = output.index('<div id="c1"')
+    pos_c3 = output.index('<div id="c3"')
+    pos_c8 = output.index('<div id="c8"')
+    pos_c4 = output.index('<div id="c4"')
+    pos_c7 = output.index('<div id="c7"')
+    pos_c2 = output.index('<div id="c2"')
+    pos_c5 = output.index('<div id="c5"')
+    pos_c6 = output.index('<div id="c6"')
+    pos_c9 = output.index('<div id="c9"')
+    assert (pos_c1 < pos_c3 < pos_c8 <
+            pos_c4 < pos_c7 < pos_c2 <
+            pos_c5 < pos_c6 < pos_c9)
+
+
+@pytest.mark.django_db
+def test_render_xtdcomment_list_raises_with_many_args(an_article):
+    t = ("{% load comments_xtd %}"
+         "{% render_xtdcomment_list for tests.article 1 using tal pascual %}")
+    with pytest.raises(TemplateSyntaxError):
+        Template(t).render(Context({'object': an_article}))
+
+
+@pytest.mark.django_db
+def test_render_xtdcomment_list_raises_for_non_existing_object():
+    t = ("{% load comments_xtd %}"
+         "{% render_xtdcomment_list for obj_not_in_context %}")
+    output = Template(t).render(Context({'object': None}))
+    assert output == ""
+
+
+@pytest.mark.django_db
+def test_get_xtdcomment_permalink_in_page_eq_1(an_articles_comment):
+    t = ("{% load comments_xtd %}"
+         "{% get_xtdcomment_permalink comment 1 %}")
+    output = Template(t).render(Context({'comment': an_articles_comment}))
+    assert output == an_articles_comment.get_absolute_url()
+
+
+@pytest.mark.django_db
+def test_get_xtdcomment_permalink_in_page_gt_1(an_articles_comment):
+    t = ("{% load comments_xtd %}"
+         "{% get_xtdcomment_permalink comment 2 %}")
+    output = Template(t).render(Context({'comment': an_articles_comment}))
+    assert output == "/comments/cr/10/1/1/?cpage=2#c1"
+
+
+@pytest.mark.django_db
+def test_get_xtdcomment_permalink_in_page_gt_1_custom(an_articles_comment):
+    t = ('{% load comments_xtd %}'
+         '{% get_xtdcomment_permalink comment 2 "#c%(id)s" %}')
+    output = Template(t).render(Context({'comment': an_articles_comment}))
+    assert output == "/comments/cr/10/1/1/?cpage=2#c1"
+
+
+@pytest.mark.django_db
+def test_get_xtdcomment_permalink_in_page_gt_1_fails(an_articles_comment):
+    t = ('{% load comments_xtd %}'
+         '{% get_xtdcomment_permalink comment 2 "$c%(doesnotexist)s" %}')
+    output = Template(t).render(Context({'comment': an_articles_comment}))
+    assert output == an_articles_comment.get_absolute_url()
+
+
+@pytest.mark.django_db
+def test_get_xtdcomment_permalink_in_wrong_page_number(an_articles_comment):
+    t = ('{% load comments_xtd %}'
+         '{% get_xtdcomment_permalink comment "a" %}')
+    with pytest.raises(PageNotAnInteger):
+        Template(t).render(Context({'comment': an_articles_comment}))
+
+
+@pytest.mark.django_db
+def test_get_commentbox_props(an_article):
+    t = ('{% load comments_xtd %}'
+         '{% get_commentbox_props for object %}')
+    output = Template(t).render(Context({'object': an_article}))
+    props = json.loads(output)
+    assert props == {
+        "comment_count": 0,
+        "input_allowed": True,
+        "current_user": "0:Anonymous",
+        "request_name": False,
+        "request_email_address": False,
+        "is_authenticated": False,
+        "who_can_post": "all",
+        "comment_flagging_enabled": False,
+        "comment_reactions_enabled": False,
+        "object_reactions_enabled": False,
+        "can_moderate": False,
+        "polling_interval": 2000,
+        "react_url": "/comments/api/react/",
+        "delete_url": "/comments/delete/0/",
+        "reply_url": "/comments/reply/0/",
+        "flag_url": "/comments/api/flag/",
+        "list_url": "/comments/api/tests-article/1/",
+        "count_url": "/comments/api/tests-article/1/count/",
+        "send_url": "/comments/api/comment/",
+        "form": {
+            "content_type": "tests.article",
+            "object_pk": "1",
+            "timestamp": props["form"]["timestamp"],
+            "security_hash": props["form"]["security_hash"]
+        },
+        "default_followup": False,
+        "html_id_suffix": "7f7a81d9acbab29db51ca501c2d44afe313227bc",
+        "max_thread_level": 3,
+        "login_url": "/accounts/login/"
+    }
+
+
+@pytest.mark.django_db
+def test_get_commentbox_props_raises_1(an_article):
+    t = ('{% load comments_xtd %}'
+         '{% get_commentbox_props %}')
+    with pytest.raises(TemplateSyntaxError):
+        Template(t).render(Context({'object': an_article}))
+
+
+@pytest.mark.django_db
+def test_get_commentbox_props_raises_2(an_article):
+    t = ('{% load comments_xtd %}'
+         '{% get_commentbox_props for %}')
+    with pytest.raises(TemplateSyntaxError):
+        Template(t).render(Context({'object': an_article}))

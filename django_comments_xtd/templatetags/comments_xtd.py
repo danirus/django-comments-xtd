@@ -96,14 +96,14 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             if num_tokens_between == 2:
                 # {% render_xtdcomment_list for object using tmpl}
                 return cls(object_expr=parser.compile_filter(tokens[2]),
-                            template_path=template_path)
+                           template_path=template_path)
             elif num_tokens_between == 3:
                 # {% render_xtdcomment_list for app.model pk using tmpl}
                 tag_t, app_t = tokens[0], tokens[2]
                 ctype = BaseCommentNode.lookup_content_type(app_t, tag_t)
                 return cls(ctype=ctype,
-                            object_pk_expr=parser.compile_filter(tokens[3]),
-                            template_path=template_path)
+                           object_pk_expr=parser.compile_filter(tokens[3]),
+                           template_path=template_path)
         else:
             msg = ("Wrong syntax in %r tag. Valid syntaxes are: "
                    "{%% render_xtdcomment_list for [object] [using "
@@ -210,11 +210,10 @@ def get_xtdcomment_permalink(comment, page_number=None, anchor_pattern=None):
         else:
             cm_abs_url = comment.get_absolute_url()
 
-
         hash_pos = cm_abs_url.find("#")
         cm_anchor = cm_abs_url[hash_pos:]
         cm_abs_url = cm_abs_url[:hash_pos]
-    except:
+    except Exception:
         return comment.get_absolute_url()
 
     if not page_number:

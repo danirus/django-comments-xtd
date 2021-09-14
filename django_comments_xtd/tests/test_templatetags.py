@@ -9,16 +9,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.paginator import PageNotAnInteger
 from django.http.response import Http404
-from django.template import Context, Template, TemplateSyntaxError
+from django.template import Context, Template, TemplateSyntaxError, loader
 from django.test import TestCase as DjangoTestCase
+from django.urls import reverse
 import pytest
 
-from django_comments_xtd import get_model
+from django_comments_xtd import get_model, get_reactions_enum
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (XtdComment,
                                         publish_or_withhold_on_pre_save)
 from django_comments_xtd.templatetags import comments_xtd
-from django_comments_xtd.utils import get_current_site_id
+from django_comments_xtd.utils import get_current_site_id, get_html_id_suffix
 
 from django_comments_xtd.tests.models import Article, MyComment
 from django_comments_xtd.tests.test_models import (
@@ -658,3 +659,91 @@ def test_get_commentbox_props_raises_2(an_article):
          '{% get_commentbox_props for %}')
     with pytest.raises(TemplateSyntaxError):
         Template(t).render(Context({'object': an_article}))
+
+
+@pytest.mark.django_db
+def test_comment_reaction_form_target(an_articles_comment):
+    t = ('{% load comments_xtd %}'
+         '{% comment_reaction_form_target comment %}')
+    output = Template(t).render(Context({'comment': an_articles_comment}))
+    assert output == reverse("comments-xtd-react",
+                             args=(an_articles_comment.id,))
+
+
+@pytest.mark.django_db
+def test_render_reactions_buttons(a_comments_reaction):
+    user_reactions = [get_reactions_enum()(a_comments_reaction.reaction)]
+    t = ('{% load comments_xtd %}'
+         '{% render_reactions_buttons user_reactions %}')
+    output = Template(t).render(Context({'user_reactions': user_reactions}))
+    template = loader.get_template('comments/reactions_buttons.html')
+    expected = template.render({
+        'reactions': get_reactions_enum(),
+        'user_reactions': user_reactions,
+        'break_every': settings.COMMENTS_XTD_REACTIONS_ROW_LENGTH
+    })
+    assert output == expected
+
+    # Find the button representing the 'a_comments_reaction',
+    # which is the '+1' reaction, with the CSS class 'active'.
+    active_reaction = r"""<button
+    type="submit" name="reaction" value="+"
+    class="secondary active"
+  >"""
+    assert output.find(active_reaction) > -1
+
+    # Find the button of the '-1' reaction, without the 'active' class.
+    not_active_reaction = r"""<button
+    type="submit" name="reaction" value="-"
+    class="secondary "
+  >"""
+    assert output.find(not_active_reaction) > -1
+
+
+@pytest.mark.django_db
+def test_render_reactions_enum_strlist():
+    t = ('{% load comments_xtd %}'
+         '{% reactions_enum_strlist %}')
+    output = Template(t).render(Context({}))
+    assert output == get_reactions_enum().strlist()
+
+
+@pytest.mark.django_db
+def test_authors_list(a_comments_reaction, an_user):
+    t = ('{% load comments_xtd %}'
+         '{{ reaction|authors_list }}')
+    output = Template(t).render(Context({'reaction': a_comments_reaction}))
+    expected = Template("{{ result }}").render(Context({
+        'result': [settings.COMMENTS_XTD_API_USER_REPR(an_user)]
+    }))
+    assert output == expected
+
+
+@pytest.mark.django_db
+def test_reaction_enum(a_comments_reaction):
+    t = ('{% load comments_xtd %}'
+         '{{ reaction|get_reaction_enum }}')
+    output = Template(t).render(Context({'reaction': a_comments_reaction}))
+    expected = Template("{{ reaction }}").render(Context({
+        'reaction': get_reactions_enum()(a_comments_reaction.reaction)
+    }))
+    assert output == expected
+
+
+@pytest.mark.django_db
+def test_get_comment(an_articles_comment):
+    t = ('{% load comments_xtd %}'
+         '{% with comment=1|get_comment %}'
+         '{{ comment.comment }}'
+         '{% endwith %}')
+    output = Template(t).render(Context({}))
+    assert output == an_articles_comment.comment
+
+
+@pytest.mark.django_db
+def test_render_only_users_can_post_template(an_article):
+    t = ('{% load comments_xtd %}'
+         '{% render_only_users_can_post_template object %}')
+    output = Template(t).render(Context({'object': an_article}))
+    suffix = get_html_id_suffix(an_article)
+    assert output.find(f"only-users-can-post-{suffix}") > -1

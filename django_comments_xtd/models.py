@@ -221,7 +221,8 @@ class XtdComment(Comment):
 def publish_or_unpublish_nested_comments(comment, are_public=False):
     qs = get_model().objects.filter(~Q(pk=comment.id), parent_id=comment.id)
     nested = [cm.id for cm in qs]
-    qs.update(is_public=are_public)
+    if qs:
+        qs.update(is_public=are_public)
     while len(nested):
         cm_id = nested.pop()
         qs = XtdComment.objects.filter(~Q(pk=cm_id), parent_id=cm_id)

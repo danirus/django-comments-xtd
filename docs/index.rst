@@ -19,7 +19,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.9.2, of
+    This documentation represents the current version, v2.9.3, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.8.5: https://django-comments-xtd.readthedocs.io/en/2.8.5/
@@ -95,6 +95,12 @@ specific features, or check out the use cases to see how others customize it.
 
 Change Log
 ==========
+
+[2.9.3] - 2021-09-22
+--------------------
+
+    * Fixes issue in 'models.publish_or_unpublish_nested_comments', when calling the update method on an empty QuerySet. See [issue-318](https://github.com/danirus/django-comments-xtd/issues/318). Thanks to @abiatarfestus, @ironworld and @Khoding.
+    * Enhance the queryset in notify_comment_followers using distinct when possible. And fallback to the previous queryset when distinct is not supported, as is the case for sqlite. See [issue-326](https://github.com/danirus/django-comments-xtd/issues/326). Thanks to @enzedonline.
 
 [2.9.2] - 2021-06-19
 --------------------

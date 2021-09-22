@@ -32,7 +32,7 @@ class XtdCommentFormTestCase(TestCase):
 
     def test_get_comment_create_data(self):
         # as it's used in django_comments.views.comments
-        data = {"name": "Daniel",
+        data = {"name": "Daniela",
                 "email": "danirus@eml.cc",
                 "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,

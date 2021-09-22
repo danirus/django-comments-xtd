@@ -18,7 +18,7 @@ test.run_tests = run_tests
 
 setup(
     name="django-comments-xtd",
-    version="2.9.2",
+    version="2.9.3",
     packages=find_packages(),
     include_package_data=True,
     license="MIT",
@@ -29,10 +29,10 @@ setup(
                       "comments Framework with thread support, following up "
                       "notifications and comments that only hits the "
                       "database after users confirm them by email."),
-    author="Daniel Rus Morales",
-    author_email="mbox@danir.us",
-    maintainer="Daniel Rus Morales",
-    maintainer_email="mbox@danir.us",
+    author="Daniela Rus Morales",
+    author_email="danirus@eml.cc",
+    maintainer="Daniela Rus Morales",
+    maintainer_email="danirus@eml.cc",
     url="http://pypi.python.org/pypi/django-comments-xtd",
     install_requires=[
         'Django>=2.2',

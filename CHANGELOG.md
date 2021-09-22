@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.9.3] - 2021-09-22
+
+    * Fixes issue in 'models.publish_or_unpublish_nested_comments', when calling the update method on an empty QuerySet. See [issue-318](https://github.com/danirus/django-comments-xtd/issues/318). Thanks to @abiatarfestus, @ironworld and @Khoding.
+    * Enhance the queryset in notify_comment_followers using distinct when possible. And fallback to the previous queryset when distinct is not supported, as is the case for sqlite. See [issue-326](https://github.com/danirus/django-comments-xtd/issues/326). Thanks to @enzedonline.
+
 ## [2.9.2] - 2021-06-19
 
     * Fixes issue with nested_count XtdComment's attribute being wrongly computed when comment threads are more than 2 level deep and have more than 1 thread. See [PR-312](https://github.com/danirus/django-comments-xtd/pull/312).

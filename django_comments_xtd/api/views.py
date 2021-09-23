@@ -6,7 +6,7 @@ from django.utils.module_loading import import_string
 
 from django_comments.models import CommentFlag
 from django_comments.views.moderation import perform_flag
-from rest_framework import generics, mixins, permissions, status
+from rest_framework import generics, mixins, permissions, status, renderers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
@@ -24,7 +24,13 @@ from django_comments_xtd.utils import get_current_site_id
 XtdComment = get_model()
 
 
-class CommentCreate(generics.CreateAPIView):
+class DefaultsMixin():
+    renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
+    page_size = None
+    pagination_class = None
+
+
+class CommentCreate(DefaultsMixin, generics.CreateAPIView):
     """Create a comment."""
     serializer_class = serializers.WriteCommentSerializer
 
@@ -50,9 +56,10 @@ class CommentCreate(generics.CreateAPIView):
         self.resp_dict = serializer.save()
 
 
-class CommentList(generics.ListAPIView):
+class CommentList(DefaultsMixin, generics.ListAPIView):
     """List all comments for a given ContentType and object ID."""
     serializer_class = serializers.ReadCommentSerializer
+    permission_classes = (permissions.AllowAny,)
 
     def get_queryset(self, **kwargs):
         content_type_arg = self.kwargs.get('content_type', None)
@@ -80,9 +87,10 @@ class CommentList(generics.ListAPIView):
         return qs
 
 
-class CommentCount(generics.GenericAPIView):
+class CommentCount(DefaultsMixin, generics.GenericAPIView):
     """Get number of comments posted to a given ContentType and object ID."""
     serializer_class = serializers.ReadCommentSerializer
+    permission_classes = (permissions.AllowAny,)
 
     def get_queryset(self):
         content_type_arg = self.kwargs.get('content_type', None)
@@ -98,7 +106,7 @@ class CommentCount(generics.GenericAPIView):
         return Response({'count': self.get_queryset().count()})
 
 
-class ToggleFeedbackFlag(generics.CreateAPIView, mixins.DestroyModelMixin):
+class ToggleFeedbackFlag(DefaultsMixin, generics.CreateAPIView, mixins.DestroyModelMixin):
     """Create and delete like/dislike flags."""
 
     serializer_class = serializers.FlagSerializer
@@ -119,7 +127,7 @@ class ToggleFeedbackFlag(generics.CreateAPIView, mixins.DestroyModelMixin):
         self.created = f(self.request, serializer.validated_data['comment'])
 
 
-class CreateReportFlag(generics.CreateAPIView):
+class CreateReportFlag(DefaultsMixin, generics.CreateAPIView):
     """Create 'removal suggestion' flags."""
 
     serializer_class = serializers.FlagSerializer

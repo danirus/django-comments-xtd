@@ -1,5 +1,3 @@
-import sys
-
 from django.db import connections
 from django.db.utils import ConnectionDoesNotExist, IntegrityError
 from django.core.management.base import BaseCommand
@@ -35,14 +33,17 @@ class Command(BaseCommand):
                 self.populate_db(connections[db_conn].cursor())
                 total += XtdComment.objects.using(db_conn).count()
             except ConnectionDoesNotExist:
-                print("DB connection '%s' does not exist." % db_conn)
+                self.stdout.write("DB connection '%s' does not exist."
+                                  % db_conn)
                 continue
             except IntegrityError:
                 if db_conn != 'default':
-                    print("Table '%s' (in '%s' DB connection) must be empty."
-                          % (XtdComment._meta.db_table, db_conn))
+                    self.stdout.write("Table '%s' (in '%s' DB connection) "
+                                      "must be empty."
+                                      % (XtdComment._meta.db_table, db_conn))
                 else:
-                    print("Table '%s' must be empty."
-                          % XtdComment._meta.db_table)
-                sys.exit(1)
-        print("Added %d XtdComment object(s)." % total)
+                    self.stdout.write("Table '%s' must be empty."
+                                      % XtdComment._meta.db_table)
+            finally:
+                continue
+        self.stdout.write("Added %d XtdComment object(s)." % total)

@@ -68,6 +68,7 @@ class XtdComment(Comment):
                                    help_text=_("Notify follow-up comments"))
     nested_count = models.IntegerField(default=0, db_index=True)
     objects = XtdCommentManager()
+    norel_objects = CommentManager()
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -94,7 +95,8 @@ class XtdComment(Comment):
 
         self.thread_id = parent.thread_id
         self.level = parent.level + 1
-        qc_eq_thread = XtdComment.objects.filter(thread_id=parent.thread_id)
+        qc_eq_thread = XtdComment.norel_objects\
+                                 .filter(thread_id=parent.thread_id)
         qc_ge_level = qc_eq_thread.filter(level__lte=parent.level,
                                           order__gt=parent.order)
         if qc_ge_level.count():
@@ -219,13 +221,13 @@ class XtdComment(Comment):
 
 
 def publish_or_unpublish_nested_comments(comment, are_public=False):
-    qs = get_model().objects.filter(~Q(pk=comment.id), parent_id=comment.id)
+    qs = get_model().norel_objects.filter(~Q(pk=comment.id),
+                                          parent_id=comment.id)
     nested = [cm.id for cm in qs]
-    if qs:
-        qs.update(is_public=are_public)
+    qs.update(is_public=are_public)
     while len(nested):
         cm_id = nested.pop()
-        qs = XtdComment.objects.filter(~Q(pk=cm_id), parent_id=cm_id)
+        qs = XtdComment.norel_objects.filter(~Q(pk=cm_id), parent_id=cm_id)
         nested.extend([cm.id for cm in qs])
         qs.update(is_public=are_public)
     # Update nested_count in parents comments in the same thread.
@@ -236,10 +238,10 @@ def publish_or_unpublish_nested_comments(comment, are_public=False):
         op = F('nested_count') + comment.nested_count
     else:
         op = F('nested_count') - comment.nested_count
-    XtdComment.objects.filter(thread_id=comment.thread_id,
-                              level__lt=comment.level,
-                              order__lt=comment.order)\
-                      .update(nested_count=op)
+    XtdComment.norel_objects.filter(thread_id=comment.thread_id,
+                                    level__lt=comment.level,
+                                    order__lt=comment.order)\
+                            .update(nested_count=op)
 
 
 def publish_or_unpublish_on_pre_save(sender, instance, raw, using, **kwargs):

@@ -46,7 +46,7 @@ class InitializeNestedCountCmdTestCase(TestCase):
 
     def test_calling_command_computes_nested_count(self):
         # Set all comments nested_count field to 0.
-        XtdComment.objects.update(nested_count=0)
+        XtdComment.norel_objects.update(nested_count=0)
         out = StringIO()
         call_command('initialize_nested_count', stdout=out)
         self.assertIn("Updated 9 XtdComment object(s).", out.getvalue())

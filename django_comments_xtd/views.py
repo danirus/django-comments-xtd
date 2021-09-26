@@ -150,8 +150,10 @@ def post(request, next=None, using=None):
 
     kwargs = {
         "c": comment._get_pk_val(),
-        settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM: cpage
     }
+    if cpage is not None:
+        kwargs[settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM] = cpage
+
     return next_redirect(request, fallback=next or 'comments-comment-done',
                          **kwargs)
 
@@ -474,7 +476,7 @@ def mute(request, key):
                                       comment=tmp_comment,
                                       request=request)
 
-    XtdComment.objects.filter(
+    XtdComment.norel_objects.filter(
         content_type=tmp_comment.content_type,
         object_pk=tmp_comment.object_pk,
         user_email=tmp_comment.user_email,
@@ -617,8 +619,8 @@ def comment_in_page(request, content_type_id, object_id, comment_id):
     response = shortcut(request, content_type_id, object_id)
     qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     page = request and request.GET.get(qs_param, None) or None
-
-    if not page:  # Create a CommentsPaginator and get the page of the comment.
+    if not page:
+        # Create a CommentsPaginator and get the page of the comment.
         page = get_comment_page_number(request, content_type_id,
                                        object_id, comment_id)
 

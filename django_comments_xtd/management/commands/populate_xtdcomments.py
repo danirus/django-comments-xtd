@@ -1,5 +1,3 @@
-import sys
-
 from django.db import connections
 from django.db.utils import ConnectionDoesNotExist, IntegrityError
 from django.core.management.base import BaseCommand
@@ -48,4 +46,3 @@ class Command(BaseCommand):
             finally:
                 continue
         self.stdout.write("Added %d XtdComment object(s)." % total)
-

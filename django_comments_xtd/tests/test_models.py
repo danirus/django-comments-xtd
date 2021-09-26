@@ -402,13 +402,13 @@ class ThreadStep5TestCase(ArticleBaseTestCase):
 
         (  # content ->    cmt.id  thread_id  parent_id  level  order  nested
             self.c1,  # ->   1         1          1        0      1      4
-            self.c3,  # ->   3         1          1        1      2      1
-            self.c8,  # ->   8         1          3        2      3      0
-            self.c4,  # ->   4         1          1        1      4      1
-            self.c7,  # ->   7         1          4        2      5      0
+            self.c3,  # ->   |- 3      1          1        1      2      1
+            self.c8,  # ->      |- 8   1          3        2      3      0
+            self.c4,  # ->   |- 4      1          1        1      4      1
+            self.c7,  # ->      |- 7   1          4        2      5      0
             self.c2,  # ->   2         2          2        0      1      2
-            self.c5,  # ->   5         2          2        1      2      1
-            self.c6,  # ->   6         2          5        2      3      0
+            self.c5,  # ->   |- 5      2          2        1      2      1
+            self.c6,  # ->      |- 6   2          5        2      3      0
             self.c9   # ->   9         9          9        0      1      0
         ) = XtdComment.objects.all()
 

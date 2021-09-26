@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.9.4] -
+
+   * Fixes [issue-333](https://github.com/danirus/django-comments-xtd/issues/333) produced when using django-comments-xtd with Django 3.2 with MySQL/MariaDB. The issue raises when calling 'update()' on queries with 'sorted_by', as it is the case of the default 'objects' manager of XtdComment.
+   * Improve command 'populate_xtdcomments' to output using the stdout attribute of the BaseCommand.
+
 ## [2.9.3] - 2021-09-22
 
     * Fixes issue in 'models.publish_or_unpublish_nested_comments', when calling the update method on an empty QuerySet. See [issue-318](https://github.com/danirus/django-comments-xtd/issues/318). Thanks to @abiatarfestus, @ironworld and @Khoding.

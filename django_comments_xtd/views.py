@@ -353,7 +353,7 @@ def mute(request, key):
                                       comment=tmp_comment,
                                       request=request)
 
-    XtdComment.objects.filter(
+    XtdComment.norel_objects.filter(
         content_type=tmp_comment.content_type,
         object_pk=tmp_comment.object_pk,
         user_email=tmp_comment.user_email,

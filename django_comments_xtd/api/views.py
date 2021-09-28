@@ -25,9 +25,17 @@ XtdComment = get_model()
 
 
 class DefaultsMixin():
-    renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
-    page_size = None
-    pagination_class = None
+    @property
+    def renderer_classes(self):
+        if self.kwargs.get('override_drf_defaults', False):
+            return (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
+        return super().renderer_classes
+
+    @property
+    def pagination_class(self):
+        if self.kwargs.get('override_drf_defaults', False):
+            return None
+        return super().pagination_class
 
 
 class CommentCreate(DefaultsMixin, generics.CreateAPIView):

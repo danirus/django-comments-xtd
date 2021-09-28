@@ -1,0 +1,369 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-28 15:38+0800\n"
+"PO-Revision-Date: 2021-09-29 15:10+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: api/serializers.py:277 templates/comments/list.html:17
+#: templates/django_comments_xtd/comment.html:15
+#: templates/django_comments_xtd/comment_tree.html:36
+msgid "This comment has been removed."
+msgstr "此评论已被删除。"
+
+#: forms.py:13
+msgid "Notify me about follow-up comments"
+msgstr "有后续评论时通知我"
+
+#: forms.py:29
+msgid "Name"
+msgstr "姓名"
+
+#: forms.py:31
+msgid "name"
+msgstr "姓名"
+
+#: forms.py:33
+msgid "Mail"
+msgstr "邮件"
+
+#: forms.py:34
+msgid "Required for comment verification"
+msgstr "评论验证需要"
+
+#: forms.py:36
+msgid "mail address"
+msgstr "邮件地址"
+
+#: forms.py:38
+msgid "Link"
+msgstr "链接"
+
+#: forms.py:41
+msgid "url your name links to (optional)"
+msgstr "你的姓名的URL链接（可选）"
+
+#: forms.py:45
+msgid "Your comment"
+msgstr "你的评论"
+
+#: models.py:68
+msgid "Notify follow-up comments"
+msgstr "通知后续评论"
+
+#: templates/comments/delete.html:5
+msgid "Remove comment"
+msgstr "删除评论"
+
+#: templates/comments/delete.html:9
+msgid "Remove this comment?"
+msgstr "删除此评论？"
+
+#: templates/comments/delete.html:12
+msgid ""
+"As a moderator you can delete comments. Deleting a comment does not remove "
+"it from the site, only prevents your website from showing the text. Click on "
+"the remove button to delete the following comment:"
+msgstr "作为版主，你可以删除评论。删除评论不会将其从网站上删除，只会阻止你的网站显示其文本。点击删除按钮删除以下评论："
+
+#: templates/comments/delete.html:45
+msgid "Remove"
+msgstr "删除"
+
+#: templates/comments/deleted.html:5
+msgid "Comment removed"
+msgstr "评论已删除"
+
+#: templates/comments/deleted.html:12
+msgid "The comment has been removed."
+msgstr "该评论已被删除。"
+
+#: templates/comments/deleted.html:13 templates/comments/flagged.html:13
+msgid ""
+"Thank you for taking the time to improve the quality of discussion in our "
+"site."
+msgstr "感谢你花时间提高我们网站上的讨论质量。"
+
+#: templates/comments/flag.html:5
+msgid "Flag comment"
+msgstr "标记评论"
+
+#: templates/comments/flag.html:13
+msgid "Flag this comment?"
+msgstr "标记此评论？"
+
+#: templates/comments/flag.html:16
+msgid ""
+"Click on the flag button to mark the following comment as inappropriate."
+msgstr "单击标记按钮将以下评论标记为不当。"
+
+#: templates/comments/flag.html:41
+#: templates/django_comments_xtd/comment.html:11
+#: templates/django_comments_xtd/dislike.html:49
+#: templates/django_comments_xtd/like.html:47
+msgid "Posted to "
+msgstr "发布到 "
+
+#: templates/comments/flag.html:56
+msgid "Flag"
+msgstr "标记"
+
+#: templates/comments/flag.html:57
+#: templates/django_comments_xtd/dislike.html:74
+#: templates/django_comments_xtd/like.html:73
+msgid "cancel"
+msgstr "取消"
+
+#: templates/comments/flagged.html:5
+msgid "Comment flagged"
+msgstr "评论已标记"
+
+#: templates/comments/flagged.html:12
+msgid "The comment has been flagged."
+msgstr "该评论已被标记。"
+
+#: templates/comments/form.html:70
+msgid "send"
+msgstr "发送"
+
+#: templates/comments/form.html:71
+msgid "preview"
+msgstr "预览"
+
+#: templates/comments/list.html:25
+#: templates/django_comments_xtd/comment_tree.html:45
+msgid "Reply"
+msgstr "回复"
+
+#: templates/comments/posted.html:6
+msgid "Comment confirmation requested."
+msgstr "已请求评论确认。"
+
+#: templates/comments/posted.html:12
+msgid ""
+"A confirmation message has been sent to your\n"
+"            email address. Please, click on the link in the message to "
+"confirm\n"
+"            your comment."
+msgstr ""
+"确认消息已发送至你的电子邮件地址。\n"
+"请点击邮件中的链接确认你的评论。"
+
+#: templates/comments/preview.html:5 templates/comments/preview.html:10
+msgid "Preview your comment"
+msgstr "预览你的评论"
+
+#: templates/comments/preview.html:14
+msgid "Preview of your comment for:"
+msgstr "预览你的评论："
+
+#: templates/comments/preview.html:21
+msgid "Empty comment."
+msgstr "空评论。"
+
+#: templates/comments/preview.html:48
+#: templates/django_comments_xtd/reply.html:32
+msgid "Post your comment"
+msgstr "发表你的评论"
+
+#: templates/django_comments_xtd/comment_list.html:11
+msgid "List of comments"
+msgstr "评论列表"
+
+#: templates/django_comments_xtd/comment_tree.html:12
+msgid "moderator"
+msgstr "版主"
+
+#: templates/django_comments_xtd/comment_tree.html:12
+msgid "comment permalink"
+msgstr "评论永久链接"
+
+#: templates/django_comments_xtd/comment_tree.html:17
+#, python-format
+msgid "A user has flagged this comment as inappropriate."
+msgid_plural "%(counter)s users have flagged this comment as inappropriate."
+msgstr[0] "用户已将此评论标记为不当。"
+msgstr[1] "%(counter)s 位用户已将此评论标记为不当。"
+
+#: templates/django_comments_xtd/comment_tree.html:21
+msgid "comment flagged"
+msgstr "评论已标记"
+
+#: templates/django_comments_xtd/comment_tree.html:25
+msgid "flag comment"
+msgstr "标记评论"
+
+#: templates/django_comments_xtd/comment_tree.html:30
+msgid "remove comment"
+msgstr "删除评论"
+
+#: templates/django_comments_xtd/discarded.html:4
+msgid "Comment discarded"
+msgstr "评论被丢弃"
+
+#: templates/django_comments_xtd/discarded.html:7
+msgid "Comment automatically discarded"
+msgstr "评论自动丢弃"
+
+#: templates/django_comments_xtd/discarded.html:8
+msgid "Sorry, your comment has been automatically discarded"
+msgstr "抱歉，你的评论已被自动丢弃"
+
+#: templates/django_comments_xtd/dislike.html:5
+#: templates/django_comments_xtd/like.html:5
+msgid "Confirm your opinion"
+msgstr "确认你的意见"
+
+#: templates/django_comments_xtd/dislike.html:15
+msgid "You didn't like this comment, do you want to change it?"
+msgstr "你不喜欢此评论，要更改吗？"
+
+#: templates/django_comments_xtd/dislike.html:17
+msgid "Do you dislike this comment?"
+msgstr "你不喜欢这条评论吗？"
+
+#: templates/django_comments_xtd/dislike.html:22
+#: templates/django_comments_xtd/like.html:22
+msgid "Please, confirm your opinion about the comment."
+msgstr "请确认你对此评论的意见"
+
+#: templates/django_comments_xtd/dislike.html:62
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your negative "
+"opinion on this comment."
+msgstr "如果你想撤回对此评论的负面意见，请单击“撤回”按钮。"
+
+#: templates/django_comments_xtd/dislike.html:70
+#: templates/django_comments_xtd/like.html:69
+msgid "Withdraw"
+msgstr "撤回"
+
+#: templates/django_comments_xtd/dislike.html:72
+msgid "I dislike it"
+msgstr "我不喜欢它"
+
+#: templates/django_comments_xtd/disliked.html:4
+msgid "You disliked the comment"
+msgstr "你不喜欢这个评论"
+
+#: templates/django_comments_xtd/disliked.html:7
+#: templates/django_comments_xtd/liked.html:7
+msgid "Thanks for taking the time to participate."
+msgstr "感谢你抽出时间参加。"
+
+#: templates/django_comments_xtd/email_followup_comment.txt:4
+msgid "There is a new comment following up yours."
+msgstr "有一条新评论跟在你的评论后面。"
+
+#: templates/django_comments_xtd/email_followup_comment.txt:20
+msgid "Kind regards"
+msgstr "亲切问候"
+
+#: templates/django_comments_xtd/like.html:15
+msgid "You liked this comment, do you want to change it?"
+msgstr "你喜欢这个评论，你想更改它吗？"
+
+#: templates/django_comments_xtd/like.html:17
+msgid "Do you like this comment?"
+msgstr "你喜欢这个评论吗？"
+
+#: templates/django_comments_xtd/like.html:60
+msgid ""
+"Click on the \"withdraw\" button if you want to withdraw your positive "
+"opinion on this comment."
+msgstr "如果你想撤回对此评论的正面意见，请单击“撤回”按钮。"
+
+#: templates/django_comments_xtd/like.html:71
+msgid "I like it"
+msgstr "我喜欢它"
+
+#: templates/django_comments_xtd/liked.html:4
+msgid "Your opinion is appreciated"
+msgstr "感谢你的意见"
+
+#: templates/django_comments_xtd/moderated.html:4
+msgid "Comment requires approval"
+msgstr "评论需要批准"
+
+#: templates/django_comments_xtd/moderated.html:8
+msgid "Comment in moderation"
+msgstr "评论正在审核"
+
+#: templates/django_comments_xtd/moderated.html:14
+msgid ""
+"\n"
+"            Your comment is in moderation.<br/>\n"
+"            It has to be reviewed before being published.<br/>\n"
+"            Thank you for your patience and understanding.\n"
+"            "
+msgstr ""
+"\n"
+"你的评论正在审核中。<br/>\n"
+"在发表之前，必须对其进行检查。<br/>\n"
+"感谢你的耐心和理解。"
+
+#: templates/django_comments_xtd/moderated.html:22
+#, python-format
+msgid ""
+"\n"
+"            Go back to: <a href=\"%(content_object_url)s\">"
+"%(content_object_str)s</a>\n"
+"            "
+msgstr ""
+"\n"
+"返回到：<a href=\"%(content_object_url)s\">%(content_object_str)s</a>\n"
+" "
+
+#: templates/django_comments_xtd/muted.html:4
+msgid "Comment thread muted"
+msgstr "评论跟帖静音"
+
+#: templates/django_comments_xtd/muted.html:7
+msgid "Comment thread has been muted"
+msgstr "评论跟帖已静音"
+
+#: templates/django_comments_xtd/muted.html:9
+msgid "You will no longer receive email notifications for comments sent to"
+msgstr "你将不再收到发送给评论的电子邮件通知"
+
+#: templates/django_comments_xtd/reply.html:6
+msgid "Comment reply"
+msgstr "评论回复"
+
+#: templates/django_comments_xtd/reply.html:11
+msgid "Reply to comment"
+msgstr "回复评论"
+
+#: tests/apiauth.py:17
+msgid "Invalid token header. No credentials provided."
+msgstr "令牌头无效。没有提供凭证。"
+
+#: tests/apiauth.py:20
+msgid "Invalid token header.Token string should not contain spaces."
+msgstr "令牌头无效。令牌字符串不应包含空格。"
+
+#: tests/apiauth.py:27
+msgid ""
+"Invalid token header. Token string should not contain invalid characters."
+msgstr "令牌头无效。令牌字符串不应包含无效字符。"
+
+#: views.py:60
+msgid "comment confirmation request"
+msgstr "评论确认请求"
+
+#: views.py:278
+msgid "new comment posted"
+msgstr "发布了新评论"

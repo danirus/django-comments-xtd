@@ -109,10 +109,10 @@ class CommentBoxDriver(object):
             "flag_url": cls._reverse("comments-flag", args=(0,)),
             "list_url": cls._reverse('comments-xtd-api-list',
                                      kwargs={'content_type': ctype_slug,
-                                             'object_pk': obj.id}),
+                                             'object_pk': obj.pk}),
             "count_url": cls._reverse('comments-xtd-api-count',
                                       kwargs={'content_type': ctype_slug,
-                                              'object_pk': obj.id}),
+                                              'object_pk': obj.pk}),
             "send_url": cls._reverse("comments-xtd-api-create"),
             "preview_url": cls._reverse("comments-xtd-api-preview"),
             "form": {

@@ -61,7 +61,7 @@ def commentbox_props(obj, user, request=None):
     form = CommentSecurityForm(obj)
     ctype = ContentType.objects.get_for_model(obj)
     queryset = XtdComment.objects.filter(content_type=ctype,
-                                         object_pk=obj.pk,
+                                         object_pk=obj._get_pk_val(),
                                          site__pk=get_current_site_id(request),
                                          is_public=True)
     ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
@@ -86,10 +86,10 @@ def commentbox_props(obj, user, request=None):
         "flag_url": _reverse("comments-flag", args=(0,)),
         "list_url": _reverse('comments-xtd-api-list',
                              kwargs={'content_type': ctype_slug,
-                                     'object_pk': obj.id}),
+                                     'object_pk': obj._get_pk_val()}),
         "count_url": _reverse('comments-xtd-api-count',
                               kwargs={'content_type': ctype_slug,
-                                      'object_pk': obj.id}),
+                                      'object_pk': obj._get_pk_val()}),
         "send_url": _reverse("comments-xtd-api-create"),
         "preview_url": _reverse("comments-xtd-api-preview"),
         "form": {

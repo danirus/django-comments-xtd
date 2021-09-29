@@ -114,7 +114,8 @@ class CommentCount(DefaultsMixin, generics.GenericAPIView):
         return Response({'count': self.get_queryset().count()})
 
 
-class ToggleFeedbackFlag(DefaultsMixin, generics.CreateAPIView, mixins.DestroyModelMixin):
+class ToggleFeedbackFlag(
+        DefaultsMixin, generics.CreateAPIView, mixins.DestroyModelMixin):
     """Create and delete like/dislike flags."""
 
     serializer_class = serializers.FlagSerializer

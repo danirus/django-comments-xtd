@@ -21,7 +21,8 @@ urlpatterns = [
             name='comments-xtd-dislike-done'),
 
     # API handlers.
-    path('api/', include("django_comments_xtd.api.urls"), {'override_drf_defaults': True}),
+    path('api/', include("django_comments_xtd.api.urls"),
+         {'override_drf_defaults': True}),
 
     path('', include("django_comments.urls")),
 ]

@@ -152,7 +152,7 @@ class CreateReportFlag(DefaultsMixin, generics.CreateAPIView):
 
 
 @api_view(["POST"])
-def preview_user_avatar(request):
+def preview_user_avatar(request, *args, **kwargs):
     """Fetch the image associated with the user previewing the comment."""
     print("I am here")
     temp_comment = TmpXtdComment({

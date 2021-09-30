@@ -12,6 +12,10 @@ from django_comments_xtd.utils import (
 )
 
 
+COMMENTS_FOR_CONCRETE_MODEL = \
+    getattr(settings, 'COMMENTS_FOR_CONCRETE_MODEL', True)
+
+
 XtdComment = get_comment_model()
 
 
@@ -59,7 +63,9 @@ def commentbox_props(obj, user, request=None):
         return reverse(*args, **kwargs)
 
     form = CommentSecurityForm(obj)
-    ctype = ContentType.objects.get_for_model(obj)
+    ctype = ContentType.objects.get_for_model(
+        obj, for_concrete_model=COMMENTS_FOR_CONCRETE_MODEL,
+    )
     queryset = XtdComment.objects.filter(content_type=ctype,
                                          object_pk=obj._get_pk_val(),
                                          site__pk=get_current_site_id(request),

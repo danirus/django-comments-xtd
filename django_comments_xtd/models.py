@@ -220,6 +220,10 @@ class XtdComment(Comment):
         return dic_list
 
 
+XtdComment.content_object.for_concrete_model = \
+    getattr(settings, 'COMMENTS_FOR_CONCRETE_MODEL', True)
+
+
 def publish_or_unpublish_nested_comments(comment, are_public=False):
     qs = get_model().norel_objects.filter(~Q(pk=comment.id),
                                           parent_id=comment.id)

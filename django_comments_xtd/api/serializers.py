@@ -94,7 +94,7 @@ class WriteCommentSerializer(serializers.Serializer):
         except (AttributeError, TypeError, LookupError):
             raise serializers.ValidationError("Invalid content_type value: %r"
                                               % escape(ctype))
-        except model.ObjectDoesNotExist:
+        except model.DoesNotExist:
             raise serializers.ValidationError(
                 "No object matching content-type %r and object PK %r exists."
                 % (escape(ctype), escape(object_pk)))

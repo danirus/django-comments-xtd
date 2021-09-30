@@ -3,17 +3,13 @@ from __future__ import unicode_literals
 import re
 import random
 import string
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from unittest.mock import patch
 from datetime import datetime
 
 # from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import AnonymousUser, User
-from django.http.response import Http404
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 

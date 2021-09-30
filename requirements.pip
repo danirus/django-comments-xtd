@@ -1,6 +1,6 @@
-django-contrib-comments
-djangorestframework
+Django>=3,<4
+django-contrib-comments>=2.1,<2.2
+djangorestframework>=3.12,<3.13
+django-markdown2>=0.3,<0.4
+docutils>=0.17,<0.18
 six
-Django
-docutils
-django-markdown2

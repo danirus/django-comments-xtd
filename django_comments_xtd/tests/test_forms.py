@@ -5,10 +5,7 @@ from django_comments_xtd.models import TmpXtdComment
 from django_comments_xtd.forms import XtdCommentForm
 from django_comments_xtd.tests.models import Article
 
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from unittest.mock import patch
 
 
 class GetFormTestCase(TestCase):

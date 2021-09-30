@@ -1,11 +1,5 @@
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
-import unittest
-
 from django.contrib.auth.models import AnonymousUser
-from django.template import Context, Template, TemplateSyntaxError
+from django.template import Context, Template
 from django.test import TestCase as DjangoTestCase
 
 from django_comments_xtd.models import XtdComment

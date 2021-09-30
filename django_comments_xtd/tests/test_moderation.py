@@ -2,10 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from unittest.mock import patch
 from datetime import datetime, timedelta
 
 import django
@@ -13,10 +10,7 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 
-try:
-    from django_comments.models import CommentFlag
-except ImportError:
-    from django.contrib.comments.models import CommentFlag
+from django_comments.models import CommentFlag
 
 from django_comments_xtd import django_comments, views
 from django_comments_xtd.models import LIKEDIT_FLAG, DISLIKEDIT_FLAG

@@ -1,22 +1,21 @@
 [tool.poetry]
 name = "django-comments-xtd"
-version = "2.3.1"
+version = "2.9.3"
 description = "Django Comments Framework extension app with thread support, follow up notifications and email confirmations."
-authors = ["Daniela Rus Morales <mbox@danir.us>"]
+authors = ["Daniela Rus Morales <danirus@eml.cc>"]
 
 [tool.poetry.dependencies]
-python = "^3.4.0"
-django-contrib-comments = "^1.8.0"
-djangorestframework = "^3.12.0"
-six = "^1.12.0"
-Django = "^2.0.0"
-docutils = "^0.14.0"
-django-markdown2 = "^0.3.1"
+python = "^3"
+Django = "^3"
+django-contrib-comments = "^2.1"
+djangorestframework = "^3.12"
+six = "^1.16"
+docutils = "^0.17"
+django-markdown2 = "^0.3"
 
 [tool.poetry.dev-dependencies]
-coverage = "^4.5.0"
-mock = "^2.0.0"
+coverage = "^5.5"
 
 [build-system]
-requires = ["poetry>=0.12"]
+requires = ["poetry>=1.1,<1.2"]
 build-backend = "poetry.masonry.api"

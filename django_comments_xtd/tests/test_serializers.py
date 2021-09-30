@@ -2,10 +2,7 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 import pytz
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from unittest.mock import patch
 
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType

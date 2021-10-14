@@ -4,10 +4,7 @@
 import hashlib
 import queue as queue
 import threading
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
+from urllib.parse import urlencode
 
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.contenttypes.models import ContentType

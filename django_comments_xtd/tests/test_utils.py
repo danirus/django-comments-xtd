@@ -1,7 +1,17 @@
+from datetime import datetime
+
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
+from django.utils.functional import cached_property
 import pytest
 
-from django_comments_xtd import utils
+from django_comments_xtd import get_model, utils
+from django_comments_xtd.conf import settings
 from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_OPTIONS
+from django_comments_xtd.paginator import CommentsPaginator
+
+
+XtdComment = get_model()
 
 
 @pytest.mark.django_db
@@ -137,3 +147,96 @@ def test_redirect_to_with_request(an_articles_comment):
 def test_redirect_to_with_page_number(an_articles_comment):
     http_response = utils.redirect_to(an_articles_comment, page_number=2)
     assert http_response.url == "/comments/cr/10/1/1/?cpage=2#c1"
+
+
+# ----------------------------------------------
+def create_scenario_1(an_article):
+    """Test based on the Example 1 of the paginator.py module."""
+    article_ct = ContentType.objects.get(app_label="tests", model="article")
+    site = Site.objects.get(pk=1)
+    attrs = {
+        "content_type": article_ct,
+        "object_pk": an_article.pk,
+        "content_object": an_article,
+        "site": site,
+        "comment": f"another comment to article {an_article.pk}",
+        "submit_date": datetime.now()
+    }
+
+    # Create 8 comments at level 0.
+    for cm_level_0 in range(8):
+        XtdComment.objects.create(**attrs)
+
+    cmts_level_0 = XtdComment.objects.all()
+    # Add the following number of child comments to the previous cmts_level_0.
+    children_number = [10, 10, 10, 10, 10, 10, 5, 4]
+    for index, cmt_level_0 in enumerate(cmts_level_0):
+        for child in range(children_number[index]):
+            XtdComment.objects.create(**attrs, parent_id=cmt_level_0.pk)
+
+    return article_ct
+
+
+@pytest.mark.django_db
+def test_get_comment_page_number_when_page_size_is_0(an_article, monkeypatch):
+    article_ct = create_scenario_1(an_article)
+    monkeypatch.setattr(utils.settings, 'COMMENTS_XTD_ITEMS_PER_PAGE', 0)
+    for comment in XtdComment.objects.all():
+        page_number = utils.get_comment_page_number(None, article_ct,
+                                                    an_article.pk, comment.id)
+        assert page_number == 1
+
+
+@pytest.mark.django_db
+def test_get_comment_page_number(an_article, monkeypatch):
+    article_ct = create_scenario_1(an_article)
+    monkeypatch.setattr(utils.settings, 'SITE_ID', None)
+    page_size = 25
+    orphans = 10
+    assert settings.COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS == orphans
+    assert settings.COMMENTS_XTD_ITEMS_PER_PAGE == page_size
+    queryset = XtdComment.objects.all()
+    paginator = CommentsPaginator(queryset, page_size, orphans)
+
+    page = paginator.page(1)
+    for comment in page.object_list:
+        page_number = utils.get_comment_page_number(None, article_ct,
+                                                    an_article.pk, comment.id)
+        assert page_number == 1
+
+    page = paginator.page(2)
+    for comment in page.object_list:
+        page_number = utils.get_comment_page_number(None, article_ct,
+                                                    an_article.pk, comment.id)
+        assert page_number == 2
+
+    page = paginator.page(3)
+    for comment in page.object_list:
+        page_number = utils.get_comment_page_number(None, article_ct,
+                                                    an_article.pk, comment.id)
+        assert page_number == 3
+
+
+# -------------------------------------------
+class FakeCommentsPaginator(CommentsPaginator):
+    @cached_property
+    def num_pages(self):
+        return 0
+
+
+@pytest.mark.django_db
+def test_get_comment_page_number_raises_Exception(an_article, monkeypatch):
+    article_ct = create_scenario_1(an_article)
+    monkeypatch.setattr(utils, 'CommentsPaginator', FakeCommentsPaginator)
+    page_size = 25
+    orphans = 10
+    assert settings.COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS == orphans
+    assert settings.COMMENTS_XTD_ITEMS_PER_PAGE == page_size
+    queryset = XtdComment.objects.all()
+    paginator = CommentsPaginator(queryset, page_size, orphans)
+
+    page = paginator.page(2)
+    comment = page.object_list[0]
+    with pytest.raises(Exception):
+        utils.get_comment_page_number(None, article_ct,
+                                      an_article.pk, comment.id)

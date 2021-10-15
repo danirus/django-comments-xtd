@@ -12,7 +12,23 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'dcx3demo',
+    #     'USER': 'dcx3demo',
+    #     'PASSWORD': 'dcx3demo',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432'
+    # },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'dcx3demo',
+    #     'USER': 'dcx3demo',
+    #     'PASSWORD': 'dcx3demo',
+    #     'HOST': 'localhost',
+    #     'PORT': '3306'
+    # }
 }
 
 MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE

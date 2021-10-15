@@ -165,12 +165,9 @@ def redirect_to(comment, request=None, page_number=None):
     cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     cpage = request.GET.get(cpage_qs_param, None) if request else page_number
     if cpage:
-        try:
-            hash_pos = cm_abs_url.find("#")
-            cm_anchor = cm_abs_url[hash_pos:]
-            cm_abs_url = cm_abs_url[:hash_pos]
-        except ValueError:
-            cm_anchor = ""
+        hash_pos = cm_abs_url.find("#")
+        cm_anchor = cm_abs_url[hash_pos:]
+        cm_abs_url = cm_abs_url[:hash_pos]
         url = f"{cm_abs_url}?{cpage_qs_param}={cpage}{cm_anchor}"
         return HttpResponseRedirect(url)
     else:

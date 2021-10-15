@@ -90,3 +90,50 @@ def test_get_app_model_options_with_content_type(monkeypatch):
     expected_options = default_and_article_options['default']
     expected_options.update(default_and_article_options['tests.article'])
     assert _options == expected_options
+
+
+@pytest.mark.django_db
+def test_get_app_model_options_with_non_existing_content_type(monkeypatch):
+    monkeypatch.setattr(utils.settings, 'COMMENTS_XTD_APP_MODEL_OPTIONS',
+                        default_and_article_options)
+    _options = utils.get_app_model_options(content_type="tralari.tralara")
+    expected_options = default_and_article_options['default']
+    assert _options == expected_options
+
+
+# ----------------------------------------------
+@pytest.mark.django_db
+def test_get_user_avatar_for_comment(an_articles_comment):
+    gravatar_url = utils.get_user_avatar(an_articles_comment)
+    assert gravatar_url.startswith("//www.gravatar.com/avatar/")
+
+
+# ----------------------------------------------
+@pytest.mark.django_db
+def test_redirect_to_with_comment(an_articles_comment):
+    http_response = utils.redirect_to(an_articles_comment)
+    assert http_response.url == an_articles_comment.get_absolute_url()
+
+
+# ----------------------------------------------
+class FakeRequest:
+    def __init__(self, cpage):
+        self.cpage = cpage
+
+    @property
+    def GET(self):
+        return {'cpage': self.cpage}
+
+
+@pytest.mark.django_db
+def test_redirect_to_with_request(an_articles_comment):
+    request = FakeRequest(cpage=2)
+    http_response = utils.redirect_to(an_articles_comment, request)
+    assert http_response.url == "/comments/cr/10/1/1/?cpage=2#c1"
+
+
+# ----------------------------------------------
+@pytest.mark.django_db
+def test_redirect_to_with_page_number(an_articles_comment):
+    http_response = utils.redirect_to(an_articles_comment, page_number=2)
+    assert http_response.url == "/comments/cr/10/1/1/?cpage=2#c1"

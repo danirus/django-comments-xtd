@@ -16,7 +16,7 @@ def test_comment_box_props_with_object_and_user(an_user, an_article):
     """
     Verify the default props obtained for an_article without comments.
     """
-    props = frontend.commentbox_props(an_article, an_user)
+    props = frontend.comments_api_props(an_article, an_user)
 
     ctype = ContentType.objects.get_for_model(an_article)
     ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
@@ -39,7 +39,6 @@ def test_comment_box_props_with_object_and_user(an_user, an_article):
     assert props['comment_reactions_enabled'] == False
     assert props['object_reactions_enabled'] == False
     assert props['can_moderate'] == False
-    assert props['polling_interval'] == 2000
     assert props['react_url'] == reverse('comments-xtd-api-react')
     assert props['delete_url'] == reverse('comments-delete', args=(0,))
     assert props['reply_url'] == reverse('comments-xtd-reply',
@@ -67,8 +66,8 @@ def test_comment_box_props_with_new_app_model_options(an_user, an_article,
     """
     Modify setting COMMENTS_XTD_APP_MODEL_OPTIONS to contain an entry for
     'check_input_allowed' pointing to a function that will return False. The
-    dictionary returned by commentbox_props must have a key 'input_allowed' with a False value. Also modify the rest of the values provided by the
-    setting to check that commentbox_props reads them correctly.
+    dictionary returned by comments_api_props must have a key 'input_allowed' with a False value. Also modify the rest of the values provided by the
+    setting to check that comments_api_props reads them correctly.
     """
     check_f = 'django_comments_xtd.tests.test_frontend.check_input_allowed'
     app_model_options = {
@@ -81,7 +80,7 @@ def test_comment_box_props_with_new_app_model_options(an_user, an_article,
     }
     monkeypatch.setattr(frontend, 'get_app_model_options',
                         lambda **kwargs: app_model_options)
-    props = frontend.commentbox_props(an_article, an_user)
+    props = frontend.comments_api_props(an_article, an_user)
     assert props['input_allowed'] == False
     assert props['who_can_post'] == 'users'
     assert props['comment_flagging_enabled'] == True
@@ -94,14 +93,14 @@ def test_comment_box_props_with_new_max_thread_level(an_user, an_article,
                                                      monkeypatch):
     monkeypatch.setattr(frontend, 'max_thread_level_for_content_type',
                         lambda *args: 1)
-    props = frontend.commentbox_props(an_article, an_user)
+    props = frontend.comments_api_props(an_article, an_user)
     assert props['max_thread_level'] == 1
 
 
 @pytest.mark.django_db
 def test_comment_box_props_with_anonymous_user(an_article):
     anonymous_user = AnonymousUser()
-    props = frontend.commentbox_props(an_article, anonymous_user)
+    props = frontend.comments_api_props(an_article, anonymous_user)
     assert props['current_user'] == "0:Anonymous"
     assert props['is_authenticated'] == False
     assert 'login_url' in props
@@ -114,15 +113,15 @@ def test_comment_box_props_with_user_that_can_moderate(an_user, an_article):
     can_moderate = Permission.objects.get(codename='can_moderate',
                                           content_type=ct_comments)
     an_user.user_permissions.add(can_moderate)
-    props = frontend.commentbox_props(an_article, an_user)
+    props = frontend.comments_api_props(an_article, an_user)
     assert props['can_moderate'] == True
 
 
 @pytest.mark.django_db
 def test_comment_box_props_response(an_user, an_article):
     from rest_framework.response import Response
-    response = frontend.commentbox_props_response(an_article, an_user,
+    response = frontend.comments_api_props_response(an_article, an_user,
                                                   request=None)
-    props = frontend.commentbox_props(an_article, an_user)
+    props = frontend.comments_api_props(an_article, an_user)
     assert isinstance(response, Response)
     assert response.data == props

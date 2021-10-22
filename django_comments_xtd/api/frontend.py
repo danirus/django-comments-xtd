@@ -16,7 +16,7 @@ from django_comments_xtd.utils import (
 XtdComment = get_comment_model()
 
 
-def commentbox_props(obj, user, request=None):
+def comments_api_props(obj, user, request=None):
     """
     Returns a JSON object with the initial props for the CommentBox component.
 
@@ -34,7 +34,6 @@ def commentbox_props(obj, user, request=None):
             comment_reactions_enabled: <bool>,
             object_reactions_enabled: <bool>,
             can_moderate: <bool>,  // Whether current_user can moderate.
-            polling_interval: 2000, // Check for new comments every 2 seconds.
             react_url: <api-url-to-send-reactions-to-comments>,
             delete_url: <api-url-for-moderators-to-remove-comment>,
             reply_url: <api-url-to-reply-comments>,
@@ -42,7 +41,6 @@ def commentbox_props(obj, user, request=None):
             list_url: <api-url-to-list-comments>,
             count_url: <api-url-to-count-comments>,
             send_url: <api-url-to-send-a-comment>,
-            preview_url: <api-url-to-preview-users-avatar>,
             form: {
                 content_type: <value>,
                 object_pk: <value>,
@@ -77,7 +75,6 @@ def commentbox_props(obj, user, request=None):
         "comment_reactions_enabled": options['comment_reactions_enabled'],
         "object_reactions_enabled": options['object_reactions_enabled'],
         "can_moderate": False,
-        "polling_interval": 2000,
         "react_url": reverse("comments-xtd-api-react"),
         "delete_url": reverse("comments-delete", args=(0,)),
         "reply_url": reverse("comments-xtd-reply", kwargs={'cid': 0}),
@@ -112,14 +109,14 @@ def commentbox_props(obj, user, request=None):
     return d
 
 
-def commentbox_props_response(obj, user, request):
+def comments_api_props_response(obj, user, request):
     """Return a Response containing React props for use with client-side JS.
     Can add as an extra action to a ViewSet as follows:
 
         @action(detail=True, methods=['get'],
                 permission_classes=[permissions.IsAuthenticated])
-        def comment_props(self, request, *args, **kwargs):
-            return commentbox_props_response(self.get_object(),
-                                             request.user, request)
+        def comments_api_props(self, request, *args, **kwargs):
+            return comments_api_props_response(self.get_object(),
+                                               request.user, request)
     """
-    return Response(data=commentbox_props(obj, user, request=request))
+    return Response(data=comments_api_props(obj, user, request=request))

@@ -22,11 +22,11 @@
         {{ comment.comment|linebreaks|escape }}
       {% endif %}
     </div>
-    <div class="footer">
+    <div id="cm-footer-{{ comment.id }}" class="footer">
       {% if not comment.is_removed %}
         {% if comment_reactions_enabled %}
           {% if comment.reactions.count > 0 %}
-            <div class="reactions">
+            <div class="reactions" id="cm-reactions-{{ comment.id }}">
               {% include "comments/comment_reactions.html" %}
             </div>
           {% endif %}

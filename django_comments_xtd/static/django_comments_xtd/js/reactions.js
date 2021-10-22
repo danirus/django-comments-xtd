@@ -52,8 +52,17 @@ function _init_row_length(elem) {
 function _init_reactions_url(elem) {
   const url = elem.getAttribute("data-reactions-url");
   if (url == null || url.length == 0) {
-    throw new Error("Cannot initialize reactions panel => The " +
-    "[data-reactions-url] attribute does not exist or is empty.");
+    if (
+      window.comments_api_props &&
+      window.comments_api_props.is_authenticated
+    ) {
+      throw new Error("Cannot initialize reactions panel => The " +
+      "[data-reactions-url] attribute does not exist or is empty.");
+    } else {
+      console.info("Couldn't find the data-reactions-url attribute, but the " +
+      "user is anonymous. She has to login first in order to post comment " +
+      "reactions.");
+    }
   }
   return url;
 }
@@ -316,6 +325,6 @@ window.addEventListener("keyup", (event) => {
   }
 });
 
-window.addEventListener("load", (_) => init());
+window.addEventListener("DOMContentLoaded", (_) => init());
 
 export default init;

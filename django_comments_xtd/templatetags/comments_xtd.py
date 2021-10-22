@@ -232,7 +232,7 @@ def get_xtdcomment_permalink(comment, page_number=None, anchor_pattern=None):
 
 
 # ----------------------------------------------------------------------
-class GetCommentBoxPropsNode(Node):
+class GetCommentsAPIPropsNode(Node):
     def __init__(self, obj):
         self.obj = Variable(obj)
 
@@ -240,19 +240,19 @@ class GetCommentBoxPropsNode(Node):
         obj = self.obj.resolve(context)
         user = context.get('user', None)
         request = context.get('request', None)
-        props = frontend.commentbox_props(obj, user, request=request)
+        props = frontend.comments_api_props(obj, user, request=request)
         return json.dumps(props)
 
 
 @register.tag
-def get_commentbox_props(parser, token):
+def get_comments_api_props(parser, token):
     """
-    Returns a JSON object with the initial props for the CommentBox component.
+    Returns a JSON with properties required to use the REST API.
 
-    See api.frontend.commentbox_props for full details on the props.
+    See api.frontend.comments_props for full details on the props.
 
     Example::
-        {% get_commentbox_props for comment %}
+        {% get_comments_api_props for comment %}
     """
     try:
         tag_name, args = token.contents.split(None, 1)
@@ -263,7 +263,7 @@ def get_commentbox_props(parser, token):
     if not match:
         raise TemplateSyntaxError("%r tag had invalid arguments" % tag_name)
     obj = match.groups()[0]
-    return GetCommentBoxPropsNode(obj)
+    return GetCommentsAPIPropsNode(obj)
 
 
 # ----------------------------------------------------------------------

@@ -607,9 +607,9 @@ def test_get_xtdcomment_permalink_in_wrong_page_number(an_articles_comment):
 
 
 @pytest.mark.django_db
-def test_get_commentbox_props(an_article):
+def test_get_comments_api_props(an_article):
     t = ('{% load comments_xtd %}'
-         '{% get_commentbox_props for object %}')
+         '{% get_comments_api_props for object %}')
     output = Template(t).render(Context({'object': an_article}))
     props = json.loads(output)
     assert props == {
@@ -624,7 +624,6 @@ def test_get_commentbox_props(an_article):
         "comment_reactions_enabled": False,
         "object_reactions_enabled": False,
         "can_moderate": False,
-        "polling_interval": 2000,
         "react_url": "/comments/api/react/",
         "delete_url": "/comments/delete/0/",
         "reply_url": "/comments/reply/0/",
@@ -646,17 +645,17 @@ def test_get_commentbox_props(an_article):
 
 
 @pytest.mark.django_db
-def test_get_commentbox_props_raises_1(an_article):
+def test_get_comments_api_props_raises_1(an_article):
     t = ('{% load comments_xtd %}'
-         '{% get_commentbox_props %}')
+         '{% get_comments_api_props %}')
     with pytest.raises(TemplateSyntaxError):
         Template(t).render(Context({'object': an_article}))
 
 
 @pytest.mark.django_db
-def test_get_commentbox_props_raises_2(an_article):
+def test_get_comments_api_props_raises_2(an_article):
     t = ('{% load comments_xtd %}'
-         '{% get_commentbox_props for %}')
+         '{% get_comments_api_props for %}')
     with pytest.raises(TemplateSyntaxError):
         Template(t).render(Context({'object': an_article}))
 

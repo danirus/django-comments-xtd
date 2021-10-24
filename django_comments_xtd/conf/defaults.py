@@ -93,3 +93,19 @@ COMMENTS_XTD_ITEMS_PER_PAGE = 25
 
 # Name of the query string parameter containing the page number.
 COMMENTS_XTD_PAGE_QUERY_STRING_PARAM = "cpage"
+
+# Define the position correction values to apply to the Reactions' JavaScript
+# overlays. A popover displays the "Pick your reaction" overlay. A tooltip
+# displays the users that selected each individual reaction.
+COMMENTS_XTD_REACTIONS_JS_OVERLAYS = {
+    'default': {  # Create more entries for your 'app.model' specific settings.
+        'popover': {
+            'pos_bottom': 30,
+            'pos_left': 10
+        },
+        'tooltip': {
+            'pos_bottom': 30,
+            'pos_left': 76
+        }
+    }
+}

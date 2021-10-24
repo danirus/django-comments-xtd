@@ -64,17 +64,17 @@ class RenderXtdCommentListTestCase(DjangoTestCase):
             t += "{% render_xtdcomment_list for object %}"
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<div id="c'), 9)
+        self.assertEqual(output.count('<div id="comment-'), 9)
         try:
-            pos_c1 = output.index('<div id="c1"')
-            pos_c3 = output.index('<div id="c3"')
-            pos_c8 = output.index('<div id="c8"')
-            pos_c4 = output.index('<div id="c4"')
-            pos_c7 = output.index('<div id="c7"')
-            pos_c2 = output.index('<div id="c2"')
-            pos_c5 = output.index('<div id="c5"')
-            pos_c6 = output.index('<div id="c6"')
-            pos_c9 = output.index('<div id="c9"')
+            pos_c1 = output.index('<div id="comment-1"')
+            pos_c3 = output.index('<div id="comment-3"')
+            pos_c8 = output.index('<div id="comment-8"')
+            pos_c4 = output.index('<div id="comment-4"')
+            pos_c7 = output.index('<div id="comment-7"')
+            pos_c2 = output.index('<div id="comment-2"')
+            pos_c5 = output.index('<div id="comment-5"')
+            pos_c6 = output.index('<div id="comment-6"')
+            pos_c9 = output.index('<div id="comment-9"')
         except ValueError as exc:
             self.fail(exc)
         else:
@@ -112,13 +112,13 @@ class RenderXtdCommentListTestCase(DjangoTestCase):
              "{% render_xtdcomment_list for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<div id="c'), 4)
+        self.assertEqual(output.count('<div id="comment-'), 4)
         # Only the following comments must be displayed, the other ones must
         # have been withheld when setting the comment 1 is_public to False.
-        pos_c2 = output.index('<div id="c2"')
-        pos_c5 = output.index('<div id="c5"')
-        pos_c6 = output.index('<div id="c6"')
-        pos_c9 = output.index('<div id="c9"')
+        pos_c2 = output.index('<div id="comment-2"')
+        pos_c5 = output.index('<div id="comment-5"')
+        pos_c6 = output.index('<div id="comment-6"')
+        pos_c9 = output.index('<div id="comment-9"')
         self.assertTrue(pos_c2 > 0)
         self.assertTrue(pos_c5 > 0)
         self.assertTrue(pos_c6 > 0)
@@ -180,13 +180,13 @@ class RenderXtdCommentListTestCase(DjangoTestCase):
              "{% render_xtdcomment_list for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<div id='), 4)
+        self.assertEqual(output.count('<div id="comment-'), 4)
         # Only the following comments must be displayed, the other ones must
         # have been withheld when setting the comment 1 is_public to False.
-        pos_c3 = output.index('<div id="c3"')
-        pos_c5 = output.index('<div id="c5"')
-        pos_c6 = output.index('<div id="c6"')
-        pos_c4 = output.index('<div id="c4"')
+        pos_c3 = output.index('<div id="comment-3"')
+        pos_c5 = output.index('<div id="comment-5"')
+        pos_c6 = output.index('<div id="comment-6"')
+        pos_c4 = output.index('<div id="comment-4"')
         self.assertTrue(pos_c3 > 0)
         self.assertTrue(pos_c5 > 0)
         self.assertTrue(pos_c6 > 0)
@@ -216,11 +216,11 @@ class RenderXtdCommentListTestCase(DjangoTestCase):
              "{% render_xtdcomment_list for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<div id='), 4)
-        pos_c2 = output.index('<div id="c2"')
-        pos_c5 = output.index('<div id="c5"')
-        pos_c6 = output.index('<div id="c6"')
-        pos_c9 = output.index('<div id="c9"')
+        self.assertEqual(output.count('<div id="comment-'), 4)
+        pos_c2 = output.index('<div id="comment-2"')
+        pos_c5 = output.index('<div id="comment-5"')
+        pos_c6 = output.index('<div id="comment-6"')
+        pos_c9 = output.index('<div id="comment-9"')
         self.assertTrue(pos_c2 > 0)
         self.assertTrue(pos_c5 > 0)
         self.assertTrue(pos_c6 > 0)
@@ -250,12 +250,12 @@ class RenderXtdCommentListTestCase(DjangoTestCase):
              "{% render_xtdcomment_list for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<div id="c'), 5)
-        pos_c1 = output.index('<div id="c1"')
-        pos_c2 = output.index('<div id="c2"')
-        pos_c5 = output.index('<div id="c5"')
-        pos_c6 = output.index('<div id="c6"')
-        pos_c9 = output.index('<div id="c9"')
+        self.assertEqual(output.count('<div id="comment-'), 5)
+        pos_c1 = output.index('<div id="comment-1"')
+        pos_c2 = output.index('<div id="comment-2"')
+        pos_c5 = output.index('<div id="comment-5"')
+        pos_c6 = output.index('<div id="comment-6"')
+        pos_c9 = output.index('<div id="comment-9"')
         self.assertTrue(pos_c1 > 0)
         self.assertTrue(pos_c2 > 0)
         self.assertTrue(pos_c5 > 0)
@@ -511,16 +511,16 @@ def test_render_xtdcomment_list_for_app_model_pk(an_article):
          "{% render_xtdcomment_list for tests.article 1 %}")
     output = Template(t).render(Context({'object': an_article,
                                          'user': AnonymousUser()}))
-    assert output.count('<div id="c') == 9
-    pos_c1 = output.index('<div id="c1"')
-    pos_c3 = output.index('<div id="c3"')
-    pos_c8 = output.index('<div id="c8"')
-    pos_c4 = output.index('<div id="c4"')
-    pos_c7 = output.index('<div id="c7"')
-    pos_c2 = output.index('<div id="c2"')
-    pos_c5 = output.index('<div id="c5"')
-    pos_c6 = output.index('<div id="c6"')
-    pos_c9 = output.index('<div id="c9"')
+    assert output.count('<div id="comment-') == 9
+    pos_c1 = output.index('<div id="comment-1"')
+    pos_c3 = output.index('<div id="comment-3"')
+    pos_c8 = output.index('<div id="comment-8"')
+    pos_c4 = output.index('<div id="comment-4"')
+    pos_c7 = output.index('<div id="comment-7"')
+    pos_c2 = output.index('<div id="comment-2"')
+    pos_c5 = output.index('<div id="comment-5"')
+    pos_c6 = output.index('<div id="comment-6"')
+    pos_c9 = output.index('<div id="comment-9"')
     assert (pos_c1 < pos_c3 < pos_c8 <
             pos_c4 < pos_c7 < pos_c2 <
             pos_c5 < pos_c6 < pos_c9)
@@ -535,16 +535,16 @@ def test_render_xtdcomment_list_for_app_model_pk_using_tmpl(an_article):
          "%}")
     output = Template(t).render(Context({'object': an_article,
                                          'user': AnonymousUser()}))
-    assert output.count('<div id="c') == 9
-    pos_c1 = output.index('<div id="c1"')
-    pos_c3 = output.index('<div id="c3"')
-    pos_c8 = output.index('<div id="c8"')
-    pos_c4 = output.index('<div id="c4"')
-    pos_c7 = output.index('<div id="c7"')
-    pos_c2 = output.index('<div id="c2"')
-    pos_c5 = output.index('<div id="c5"')
-    pos_c6 = output.index('<div id="c6"')
-    pos_c9 = output.index('<div id="c9"')
+    assert output.count('<div id="comment-') == 9
+    pos_c1 = output.index('<div id="comment-1"')
+    pos_c3 = output.index('<div id="comment-3"')
+    pos_c8 = output.index('<div id="comment-8"')
+    pos_c4 = output.index('<div id="comment-4"')
+    pos_c7 = output.index('<div id="comment-7"')
+    pos_c2 = output.index('<div id="comment-2"')
+    pos_c5 = output.index('<div id="comment-5"')
+    pos_c6 = output.index('<div id="comment-6"')
+    pos_c9 = output.index('<div id="comment-9"')
     assert (pos_c1 < pos_c3 < pos_c8 <
             pos_c4 < pos_c7 < pos_c2 <
             pos_c5 < pos_c6 < pos_c9)
@@ -640,6 +640,7 @@ def test_get_comments_api_props(an_article):
         "default_followup": False,
         "html_id_suffix": "7f7a81d9acbab29db51ca501c2d44afe313227bc",
         "max_thread_level": 3,
+        "reactions_js_overlays": settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS,
         "login_url": "/accounts/login/"
     }
 

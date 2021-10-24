@@ -146,7 +146,18 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             'comments_page_qs_param': qs_param,
             'max_thread_level': mtl,
             'reply_stack': [],  # List to control reply rendering.
-            'show_nested': True
+            'show_nested': True,
+        })
+
+        # Pass values for Reactions JS Overlays to the context.
+        reactions_js = utils.get_reactions_js_overlays(content_type=app_model)
+        reactions_popover = reactions_js['popover']
+        reactions_tooltip = reactions_js['tooltip']
+        context_dict.update({
+            'reactions_popover_pos_bottom': reactions_popover['pos_bottom'],
+            'reactions_popover_pos_left': reactions_popover['pos_left'],
+            'reactions_tooltip_pos_bottom': reactions_tooltip['pos_bottom'],
+            'reactions_tooltip_pos_left': reactions_tooltip['pos_left'],
         })
 
         # get_app_model_options returns a dict like: {

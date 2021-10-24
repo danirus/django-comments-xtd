@@ -9,7 +9,8 @@ from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import max_thread_level_for_content_type
 from django_comments_xtd.utils import (
-    get_current_site_id, get_app_model_options, get_html_id_suffix
+    get_current_site_id, get_app_model_options, get_html_id_suffix,
+    get_reactions_js_overlays
 )
 
 
@@ -63,6 +64,7 @@ def comments_api_props(obj, user, request=None):
     options = get_app_model_options(content_type=app_model)
     check_input_allowed_str = options.pop('check_input_allowed')
     check_func = import_string(check_input_allowed_str)
+    reactions_js_overlays = get_reactions_js_overlays(content_type=app_model)
     d = {
         "comment_count": queryset.count(),
         "input_allowed": check_func(obj),
@@ -95,6 +97,7 @@ def comments_api_props(obj, user, request=None):
         "default_followup": settings.COMMENTS_XTD_DEFAULT_FOLLOWUP,
         "html_id_suffix": get_html_id_suffix(obj),
         "max_thread_level": max_thread_level_for_content_type(ctype),
+        "reactions_js_overlays": reactions_js_overlays,
     }
     if user and user.is_authenticated:
         d['current_user'] = "%d:%s" % (

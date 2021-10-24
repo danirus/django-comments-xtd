@@ -60,3 +60,18 @@
   </article>
 </main>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+ window.comments_api_props = {% get_comments_api_props for object %};
+ window.comments_api_props_override = {
+   allow_comments: {% if object.allow_comments %}true{% else %}false{% endif %},
+   allow_feedback: true,
+   show_feedback: true,
+   allow_flagging: true,
+   polling_interval: 5000
+ };
+</script>
+<script type="module" src="{% static 'django_comments_xtd/js/index.js' %}"></script>
+<script type="module" src="{% static 'django_comments_xtd/js/reactions.js' %}"></script>
+{% endblock %}

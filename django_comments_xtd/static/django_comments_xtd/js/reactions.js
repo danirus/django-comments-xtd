@@ -120,13 +120,9 @@ function toggle_buttons_panel(comment_id) {
 
 function create_buttons_panels(nodes) {
   for (let elem of Array.from(nodes)) {
-    const anchor_pos = elem.getBoundingClientRect();
-    const footer_pos = elem.parentNode.getBoundingClientRect();
     const comment_id = elem.getAttribute("data-comment");
     if (comment_id != null) {
       const panel = document.createElement("div");
-      panel.style.bottom = "35px";
-      panel.style.left = `${anchor_pos.x - footer_pos.x -10}px`;
       panel.className = "reactions-panel";
       panel.setAttribute("data-crpanel", `${comment_id}`);
 
@@ -151,10 +147,26 @@ function create_buttons_panels(nodes) {
       }
       panel.appendChild(body);
       elem.parentNode.insertBefore(panel, elem);
+      calc_buttons_panel_position(comment_id);
       elem.addEventListener("click", toggle_buttons_panel(comment_id));
     }
   }
 };
+
+function calc_buttons_panel_position(cid) {
+  const panel = document.querySelector(`[data-crpanel="${cid}"]`);
+  if (panel) {
+    const rroot = document.querySelector("[data-type=reactions-def]");
+    const bottom = parseInt(rroot.getAttribute("data-pos-bottom")) || 0;
+    const left = parseInt(rroot.getAttribute("data-pos-left")) || 0;
+    const elem_sel = `[data-type="reactions-panel"][data-comment="${cid}"]`;
+    const elem = document.querySelector(elem_sel);
+    const anchor_pos = elem.getBoundingClientRect();
+    const footer_pos = elem.parentNode.parentNode.getBoundingClientRect();
+    panel.style.bottom = `${bottom}px`;
+    panel.style.left = `${anchor_pos.x - footer_pos.x - left}px`;
+  }
+}
 
 function on_mouseover_reaction_btn(header) {
   return (event) => {
@@ -169,7 +181,6 @@ function on_mouseout_reaction_btn(header) {
 function on_click_reaction_btn(crid, cid) {
   return (event) => {
     event.preventDefault();
-    console.log(`Clicked on reaction ${crid} on comment ${cid}`);
     post_reaction({ comment: cid, reaction: crid }).then(data => {
       handle_reaction_response(cid, data);
     });
@@ -178,12 +189,15 @@ function on_click_reaction_btn(crid, cid) {
 
 function on_mouseover_tooltip(event) {
   const parent_all = event.target.parentNode.parentNode;
+  const bottom = parseInt(parent_all.getAttribute("data-pos-bottom")) || 0;
+  const left = parseInt(parent_all.getAttribute("data-pos-left")) || 0;
   const tooltip = event.target.parentNode.children[0];
   const target_pos = event.target.getBoundingClientRect();
   const parent_all_pos = parent_all.getBoundingClientRect();
   if (tooltip.className == "reactions-tooltip") {
     tooltip.style.display = "block";
-    tooltip.style.left = `${-90 + target_pos.x - parent_all_pos.x}px`;
+    tooltip.style.bottom = `${bottom}px`;
+    tooltip.style.left = `${target_pos.x - parent_all_pos.x - left}px`;
   }
 }
 
@@ -239,8 +253,6 @@ function create_reaction_btn(reaction, cid) {
 }
 
 function handle_reaction_response(cid, data) {
-  console.log(`handleReactionResponse for comment id`, cid);
-  console.log(`response data:`, data);
   const cm_reactions_div = document.getElementById(`cm-reactions-${cid}`);
   if(data.counter > 0) {
     const new_list = create_reactions_list(data);
@@ -250,10 +262,6 @@ function handle_reaction_response(cid, data) {
       reactions.className = "reactions";
       reactions.appendChild(new_list);
       reactions.insertAdjacentHTML("beforeend", "&nbsp;");
-      const divider = document.createElement("span");
-      divider.className = "text-muted";
-      divider.innerHTML = "&bull;"
-      reactions.appendChild(divider);
       reactions.insertAdjacentHTML("beforeend", "&nbsp;");
       const cm_footer = document.getElementById(`cm-footer-${cid}`);
       cm_footer.insertBefore(reactions, cm_footer.children[0]);
@@ -263,11 +271,16 @@ function handle_reaction_response(cid, data) {
     }
   } else if (cm_reactions_div)
       cm_reactions_div.remove();
+  // Recalculate the position of the reactions buttons panel.
+  calc_buttons_panel_position(cid);
 }
 
 function create_reactions_list(data) {
+  const js_overlays = window.comments_api_props.reactions_js_overlays;
   const list = document.createElement("div");
   list.className = "active-reactions";
+  list.setAttribute("data-pos-bottom", js_overlays.tooltip.pos_bottom);
+  list.setAttribute("data-pos-left", js_overlays.tooltip.pos_left);
   for (let item of data.list) {
     const reaction = document.createElement("span");
     reaction.className = "reaction";

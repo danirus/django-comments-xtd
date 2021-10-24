@@ -13,8 +13,8 @@
     {% endif %}
     data-reactions-row-length="4"
     data-reactions-header-title="{% trans 'Pick your reaction' %}"
-    data-pos-bottom="30"
-    data-pos-left="-7"
+    data-pos-bottom="{{ reactions_popover_pos_bottom }}"
+    data-pos-left="{{ reactions_popover_pos_left }}"
   {% endif %}
 >
   {% if is_paginated %}

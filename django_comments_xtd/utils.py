@@ -17,7 +17,8 @@ from rest_framework.exceptions import PermissionDenied
 
 from django_comments_xtd import get_model
 from django_comments_xtd.conf import settings
-from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_OPTIONS
+from django_comments_xtd.conf.defaults import (
+    COMMENTS_XTD_APP_MODEL_OPTIONS, COMMENTS_XTD_REACTIONS_JS_OVERLAYS)
 from django_comments_xtd.paginator import CommentsPaginator
 
 
@@ -74,7 +75,7 @@ def get_app_model_options(comment=None, content_type=None):
     """
     defaults_options = dict.copy(COMMENTS_XTD_APP_MODEL_OPTIONS)
     settings_options = dict.copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS)
-    if 'default' in settings_options:
+    if defaults_options != settings_options and 'default' in settings_options:
         defaults_options['default'].update(settings_options.pop('default'))
 
     model_app_options = {}
@@ -140,6 +141,46 @@ def check_input_allowed(object):
     'COMMENTS_XTD_APP_MODEL_OPTIONS' in your settings.
     """
     return True
+
+
+# --------------------------------------------------------------------
+def get_reactions_js_overlays(comment=None, content_type=None):
+    """
+    Get the app_model_option from COMMENTS_XTD_REACTIONS_JS_OVERLAYS.
+
+    If a comment is given, the content_type is extracted from it. Otherwise,
+    the content_type kwarg has to be provided. Checks whether there is a
+    matching dictionary for the app_label.model of the content_type, and
+    returns it. Otherwise it returns the default from:
+
+        `django_comments_xtd.conf.defaults.COMMENTS_XTD_REACTIONS_JS_OVERLAYS`.
+
+    """
+    _defaults = dict.copy(COMMENTS_XTD_REACTIONS_JS_OVERLAYS)
+    _settings = dict.copy(settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS)
+    if _defaults != _settings and 'default' in _settings:
+        _defaults['default'].update(_settings.pop('default'))
+
+    _for_app_model = {}
+    for app_model in _settings.keys():
+        for k in _defaults['default'].keys():
+            if k not in _settings[app_model]:
+                _for_app_model[k] = _defaults['default'][k]
+            else:
+                _for_app_model[k] = _settings[app_model][k]
+
+    if comment:
+        content_type = ContentType.objects.get_for_model(comment.content_object)
+        key = "%s.%s" % (content_type.app_label, content_type.model)
+    elif content_type:
+        key = content_type
+    else:
+        return _defaults['default']
+    try:
+        _for_app_model.update(settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS[key])
+        return _for_app_model
+    except Exception:
+        return _for_app_model
 
 
 # --------------------------------------------------------------------

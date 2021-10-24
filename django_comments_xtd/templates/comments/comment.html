@@ -2,7 +2,7 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<div id="c{{ comment.id }}" class="comment-box {% if show_nested %}{% comment_css_thread_range comment %}{% endif %}">
+<div id="comment-{{ comment.id }}" class="comment-box {% if show_nested %}{% comment_css_thread_range comment %}{% endif %}">
   {% if show_nested %}{{ comment.level|indent_divs }}{% endif %}
   <div class="comment">
     <div class="header">
@@ -18,11 +18,11 @@
         {{ comment.comment|linebreaks|escape }}
       {% endif %}
     </div>
-    <div class="footer">
+    <div id="cm-footer-{{ comment.id }}" class="footer">
       {% if not comment.is_removed %}
         {% if comment_reactions_enabled %}
           {% if comment.reactions.count > 0 %}
-            <div class="reactions">
+            <div id="cm-reactions-{{ comment.id }}" class="reactions">
               {% include "comments/comment_reactions.html" %}
             </div>
           {% endif %}

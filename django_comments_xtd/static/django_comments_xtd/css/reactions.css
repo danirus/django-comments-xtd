@@ -58,6 +58,7 @@ button.emoji {
   outline: none;
   background: white;
   font-size: 1.2rem;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 button.emoji:hover, button.emoji:focus {

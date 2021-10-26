@@ -39,7 +39,7 @@
       {% endif %}
       {% if show_nested and comment.level == 0 and comment.nested_count and not comment.is_removed %}
         <div>
-          <a id="c{{ comment.id}}-replies" data-type="nreplies" data-comment="{{ comment.id }}" class="small" href="#">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</a>
+          <span id="comment-{{ comment.id}}-replies" data-type="nreplies" data-comment="{{ comment.id }}" class="small">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
         </div>
       {% endif %}
     </div>

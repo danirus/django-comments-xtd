@@ -51,6 +51,7 @@ def comments_api_props(obj, user, request=None):
             login_url: <only_when_user_is_not_authenticated>,
             html_id_suffix: <html_element_id_suffix>,
             max_thread_level: max_thread_level for the content type of the obj.
+            reactions_js_overlays: <reactions_js_overlays for content_type>.
         }
     """
     form = CommentSecurityForm(obj)

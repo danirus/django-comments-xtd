@@ -217,6 +217,35 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 
 COMMENTS_XTD_REACTIONS_ENUM = "project.enums.ReactionEnum"
 
+# This settings define the correction made to the popover JavaScript element
+# and the tooltip element displayed in the Reactions area of each comment.
+# The panel with the reaction choices is a popover, while the overlay with
+# the name of the people who clicked on a specific reaction is a tooltip.
+COMMENTS_XTD_REACTIONS_JS_OVERLAYS = {
+    'default': {
+        'popover': {
+            'pos_bottom': 30,
+            'pos_left': -6
+        },
+        'tooltip': {
+            'pos_bottom': 30,
+            'pos_left': 63
+        }
+    },
+    # Given than stories.story display an avatar along with the comment,
+    # the pos_left for both, the popover and tooltip, has to be adapted.
+    'stories.story': {
+        'popover': {
+            'pos_bottom': 30,
+            'pos_left': 10
+        },
+        'tooltip': {
+            'pos_bottom': 30,
+            'pos_left': 76
+        }
+    },
+}
+
 AVATAR_PROVIDERS = [
     'avatar.providers.PrimaryAvatarProvider',
     'avatar.providers.GravatarAvatarProvider',

@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load comments %}
 
-<form method="POST" id="comment-form" autocomplete="off" onsubmit="return false" action="{% comment_form_target %}">
+<form method="POST" id="comment-form" autocomplete="off" onsubmit="post.disabled = true; return true;" action="{% comment_form_target %}">
   {% csrf_token %}
   <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}" />
   {% for field in form %}
@@ -57,8 +57,8 @@
 
   <div class="col2">
     <div class="inline-left">
-      <button type="submit" class="primary" name="post" onclick="return submit_comment_form();">{% trans 'send' %}</button>&nbsp;
-      <button type="submit" class="secondary" name="preview" onclick="return preview_comment();">{% trans 'preview' %}</button>
+      <button type="submit" class="primary" name="post">{% trans 'send' %}</button>&nbsp;
+      <button type="submit" class="secondary" name="preview">{% trans 'preview' %}</button>
     </div>
   </div>
 </form>

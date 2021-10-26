@@ -161,6 +161,8 @@ function calc_buttons_panel_position(cid) {
     const left = parseInt(rroot.getAttribute("data-pos-left")) || 0;
     const elem_sel = `[data-type="reactions-panel"][data-comment="${cid}"]`;
     const elem = document.querySelector(elem_sel);
+    // elem is the <a>React</a>, and elem.parentNode.parentNode is the element
+    // containing the .active-reactions (reactions already selected by users).
     const anchor_pos = elem.getBoundingClientRect();
     const footer_pos = elem.parentNode.parentNode.getBoundingClientRect();
     panel.style.bottom = `${bottom}px`;
@@ -262,9 +264,9 @@ function handle_reaction_response(cid, data) {
       reactions.className = "reactions";
       reactions.appendChild(new_list);
       reactions.insertAdjacentHTML("beforeend", "&nbsp;");
-      reactions.insertAdjacentHTML("beforeend", "&nbsp;");
       const cm_footer = document.getElementById(`cm-footer-${cid}`);
       cm_footer.insertBefore(reactions, cm_footer.children[0]);
+      reactions.insertAdjacentHTML("afterend", "&nbsp;");
     } else {
       const old_list = cm_reactions_div.querySelector(".active-reactions");
       cm_reactions_div.replaceChild(new_list, old_list);

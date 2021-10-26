@@ -161,14 +161,6 @@ def get_reactions_js_overlays(comment=None, content_type=None):
     if _defaults != _settings and 'default' in _settings:
         _defaults['default'].update(_settings.pop('default'))
 
-    _for_app_model = {}
-    for app_model in _settings.keys():
-        for k in _defaults['default'].keys():
-            if k not in _settings[app_model]:
-                _for_app_model[k] = _defaults['default'][k]
-            else:
-                _for_app_model[k] = _settings[app_model][k]
-
     if comment:
         content_type = ContentType.objects.get_for_model(comment.content_object)
         key = "%s.%s" % (content_type.app_label, content_type.model)
@@ -177,10 +169,9 @@ def get_reactions_js_overlays(comment=None, content_type=None):
     else:
         return _defaults['default']
     try:
-        _for_app_model.update(settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS[key])
-        return _for_app_model
+        return settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS[key]
     except Exception:
-        return _for_app_model
+        return _defaults['default']
 
 
 # --------------------------------------------------------------------

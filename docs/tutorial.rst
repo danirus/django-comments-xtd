@@ -172,7 +172,7 @@ Now let's append the following entries to the tutorial settings module:
                             b"Aequam memento rebus in arduis servare mentem.")
 
        # Source mail address used for notifications.
-       COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
+       COMMENTS_XTD_FROM_EMAIL = "webmaster@example.com"
 
        # Contact mail address to show in messages.
        COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
@@ -380,7 +380,8 @@ confirming the comment you will see the ``django_comments_xtd/moderated.html``
 template, and your comment will be put on hold for approval.
 
 If on the other hand you send a comment to a blog post created within the last
-year your comment will not be put in moderation. Give it a try as a logged in
+year (login in the admin interface and update the publish field of the post) 
+your comment will not be put in moderation. Give it a try as a logged in
 user and as an anonymous user.
 
 When sending a comment as a logged-in user the comment won't have to be

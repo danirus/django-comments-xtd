@@ -96,9 +96,11 @@ specific features, or check out the use cases to see how others customize it.
 Change Log
 ==========
 
-## [2.9.4] -
+## [2.9.4] - 2021-11-11
 
    * Fixes `issue #333 <https://github.com/danirus/django-comments-xtd/issues/333>`_ produced when using django-comments-xtd with Django 3.2 with MySQL/MariaDB. The issue raises when calling 'update()' on queries with 'sorted_by', as it is the case of the default 'objects' manager of XtdComment.
+   * App translation to Simplified Chinesse thanks to @galeo.
+   * Fixes issue #334 related to defaults for DRF views. See the `PR-338 <https://github.com/danirus/django-comments-xtd/pull/338>`_. Thanks to @PetrDlouhy.
    * Improve command 'populate_xtdcomments' to output using the stdout attribute of the BaseCommand.
 
 [2.9.3] - 2021-09-22

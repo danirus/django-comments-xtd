@@ -102,7 +102,7 @@ export class Comment extends React.Component {
           inapp_msg = django.gettext("I flagged it as inappropriate");
           flagging_html = (
             <span>
-              {flagging_count}
+              {flagging_count}&nbsp;
               <i className="fas fa-flag text-danger" title={inapp_msg}></i>
             </span>
           );

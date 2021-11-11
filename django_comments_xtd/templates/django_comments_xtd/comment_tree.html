@@ -17,7 +17,7 @@
                 <span class="badge badge-danger" title="{% blocktrans count counter=item.flagged_count %}A user has flagged this comment as inappropriate.{% plural %}{{ counter }} users have flagged this comment as inappropriate.{% endblocktrans %}">{{ item.flagged_count }}</span>
               {% endif %}
             {% endif %}
-            {% if allow_flagging and item.flagged %}
+            {% if allow_flagging and request.user in item.flagged %}
               <i class="fas fa-flag text-danger" title="{% trans 'comment flagged' %}"></i>
             {% elif allow_flagging %}
               <a class="mutedlink"

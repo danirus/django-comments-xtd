@@ -6,7 +6,7 @@
   {% for comment in comment_list %}
   <div class="media pb-2">
     <a name="c{{ comment.id }}"></a>
-    {{ comment.user_email|xtd_comment_gravatar }}
+    <span class="mr-3">{{ comment.user_email|xtd_comment_gravatar }}</span>
     <div class="media-body">
       <div class="comment pb-3">
         <h6 class="mb-1 small d-flex">

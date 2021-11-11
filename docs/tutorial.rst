@@ -380,7 +380,7 @@ confirming the comment you will see the ``django_comments_xtd/moderated.html``
 template, and your comment will be put on hold for approval.
 
 If on the other hand you send a comment to a blog post created within the last
-year (login in the admin interface and update the publish field of the post) 
+year (login in the admin interface and update the publish field of the post)
 your comment will not be put in moderation. Give it a try as a logged in
 user and as an anonymous user.
 
@@ -619,9 +619,9 @@ Edit ``blog/post_detail.html`` to make it look like follows:
        </div>
 
        {% if object.allow_comments %}
-       <div class="comment">
-         <h4 class="text-center">Your comment</h4>
-         <div class="well">
+       <div class="comment mt-3 mb-5">
+         <h4 class="text-center mb-4">Your comment</h4>
+         <div class="card pt-4">
            {% render_comment_form for object %}
          </div>
        </div>

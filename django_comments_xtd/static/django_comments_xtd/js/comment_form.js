@@ -1,11 +1,19 @@
 export default class CommentForm {
-  constructor(url, formElId, errorsElId) {
-    this.url = url;
-    this.formEl = document.getElementById(formElId);
-    this.formEl.action = "";
-    this.errorsEl = document.getElementById(errorsElId);
-    console.log(`this.initial: `, this.initial);
-    console.log(`this.url: `, this.url);
+  constructor(formWrapper, errorsWrapper) {
+    this.formWrapper = formWrapper;
+    this.errorsWrapper = errorsWrapper;
+    this.url = "";
+    this._init();
+  }
+
+  _init() {
+    this.formWrapperEl = document.querySelector(this.formWrapper);
+    this.formEl = this.formWrapperEl.querySelector("form");
+    if (!this.url.length) {
+      this.url = this.formEl.action;
+      this.formEl.action = "";
+    }
+    this.errorsEl = this.formWrapperEl.querySelector(this.errorsWrapper);
   }
 
   cleanErrorsEl() {
@@ -35,39 +43,62 @@ export default class CommentForm {
     this.formEl.elements['preview'].disabled = value;
   }
 
-  preview() {
-    this._disable_btns(true);
-    console.log(`Preview the comment:`, this.formEl.elements['comment'].value);
-    this._disable_btns(false);
-    console.log(`post.disabled? `, this.formEl.elements['post'].disabled);
+  _is_valid() {
+    for (const el of this.formEl.querySelectorAll("[required]")) {
+      if (!el.reportValidity()) {
+        return false;
+      }
+    }
+    return true;
   }
 
-  post() {
+  post(submit_button_name) {
+    this.cleanErrorsEl();
+    if (!this._is_valid())
+      return;
     this._disable_btns(true);
-    let formBody = {};
-    for (const field of this.formEl.elements) {
-      formBody[field.name] = field.value;
-    }
-    formBody.name = (formBody.name == undefined) ? "" : formBody.name;
-    formBody.email = (formBody.email == undefined) ? "" : formBody.email;
-    const csrftoken = formBody['csrfmiddlewaretoken'];
-    delete formBody['csrfmiddlewaretoken'];
-    console.log("formBody:", formBody);
-    // fetch(this.url, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json',
-    //     'X-CSRFToken': csrftoken,
-    //   },
-    //   body: JSON.stringify(formBody)
-    // }).then(response => {
-    //   return response.json();
-    // }).then(data => {
-    //   console.log(`got response:`, data);
-    // });
+    const formData = new FormData(this.formEl);
+    console.log(`submit_button_name:`, submit_button_name);
+    if (submit_button_name != undefined)
+      formData.append(submit_button_name, 1);
+    console.log("formData:", formData);
+    fetch(this.url, {
+      method: 'POST',
+      headers: {
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      body: formData
+    }).then(response => {
+      if (submit_button_name == "preview")
+        this.handle_preview_comment_response(response);
+      else if (submit_button_name == "post")
+        this.handle_post_comment_response(response);
+    });
     this._disable_btns(false);
-    console.log(`post.disabled? `, this.formEl.elements['post'].disabled);
     return false;  // To prevent calling the action attribute.
+  }
+
+  async handle_preview_comment_response(response) {
+    if (response.status == 200 || response.status == 422) {
+      content = await response.text();
+      this.formWrapperEl.innerHTML = content;
+      this._init();
+    }
+  }
+
+  async handle_post_comment_response(response) {
+    debugger;
+    if (response.status == 422) {
+      content = await response.text();
+      console.log(`handle_post_comment_response status:`, response.status);
+      console.log(`handle_post_comment_response content:`, content);
+      this.formEl.innerHTML = content;
+      this._init();
+    } else if (response.status >= 400 && response.status < 500) {
+      this.setErrorsElText(
+        "Something went wrong, your comment can not be processed.",
+        "hide", "alert-error text-error"
+      );
+    }
   }
 }

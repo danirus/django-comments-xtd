@@ -140,7 +140,9 @@ function create_buttons_panels(nodes) {
       for (let i=0; i<reaction_choices.length; i++) {
         if (i > 0 && i % row_length == 0)
           body.appendChild(document.createElement("br"));
-        const btn = create_reaction_btn(reaction_choices[i], comment_id);
+        const login_next_url = elem.getAttribute("data-login-next") || "";
+        const btn = create_reaction_btn(reaction_choices[i], comment_id,
+                                        login_next_url);
         btn.addEventListener("mouseover", on_mouseover_reaction_btn(header));
         btn.addEventListener("mouseout", on_mouseout_reaction_btn(header));
         body.appendChild(btn);
@@ -243,14 +245,21 @@ async function post_reaction(data) {
   return response.json();
 }
 
-function create_reaction_btn(reaction, cid) {
+function create_reaction_btn(reaction, cid, login_next_url) {
   const [crid, title, emoji] = reaction.split(",");
   const button = document.createElement("button");
   button.setAttribute("data-title", title);
   button.setAttribute("data-code", crid);
   button.className = "emoji";
   button.innerHTML = `&${emoji};`;
-  button.addEventListener("click", on_click_reaction_btn(crid, cid));
+  if (window.comments_api_props.is_authenticated) {
+    button.addEventListener("click", on_click_reaction_btn(crid, cid));
+  } else {
+    button.addEventListener("click", function(_) {
+      window.location.href = (`${window.comments_api_props.login_url}` +
+                              `?next=${login_next_url}`);
+    });
+  }
   return button;
 }
 

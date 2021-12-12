@@ -33,7 +33,7 @@
         {% endif %}
         {% if comment_reactions_enabled and is_input_allowed %}
           <div>
-            <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}?{{ cpage_qs_param }}={{ page_obj.number }}">{% trans "React" %}</a>
+            <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}?{{ cpage_qs_param }}={{ page_obj.number }}" {% if not user.is_authenticated %}data-login-next="{% get_xtdcomment_permalink comment page_number %}{% endif %}">{% trans "React" %}</a>
           </div>
         {% endif %}
       {% endif %}

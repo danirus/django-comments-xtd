@@ -54,7 +54,6 @@ def post(request, next=None, using=None):
     context passed to the template as `page_number`, which corresponds to the
     comment's page number in which the comment has been displayed.
     """
-    # Fill out some initial data fields from an authenticated user, if present
     data = request.POST.copy()
     if request.user.is_authenticated:
         if not data.get('name', ''):
@@ -63,7 +62,7 @@ def post(request, next=None, using=None):
         if not data.get('email', ''):
             data["email"] = request.user.email
 
-    # Look up the object we're trying to comment about
+    # Look up the object we're trying to comment about.
     ctype = data.get("content_type")
     object_pk = data.get("object_pk")
     if ctype is None or object_pk is None:
@@ -72,7 +71,7 @@ def post(request, next=None, using=None):
     try:
         model = apps.get_model(*ctype.split(".", 1))
         target = model._default_manager.using(using).get(pk=object_pk)
-    except TypeError:
+    except (LookupError, TypeError):
         return CommentPostBadRequest(
             "Invalid content_type value: %r" % escape(ctype))
     except AttributeError:
@@ -103,22 +102,51 @@ def post(request, next=None, using=None):
     cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     cpage = request.POST.get(cpage_qs_param, None)
 
-    # If there are errors or if we requested a preview show the comment
+    # If there are errors or if we requested a preview show the comment.
     if form.errors or preview:
-        template_list = [
-            "comments/%s/%s/preview.html" % (model._meta.app_label,
-                                             model._meta.model_name),
-            "comments/%s/preview.html" % model._meta.app_label,
-            "comments/preview.html",
-        ]
-        return render(request, template_list, {
+        # If the comment was posted via JavaScript (we denote it by
+        # appending the header: "X-Requested-With": "XMLHttpRequest"),
+        # return the single comment template `comment_preview.html`.
+        if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+            template_list = [
+                "comments/%s/%s/form.html" % (
+                    model._meta.app_label,
+                    model._meta.model_name),
+                "comments/%s/form.html" % model._meta.app_label,
+                "comments/form.html",
+            ]
+
+            if form.errors:
+                status = 422
+                preview_in_js = False
+            elif preview:
+                status = 200
+                preview_in_js = True
+
+            return render(request, template_list, {
+                "preview_in_js": preview_in_js,
                 "comment": form.data.get("comment", ""),
                 "form": form,
                 "next": data.get("next", next),
                 "page_number": cpage,
                 "cpage_qs_param": cpage_qs_param
-            },
-        )
+            }, status=status)
+
+        else:
+            template_list = [
+                "comments/%s/%s/preview.html" % (model._meta.app_label,
+                                                 model._meta.model_name),
+                "comments/%s/preview.html" % model._meta.app_label,
+                "comments/preview.html",
+            ]
+
+            return render(request, template_list, {
+                "comment": form.data.get("comment", ""),
+                "form": form,
+                "next": data.get("next", next),
+                "page_number": cpage,
+                "cpage_qs_param": cpage_qs_param
+            })
 
     # Otherwise create the comment
     comment = form.get_comment_object(site_id=get_current_site(request).id)
@@ -301,8 +329,8 @@ def sent(request, using=None):
         return render(request, template_arg, {'target': target})
     else:
         if (
-            request.is_ajax() and comment.user and
-            comment.user.is_authenticated
+            request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+            and comment.user and comment.user.is_authenticated
         ):
             if comment.is_public:
                 template_arg = [

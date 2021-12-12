@@ -69,7 +69,7 @@ class XtdComment(Comment):
     objects = XtdCommentManager()
     norel_objects = CommentManager()
 
-    def get_absolute_url(self, anchor_pattern="#c%(id)s"):
+    def get_absolute_url(self, anchor_pattern="#comment-%(id)s"):
         return reverse(
             "comments-url-redirect",
             args=(self.content_type_id, self.object_pk, self.pk)
@@ -125,7 +125,7 @@ class XtdComment(Comment):
                             .update(nested_count=F('nested_count') + 1)
 
     def get_reply_url(self):
-        return reverse("comments-xtd-reply", kwargs={"cid": self.pk})
+        return reverse("comments-xtd-reply", kwargs={"comment-id": self.pk})
 
     def allow_thread(self):
         if self.level < max_thread_level_for_content_type(self.content_type):

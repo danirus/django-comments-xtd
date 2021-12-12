@@ -3,6 +3,7 @@ from django.db.models.signals import pre_save
 
 
 class CommentsXtdConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
     name = 'django_comments_xtd'
     verbose_name = 'Comments Xtd'
 

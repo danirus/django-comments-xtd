@@ -11,6 +11,7 @@
     <div class="content">
       <section class="reply-form">
         <form id="reply-form-{{ comment.id }}" method="post" action="{% url 'comments-xtd-reply' comment.id %}">{% csrf_token %}
+          <input type="hidden" name="reply_to" value="{{ comment.id }}" />
           {% if is_paginated %}
           <input type="hidden" name="{{ cpage_qs_param }}" value="{{ page_obj.number }}" />
           {% endif %}

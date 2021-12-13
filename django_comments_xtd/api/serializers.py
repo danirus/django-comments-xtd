@@ -4,7 +4,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils import formats, timezone
 from django.utils.html import escape
 from django.utils.module_loading import import_string
-from django.utils.translation import ugettext as _, activate, get_language
+from django.utils.translation import gettext as _, activate, get_language
 
 from django_comments import get_form
 from django_comments.forms import CommentSecurityForm

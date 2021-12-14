@@ -18,7 +18,7 @@ test.run_tests = run_tests
 
 setup(
     name="django-comments-xtd",
-    version="2.9.4",
+    version="2.9.5",
     packages=find_packages(),
     include_package_data=True,
     license="MIT",
@@ -35,9 +35,9 @@ setup(
     maintainer_email="danirus@eml.cc",
     url="http://pypi.python.org/pypi/django-comments-xtd",
     install_requires=[
-        'Django>=3,<4',
+        'Django>=3,<5',
         'django-contrib-comments>=2.1,<2.2',
-        'djangorestframework>=3.12,<3.13',
+        'djangorestframework>=3.12,<3.14',
         'docutils',
         'six',
     ],

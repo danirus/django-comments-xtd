@@ -318,9 +318,9 @@ One of the differences between django-comments-xtd and other commenting
 applications is the fact that by default it requires comment confirmation by
 email when users are not logged in, a very effective feature to discard unwanted
 comments. However there might be cases in which you would prefer a different
-approach. Django Comments Framework comes with `moderation capabilities
+approach. The Django Comments Framework comes with `moderation capabilities
 <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_
-included upon which you can build your own comment filtering.
+included, on top of which you can build your own comment filtering.
 
 Comment moderation is often established to fight spam, but may be used for other
 purposes, like triggering actions based on comment content, rejecting comments
@@ -342,7 +342,7 @@ Let's start adding our email address to the :setting:`MANAGERS` in the
 
 
 Now we will create a new ``Moderator`` class that inherits from Django Comments
-Frammework's ``CommentModerator``. This class enables moderation by defining a
+Framework's ``CommentModerator``. This class enables moderation by defining a
 number of class attributes. Read more about it in `moderation options
 <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html
 #moderation-options>`_, in the official documentation of the Django Comments
@@ -465,7 +465,7 @@ Moderate on bad words
 Let's now create our own Moderator class by subclassing ``SpamModerator``. The
 goal is to provide a ``moderate`` method that looks in the content of the
 comment and returns ``False`` whenever it finds a bad word in the message. The
-effect of returning ``False`` is that comment's ``is_public`` attribute will be
+effect of returning ``False`` is that comments' ``is_public`` attribute will be
 put to ``False`` and therefore the comment will be in moderation.
 
 The blog application comes with a bad word list in the
@@ -883,9 +883,12 @@ to the template tag:
 
    .. code-block:: html+django
 
+       [...]
        <ul class="media-list">
          {% render_xtdcomment_tree for object allow_flagging allow_feedback show_feedback %}
        </ul>
+       {% endif %}
+       {% endblock %}
 
        {% block extra-js %}
        <script
@@ -1133,8 +1136,8 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
     <script
       type="text/javascript"
       src="{% url 'javascript-catalog' %}"></script>
-    <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.9.4.js' %}"></script>
-    <script src="{% static 'django_comments_xtd/js/plugin-2.9.4.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.9.5.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/plugin-2.9.5.js' %}"></script>
     <script>
     $(function() {
       $('[data-toggle="tooltip"]').tooltip({html: true});

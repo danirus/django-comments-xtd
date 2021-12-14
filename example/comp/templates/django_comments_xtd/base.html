@@ -39,11 +39,11 @@
                            data-toggle="dropdown" href="#">{{ current_language|language_name }}</a>
                         <div class="dropdown-menu languages" id="selectlanguage">
                             {% for language in LANGUAGES %}
-                            {% ifnotequal current_language language.0 %}
+                            {% if current_language != language.0 %}
                             <a class="dropdown-item" href="#" data-name="language" data-code="{{ language.0 }}">{{ language.0|language_tuple }}</a>
                             {% else %}
                             <a class="dropdown-item disabled" href="#">{{ language.0|language_name }}</a>
-                            {% endifnotequal %}
+                            {% endif %}
                             {% endfor %}
                         </div>
                     </div>

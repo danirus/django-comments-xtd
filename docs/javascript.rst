@@ -155,8 +155,8 @@ Plugin sources live inside the **static** directory of django-comments-xtd:
        │   ├── commentform.jsx
        │   ├── index.js
        │   └── lib.js
-       ├── vendor~plugin-2.9.4.js
-       └── plugin-2.9.4.js
+       ├── vendor~plugin-2.9.5.js
+       └── plugin-2.9.5.js
 
        1 directory, 7 files
 

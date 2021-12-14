@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.9.5] - 2021-12-13
+
+   * Adds compatibility with Django v4.
+   * Fixes [issue-358](https://github.com/danirus/django-comments-xtd/issues/358): Missing closing <form> tag in the dislike.html template.
+
 ## [2.9.4] - 2021-11-11
 
    * Fixes [issue-333](https://github.com/danirus/django-comments-xtd/issues/333) produced when using django-comments-xtd with Django 3.2 with MySQL/MariaDB. The issue raises when calling 'update()' on queries with 'sorted_by', as it is the case of the default 'objects' manager of XtdComment.

@@ -9,7 +9,7 @@ sys.path.insert(0, '../..') # parent of django_comments_xtd directory
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings_dev')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

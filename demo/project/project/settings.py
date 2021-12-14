@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', None)
+SECRET_KEY = "bqac+=!uj4i@-1q-u#w=gy*q6b(y_5*nv84s4vbg#@5s+cq7nc"
 
 SITE_ID = os.environ.get('SITE_ID', 1)
 
@@ -181,6 +181,8 @@ REST_FRAMEWORK = {
 COMMENTS_APP = "django_comments_xtd"
 
 COMMENTS_HIDE_REMOVED = False
+
+COMMENTS_XTD_SALT="w28dnq7czc1m+=l)=yiydar-r$$pnz#a5#22pjz_&5n%sq^kkr"
 COMMENTS_XTD_CONFIRM_EMAIL = True   # Set to False to disable confirmation
 COMMENTS_XTD_FROM_EMAIL = 'staff@example.com'
 COMMENTS_XTD_CONTACT_EMAIL = 'staff@example.com'
@@ -190,7 +192,6 @@ COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
 
 COMMENTS_XTD_API_USER_REPR = lambda user: user.name
 
-COMMENTS_XTD_SALT = os.environ.get('COMMENTS_XTD_SALT', 1).encode('utf-8')
 COMMENTS_XTD_SEND_HTML_EMAIL = True
 
 # Level 3 is the maximum supported (limited by CSS classes).

@@ -3,7 +3,7 @@
 ## [2.9.5] - 2021-12-13
 
    * Adds compatibility with Django v4.
-   * Fixes [issue-358](https://github.com/danirus/django-comments-xtd/issues/358): Missing closing </form> tag in the dislike.html template.
+   * Fixes [issue-358](https://github.com/danirus/django-comments-xtd/issues/358): Missing closing <form> tag in the dislike.html template.
 
 ## [2.9.4] - 2021-11-11
 

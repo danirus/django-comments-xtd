@@ -104,9 +104,6 @@ def post(request, next=None, using=None):
 
     # If there are errors or if we requested a preview show the comment.
     if form.errors or preview:
-        # If the comment was posted via JavaScript (we denote it by
-        # appending the header: "X-Requested-With": "XMLHttpRequest"),
-        # return the single comment template `comment_preview.html`.
         if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             template_list = [
                 "comments/%s/%s/form.html" % (

@@ -2,8 +2,8 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<div id="comment-{{ comment.id }}" class="comment-box {% if show_nested %}{% comment_css_thread_range comment %}{% endif %}">
-  {% if show_nested %}{{ comment.level|indent_divs }}{% endif %}
+<div id="comment-{{ comment.id }}" class="comment-box {% comment_css_thread_range comment %}">
+  {{ comment.level|indent_divs }}
   <div class="comment">
     <div class="header">
       <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment page_number %}">¶</a></div>
@@ -34,7 +34,7 @@
           </div>
         {% endif %}
       {% endif %}
-      {% if show_nested and comment.level == 0 and comment.nested_count %}
+      {% if comment.level == 0 and comment.nested_count %}
         <div>
           <a data-type="fold-replies" data-comment="{{ comment.id }}" class="small" href="#">{% blocktrans with count=comment.nested_count%}Fold {{ count }} replies{% endblocktrans %}</a>
         </div>

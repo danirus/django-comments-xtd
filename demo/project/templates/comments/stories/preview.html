@@ -19,13 +19,15 @@
       <div class="dcx">
         <div class="comment-list">
           {% if form.reply_to.value == "0" %}
-            <div class="comment-box-img">
+            <div class="comment-box-img l0-ini">
+              {{ 0|indent_divs }}
               <div class="user-avatar">
                 {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}
               </div>
               <div class="comment">
                 <div class="header">
-                  {% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}
+                  <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
+                  <div class="small text-info">{% trans "comment in preview" %}</div>
                 </div>
                 <div class="body">
                   {{ form.cleaned_data.comment|linebreaks|escape }}
@@ -33,6 +35,7 @@
                 <div class="footer"></div>
               </div>
             </div>
+            <div class="not-reply-box l0"></div>
           {% else %}
             {% with parent=form.reply_to.value|get_comment %}
               <div class="comment-box-img l0-ini">
@@ -58,7 +61,8 @@
               </div>
               <div class="comment">
                 <div class="header">
-                  {% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}
+                  <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
+                  <div class="small text-info">{% trans "comment in preview" %}</div>
                 </div>
                 <div class="body">
                   {{ form.cleaned_data.comment|linebreaks|escape }}

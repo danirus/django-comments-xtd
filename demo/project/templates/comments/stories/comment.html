@@ -3,8 +3,8 @@
 {% load comments_xtd %}
 {% load dcx_demo_tags %}
 
-<div id="comment-{{ comment.id }}" class="comment-box-img {% if show_nested %}{% comment_css_thread_range comment %}{% endif %}">
-  {% if show_nested %}{{ comment.level|indent_divs }}{% endif %}
+<div id="comment-{{ comment.id }}" class="comment-box-img {% comment_css_thread_range comment %}">
+  {{ comment.level|indent_divs }}
   <div class="user-avatar">
     {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}
   </div>
@@ -37,7 +37,7 @@
           </div>
         {% endif %}
       {% endif %}
-      {% if show_nested and comment.level == 0 and comment.nested_count and not comment.is_removed %}
+      {% if comment.level == 0 and comment.nested_count and not comment.is_removed %}
         <div>
           <span id="comment-{{ comment.id}}-replies" data-type="nreplies" data-comment="{{ comment.id }}" class="small">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
         </div>

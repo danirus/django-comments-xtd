@@ -44,7 +44,7 @@
     {% endif %}
 
     {% block comment %}
-      {% with page_number=page_obj.number show_nested=True %}
+      {% with page_number=page_obj.number %}
         {% include "my_comments/comment.html" %}
       {% endwith %}
     {% endblock %}

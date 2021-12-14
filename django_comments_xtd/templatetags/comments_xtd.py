@@ -146,7 +146,6 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             'comments_page_qs_param': qs_param,
             'max_thread_level': mtl,
             'reply_stack': [],  # List to control reply rendering.
-            'show_nested': True,
         })
 
         # Pass values for Reactions JS Overlays to the context.

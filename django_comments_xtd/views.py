@@ -187,8 +187,8 @@ def sent(request, using=None):
         return render(request, template_arg, {'target': target})
     else:
         if (
-                request.is_ajax() and comment.user and
-                comment.user.is_authenticated
+            request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest' and
+            comment.user and comment.user.is_authenticated
         ):
             if comment.is_public:
                 template_arg = [

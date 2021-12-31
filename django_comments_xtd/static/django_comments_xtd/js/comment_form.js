@@ -16,7 +16,7 @@ export default class CommentForm {
     this.errorsEl = this.formWrapperEl.querySelector(this.errorsWrapper);
   }
 
-  cleanErrorsEl() {
+  clean_errors_el() {
     const classes = [
       'alert-success', 'alert-info', 'alert-warn', 'alert-error',
       'text-success', 'text-info', 'text-warn', 'text-error'
@@ -28,7 +28,7 @@ export default class CommentForm {
     }
   }
 
-  setErrorsElText(text, remove_classes, add_classes) {
+  set_errors_el_text(text, remove_classes, add_classes) {
     for (let classname of remove_classes.split(" ")) {
       this.errorsEl.classList.remove(classname);
     }
@@ -53,7 +53,7 @@ export default class CommentForm {
   }
 
   post(submit_button_name) {
-    this.cleanErrorsEl();
+    this.clean_errors_el();
     if (!this._is_valid())
       return;
     this._disable_btns(true);
@@ -95,7 +95,7 @@ export default class CommentForm {
       this.formEl.innerHTML = content;
       this._init();
     } else if (response.status >= 400 && response.status < 500) {
-      this.setErrorsElText(
+      this.set_errors_el_text(
         "Something went wrong, your comment can not be processed.",
         "hide", "alert-error text-error"
       );

@@ -12,10 +12,11 @@ window.addEventListener("DOMContentLoaded", (_) => {
     if (document.querySelector(qs_cform)) {
       comment_form = new CommentForm(qs_cform, qs_cform_errors);
     }
-    reply_forms_handler = new ReplyFormsHandler(
-      "comment-form",  // The main comment form in the page.
-      "reply-form"  // The class wrapping the form in reply_button.html tmpl.
-    );
+
+    const qs_rform = "[data-dcx=reply-form]";
+    if (document.querySelectorAll(qs_rform)) {
+      reply_forms_handler = new ReplyFormsHandler(qs_rform);
+    }
   }
 });
 

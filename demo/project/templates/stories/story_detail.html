@@ -64,6 +64,9 @@
    polling_interval: 5000
  };
 </script>
-<script type="module" src="{% static 'django_comments_xtd/js/index.js' %}"></script>
+<script type="module" src="{% static 'django_comments_xtd/js/comments.js' %}"></script>
 <script type="module" src="{% static 'django_comments_xtd/js/reactions.js' %}"></script>
+<div style="display: none">
+  {% render_comment_reply_form for object %}
+</div>
 {% endblock %}

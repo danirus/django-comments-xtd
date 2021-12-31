@@ -39,7 +39,9 @@
 {% endif %}
 
 <section class="{% if form.reply_to.value == 0 %}comment-form{% else %}reply-form active{% endif %}">
-  <h5 class="text-center">Post your comment</h5>
+  {% if form.reply_to.value == 0 %}
+    <h5 class="text-center">{% translate "Post your comment" %}</h5>
+  {% endif %}
   <form method="POST" autocomplete="off" action="{% comment_form_target %}">
     {% csrf_token %}
     <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}" />

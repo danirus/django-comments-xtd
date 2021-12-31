@@ -11,8 +11,9 @@ from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
-from django_comments.templatetags.comments import (BaseCommentNode,
-                                                   RenderCommentListNode)
+from django_comments.templatetags.comments import (
+    BaseCommentNode, RenderCommentFormNode, RenderCommentListNode
+)
 
 from django_comments_xtd import get_model, get_reactions_enum, utils
 from django_comments_xtd.api import frontend
@@ -203,6 +204,37 @@ def render_xtdcomment_list(parser, token):
 
     """
     return RenderXtdCommentListNode.handle_token(parser, token)
+
+
+class RenderCommentReplyFormNode(RenderCommentFormNode):
+    def render(self, context):
+        ctype, object_pk = self.get_target_ctype_pk(context)
+        if object_pk:
+            templates = [
+                "comments/%s/%s/reply_form.html" % (ctype.app_label,
+                                                    ctype.model),
+                "comments/%s/reply_form.html" % ctype.app_label,
+                "comments/reply_form.html"
+            ]
+            context_dict = context.flatten()
+            context_dict['form'] = self.get_form(context)
+            formstr = loader.render_to_string(templates, context_dict)
+            return formstr
+        else:
+            return ''
+
+
+@register.tag
+def render_comment_reply_form(parser, token):
+    """
+    Render the comment reply form to be used by the JavaScript plugin.
+
+    Syntax::
+
+        {% render_comment_reply_form for [object] %}
+        {% render_comment_reply_form for [app].[model] [object_id] %}
+    """
+    return RenderCommentReplyFormNode.handle_token(parser, token)
 
 
 @register.simple_tag()

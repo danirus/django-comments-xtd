@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'manifest_loader',
+    # 'manifest_loader',
     'rest_framework',
     'avatar',
     'django_comments_xtd',

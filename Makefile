@@ -1,5 +1,5 @@
 	.DEFAULT_GOAL := help
-.PHONY: coverage deps help lint test tox
+.PHONY: coverage deps help test tox
 
 coverage:  ## Run tests with coverage.
 	coverage erase
@@ -13,9 +13,6 @@ deps:  ## Install dependencies.
 
 pep8:  ## Check PEP8 compliance.
 	flake8 --exclude=.tox,docs,django_comments_xtd/tests,django_comments_xtd/__init__.py,django_comments_xtd/migrations --max-line-length=80 django_comments_xtd
-
-lint:  ## Run pylint.
-	pylint django_comments_xtd
 
 test:  ## Run tests.
 	py.test

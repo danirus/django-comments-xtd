@@ -1,0 +1,5 @@
+-r requirements.txt
+coverage
+pytest
+pytest-cov
+pytest-django

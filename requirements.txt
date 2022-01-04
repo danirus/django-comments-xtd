@@ -1,4 +1,4 @@
-django>=3.0
-django-contrib-comments>=2.0
-djangorestframework>=3.12
+django>=3,<5
+django-contrib-comments>=2.1,<2.2
+djangorestframework>=3.12,<3.14
 docutils

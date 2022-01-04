@@ -29,3 +29,4 @@ example/env
 .idea
 demo/project/avatars
 demo/project/project/settings_local.py
+demos/project-quotes/pqenv

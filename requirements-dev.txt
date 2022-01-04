@@ -1,0 +1,5 @@
+-r requirements-tests.txt
+black
+ipython
+ipdb
+isort

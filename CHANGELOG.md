@@ -22,6 +22,23 @@
       reactions. To get aligned with issue #161, the new frontend to handle
       reactions doesn't have additional dependencies.
 
+## [2.9.5] - 2021-12-13
+
+   * Adds compatibility with Django v4.
+   * Fixes [issue-358](https://github.com/danirus/django-comments-xtd/issues/358): Missing closing <form> tag in the dislike.html template.
+
+## [2.9.4] - 2021-11-11
+
+   * Fixes [issue-333](https://github.com/danirus/django-comments-xtd/issues/333) produced when using django-comments-xtd with Django 3.2 with MySQL/MariaDB. The issue raises when calling 'update()' on queries with 'sorted_by', as it is the case of the default 'objects' manager of XtdComment.
+   * App translation to Simplified Chinesse thanks to @galeo.
+   * Fixes issue #334 related to defaults for DRF views. See the [PR-338](https://github.com/danirus/django-comments-xtd/pull/338). Thanks to @PetrDlouhy.
+   * Improve command 'populate_xtdcomments' to output using the stdout attribute of the BaseCommand.
+   * Fixes [issue-337](https://github.com/danirus/django-comments-xtd/issues/337). Provides updated pyproject.toml file that matches package version.
+
+## [2.9.3] - 2021-09-22
+
+    * Fixes issue in 'models.publish_or_unpublish_nested_comments', when calling the update method on an empty QuerySet. See [issue-318](https://github.com/danirus/django-comments-xtd/issues/318). Thanks to @abiatarfestus, @ironworld and @Khoding.
+    * Enhance the queryset in notify_comment_followers using distinct when possible. And fallback to the previous queryset when distinct is not supported, as is the case for sqlite. See [issue-326](https://github.com/danirus/django-comments-xtd/issues/326). Thanks to @enzedonline.
 
 ## [2.9.2] - 2021-06-19
 

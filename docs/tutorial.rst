@@ -172,7 +172,7 @@ Now let's append the following entries to the tutorial settings module:
                             b"Aequam memento rebus in arduis servare mentem.")
 
        # Source mail address used for notifications.
-       COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
+       COMMENTS_XTD_FROM_EMAIL = "webmaster@example.com"
 
        # Contact mail address to show in messages.
        COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
@@ -318,9 +318,9 @@ One of the differences between django-comments-xtd and other commenting
 applications is the fact that by default it requires comment confirmation by
 email when users are not logged in, a very effective feature to discard unwanted
 comments. However there might be cases in which you would prefer a different
-approach. Django Comments Framework comes with `moderation capabilities
+approach. The Django Comments Framework comes with `moderation capabilities
 <http://django-contrib-comments.readthedocs.io/en/latest/moderation.html>`_
-included upon which you can build your own comment filtering.
+included, on top of which you can build your own comment filtering.
 
 Comment moderation is often established to fight spam, but may be used for other
 purposes, like triggering actions based on comment content, rejecting comments
@@ -342,7 +342,7 @@ Let's start adding our email address to the :setting:`MANAGERS` in the
 
 
 Now we will create a new ``Moderator`` class that inherits from Django Comments
-Frammework's ``CommentModerator``. This class enables moderation by defining a
+Framework's ``CommentModerator``. This class enables moderation by defining a
 number of class attributes. Read more about it in `moderation options
 <https://django-contrib-comments.readthedocs.io/en/latest/moderation.html
 #moderation-options>`_, in the official documentation of the Django Comments
@@ -380,7 +380,8 @@ confirming the comment you will see the ``django_comments_xtd/moderated.html``
 template, and your comment will be put on hold for approval.
 
 If on the other hand you send a comment to a blog post created within the last
-year your comment will not be put in moderation. Give it a try as a logged in
+year (login in the admin interface and update the publish field of the post)
+your comment will not be put in moderation. Give it a try as a logged in
 user and as an anonymous user.
 
 When sending a comment as a logged-in user the comment won't have to be
@@ -464,7 +465,7 @@ Moderate on bad words
 Let's now create our own Moderator class by subclassing ``SpamModerator``. The
 goal is to provide a ``moderate`` method that looks in the content of the
 comment and returns ``False`` whenever it finds a bad word in the message. The
-effect of returning ``False`` is that comment's ``is_public`` attribute will be
+effect of returning ``False`` is that comments' ``is_public`` attribute will be
 put to ``False`` and therefore the comment will be in moderation.
 
 The blog application comes with a bad word list in the
@@ -618,9 +619,9 @@ Edit ``blog/post_detail.html`` to make it look like follows:
        </div>
 
        {% if object.allow_comments %}
-       <div class="comment">
-         <h4 class="text-center">Your comment</h4>
-         <div class="well">
+       <div class="comment mt-3 mb-5">
+         <h4 class="text-center mb-4">Your comment</h4>
+         <div class="card pt-4">
            {% render_comment_form for object %}
          </div>
        </div>
@@ -882,9 +883,12 @@ to the template tag:
 
    .. code-block:: html+django
 
+       [...]
        <ul class="media-list">
          {% render_xtdcomment_tree for object allow_flagging allow_feedback show_feedback %}
        </ul>
+       {% endif %}
+       {% endblock %}
 
        {% block extra-js %}
        <script

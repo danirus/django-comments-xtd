@@ -5,7 +5,7 @@ from django_comments.views.comments import comment_done
 from django_comments.views.moderation import (flag_done, delete, delete_done,
                                               approve, approve_done)
 
-from django_comments_xtd import api, views
+from django_comments_xtd import views
 
 
 urlpatterns = [
@@ -36,17 +36,10 @@ urlpatterns = [
             name='comments-url-redirect'),
 
     # API handlers.
-    re_path(r'^api/comment/$', api.CommentCreate.as_view(),
-            name='comments-xtd-api-create'),
-    re_path(r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[-\w]+)/$',
-            api.CommentList.as_view(), name='comments-xtd-api-list'),
-    re_path(
-        r'^api/(?P<content_type>\w+[-]{1}\w+)/(?P<object_pk>[-\w]+)/count/$',
-        api.CommentCount.as_view(), name='comments-xtd-api-count'),
-    re_path(r'^api/react/$', api.PostCommentReaction.as_view(),
-            name='comments-xtd-api-react'),
-    re_path(r'^api/flag/$', api.CreateReportFlag.as_view(),
-            name='comments-xtd-api-flag'),
+    path('api/', include("django_comments_xtd.api.urls"),
+         {'override_drf_defaults': True}),
+
+    path('', include("django_comments.urls")),
 ]
 
 

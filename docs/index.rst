@@ -102,33 +102,52 @@ Change Log
 
     * Fixes issue `#194 <https://github.com/danirus/django-comments-xtd/issues/221>`_, about the :setting:`COMMENTS_HIDE_REMOVED` setting and the new :setting:`COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED`. Up until v3.0.0 removed comments were listed but their content were not displayed. They showed a "comment has been removed" message instead. That behaviour didn't fully comply with the :setting:`COMMENTS_HIDE_REMOVED` setting of django-comments, the parent app. By default :setting:`COMMENTS_HIDE_REMOVED` is ``True``, which has the effect of hiding removed comments. As of v3.0.0 this is also the behaviour of django-comments-xtd. Additionally a new setting :setting:`COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED` has been created to control whether nested comments of a comment being removed or approved will be withhold or published.
 
+[2.9.5] - 2021-12-14
+--------------------
+
+   * Adds compatibility with Django v4.
+   * Fixes `issue #358 <https://github.com/danirus/django-comments-xtd/issues/358>`_: Missing closing <form> tag in the dislike.html template.
+
+[2.9.4] - 2021-11-11
+--------------------
+
+   * Fixes `issue #333 <https://github.com/danirus/django-comments-xtd/issues/333>`_ produced when using django-comments-xtd with Django 3.2 with MySQL/MariaDB. The issue raises when calling 'update()' on queries with 'sorted_by', as it is the case of the default 'objects' manager of XtdComment.
+   * App translation to Simplified Chinesse thanks to @galeo.
+   * Fixes issue #334 related to defaults for DRF views. See the `PR-338 <https://github.com/danirus/django-comments-xtd/pull/338>`_. Thanks to @PetrDlouhy.
+   * Improve command 'populate_xtdcomments' to output using the stdout attribute of the BaseCommand.
+
+[2.9.3] - 2021-09-22
+--------------------
+
+    * Fixes issue in 'models.publish_or_unpublish_nested_comments', when calling the update method on an empty QuerySet. See `issue #318 <https://github.com/danirus/django-comments-xtd/issues/318>`_. Thanks to @abiatarfestus, @ironworld and @Khoding.
+    * Enhance the queryset in notify_comment_followers using distinct when possible. And fallback to the previous queryset when distinct is not supported, as is the case for sqlite. See `issue #326 <https://github.com/danirus/django-comments-xtd/issues/326>`_. Thanks to @enzedonline.
 
 [2.9.2] - 2021-06-19
 --------------------
 
-    * Fixes issue with nested_count XtdComment's attribute being wrongly computed when comment threads are more than 2 level deep and have more than 1 thread. See [PR-312](https://github.com/danirus/django-comments-xtd/pull/312).
-    * Resolves limitation in API views. Avoid using explicit XtdComment model and rather use the `get_model` function to allow using customized comment models with API. See [PR-313](https://github.com/danirus/django-comments-xtd/pull/313). Thanks to @r4fek.
-    * Enhance comment form initialization, so that original fields are not override but rather only some of its attributes. See [PR-315](https://github.com/danirus/django-comments-xtd/pull/315). Thanks to @dest81.
+    * Fixes issue with nested_count XtdComment's attribute being wrongly computed when comment threads are more than 2 level deep and have more than 1 thread. See `PR-312 <https://github.com/danirus/django-comments-xtd/pull/312>`_.
+    * Resolves limitation in API views. Avoid using explicit XtdComment model and rather use the `get_model` function to allow using customized comment models with API. See `PR-313 <https://github.com/danirus/django-comments-xtd/pull/313>`_. Thanks to @r4fek.
+    * Enhance comment form initialization, so that original fields are not override but rather only some of its attributes. See `PR-315 <https://github.com/danirus/django-comments-xtd/pull/315>`_. Thanks to @dest81.
 
 [2.9.1] - 2021-04-25
 --------------------
 
-    * Fixes issue when the 'sent' view does not receive a 'c' query string parameter. See [PR-305](https://github.com/danirus/django-comments-xtd/pull/305). Thanks to @dest81.
+    * Fixes issue when the 'sent' view does not receive a 'c' query string parameter. See `PR-305 <https://github.com/danirus/django-comments-xtd/pull/305>`_. Thanks to @dest81.
 
 [2.9.0] - 2021-03-20
 --------------------
 
     * Drops support for Django 2.0 and 2.1.
     * Requires django-contrib-comments >= 2.1, and djangorestframework >= 3.12.
-    * Fixes warning when generating the OpenAPI schema. Thanks to @ivanychev. See [PR-296](https://github.com/danirus/django-comments-xtd/pull/296).
-    * Fixes issue with `render_xtdcomment_tree` templatetag, thanks to @dest81. See [PR-295](https://github.com/danirus/django-comments-xtd/pull/295).
+    * Fixes warning when generating the OpenAPI schema. Thanks to @ivanychev. See `PR-296 <https://github.com/danirus/django-comments-xtd/pull/296>`_.
+    * Fixes issue with `render_xtdcomment_tree` templatetag, thanks to @dest81. See `PR-295 <https://github.com/danirus/django-comments-xtd/pull/295>`_.
     * Fixes issue `#291 <https://github.com/danirus/django-comments-xtd/issues/291>`_, about the frontend plugin not being aware of the setting COMMENTS_XTD_DEFAULT_FOLLOWUP. It also fixes the content of the `login_url` props attribute. Its value is now the content of `settings.LOGIN_URL`.
     * Fixes issue `#284 <https://github.com/danirus/django-comments-xtd/issues/284>`_, about sending a comment twice by clicking the comment send button twice. It happened when not using the JavaScript plugin.
 
 [2.8.5] - 2021-03-02
 --------------------
 
-    * Fixes issue #292 with the workflow upload-pypi.yml, that caused the package bundle to be built without JavaScript files.
+    * Fixes issue `#292 <https://github.com/danirus/django-comments-xtd/issues/292>`_ with the workflow upload-pypi.yml, that caused the package bundle to be built without JavaScript files.
 
 [2.8.4] - 2021-02-28
 --------------------

@@ -57,7 +57,7 @@ The new class ``MyComment`` extends django_comments_xtd's ``XtdComment`` with a 
 The forms module extends ``XtdCommentForm`` and rewrites the method ``get_comment_create_data``::
 
   from django import forms
-  from django.utils.translation import ugettext_lazy as _
+  from django.utils.translation import gettext_lazy as _
 
   from django_comments_xtd.forms import XtdCommentForm
   from django_comments_xtd.models import TmpXtdComment
@@ -81,7 +81,7 @@ The forms module extends ``XtdCommentForm`` and rewrites the method ``get_commen
 The admin module provides a new class MyCommentAdmin that inherits from XtdCommentsAdmin and customize some of its attributes to include the new field ``title``::
 
   from django.contrib import admin
-  from django.utils.translation import ugettext_lazy as _
+  from django.utils.translation import gettext_lazy as _
 
   from django_comments_xtd.admin import XtdCommentsAdmin
   from custom_comments.mycomments.models import MyComment

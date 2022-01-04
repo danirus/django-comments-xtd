@@ -1,0 +1,178 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-28 15:38+0800\n"
+"PO-Revision-Date: 2021-09-29 15:06+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "This field is required."
+msgstr "此字段为必填字段。"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Your comment"
+msgstr "你的评论"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "name"
+msgstr "姓名"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Name"
+msgstr "姓名"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "mail address"
+msgstr "邮件地址"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Required for comment verification."
+msgstr "评论验证需要"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Mail"
+msgstr "邮件"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "url your name links to (optional)"
+msgstr "你的姓名的URL链接（可选）"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Link"
+msgstr "链接"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Notify me about follow-up comments"
+msgstr "通知后续评论"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Your comment will be reviewed. Thank your for your patience."
+msgstr "你的评论将被检查。谢谢你的耐心。"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Thank you, a comment confirmation request has been sent by mail."
+msgstr "谢谢，已通过电子邮件发送评论确认请求。"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Sorry, your comment has been rejected."
+msgstr "抱歉，你的评论被拒绝了。"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Your comment in preview"
+msgstr "预览中的评论"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Now"
+msgstr "现在"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "preview"
+msgstr "预览"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "send"
+msgstr "发送"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Post your comment"
+msgstr "发表评论"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "moderator"
+msgstr "版主"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+#, javascript-format
+msgid "%s user has flagged this comment as inappropriate."
+msgid_plural "%s users have flagged this comment as inappropriate."
+msgstr[0] "%s 位用户将此评论标记为不当。"
+msgstr[1] "%s 位用户将此评论标记为不当。"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "I flagged it as inappropriate"
+msgstr "我把它标记为不当。"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "flag comment as inappropriate"
+msgstr "标记为不当评论"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "remove comment"
+msgstr "删除评论"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "I like it"
+msgstr "我喜欢它"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "I dislike it"
+msgstr "我不喜欢它"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Reply"
+msgstr "回复"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+#, javascript-format
+msgid "%s comment."
+msgid_plural "%s comments."
+msgstr[0] "%s 条评论。"
+msgstr[1] "%s 条评论。"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Only registered users can post comments."
+msgstr "只有注册用户才能发表评论。"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+msgid "Comments are disabled for this article."
+msgstr "评论被禁止。"
+
+#: static/django_comments_xtd/js/plugin-2.9.2.js:1
+#: static/django_comments_xtd/js/plugin-2.9.3.js:1
+#, javascript-format
+msgid "There is %s new comment."
+msgid_plural "There are %s new comments."
+msgstr[0] "有 %s 条评论。"
+msgstr[1] "有 %s 条评论。"

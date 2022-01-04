@@ -12,7 +12,7 @@ deps:  ## Install dependencies.
 	pip install -r requirements.txt
 
 pep8:  ## Check PEP8 compliance.
-	flake8 --exclude=.tox,docs,django_comments_xtd/tests,django_comments_xtd/__init__.py,django_comments_xtd/migrations --max-line-length=80 django_comments_xtd
+	flake8 --exclude=.tox,docs,django_comments_xtd/tests,django_comments_xtd/__init__.py,django_comments_xtd/migrations --max-line-length=80 --extend-ignore=E203 django_comments_xtd
 
 test:  ## Run tests.
 	py.test

@@ -90,7 +90,6 @@ TEMPLATES = [
     }
 ]
 
-django_comments = "django_comments"
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -101,7 +100,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_comments_xtd",
     "django_comments_xtd.tests",
-    django_comments,
+    "django_comments",
 ]
 COMMENTS_APP = "django_comments_xtd"
 

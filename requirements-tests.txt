@@ -1,5 +1,6 @@
 -r requirements.txt
 coverage
+flake8
 pytest
 pytest-cov
 pytest-django

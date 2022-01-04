@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404
 from django_comments_xtd import get_model as get_comment_model
 from django_comments.views.moderation import perform_flag
 from rest_framework import generics, mixins, permissions, status, renderers
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 

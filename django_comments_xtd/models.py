@@ -130,7 +130,7 @@ class XtdComment(Comment):
                 )
 
     def get_reply_url(self):
-        return reverse("comments-xtd-reply", kwargs={"comment-id": self.pk})
+        return reverse("comments-xtd-reply", kwargs={"cid": self.pk})
 
     def allow_thread(self):
         if self.level < max_thread_level_for_content_type(self.content_type):

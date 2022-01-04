@@ -17,19 +17,20 @@ import django_comments
 from django_comments_xtd import get_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.api.views import CommentCount, CommentList
-from django_comments_xtd.models import (XtdComment,
-                                        publish_or_withhold_on_pre_save)
+from django_comments_xtd.models import (
+    XtdComment,
+    publish_or_withhold_on_pre_save,
+)
 from django_comments_xtd.tests.models import Article, MyComment
 from django_comments_xtd.tests.utils import post_comment
 from django_comments_xtd.tests.test_models import (
-    thread_test_step_1, thread_test_step_2, thread_test_step_3)
+    thread_test_step_1,
+    thread_test_step_2,
+    thread_test_step_3,
+)
 
 
-app_model_options_mock = {
-    'tests.article': {
-        'who_can_post': 'users'
-    }
-}
+app_model_options_mock = {"tests.article": {"who_can_post": "users"}}
 
 XtdComment = get_model()
 
@@ -39,31 +40,45 @@ factory = APIRequestFactory()
 
 class CommentCreateTestCase(DjangoTestCase):
     def setUp(self):
-        patcher = patch('django_comments_xtd.views.send_mail')
+        patcher = patch("django_comments_xtd.views.send_mail")
         self.mock_mailer = patcher.start()
         self.article = Article.objects.create(
-            title="October", slug="october", body="What I did on October...")
+            title="October", slug="october", body="What I did on October..."
+        )
         self.form = django_comments.get_form()(self.article)
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_XTD_CONFIRM_EMAIL=False)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings", COMMENTS_XTD_CONFIRM_EMAIL=False
+    )
     def test_post_returns_201_response(self):
-        data = {"name": "Bob", "email": "fulanito@detal.com",
-                "followup": True, "reply_to": 0, "level": 1, "order": 1,
-                "comment": "Es war einmal eine kleine...",
-                "honeypot": ""}
+        data = {
+            "name": "Bob",
+            "email": "fulanito@detal.com",
+            "followup": True,
+            "reply_to": 0,
+            "level": 1,
+            "order": 1,
+            "comment": "Es war einmal eine kleine...",
+            "honeypot": "",
+        }
         data.update(self.form.initial)
         response = post_comment(data)
         self.assertEqual(response.status_code, 201)
         data = json.loads(response.rendered_content)
-        self.assertTrue('id' in data)
-        self.assertEqual(data['id'], 1)  # id of the new created comment.
+        self.assertTrue("id" in data)
+        self.assertEqual(data["id"], 1)  # id of the new created comment.
 
     def test_post_returns_2xx_response(self):
-        data = {"name": "Bob", "email": "fulanito@detal.com",
-                "followup": True, "reply_to": 0, "level": 1, "order": 1,
-                "comment": "Es war einmal eine kleine...",
-                "honeypot": ""}
+        data = {
+            "name": "Bob",
+            "email": "fulanito@detal.com",
+            "followup": True,
+            "reply_to": 0,
+            "level": 1,
+            "order": 1,
+            "comment": "Es war einmal eine kleine...",
+            "honeypot": "",
+        }
         data.update(self.form.initial)
         response = post_comment(data)
         self.assertEqual(response.status_code, 204)
@@ -72,24 +87,38 @@ class CommentCreateTestCase(DjangoTestCase):
     def test_post_returns_4xx_response(self):
         # It uses an authenticated user, but the user has no mail address.
         self.user = User.objects.create_user("bob", "", "pwd")
-        data = {"name": "", "email": "",
-                "followup": True, "reply_to": 0, "level": 1, "order": 1,
-                "comment": "Es war einmal eine kleine...",
-                "honeypot": ""}
+        data = {
+            "name": "",
+            "email": "",
+            "followup": True,
+            "reply_to": 0,
+            "level": 1,
+            "order": 1,
+            "comment": "Es war einmal eine kleine...",
+            "honeypot": "",
+        }
         data.update(self.form.initial)
         response = post_comment(data, auth_user=self.user)
         self.assertEqual(response.status_code, 400)
-        self.assertTrue('name' in response.data)
-        self.assertTrue('email' in response.data)
+        self.assertTrue("name" in response.data)
+        self.assertTrue("email" in response.data)
         self.assertEqual(self.mock_mailer.call_count, 0)
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_XTD_APP_MODEL_OPTIONS=app_model_options_mock)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_XTD_APP_MODEL_OPTIONS=app_model_options_mock,
+    )
     def test_post_returns_unauthorize_response(self):
-        data = {"name": "Bob", "email": "fulanito@detal.com",
-                "followup": True, "reply_to": 0, "level": 1, "order": 1,
-                "comment": "Es war einmal eine kleine...",
-                "honeypot": ""}
+        data = {
+            "name": "Bob",
+            "email": "fulanito@detal.com",
+            "followup": True,
+            "reply_to": 0,
+            "level": 1,
+            "order": 1,
+            "comment": "Es war einmal eine kleine...",
+            "honeypot": "",
+        }
         data.update(self.form.initial)
         response = post_comment(data)
         self.assertEqual(response.status_code, 400)
@@ -99,26 +128,33 @@ class CommentCreateTestCase(DjangoTestCase):
     def post_parent_comment(self):
         article_ct = ContentType.objects.get(app_label="tests", model="article")
         site1 = Site.objects.get(pk=1)
-        self.cm = XtdComment.objects.create(content_type=article_ct,
-                                            object_pk=self.article.id,
-                                            content_object=self.article,
-                                            site=site1,
-                                            comment="just a testing comment",
-                                            submit_date=datetime.now())
+        self.cm = XtdComment.objects.create(
+            content_type=article_ct,
+            object_pk=self.article.id,
+            content_object=self.article,
+            site=site1,
+            comment="just a testing comment",
+            submit_date=datetime.now(),
+        )
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_XTD_MAX_THREAD_LEVEL=0,
-                    COMMENTS_XTD_CONFIRM_EMAIL=False)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_XTD_MAX_THREAD_LEVEL=0,
+        COMMENTS_XTD_CONFIRM_EMAIL=False,
+    )
     def test_post_reply_to_exceeds_max_thread_level_returns_400_code(self):
         self.assertEqual(settings.COMMENTS_XTD_MAX_THREAD_LEVEL, 0)
         self.assertEqual(XtdComment.objects.count(), 0)
         self.post_parent_comment()
         self.assertEqual(XtdComment.objects.count(), 1)
-        data = {"name": "Bob", "email": "fulanito@detal.com",
-                "followup": True,
-                "reply_to": self.cm.id,  # This exceeds max thread level.
-                "comment": "Es war einmal eine kleine...",
-                "honeypot": ""}
+        data = {
+            "name": "Bob",
+            "email": "fulanito@detal.com",
+            "followup": True,
+            "reply_to": self.cm.id,  # This exceeds max thread level.
+            "comment": "Es war einmal eine kleine...",
+            "honeypot": "",
+        }
         data.update(self.form.initial)
         response = post_comment(data)
         self.assertEqual(XtdComment.objects.count(), 1)  # Comment not added.
@@ -131,11 +167,12 @@ _xtd_model = "django_comments_xtd.tests.models.MyComment"
 class CommentCountTestCase(APITestCase):
     def setUp(self):
         self.article = Article.objects.create(
-            title="September", slug="september", body="During September...")
+            title="September", slug="september", body="During September..."
+        )
 
     def _send_request(self):
         kwargs = {"content_type": "tests-article", "object_pk": "1"}
-        req = factory.get(reverse('comments-xtd-api-count', kwargs=kwargs))
+        req = factory.get(reverse("comments-xtd-api-count", kwargs=kwargs))
         view = CommentCount.as_view()
         return view(req, **kwargs)
 
@@ -150,27 +187,31 @@ class CommentCountTestCase(APITestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.rendered_content, b'{"count":2}')
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_XTD_MODEL=_xtd_model)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings", COMMENTS_XTD_MODEL=_xtd_model
+    )
     def test_get_count_for_custom_comment_model_shall_be_2(self):
-        thread_test_step_1(self.article, model=MyComment,
-                           title="Can't be empty 1")
+        thread_test_step_1(
+            self.article, model=MyComment, title="Can't be empty 1"
+        )
         resp = self._send_request()
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.rendered_content, b'{"count":2}')
 
-    @patch.multiple('django_comments_xtd.conf.settings', SITE_ID=2)
+    @patch.multiple("django_comments_xtd.conf.settings", SITE_ID=2)
     def test_get_count_for_comments_sent_to_different_site(self):
-        site2 = Site.objects.create(domain='site2.com', name='site2.com')
+        site2 = Site.objects.create(domain="site2.com", name="site2.com")
         thread_test_step_1(self.article)
         thread_test_step_1(self.article, site=site2)
         resp = self._send_request()
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.rendered_content, b'{"count":2}')
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_HIDE_REMOVED=True,
-                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_HIDE_REMOVED=True,
+        COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True,
+    )
     def test_get_count_for_HIDE_REMOVED_case_1(self):
         # To find out what are the cases 1, 2 and 3, read the docs settings
         # page, section COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED.
@@ -191,9 +232,11 @@ class CommentCountTestCase(APITestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.rendered_content, b'{"count":1}')
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_HIDE_REMOVED=False,
-                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_HIDE_REMOVED=False,
+        COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True,
+    )
     def test_get_count_for_HIDE_REMOVED_case_2(self):
         thread_test_step_1(self.article)
         thread_test_step_2(self.article)
@@ -218,15 +261,18 @@ class CommentCountTestCase(APITestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.rendered_content, b'{"count":2}')
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_HIDE_REMOVED=False,
-                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_HIDE_REMOVED=False,
+        COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False,
+    )
     def test_get_count_for_HIDE_REMOVED_case_3(self):
         model_app_label = get_model()._meta.label
         # The function publish_or_withhold_on_pre_save is only called if
         # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True.
-        pre_save.disconnect(publish_or_withhold_on_pre_save,
-                            sender=model_app_label)
+        pre_save.disconnect(
+            publish_or_withhold_on_pre_save, sender=model_app_label
+        )
         thread_test_step_1(self.article)
         thread_test_step_2(self.article)
         #
@@ -249,18 +295,20 @@ class CommentCountTestCase(APITestCase):
         self.assertEqual(resp.rendered_content, b'{"count":4}')
 
         # Re-connect the function for the following tests.
-        pre_save.connect(publish_or_withhold_on_pre_save,
-                         sender=model_app_label)
+        pre_save.connect(
+            publish_or_withhold_on_pre_save, sender=model_app_label
+        )
 
 
 class CommentListTestCase(APITestCase):
     def setUp(self):
         self.article = Article.objects.create(
-            title="September", slug="september", body="During September...")
+            title="September", slug="september", body="During September..."
+        )
 
     def _send_request(self):
         kwargs = {"content_type": "tests-article", "object_pk": "1"}
-        req = factory.get(reverse('comments-xtd-api-list', kwargs=kwargs))
+        req = factory.get(reverse("comments-xtd-api-list", kwargs=kwargs))
         view = CommentList.as_view()
         return view(req, **kwargs)
 
@@ -279,15 +327,15 @@ class CommentListTestCase(APITestCase):
         data = json.loads(resp.rendered_content)
         self.assertEqual(len(data), 5)
         for cm, cm_id in zip(data, [1, 3, 4, 2, 5]):
-            self.assertEqual(cm['id'], cm_id)
+            self.assertEqual(cm["id"], cm_id)
 
     # Missing enhancement: extend the capacity to customize the comment model
     # to the API, so that a comment model can be used in combination with its
     # own serializer, and test it here.
 
-    @patch.multiple('django.conf.settings', SITE_ID=2)
+    @patch.multiple("django.conf.settings", SITE_ID=2)
     def test_get_list_for_a_second_site(self):
-        site2 = Site.objects.create(domain='site2.com', name='site2.com')
+        site2 = Site.objects.create(domain="site2.com", name="site2.com")
 
         # Send nested comments to the article in the site1.
         thread_test_step_1(self.article)
@@ -302,11 +350,13 @@ class CommentListTestCase(APITestCase):
         data = json.loads(resp.rendered_content)
         self.assertEqual(len(data), 2)
         for cm, cm_id in zip(data, [6, 7]):
-            self.assertEqual(cm['id'], cm_id)
+            self.assertEqual(cm["id"], cm_id)
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_HIDE_REMOVED=True,
-                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_HIDE_REMOVED=True,
+        COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True,
+    )
     def test_get_list_for_HIDE_REMOVED_case_1(self):
         thread_test_step_1(self.article)
         thread_test_step_2(self.article)
@@ -325,11 +375,13 @@ class CommentListTestCase(APITestCase):
         self.assertEqual(resp.status_code, 200)
         data = json.loads(resp.rendered_content)
         self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]['id'], 2)
+        self.assertEqual(data[0]["id"], 2)
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_HIDE_REMOVED=False,
-                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_HIDE_REMOVED=False,
+        COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=True,
+    )
     def test_get_list_for_HIDE_REMOVED_case_2(self):
         thread_test_step_1(self.article)
         thread_test_step_2(self.article)
@@ -355,17 +407,20 @@ class CommentListTestCase(APITestCase):
         data = json.loads(resp.rendered_content)
         self.assertEqual(len(data), 2)
         for cm, cm_id in zip(data, [1, 2]):
-            self.assertEqual(cm['id'], cm_id)
+            self.assertEqual(cm["id"], cm_id)
 
-    @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_HIDE_REMOVED=False,
-                    COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False)
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_HIDE_REMOVED=False,
+        COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED=False,
+    )
     def test_get_list_for_HIDE_REMOVED_case_3(self):
         model_app_label = get_model()._meta.label
         # The function publish_or_withhold_on_pre_save is only called if
         # COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED are True.
-        pre_save.disconnect(publish_or_withhold_on_pre_save,
-                            sender=model_app_label)
+        pre_save.disconnect(
+            publish_or_withhold_on_pre_save, sender=model_app_label
+        )
         thread_test_step_1(self.article)
         thread_test_step_2(self.article)
         # These two lines create the following comments:
@@ -385,20 +440,21 @@ class CommentListTestCase(APITestCase):
         data = json.loads(resp.rendered_content)
         self.assertEqual(len(data), 4)
         for cm, cm_id in zip(data, [1, 3, 4, 2]):
-            self.assertEqual(cm['id'], cm_id)
+            self.assertEqual(cm["id"], cm_id)
         # Re-connect the function for the following tests.
-        pre_save.connect(publish_or_withhold_on_pre_save,
-                         sender=model_app_label)
+        pre_save.connect(
+            publish_or_withhold_on_pre_save, sender=model_app_label
+        )
 
 
 @pytest.mark.django_db
 def test_CommentList_handles_no_ContentType():
-    kwargs = {'content_type': 'this-that', 'object_pk': '1'}
-    request = factory.get(reverse('comments-xtd-api-list', kwargs=kwargs))
+    kwargs = {"content_type": "this-that", "object_pk": "1"}
+    request = factory.get(reverse("comments-xtd-api-list", kwargs=kwargs))
     view = CommentList.as_view()
     response = view(request, **kwargs)
     assert response.status_code == 200
-    assert response.rendered_content == b'[]'
+    assert response.rendered_content == b"[]"
 
 
 @pytest.mark.django_db
@@ -406,9 +462,9 @@ def test_CommentCount_settings_has_no_SITE_ID(monkeypatch):
     # Remove 'SITE_ID' from settings module, to test that method 'get_queryset'
     # in CommentCount class uses function 'utils.get_current_site_id' to get
     # the site_id.
-    monkeypatch.delattr(settings, name='SITE_ID')
+    monkeypatch.delattr(settings, name="SITE_ID")
     kwargs = {"content_type": "tests-article", "object_pk": "1"}
-    request = factory.get(reverse('comments-xtd-api-count', kwargs=kwargs))
+    request = factory.get(reverse("comments-xtd-api-count", kwargs=kwargs))
     view = CommentCount.as_view()
     response = view(request, **kwargs)
     assert response.status_code == 200

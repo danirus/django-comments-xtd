@@ -46,7 +46,7 @@ import hashlib
 from django_comments_xtd.conf import settings
 
 
-def dumps(obj, key=None, compress=False, extra_key=b''):
+def dumps(obj, key=None, compress=False, extra_key=b""):
     """
     Returns URL-safe, sha1 signed base64 compressed pickle. If key is
     None, settings.SECRET_KEY is used instead.
@@ -62,45 +62,48 @@ def dumps(obj, key=None, compress=False, extra_key=b''):
     is_compressed = False  # Flag for if it's been compressed or not
     if compress:
         import zlib  # Avoid zlib dependency unless compress is being used
+
         compressed = zlib.compress(pickled)
         if len(compressed) < (len(pickled) - 1):
             pickled = compressed
             is_compressed = True
-    base64d = encode(pickled).strip(b'=')
+    base64d = encode(pickled).strip(b"=")
     if is_compressed:
-        base64d = b'.' + base64d
-    return sign(base64d,
-                (key or settings.SECRET_KEY.encode('ascii')) + extra_key)
+        base64d = b"." + base64d
+    return sign(
+        base64d, (key or settings.SECRET_KEY.encode("ascii")) + extra_key
+    )
 
 
-def loads(s, key=None, extra_key=b''):
+def loads(s, key=None, extra_key=b""):
     "Reverse of dumps(), raises ValueError if signature fails"
     if isinstance(s, str):
-        s = s.encode('utf8')  # base64 works on bytestrings
+        s = s.encode("utf8")  # base64 works on bytestrings
     try:
-        base64d = unsign(s,
-                         (key or settings.SECRET_KEY.encode('ascii')) +
-                         extra_key)
+        base64d = unsign(
+            s, (key or settings.SECRET_KEY.encode("ascii")) + extra_key
+        )
     except ValueError:
         raise
     decompress = False
-    if base64d.startswith(b'.'):
+    if base64d.startswith(b"."):
         # It's compressed; uncompress it first
         base64d = base64d[1:]
         decompress = True
     pickled = decode(base64d)
     if decompress:
         import zlib
+
         pickled = zlib.decompress(pickled)
     return pickle.loads(pickled)
 
 
 def encode(s):
-    return base64.urlsafe_b64encode(s).strip(b'=')
+    return base64.urlsafe_b64encode(s).strip(b"=")
 
 
 def decode(s):
-    return base64.urlsafe_b64decode(s + b'=' * (len(s) % 4))
+    return base64.urlsafe_b64decode(s + b"=" * (len(s) % 4))
 
 
 class BadSignature(ValueError):
@@ -111,24 +114,24 @@ class BadSignature(ValueError):
 
 def sign(value, key=None):
     if isinstance(value, str):
-        raise TypeError('sign() needs bytestring: %s' % repr(value))
+        raise TypeError("sign() needs bytestring: %s" % repr(value))
     if key is None:
-        key = settings.SECRET_KEY.encode('ascii')
-    return value + b'.' + base64_hmac(value, key)
+        key = settings.SECRET_KEY.encode("ascii")
+    return value + b"." + base64_hmac(value, key)
 
 
 def unsign(signed_value, key=None):
     if isinstance(signed_value, str):
-        raise TypeError('unsign() needs bytestring')
+        raise TypeError("unsign() needs bytestring")
     if key is None:
-        key = settings.SECRET_KEY.encode('ascii')
-    if signed_value.find(b'.') == -1:
-        raise BadSignature('Missing sig (no . found in value)')
-    value, sig = signed_value.rsplit(b'.', 1)
+        key = settings.SECRET_KEY.encode("ascii")
+    if signed_value.find(b".") == -1:
+        raise BadSignature("Missing sig (no . found in value)")
+    value, sig = signed_value.rsplit(b".", 1)
     if base64_hmac(value, key) == sig:
         return value
     else:
-        raise BadSignature('Signature failed: %s' % sig)
+        raise BadSignature("Signature failed: %s" % sig)
 
 
 def base64_hmac(value, key):

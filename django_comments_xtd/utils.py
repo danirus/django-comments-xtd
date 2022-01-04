@@ -18,7 +18,9 @@ from rest_framework.exceptions import PermissionDenied
 from django_comments_xtd import get_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.conf.defaults import (
-    COMMENTS_XTD_APP_MODEL_OPTIONS, COMMENTS_XTD_REACTIONS_JS_OVERLAYS)
+    COMMENTS_XTD_APP_MODEL_OPTIONS,
+    COMMENTS_XTD_REACTIONS_JS_OVERLAYS,
+)
 from django_comments_xtd.paginator import CommentsPaginator
 
 
@@ -26,8 +28,9 @@ mail_sent_queue = queue.Queue()
 
 
 class EmailThread(threading.Thread):
-    def __init__(self, subject, body, from_email, recipient_list,
-                 fail_silently, html):
+    def __init__(
+        self, subject, body, from_email, recipient_list, fail_silently, html
+    ):
         self.subject = subject
         self.body = body
         self.recipient_list = recipient_list
@@ -37,27 +40,37 @@ class EmailThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        _send_mail(self.subject, self.body, self.from_email,
-                   self.recipient_list, self.fail_silently, self.html)
+        _send_mail(
+            self.subject,
+            self.body,
+            self.from_email,
+            self.recipient_list,
+            self.fail_silently,
+            self.html,
+        )
         mail_sent_queue.put(True)
 
 
-def _send_mail(subject, body, from_email, recipient_list,
-               fail_silently=False, html=None):
+def _send_mail(
+    subject, body, from_email, recipient_list, fail_silently=False, html=None
+):
     msg = EmailMultiAlternatives(subject, body, from_email, recipient_list)
     if html:
         msg.attach_alternative(html, "text/html")
     msg.send(fail_silently)
 
 
-def send_mail(subject, body, from_email, recipient_list,
-              fail_silently=False, html=None):
+def send_mail(
+    subject, body, from_email, recipient_list, fail_silently=False, html=None
+):
     if settings.COMMENTS_XTD_THREADED_EMAILS:
-        EmailThread(subject, body, from_email, recipient_list,
-                    fail_silently, html).start()
+        EmailThread(
+            subject, body, from_email, recipient_list, fail_silently, html
+        ).start()
     else:
-        _send_mail(subject, body, from_email, recipient_list,
-                   fail_silently, html)
+        _send_mail(
+            subject, body, from_email, recipient_list, fail_silently, html
+        )
 
 
 # --------------------------------------------------------------------
@@ -75,14 +88,14 @@ def get_app_model_options(comment=None, content_type=None):
     """
     defaults_options = dict.copy(COMMENTS_XTD_APP_MODEL_OPTIONS)
     settings_options = dict.copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS)
-    if defaults_options != settings_options and 'default' in settings_options:
-        defaults_options['default'].update(settings_options.pop('default'))
+    if defaults_options != settings_options and "default" in settings_options:
+        defaults_options["default"].update(settings_options.pop("default"))
 
     model_app_options = {}
     for app_model in settings_options.keys():
-        for k in defaults_options['default'].keys():
+        for k in defaults_options["default"].keys():
             if k not in settings_options[app_model]:
-                model_app_options[k] = defaults_options['default'][k]
+                model_app_options[k] = defaults_options["default"][k]
             else:
                 model_app_options[k] = settings_options[app_model][k]
 
@@ -92,7 +105,7 @@ def get_app_model_options(comment=None, content_type=None):
     elif content_type:
         key = content_type
     else:
-        return defaults_options['default']
+        return defaults_options["default"]
     try:
         model_app_options.update(settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key])
         return model_app_options
@@ -101,33 +114,33 @@ def get_app_model_options(comment=None, content_type=None):
 
 
 option_msgs = {
-    'comment_flagging_enabled': {
-        'PROD': "This type of comments are not allowed to be flagged.",
-        'DEBUG': "Comments posted to instances of '%s.%s' are not "
-                 "explicitly allowed to be flagged. Check the "
-                 "COMMENTS_XTD_APP_MODEL_OPTIONS setting."
+    "comment_flagging_enabled": {
+        "PROD": "This type of comments are not allowed to be flagged.",
+        "DEBUG": "Comments posted to instances of '%s.%s' are not "
+        "explicitly allowed to be flagged. Check the "
+        "COMMENTS_XTD_APP_MODEL_OPTIONS setting.",
     },
-    'comment_reactions_enabled': {
-        'PROD': "This type of comment are not allowed to receive reactions.",
-        'DEBUG': "Comments posted to instances of '%s.%s' are not "
-                 "explicitly allowed to receive reactions. Check the "
-                 "COMMENTS_XTD_APP_MODEL_OPTIONS setting."
+    "comment_reactions_enabled": {
+        "PROD": "This type of comment are not allowed to receive reactions.",
+        "DEBUG": "Comments posted to instances of '%s.%s' are not "
+        "explicitly allowed to receive reactions. Check the "
+        "COMMENTS_XTD_APP_MODEL_OPTIONS setting.",
     },
-    'object_reactions_enabled': {
-        'PROD': "This type of object are not allowed to receive reactions.",
-        'DEBUG': "Instances of '%s.%s' are not explicitly allowed to receive "
-                 "reactions. Check the COMMENTS_XTD_APP_MODEL_OPTIONS setting."
-    }
+    "object_reactions_enabled": {
+        "PROD": "This type of object are not allowed to receive reactions.",
+        "DEBUG": "Instances of '%s.%s' are not explicitly allowed to receive "
+        "reactions. Check the COMMENTS_XTD_APP_MODEL_OPTIONS setting.",
+    },
 }
 
 
 def check_option(comment, option):
     ret_option = get_app_model_options(comment=comment)[option]
     if not ret_option:
-        message = option_msgs[option]['PROD']
+        message = option_msgs[option]["PROD"]
         if settings.DEBUG:
             ct = ContentType.objects.get_for_model(comment.content_object)
-            message = option_msgs[option]['DEBUG'] % (ct.app_label, ct.model)
+            message = option_msgs[option]["DEBUG"] % (ct.app_label, ct.model)
         raise PermissionDenied(detail=message, code=status.HTTP_403_FORBIDDEN)
 
 
@@ -158,8 +171,8 @@ def get_reactions_js_overlays(comment=None, content_type=None):
     """
     _defaults = dict.copy(COMMENTS_XTD_REACTIONS_JS_OVERLAYS)
     _settings = dict.copy(settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS)
-    if _defaults != _settings and 'default' in _settings:
-        _defaults['default'].update(_settings.pop('default'))
+    if _defaults != _settings and "default" in _settings:
+        _defaults["default"].update(_settings.pop("default"))
 
     if comment:
         content_type = ContentType.objects.get_for_model(comment.content_object)
@@ -167,17 +180,17 @@ def get_reactions_js_overlays(comment=None, content_type=None):
     elif content_type:
         key = content_type
     else:
-        return _defaults['default']
+        return _defaults["default"]
     try:
         return settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS[key]
     except Exception:
-        return _defaults['default']
+        return _defaults["default"]
 
 
 # --------------------------------------------------------------------
 def get_current_site_id(request=None):
-    """ it's a shortcut """
-    return getattr(get_current_site(request), 'pk', 1)  # fallback value
+    """it's a shortcut"""
+    return getattr(get_current_site(request), "pk", 1)  # fallback value
 
 
 def get_html_id_suffix(object):
@@ -187,8 +200,8 @@ def get_html_id_suffix(object):
 
 
 def get_user_avatar(comment):
-    path = hashlib.md5(comment.user_email.lower().encode('utf-8')).hexdigest()
-    param = urlencode({'s': 48})
+    path = hashlib.md5(comment.user_email.lower().encode("utf-8")).hexdigest()
+    param = urlencode({"s": 48})
     return "//www.gravatar.com/avatar/%s?%s&d=identicon" % (path, param)
 
 
@@ -223,25 +236,24 @@ def get_comment_page_number(request, content_type_id, object_id, comment_id):
         site_id = get_current_site_id(request)
 
     qs = get_model().objects.filter(
-        content_type_id=content_type_id,
-        object_pk=object_id,
-        site__pk=site_id)
+        content_type_id=content_type_id, object_pk=object_id, site__pk=site_id
+    )
 
     # The is_public and is_removed fields are implementation details of the
     # built-in comment model's spam filtering system, so they might not
     # be present on a custom comment model subclass. If they exist, we
     # should filter on them.
     field_names = [f.name for f in get_model()._meta.fields]
-    if 'is_public' in field_names:
+    if "is_public" in field_names:
         qs = qs.filter(is_public=True)
     if (
-        getattr(settings, 'COMMENTS_HIDE_REMOVED', True)
-        and 'is_removed' in field_names
+        getattr(settings, "COMMENTS_HIDE_REMOVED", True)
+        and "is_removed" in field_names
     ):
         qs = qs.filter(is_removed=False)
 
-    if 'user' in field_names:
-        qs = qs.select_related('user')
+    if "user" in field_names:
+        qs = qs.select_related("user")
 
     comment_id = int(comment_id)
     paginator = CommentsPaginator(qs, page_size, orphans=num_orphans)

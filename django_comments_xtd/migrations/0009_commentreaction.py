@@ -10,18 +10,42 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('django_comments_xtd', '0008_auto_20200920_2037'),
+        ("django_comments_xtd", "0008_auto_20200920_2037"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CommentReaction',
+            name="CommentReaction",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reaction', django_comments_xtd.models.ReactionField(db_index=True, verbose_name='reaction')),
-                ('counter', models.IntegerField(default=0)),
-                ('authors', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
-                ('comment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reactions', to='django_comments_xtd.XtdComment', verbose_name='reactions')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "reaction",
+                    django_comments_xtd.models.ReactionField(
+                        db_index=True, verbose_name="reaction"
+                    ),
+                ),
+                ("counter", models.IntegerField(default=0)),
+                (
+                    "authors",
+                    models.ManyToManyField(to=settings.AUTH_USER_MODEL),
+                ),
+                (
+                    "comment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reactions",
+                        to="django_comments_xtd.XtdComment",
+                        verbose_name="reactions",
+                    ),
+                ),
             ],
         ),
     ]

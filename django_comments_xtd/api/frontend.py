@@ -9,8 +9,10 @@ from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import max_thread_level_for_content_type
 from django_comments_xtd.utils import (
-    get_current_site_id, get_app_model_options, get_html_id_suffix,
-    get_reactions_js_overlays
+    get_current_site_id,
+    get_app_model_options,
+    get_html_id_suffix,
+    get_reactions_js_overlays,
 )
 
 
@@ -56,14 +58,16 @@ def comments_api_props(obj, user, request=None):
     """
     form = CommentSecurityForm(obj)
     ctype = ContentType.objects.get_for_model(obj)
-    queryset = XtdComment.objects.filter(content_type=ctype,
-                                         object_pk=obj.pk,
-                                         site__pk=get_current_site_id(request),
-                                         is_public=True)
+    queryset = XtdComment.objects.filter(
+        content_type=ctype,
+        object_pk=obj.pk,
+        site__pk=get_current_site_id(request),
+        is_public=True,
+    )
     ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
     app_model = "%s.%s" % (ctype.app_label, ctype.model)
     options = get_app_model_options(content_type=app_model)
-    check_input_allowed_str = options.pop('check_input_allowed')
+    check_input_allowed_str = options.pop("check_input_allowed")
     check_func = import_string(check_input_allowed_str)
     reactions_js_overlays = get_reactions_js_overlays(content_type=app_model)
     d = {
@@ -73,27 +77,29 @@ def comments_api_props(obj, user, request=None):
         "request_name": False,
         "request_email_address": False,
         "is_authenticated": False,
-        "who_can_post": options['who_can_post'],
-        "comment_flagging_enabled": options['comment_flagging_enabled'],
-        "comment_reactions_enabled": options['comment_reactions_enabled'],
-        "object_reactions_enabled": options['object_reactions_enabled'],
+        "who_can_post": options["who_can_post"],
+        "comment_flagging_enabled": options["comment_flagging_enabled"],
+        "comment_reactions_enabled": options["comment_reactions_enabled"],
+        "object_reactions_enabled": options["object_reactions_enabled"],
         "can_moderate": False,
         "react_url": reverse("comments-xtd-api-react"),
         "delete_url": reverse("comments-delete", args=(0,)),
-        "reply_url": reverse("comments-xtd-reply", kwargs={'cid': 0}),
+        "reply_url": reverse("comments-xtd-reply", kwargs={"cid": 0}),
         "flag_url": reverse("comments-xtd-api-flag"),
-        "list_url": reverse('comments-xtd-api-list',
-                            kwargs={'content_type': ctype_slug,
-                                    'object_pk': obj.id}),
-        "count_url": reverse('comments-xtd-api-count',
-                             kwargs={'content_type': ctype_slug,
-                                     'object_pk': obj.id}),
+        "list_url": reverse(
+            "comments-xtd-api-list",
+            kwargs={"content_type": ctype_slug, "object_pk": obj.id},
+        ),
+        "count_url": reverse(
+            "comments-xtd-api-count",
+            kwargs={"content_type": ctype_slug, "object_pk": obj.id},
+        ),
         "send_url": reverse("comments-xtd-api-create"),
         "form": {
-            "content_type": form['content_type'].value(),
-            "object_pk": form['object_pk'].value(),
-            "timestamp": form['timestamp'].value(),
-            "security_hash": form['security_hash'].value()
+            "content_type": form["content_type"].value(),
+            "object_pk": form["object_pk"].value(),
+            "timestamp": form["timestamp"].value(),
+            "security_hash": form["security_hash"].value(),
         },
         "default_followup": settings.COMMENTS_XTD_DEFAULT_FOLLOWUP,
         "html_id_suffix": get_html_id_suffix(obj),
@@ -101,14 +107,16 @@ def comments_api_props(obj, user, request=None):
         "reactions_js_overlays": reactions_js_overlays,
     }
     if user and user.is_authenticated:
-        d['current_user'] = "%d:%s" % (
-            user.pk, settings.COMMENTS_XTD_API_USER_REPR(user))
-        d['is_authenticated'] = True
-        d['can_moderate'] = user.has_perm("django_comments.can_moderate")
-        d['request_name'] = True if not len(user.get_full_name()) else False
-        d['request_email_address'] = True if not user.email else False
+        d["current_user"] = "%d:%s" % (
+            user.pk,
+            settings.COMMENTS_XTD_API_USER_REPR(user),
+        )
+        d["is_authenticated"] = True
+        d["can_moderate"] = user.has_perm("django_comments.can_moderate")
+        d["request_name"] = True if not len(user.get_full_name()) else False
+        d["request_email_address"] = True if not user.email else False
     else:
-        d['login_url'] = settings.LOGIN_URL
+        d["login_url"] = settings.LOGIN_URL
 
     return d
 

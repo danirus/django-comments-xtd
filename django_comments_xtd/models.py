@@ -30,7 +30,7 @@ class MaxThreadLevelExceededException(Exception):
         # self.max_by_app = max_thread_level_for_content_type(content_type)
 
     def __str__(self):
-        return ("Max thread level reached for comment %d" % self.comment.id)
+        return "Max thread level reached for comment %d" % self.comment.id
 
 
 class XtdCommentManager(CommentManager):
@@ -39,23 +39,23 @@ class XtdCommentManager(CommentManager):
         content_types = []
         for app_model in args:
             app, model = app_model.split(".")
-            content_types.append(ContentType.objects.get(app_label=app,
-                                                         model=model))
+            content_types.append(
+                ContentType.objects.get(app_label=app, model=model)
+            )
         return self.for_content_types(content_types, **kwargs)
 
     def for_content_types(self, content_types, site=None):
-        filter_fields = {'content_type__in': content_types}
+        filter_fields = {"content_type__in": content_types}
         if site is not None:
-            filter_fields['site'] = site
-        qs = self.get_queryset().filter(**filter_fields)\
-                                .reverse()
+            filter_fields["site"] = site
+        qs = self.get_queryset().filter(**filter_fields).reverse()
         return qs
 
     def get_queryset(self):
         qs = super(XtdCommentManager, self).get_queryset()
-        return qs.\
-            select_related('user', 'content_type').\
-            order_by(*settings.COMMENTS_XTD_LIST_ORDER)
+        return qs.select_related("user", "content_type").order_by(
+            *settings.COMMENTS_XTD_LIST_ORDER
+        )
 
 
 class XtdComment(Comment):
@@ -63,8 +63,9 @@ class XtdComment(Comment):
     parent_id = models.IntegerField(default=0)
     level = models.SmallIntegerField(default=0)
     order = models.IntegerField(default=1, db_index=True)
-    followup = models.BooleanField(blank=True, default=False,
-                                   help_text=_("Notify follow-up comments"))
+    followup = models.BooleanField(
+        blank=True, default=False, help_text=_("Notify follow-up comments")
+    )
     nested_count = models.IntegerField(default=0, db_index=True)
     objects = XtdCommentManager()
     norel_objects = CommentManager()
@@ -72,7 +73,7 @@ class XtdComment(Comment):
     def get_absolute_url(self, anchor_pattern="#comment-%(id)s"):
         return reverse(
             "comments-url-redirect",
-            args=(self.content_type_id, self.object_pk, self.pk)
+            args=(self.content_type_id, self.object_pk, self.pk),
         ) + (anchor_pattern % self.__dict__)
 
     def save(self, *args, **kwargs):
@@ -100,17 +101,20 @@ class XtdComment(Comment):
 
         self.thread_id = parent.thread_id
         self.level = parent.level + 1
-        qc_eq_thread = XtdComment.norel_objects\
-                                 .filter(thread_id=parent.thread_id)
-        qc_ge_level = qc_eq_thread.filter(level__lte=parent.level,
-                                          order__gt=parent.order)
+        qc_eq_thread = XtdComment.norel_objects.filter(
+            thread_id=parent.thread_id
+        )
+        qc_ge_level = qc_eq_thread.filter(
+            level__lte=parent.level, order__gt=parent.order
+        )
         if qc_ge_level.count():
-            min_order = qc_ge_level.aggregate(Min('order'))['order__min']
-            qc_eq_thread.filter(order__gte=min_order)\
-                        .update(order=F('order') + 1)
+            min_order = qc_ge_level.aggregate(Min("order"))["order__min"]
+            qc_eq_thread.filter(order__gte=min_order).update(
+                order=F("order") + 1
+            )
             self.order = min_order
         else:
-            max_order = qc_eq_thread.aggregate(Max('order'))['order__max']
+            max_order = qc_eq_thread.aggregate(Max("order"))["order__max"]
             self.order = max_order + 1
 
         if self.id != parent.id:
@@ -121,8 +125,9 @@ class XtdComment(Comment):
                     break
                 parent = qc_eq_thread.get(pk=parent.parent_id)
             if parent_ids:
-                qc_eq_thread.filter(pk__in=parent_ids)\
-                            .update(nested_count=F('nested_count') + 1)
+                qc_eq_thread.filter(pk__in=parent_ids).update(
+                    nested_count=F("nested_count") + 1
+                )
 
     def get_reply_url(self):
         return reverse("comments-xtd-reply", kwargs={"comment-id": self.pk})
@@ -137,7 +142,7 @@ class XtdComment(Comment):
         total_counter = 0
         reactions = OrderedDict([(k, {}) for k in get_reactions_enum()])
         # First add the existing reactions sorted by reaction value.
-        for item in self.reactions.order_by('reaction'):
+        for item in self.reactions.order_by("reaction"):
             total_counter += item.counter
             reaction = get_reactions_enum()(item.reaction)
             authors = [
@@ -145,16 +150,16 @@ class XtdComment(Comment):
                 for author in item.authors.all()
             ]
             reactions[reaction.value] = {
-                'value': reaction.value,
-                'authors': authors,
-                'counter': item.counter,
-                'label': reaction.label,
-                'icon': reaction.icon
+                "value": reaction.value,
+                "authors": authors,
+                "counter": item.counter,
+                "label": reaction.label,
+                "icon": reaction.icon,
             }
         # Return only the values of OrderedDict after it's being sorted.
         return {
             "counter": total_counter,
-            "list": [v for k, v in reactions.items() if len(v)]
+            "list": [v for k, v in reactions.items() if len(v)],
         }
 
     @staticmethod
@@ -163,9 +168,8 @@ class XtdComment(Comment):
         Given either a content_object or the pair content_type and object_pk
         it returns the queryset with the comments posted to that object.
         """
-        if (
-            content_object is None and
-            (content_type is None or object_pk is None)
+        if content_object is None and (
+            content_type is None or object_pk is None
         ):
             return None
 
@@ -173,31 +177,34 @@ class XtdComment(Comment):
             content_type = ContentType.objects.get_for_model(content_object)
             object_pk = content_object.id
 
-        flags = CommentFlag.objects\
-            .filter(flag__in=[CommentFlag.SUGGEST_REMOVAL])\
-            .prefetch_related('user')
-        reactions = CommentReaction.objects.all().prefetch_related('authors')
-        prefetch_args = [Prefetch('flags', queryset=flags),
-                         Prefetch('reactions', queryset=reactions)]
+        flags = CommentFlag.objects.filter(
+            flag__in=[CommentFlag.SUGGEST_REMOVAL]
+        ).prefetch_related("user")
+        reactions = CommentReaction.objects.all().prefetch_related("authors")
+        prefetch_args = [
+            Prefetch("flags", queryset=flags),
+            Prefetch("reactions", queryset=reactions),
+        ]
 
         fkwds = {
             "content_type": content_type,
             "object_pk": object_pk,
             "site__pk": get_current_site_id(),
-            "is_public": True
+            "is_public": True,
         }
 
-        hide_removed = getattr(settings, 'COMMENTS_HIDE_REMOVED', True)
+        hide_removed = getattr(settings, "COMMENTS_HIDE_REMOVED", True)
         if hide_removed:
-            fkwds['is_removed'] = False
+            fkwds["is_removed"] = False
 
-        return get_model().objects\
-            .prefetch_related(*prefetch_args)\
-            .filter(**fkwds)
+        return (
+            get_model().objects.prefetch_related(*prefetch_args).filter(**fkwds)
+        )
 
     @staticmethod
-    def tree_from_queryset(queryset,
-                           with_flagging=False, with_feedback=False, user=None):
+    def tree_from_queryset(
+        queryset, with_flagging=False, with_feedback=False, user=None
+    ):
         """Converts a XtdComment queryset into a list of nested dictionaries.
         The queryset has to be ordered by thread_id, order.
         Each dictionary contains two attributes::
@@ -206,6 +213,7 @@ class XtdComment(Comment):
                 'children': [list of child comment dictionaries]
             }
         """
+
         def get_flags(comment):
             flags_dict = {}
             flagging_users = []
@@ -215,33 +223,33 @@ class XtdComment(Comment):
                 if flag.flag == CommentFlag.SUGGEST_REMOVAL:
                     flagging_users.append(user_repr)
 
-            flags_dict.update({'flagged': flagging_users})
+            flags_dict.update({"flagged": flagging_users})
             if add_flagged_count:
-                flags_dict.update({'flagged_count': len(flagging_users)})
+                flags_dict.update({"flagged_count": len(flagging_users)})
 
             return flags_dict
 
         def add_children(children, obj, user):
             for item in children:
-                if item['comment'].pk == obj.parent_id:
-                    child_dict = {'comment': obj, 'children': []}
+                if item["comment"].pk == obj.parent_id:
+                    child_dict = {"comment": obj, "children": []}
                     if with_feedback:
-                        child_dict['reactions'] = obj.get_reactions()
+                        child_dict["reactions"] = obj.get_reactions()
                     if with_flagging:
                         child_dict.update(get_flags(obj))
-                    item['children'].append(child_dict)
+                    item["children"].append(child_dict)
                     return True
-                elif item['children']:
-                    if add_children(item['children'], obj, user):
+                elif item["children"]:
+                    if add_children(item["children"], obj, user):
                         return True
             return False
 
         def get_comment_dict(obj):
-            new_dict = {'comment': obj, 'children': []}
+            new_dict = {"comment": obj, "children": []}
             if with_feedback:
                 reactions_dict = obj.get_reactions()
                 if len(reactions_dict):
-                    new_dict['reactions'] = reactions_dict
+                    new_dict["reactions"] = reactions_dict
             if with_flagging:
                 flags_dict = get_flags(obj)
                 if len(flags_dict):
@@ -250,23 +258,23 @@ class XtdComment(Comment):
 
         # ------------------------------
         add_flagged_count = False
-        if user.has_perm('django_comments.can_moderate'):
+        if user.has_perm("django_comments.can_moderate"):
             add_flagged_count = True
 
         dic_list = []
         cur_dict = None
         for obj in queryset:
-            if cur_dict and obj.level == cur_dict['comment'].level:
+            if cur_dict and obj.level == cur_dict["comment"].level:
                 dic_list.append(cur_dict)
                 cur_dict = None
             if not cur_dict:
                 cur_dict = get_comment_dict(obj)
                 continue
-            if obj.parent_id == cur_dict['comment'].pk:
+            if obj.parent_id == cur_dict["comment"].pk:
                 child_dict = get_comment_dict(obj)
-                cur_dict['children'].append(child_dict)
+                cur_dict["children"].append(child_dict)
             else:
-                add_children(cur_dict['children'], obj, user)
+                add_children(cur_dict["children"], obj, user)
         if cur_dict:
             dic_list.append(cur_dict)
 
@@ -274,8 +282,9 @@ class XtdComment(Comment):
 
 
 def publish_or_withhold_nested_comments(comment, shall_be_public=False):
-    qs = get_model().norel_objects.filter(~Q(pk=comment.id),
-                                          parent_id=comment.id)
+    qs = get_model().norel_objects.filter(
+        ~Q(pk=comment.id), parent_id=comment.id
+    )
     nested = [cm.id for cm in qs]
     qs.update(is_public=shall_be_public)
     while len(nested):
@@ -288,13 +297,14 @@ def publish_or_withhold_nested_comments(comment, shall_be_public=False):
     # attribute is not changing, only its nested comments change, and it will
     # help to re-populate nested_count should it be published again.
     if shall_be_public:
-        op = F('nested_count') + comment.nested_count
+        op = F("nested_count") + comment.nested_count
     else:
-        op = F('nested_count') - comment.nested_count
-    get_model().norel_objects.filter(thread_id=comment.thread_id,
-                                     level__lt=comment.level,
-                                     order__lt=comment.order)\
-                             .update(nested_count=op)
+        op = F("nested_count") - comment.nested_count
+    get_model().norel_objects.filter(
+        thread_id=comment.thread_id,
+        level__lt=comment.level,
+        order__lt=comment.order,
+    ).update(nested_count=op)
 
 
 def publish_or_withhold_on_pre_save(sender, instance, raw, using, **kwargs):
@@ -305,10 +315,12 @@ def publish_or_withhold_on_pre_save(sender, instance, raw, using, **kwargs):
 
 # ----------------------------------------------------------------------
 
+
 class DummyDefaultManager:
     """
     Dummy Manager to mock django's CommentForm.check_for_duplicate method.
     """
+
     def __getattr__(self, name):
         return lambda *args, **kwargs: []
 
@@ -320,6 +332,7 @@ class TmpXtdComment(dict):
     """
     Temporary XtdComment to be pickled, ziped and appended to a URL.
     """
+
     _default_manager = DummyDefaultManager()
 
     def __getattr__(self, key):
@@ -342,20 +355,20 @@ class TmpXtdComment(dict):
             return signing.dumps("%s:%s" % (content_type, self.object_pk))
 
     def __setstate__(self, state):
-        ct_key = state.pop('content_type_key')
+        ct_key = state.pop("content_type_key")
         ctype = ContentType.objects.get_by_natural_key(*ct_key)
         self.update(
             state,
             content_type=ctype,
             content_object=ctype.get_object_for_this_type(
-                pk=state['object_pk']
-            )
+                pk=state["object_pk"]
+            ),
         )
 
     def __reduce__(self):
-        state = {k: v for k, v in self.items() if k != 'content_object'}
-        ct = state.pop('content_type')
-        state['content_type_key'] = ct.natural_key()
+        state = {k: v for k, v in self.items() if k != "content_object"}
+        ct = state.pop("content_type")
+        state["content_type_key"] = ct.natural_key()
         return (TmpXtdComment, (), state)
 
 
@@ -370,13 +383,14 @@ class BlackListedDomain(models.Model):
     to get notified on changes. Changes can be fetched with rsync for a
     small fee (check their conditions, or use any other Spam filter).
     """
+
     domain = models.CharField(max_length=200, db_index=True)
 
     def __str__(self):
         return self.domain
 
     class Meta:
-        ordering = ('domain',)
+        ordering = ("domain",)
 
 
 # ----------------------------------------------------------------------
@@ -391,10 +405,12 @@ class BaseReactionEnum(models.TextChoices):
 
     @classmethod
     def strlist(cls):
-        return ";".join([
-            ",".join([f'{member.value}', member.label, member.icon])
-            for member in cls
-        ])
+        return ";".join(
+            [
+                ",".join([f"{member.value}", member.label, member.icon])
+                for member in cls
+            ]
+        )
 
 
 class ReactionEnum(BaseReactionEnum):
@@ -402,10 +418,9 @@ class ReactionEnum(BaseReactionEnum):
     DISLIKE_IT = "-", "-1"
 
 
-ReactionEnum.set_icons({
-    ReactionEnum.LIKE_IT:    "#128077",
-    ReactionEnum.DISLIKE_IT: "#128078"
-})
+ReactionEnum.set_icons(
+    {ReactionEnum.LIKE_IT: "#128077", ReactionEnum.DISLIKE_IT: "#128078"}
+)
 
 
 class ReactionField(models.TextField):
@@ -413,16 +428,19 @@ class ReactionField(models.TextField):
 
     def deconstruct(self):
         name, path, args, kwargs = super(ReactionField, self).deconstruct()
-        kwargs.pop('choices', None)  # Ignore choice changes in migrations.
+        kwargs.pop("choices", None)  # Ignore choice changes in migrations.
         return name, path, args, kwargs
 
 
 class CommentReaction(models.Model):
-    reaction = ReactionField(_('reaction'), db_index=True,
-                             choices=get_reactions_enum().choices)
-    comment = models.ForeignKey(get_model(),
-                                verbose_name=_('reactions'),
-                                related_name="reactions",
-                                on_delete=models.CASCADE)
+    reaction = ReactionField(
+        _("reaction"), db_index=True, choices=get_reactions_enum().choices
+    )
+    comment = models.ForeignKey(
+        get_model(),
+        verbose_name=_("reactions"),
+        related_name="reactions",
+        on_delete=models.CASCADE,
+    )
     counter = models.IntegerField(default=0)
     authors = models.ManyToManyField(settings.AUTH_USER_MODEL)

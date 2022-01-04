@@ -4,15 +4,16 @@ import re
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import InvalidPage, PageNotAnInteger
 from django.http import Http404
-from django.template import (Library, Node, TemplateSyntaxError,
-                             Variable, loader)
+from django.template import Library, Node, TemplateSyntaxError, Variable, loader
 from django.urls import reverse
 from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
 from django_comments.templatetags.comments import (
-    BaseCommentNode, RenderCommentFormNode, RenderCommentListNode
+    BaseCommentNode,
+    RenderCommentFormNode,
+    RenderCommentListNode,
 )
 
 from django_comments_xtd import get_model, get_reactions_enum, utils
@@ -29,17 +30,17 @@ def paginate_queryset(queryset, context):
     """
     Returns dict with pagination data for the given queryset and context.
     """
-    request = context.get('request', None)
+    request = context.get("request", None)
     num_orphans = settings.COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS
     page_size = settings.COMMENTS_XTD_ITEMS_PER_PAGE
     qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     if page_size == 0:
         return {
-            'paginator': None,
-            'page_obj': None,
-            'is_paginated': False,
-            'cpage_qs_param': qs_param,
-            'comment_list': queryset
+            "paginator": None,
+            "page_obj": None,
+            "is_paginated": False,
+            "cpage_qs_param": qs_param,
+            "comment_list": queryset,
         }
 
     paginator = CommentsPaginator(queryset, page_size, orphans=num_orphans)
@@ -47,25 +48,26 @@ def paginate_queryset(queryset, context):
     try:
         page_number = int(page)
     except ValueError:
-        if page == 'last':
+        if page == "last":
             page_number = paginator.num_pages
         else:
-            raise Http404(_('Page is not “last”, nor can it '
-                            'be converted to an int.'))
+            raise Http404(
+                _("Page is not “last”, nor can it " "be converted to an int.")
+            )
     try:
         page = paginator.page(page_number)
         return {
-            'paginator': paginator,
-            'page_obj': page,
-            'is_paginated': page.has_other_pages(),
-            'cpage_qs_param': qs_param,
-            'comment_list': page.object_list
+            "paginator": paginator,
+            "page_obj": page,
+            "is_paginated": page.has_other_pages(),
+            "cpage_qs_param": qs_param,
+            "comment_list": page.object_list,
         }
     except InvalidPage as exc:
-        raise Http404(_('Invalid page (%(page_number)s): %(message)s') % {
-            'page_number': page_number,
-            'message': str(exc)
-        })
+        raise Http404(
+            _("Invalid page (%(page_number)s): %(message)s")
+            % {"page_number": page_number, "message": str(exc)}
+        )
 
 
 class RenderXtdCommentListNode(RenderCommentListNode):
@@ -75,9 +77,10 @@ class RenderXtdCommentListNode(RenderCommentListNode):
     def handle_token(cls, parser, token):
         """Class method to parse render_xtdcomment_list and return a Node."""
         tokens = token.split_contents()
-        if tokens[1] != 'for':
-            raise TemplateSyntaxError("Second argument in %r tag must be 'for'"
-                                      % tokens[0])
+        if tokens[1] != "for":
+            raise TemplateSyntaxError(
+                "Second argument in %r tag must be 'for'" % tokens[0]
+            )
 
         # {% render_xtdcomment_list for obj %}
         if len(tokens) == 3:
@@ -87,7 +90,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         elif len(tokens) == 4:
             return cls(
                 ctype=BaseCommentNode.lookup_content_type(tokens[2], tokens[0]),
-                object_pk_expr=parser.compile_filter(tokens[3])
+                object_pk_expr=parser.compile_filter(tokens[3]),
             )
 
         # {% render_xtdcomment_list for [obj | app.model pk] [using tmpl] %}
@@ -96,20 +99,26 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             num_tokens_between = tokens.index("using") - tokens.index("for")
             if num_tokens_between == 2:
                 # {% render_xtdcomment_list for object using tmpl}
-                return cls(object_expr=parser.compile_filter(tokens[2]),
-                           template_path=template_path)
+                return cls(
+                    object_expr=parser.compile_filter(tokens[2]),
+                    template_path=template_path,
+                )
             elif num_tokens_between == 3:
                 # {% render_xtdcomment_list for app.model pk using tmpl}
                 tag_t, app_t = tokens[0], tokens[2]
                 ctype = BaseCommentNode.lookup_content_type(app_t, tag_t)
-                return cls(ctype=ctype,
-                           object_pk_expr=parser.compile_filter(tokens[3]),
-                           template_path=template_path)
+                return cls(
+                    ctype=ctype,
+                    object_pk_expr=parser.compile_filter(tokens[3]),
+                    template_path=template_path,
+                )
         else:
-            msg = ("Wrong syntax in %r tag. Valid syntaxes are: "
-                   "{%% render_xtdcomment_list for [object] [using "
-                   "<template>] %%} or {%% render_xtdcomment_list for "
-                   "[app].[model] [obj_id] [using <tmpl>] %%}")
+            msg = (
+                "Wrong syntax in %r tag. Valid syntaxes are: "
+                "{%% render_xtdcomment_list for [object] [using "
+                "<template>] %%} or {%% render_xtdcomment_list for "
+                "[app].[model] [obj_id] [using <tmpl>] %%}"
+            )
             raise TemplateSyntaxError(msg % tokens[0])
 
     def __init__(self, *args, **kwargs):
@@ -131,7 +140,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         template_search_list = [
             "comments/%s/%s/list.html" % (ctype.app_label, ctype.model),
             "comments/%s/list.html" % ctype.app_label,
-            "comments/list.html"
+            "comments/list.html",
         ]
         qs = self.get_queryset(context)
         qs = self.get_context_value_from_queryset(context, qs)
@@ -143,22 +152,26 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
         MTL = settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
         mtl = MTL.get(app_model, settings.COMMENTS_XTD_MAX_THREAD_LEVEL)
-        context_dict.update({
-            'comments_page_qs_param': qs_param,
-            'max_thread_level': mtl,
-            'reply_stack': [],  # List to control reply rendering.
-        })
+        context_dict.update(
+            {
+                "comments_page_qs_param": qs_param,
+                "max_thread_level": mtl,
+                "reply_stack": [],  # List to control reply rendering.
+            }
+        )
 
         # Pass values for Reactions JS Overlays to the context.
         reactions_js = utils.get_reactions_js_overlays(content_type=app_model)
-        reactions_popover = reactions_js['popover']
-        reactions_tooltip = reactions_js['tooltip']
-        context_dict.update({
-            'reactions_popover_pos_bottom': reactions_popover['pos_bottom'],
-            'reactions_popover_pos_left': reactions_popover['pos_left'],
-            'reactions_tooltip_pos_bottom': reactions_tooltip['pos_bottom'],
-            'reactions_tooltip_pos_left': reactions_tooltip['pos_left'],
-        })
+        reactions_popover = reactions_js["popover"]
+        reactions_tooltip = reactions_js["tooltip"]
+        context_dict.update(
+            {
+                "reactions_popover_pos_bottom": reactions_popover["pos_bottom"],
+                "reactions_popover_pos_left": reactions_popover["pos_left"],
+                "reactions_tooltip_pos_bottom": reactions_tooltip["pos_bottom"],
+                "reactions_tooltip_pos_left": reactions_tooltip["pos_left"],
+            }
+        )
 
         # get_app_model_options returns a dict like: {
         #     'who_can_post': 'all' | 'users',
@@ -168,7 +181,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         #     'object_reactions_enabled': <boolean>
         # }
         options = utils.get_app_model_options(content_type=app_model)
-        check_input_allowed_str = options.pop('check_input_allowed')
+        check_input_allowed_str = options.pop("check_input_allowed")
         check_func = import_string(check_input_allowed_str)
         target_obj = ctype.get_object_for_this_type(pk=object_pk)
 
@@ -176,12 +189,11 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         # is still allowed on the given target_object. And add
         # the resulting boolean to the template context.
         #
-        options['is_input_allowed'] = check_func(target_obj)
+        options["is_input_allowed"] = check_func(target_obj)
         context_dict.update(options)
 
         liststr = loader.render_to_string(
-            self.template_path or template_search_list,
-            context_dict
+            self.template_path or template_search_list, context_dict
         )
         return liststr
 
@@ -211,17 +223,17 @@ class RenderCommentReplyFormNode(RenderCommentFormNode):
         ctype, object_pk = self.get_target_ctype_pk(context)
         if object_pk:
             templates = [
-                "comments/%s/%s/reply_form.html" % (ctype.app_label,
-                                                    ctype.model),
+                "comments/%s/%s/reply_form.html"
+                % (ctype.app_label, ctype.model),
                 "comments/%s/reply_form.html" % ctype.app_label,
-                "comments/reply_form.html"
+                "comments/reply_form.html",
             ]
             context_dict = context.flatten()
-            context_dict['form'] = self.get_form(context)
+            context_dict["form"] = self.get_form(context)
             formstr = loader.render_to_string(templates, context_dict)
             return formstr
         else:
-            return ''
+            return ""
 
 
 @register.tag
@@ -264,7 +276,7 @@ def get_xtdcomment_permalink(comment, page_number=None, anchor_pattern=None):
         try:
             page_number = int(page_number)
         except (TypeError, ValueError):
-            raise PageNotAnInteger(_('That page number is not an integer'))
+            raise PageNotAnInteger(_("That page number is not an integer"))
 
     if page_number > 1:
         qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
@@ -280,8 +292,8 @@ class GetCommentsAPIPropsNode(Node):
 
     def render(self, context):
         obj = self.obj.resolve(context)
-        user = context.get('user', None)
-        request = context.get('request', None)
+        user = context.get("user", None)
+        request = context.get("request", None)
         props = frontend.comments_api_props(obj, user, request=request)
         return json.dumps(props)
 
@@ -299,9 +311,10 @@ def get_comments_api_props(parser, token):
     try:
         tag_name, args = token.contents.split(None, 1)
     except ValueError:
-        raise TemplateSyntaxError("%r tag requires arguments" %
-                                  token.contents.split()[0])
-    match = re.search(r'for (\w+)', args)
+        raise TemplateSyntaxError(
+            "%r tag requires arguments" % token.contents.split()[0]
+        )
+    match = re.search(r"for (\w+)", args)
     if not match:
         raise TemplateSyntaxError("%r tag had invalid arguments" % tag_name)
     obj = match.groups()[0]
@@ -321,12 +334,12 @@ def comment_reaction_form_target(comment):
     return reverse("comments-xtd-react", args=(comment.id,))
 
 
-@register.inclusion_tag('comments/reactions_buttons.html')
+@register.inclusion_tag("comments/reactions_buttons.html")
 def render_reactions_buttons(user_reactions):
     return {
-        'reactions': get_reactions_enum(),
-        'user_reactions': user_reactions,
-        'break_every': settings.COMMENTS_XTD_REACTIONS_ROW_LENGTH
+        "reactions": get_reactions_enum(),
+        "user_reactions": user_reactions,
+        "break_every": settings.COMMENTS_XTD_REACTIONS_ROW_LENGTH,
     }
 
 
@@ -345,8 +358,10 @@ def reactions_enum_strlist():
 
 @register.filter
 def authors_list(cmt_reaction):
-    return [settings.COMMENTS_XTD_API_USER_REPR(author)
-            for author in cmt_reaction.authors.all()]
+    return [
+        settings.COMMENTS_XTD_API_USER_REPR(author)
+        for author in cmt_reaction.authors.all()
+    ]
 
 
 @register.filter
@@ -371,7 +386,7 @@ def comment_css_thread_range(context, comment, prefix="l"):
 
     produces the string: "l0-mid l1-mid l2".
     """
-    max_thread_level = context.get('max_thread_level', None)
+    max_thread_level = context.get("max_thread_level", None)
     if not max_thread_level:
         ctype = ContentType.objects.get_for_model(comment.content_object)
         max_thread_level = max_thread_level_for_content_type(ctype)
@@ -458,7 +473,7 @@ def pop_comments_gte(reply_stack, level_lte=0):
 
 @register.simple_tag(takes_context=True)
 def push_comment(context, comment):
-    context['reply_stack'].append(comment)
+    context["reply_stack"].append(comment)
     return ""
 
 
@@ -468,6 +483,6 @@ def get_comment(comment_id: str):
 
 
 # ----------------------------------------------------------------------
-@register.inclusion_tag('comments/only_users_can_post.html')
+@register.inclusion_tag("comments/only_users_can_post.html")
 def render_only_users_can_post_template(object):
-    return {'html_id_suffix': utils.get_html_id_suffix(object)}
+    return {"html_id_suffix": utils.get_html_id_suffix(object)}

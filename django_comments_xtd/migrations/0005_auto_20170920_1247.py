@@ -8,13 +8,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_comments_xtd', '0004_auto_20170221_1510'),
+        ("django_comments_xtd", "0004_auto_20170221_1510"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='xtdcomment',
-            name='followup',
-            field=models.BooleanField(default=False, help_text='Notify follow-up comments'),
+            model_name="xtdcomment",
+            name="followup",
+            field=models.BooleanField(
+                default=False, help_text="Notify follow-up comments"
+            ),
         ),
     ]

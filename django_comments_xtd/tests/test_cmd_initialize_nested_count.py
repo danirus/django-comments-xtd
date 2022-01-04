@@ -6,15 +6,19 @@ from django.test import TestCase
 from django_comments_xtd.models import XtdComment
 from django_comments_xtd.tests.models import Article
 from django_comments_xtd.tests.test_models import (
-    thread_test_step_1, thread_test_step_2, thread_test_step_3,
-    thread_test_step_4, thread_test_step_5
+    thread_test_step_1,
+    thread_test_step_2,
+    thread_test_step_3,
+    thread_test_step_4,
+    thread_test_step_5,
 )
 
 
 class InitializeNestedCountCmdTestCase(TestCase):
     def setUp(self):
         self.article_1 = Article.objects.create(
-            title="September", slug="september", body="During September...")
+            title="September", slug="september", body="During September..."
+        )
         thread_test_step_1(self.article_1)
         thread_test_step_2(self.article_1)
         thread_test_step_3(self.article_1)
@@ -32,7 +36,7 @@ class InitializeNestedCountCmdTestCase(TestCase):
             self.c2,  # ->   2         2          2        0      1      2
             self.c5,  # ->   5         2          2        1      2      1
             self.c6,  # ->   6         2          5        2      3      0
-            self.c9   # ->   9         9          9        0      1      0
+            self.c9,  # ->   9         9          9        0      1      0
         ) = XtdComment.objects.all()
         self.assertEqual(self.c1.nested_count, 4)
         self.assertEqual(self.c3.nested_count, 1)
@@ -48,18 +52,18 @@ class InitializeNestedCountCmdTestCase(TestCase):
         # Set all comments nested_count field to 0.
         XtdComment.norel_objects.update(nested_count=0)
         out = StringIO()
-        call_command('initialize_nested_count', stdout=out)
+        call_command("initialize_nested_count", stdout=out)
         self.assertIn("Updated 9 XtdComment object(s).", out.getvalue())
         self.check_nested_count()
 
     def test_command_is_idempotent(self):
         out = StringIO()
-        call_command('initialize_nested_count', stdout=out)
-        call_command('initialize_nested_count', stdout=out)
+        call_command("initialize_nested_count", stdout=out)
+        call_command("initialize_nested_count", stdout=out)
         self.assertIn("Updated 9 XtdComment object(s).", out.getvalue())
         self.check_nested_count()
 
     def test_raises_ConnectionDoesNotExist(self):
         out = StringIO()
-        call_command('initialize_nested_count', "using", "taldb", stdout=out)
+        call_command("initialize_nested_count", "using", "taldb", stdout=out)
         self.assertIn("DB connection 'taldb' does not exist.", out.getvalue())

@@ -14,7 +14,7 @@ XtdComment = get_model()
 
 def test_paginator_only_accepts_queryset():
     with pytest.raises(TypeError):
-        CommentsPaginator([1,2,3], 10, 3)
+        CommentsPaginator([1, 2, 3], 10, 3)
 
 
 @pytest.mark.django_db
@@ -28,7 +28,7 @@ def test_paginator_example_1(an_article):
         "content_object": an_article,
         "site": site,
         "comment": f"another comment to article {an_article.pk}",
-        "submit_date": datetime.now()
+        "submit_date": datetime.now(),
     }
 
     # Create 8 comments at level 0.
@@ -48,7 +48,7 @@ def test_paginator_example_1(an_article):
         for child in range(children_number[index]):
             XtdComment.objects.create(**attrs, parent_id=cmt_level_0.pk)
 
-    # Verify that the children comments are nested into the cmts_level_0.
+    # Verify that the children comments are nested into the cmts_level_0.
     cmts_level_0 = XtdComment.objects.filter(level=0)
     for index, cmt_level_0 in enumerate(cmts_level_0):
         assert cmt_level_0.pk == index + 1
@@ -102,7 +102,7 @@ def test_paginator_example_2(an_article):
         "content_object": an_article,
         "site": site,
         "comment": f"another comment to article {an_article.pk}",
-        "submit_date": datetime.now()
+        "submit_date": datetime.now(),
     }
 
     # Create 3 comments at level 0.
@@ -122,7 +122,7 @@ def test_paginator_example_2(an_article):
         for child in range(children_number[index]):
             XtdComment.objects.create(**attrs, parent_id=cmt_level_0.pk)
 
-    # Verify that the children comments are nested into the cmts_level_0.
+    # Verify that the children comments are nested into the cmts_level_0.
     cmts_level_0 = XtdComment.objects.filter(level=0)
     for index, cmt_level_0 in enumerate(cmts_level_0):
         assert cmt_level_0.pk == index + 1
@@ -164,7 +164,7 @@ def test_paginator_example_3(an_article):
         "content_object": an_article,
         "site": site,
         "comment": f"another comment to article {an_article.pk}",
-        "submit_date": datetime.now()
+        "submit_date": datetime.now(),
     }
 
     # Create 3 comments at level 0.
@@ -184,7 +184,7 @@ def test_paginator_example_3(an_article):
         for child in range(children_number[index]):
             XtdComment.objects.create(**attrs, parent_id=cmt_level_0.pk)
 
-    # Verify that the children comments are nested into the cmts_level_0.
+    # Verify that the children comments are nested into the cmts_level_0.
     cmts_level_0 = XtdComment.objects.filter(level=0)
     for index, cmt_level_0 in enumerate(cmts_level_0):
         assert cmt_level_0.pk == index + 1
@@ -218,6 +218,7 @@ def test_paginator_example_3(an_article):
 @pytest.mark.django_db
 def test_paginator_allow_empty_first_page():
     qs = XtdComment.objects.all()
-    paginator = CommentsPaginator(qs, 10, orphans=3,
-                                  allow_empty_first_page=False)
+    paginator = CommentsPaginator(
+        qs, 10, orphans=3, allow_empty_first_page=False
+    )
     assert paginator.num_pages == 0

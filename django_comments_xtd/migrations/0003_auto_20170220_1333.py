@@ -8,12 +8,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_comments_xtd', '0002_blacklisteddomain'),
+        ("django_comments_xtd", "0002_blacklisteddomain"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='xtdcomment',
-            options={'ordering': ('-thread_id', 'order')},
+            name="xtdcomment",
+            options={"ordering": ("-thread_id", "order")},
         ),
     ]

@@ -13,6 +13,7 @@ from django.db import migrations
 # The fix consist of keeping this migration but making it non-effective.
 #
 
+
 def noop(*args):
     pass
 
@@ -20,7 +21,7 @@ def noop(*args):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_comments_xtd', '0007_xtdcomment_nested_count'),
+        ("django_comments_xtd", "0007_xtdcomment_nested_count"),
     ]
 
     operations = [

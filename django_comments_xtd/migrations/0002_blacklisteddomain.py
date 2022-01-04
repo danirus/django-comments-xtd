@@ -8,18 +8,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_comments_xtd', '0001_initial'),
+        ("django_comments_xtd", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='BlackListedDomain',
+            name="BlackListedDomain",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('domain', models.CharField(db_index=True, max_length=200)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("domain", models.CharField(db_index=True, max_length=200)),
             ],
             options={
-                'ordering': ('domain',),
+                "ordering": ("domain",),
             },
         ),
     ]

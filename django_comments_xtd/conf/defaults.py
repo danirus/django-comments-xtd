@@ -23,7 +23,7 @@ COMMENTS_XTD_MAX_THREAD_LEVEL = 0
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {}
 
 # Default order to list comments in.
-COMMENTS_XTD_LIST_ORDER = ('thread_id', 'order')
+COMMENTS_XTD_LIST_ORDER = ("thread_id", "order")
 
 # Form class to use.
 COMMENTS_XTD_FORM_CLASS = "django_comments_xtd.forms.XtdCommentForm"
@@ -44,21 +44,18 @@ COMMENTS_XTD_THREADED_EMAILS = True
 
 # Define what commenting features a pair app_label.model can have.
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
-    'default': {
-        'who_can_post': 'all',  # Valid values: "users", "all",
+    "default": {
+        "who_can_post": "all",  # Valid values: "users", "all",
         # Function to determine whether new comments,
         # reactions, etc. should be allowed for a given object.
-        'check_input_allowed': 'django_comments_xtd.utils.check_input_allowed',
-
+        "check_input_allowed": "django_comments_xtd.utils.check_input_allowed",
         # Whether to display a link to flag a comment as inappropriate.
-        'comment_flagging_enabled': False,
-
+        "comment_flagging_enabled": False,
         # Whether to allow users to submit reactions on comments.
-        'comment_reactions_enabled': False,
-
+        "comment_reactions_enabled": False,
         # Whether to allow users to submit reactions on any object
         # registered as a content type.
-        'object_reactions_enabled': False
+        "object_reactions_enabled": False,
     }
 }
 
@@ -98,14 +95,8 @@ COMMENTS_XTD_PAGE_QUERY_STRING_PARAM = "cpage"
 # overlays. A popover displays the "Pick your reaction" overlay. A tooltip
 # displays the users that selected each individual reaction.
 COMMENTS_XTD_REACTIONS_JS_OVERLAYS = {
-    'default': {  # Create more entries for your 'app.model' specific settings.
-        'popover': {
-            'pos_bottom': 30,
-            'pos_left': 10
-        },
-        'tooltip': {
-            'pos_bottom': 30,
-            'pos_left': 76
-        }
+    "default": {  # Create more entries for your 'app.model' specific settings.
+        "popover": {"pos_bottom": 30, "pos_left": 10},
+        "tooltip": {"pos_bottom": 30, "pos_left": 76},
     }
 }

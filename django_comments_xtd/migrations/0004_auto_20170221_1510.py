@@ -8,12 +8,17 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('django_comments_xtd', '0003_auto_20170220_1333'),
+        ("django_comments_xtd", "0003_auto_20170220_1333"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='xtdcomment',
-            options={'ordering': ('submit_date',), 'permissions': [('can_moderate', 'Can moderate comments')], 'verbose_name': 'comment', 'verbose_name_plural': 'comments'},
+            name="xtdcomment",
+            options={
+                "ordering": ("submit_date",),
+                "permissions": [("can_moderate", "Can moderate comments")],
+                "verbose_name": "comment",
+                "verbose_name_plural": "comments",
+            },
         ),
     ]

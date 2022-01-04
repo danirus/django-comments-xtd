@@ -70,12 +70,11 @@ class CommentsPaginator(Paginator):
     If a thread has more comments than the given `per_page` limit it ignores the
     limit so that the thread is not cut in several pages.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if type(self.object_list) is not QuerySet:
-            raise TypeError(
-                "'object_list' is not a QuerySet."
-            )
+            raise TypeError("'object_list' is not a QuerySet.")
 
     @cached_property
     def in_page(self):
@@ -87,8 +86,9 @@ class CommentsPaginator(Paginator):
         """
         ptotal = 0  # Page total number of comments.
         in_page = []
-        cgroups = [cm.nested_count + 1
-                   for cm in self.object_list.filter(level=0)]
+        cgroups = [
+            cm.nested_count + 1 for cm in self.object_list.filter(level=0)
+        ]
         for index, group_count in enumerate(cgroups):
             if ptotal > 0 and ptotal + group_count > self.per_page:
                 if sum(cgroups[index:], ptotal) > self.per_page + self.orphans:
@@ -110,7 +110,7 @@ class CommentsPaginator(Paginator):
         if number == 1:
             bottom = 0
         else:
-            bottom = sum(self.in_page[0:number - 1])
+            bottom = sum(self.in_page[0 : number - 1])
         top = bottom + self.in_page[number - 1]
         return self._get_page(self.object_list[bottom:top], number, self)
 

@@ -17,8 +17,9 @@ from django_comments_xtd.tests.models import Article
 @pytest.fixture
 def an_article():
     """Creates an article that can receive comments."""
-    return Article.objects.create(title="September", slug="september",
-                                  body="During September...")
+    return Article.objects.create(
+        title="September", slug="september", body="During September..."
+    )
 
 
 @pytest.mark.django_db
@@ -27,20 +28,23 @@ def an_articles_comment(an_article):
     """Send a comment to the article."""
     article_ct = ContentType.objects.get(app_label="tests", model="article")
     site = Site.objects.get(pk=1)
-    return XtdComment.objects.create(content_type=article_ct,
-                                     object_pk=an_article.pk,
-                                     content_object=an_article,
-                                     site=site,
-                                     comment="First comment to the article.",
-                                     submit_date=datetime.now())
+    return XtdComment.objects.create(
+        content_type=article_ct,
+        object_pk=an_article.pk,
+        content_object=an_article,
+        site=site,
+        comment="First comment to the article.",
+        submit_date=datetime.now(),
+    )
 
 
 @pytest.mark.django_db
 @pytest.fixture
 def an_user():
     """Add a user to the DB."""
-    return User.objects.create_user("joe", "joe@example.com", "joepwd",
-                                    first_name="Joe", last_name="Bloggs")
+    return User.objects.create_user(
+        "joe", "joe@example.com", "joepwd", first_name="Joe", last_name="Bloggs"
+    )
 
 
 @pytest.mark.django_db
@@ -48,9 +52,9 @@ def an_user():
 def a_comments_reaction(an_articles_comment, an_user):
     """Send a reaction to a comment."""
     reaction = get_reactions_enum().LIKE_IT
-    cmr = CommentReaction.objects.create(reaction=reaction,
-                                         comment=an_articles_comment,
-                                         counter=1)
+    cmr = CommentReaction.objects.create(
+        reaction=reaction, comment=an_articles_comment, counter=1
+    )
     cmr.authors.add(an_user)
     cmr.save()
     return cmr
@@ -60,6 +64,8 @@ def a_comments_reaction(an_articles_comment, an_user):
 @pytest.fixture
 def a_comments_flag(an_articles_comment, an_user):
     """Send a CommentFlag.SUGGEST_REMOVAL flag to a comment."""
-    return CommentFlag.objects.create(user=an_user,
-                                      comment=an_articles_comment,
-                                      flag=CommentFlag.SUGGEST_REMOVAL)
+    return CommentFlag.objects.create(
+        user=an_user,
+        comment=an_articles_comment,
+        flag=CommentFlag.SUGGEST_REMOVAL,
+    )

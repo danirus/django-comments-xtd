@@ -8,12 +8,17 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tests', '0001_initial'),
+        ("tests", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='mycomment',
-            options={'ordering': ('submit_date',), 'permissions': [('can_moderate', 'Can moderate comments')], 'verbose_name': 'comment', 'verbose_name_plural': 'comments'},
+            name="mycomment",
+            options={
+                "ordering": ("submit_date",),
+                "permissions": [("can_moderate", "Can moderate comments")],
+                "verbose_name": "comment",
+                "verbose_name_plural": "comments",
+            },
         ),
     ]

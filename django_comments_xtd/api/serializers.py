@@ -13,14 +13,19 @@ from rest_framework import exceptions, serializers
 from django_comments_xtd import get_model, get_reactions_enum, signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
-    CommentReaction, TmpXtdComment, XtdComment,
-    max_thread_level_for_content_type)
-from django_comments_xtd.signals import (should_request_be_authorized,
-                                         confirmation_received)
+    CommentReaction,
+    TmpXtdComment,
+    XtdComment,
+    max_thread_level_for_content_type,
+)
+from django_comments_xtd.signals import (
+    should_request_be_authorized,
+    confirmation_received,
+)
 from django_comments_xtd.utils import get_app_model_options
 
 
-COMMENT_MAX_LENGTH = getattr(settings, 'COMMENT_MAX_LENGTH', 3000)
+COMMENT_MAX_LENGTH = getattr(settings, "COMMENT_MAX_LENGTH", 3000)
 
 
 class WriteCommentSerializer(serializers.Serializer):
@@ -37,7 +42,7 @@ class WriteCommentSerializer(serializers.Serializer):
     reply_to = serializers.IntegerField(default=0)
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs['context']['request']
+        self.request = kwargs["context"]["request"]
         super(WriteCommentSerializer, self).__init__(*args, **kwargs)
 
     def validate_name(self, value):
@@ -71,12 +76,14 @@ class WriteCommentSerializer(serializers.Serializer):
                 parent = get_model().objects.get(pk=value)
             except get_model().DoesNotExist:
                 raise serializers.ValidationError(
-                    "reply_to comment does not exist")
+                    "reply_to comment does not exist"
+                )
             else:
                 max = max_thread_level_for_content_type(parent.content_type)
                 if parent.level == max:
                     raise serializers.ValidationError(
-                        "Max thread level reached")
+                        "Max thread level reached"
+                    )
         return value
 
     def validate(self, data):
@@ -85,28 +92,29 @@ class WriteCommentSerializer(serializers.Serializer):
         try:
             model = apps.get_model(*ctype.split(".", 1))
             target = model._default_manager.get(pk=object_pk)
-            whocan = get_app_model_options(content_type=ctype)['who_can_post']
+            whocan = get_app_model_options(content_type=ctype)["who_can_post"]
         except (AttributeError, TypeError, LookupError):
-            raise serializers.ValidationError("Invalid content_type value: %r"
-                                              % escape(ctype))
+            raise serializers.ValidationError(
+                "Invalid content_type value: %r" % escape(ctype)
+            )
         except model.DoesNotExist:
             raise serializers.ValidationError(
                 "No object matching content-type %r and object PK %r."
-                % (escape(ctype), escape(object_pk)))
+                % (escape(ctype), escape(object_pk))
+            )
         except (ValueError, serializers.ValidationError) as e:
             raise serializers.ValidationError(
                 "Attempting to get content-type %r and object PK %r "
-                "raised %s" % (escape(ctype), escape(object_pk),
-                               e.__class__.__name__))
+                "raised %s"
+                % (escape(ctype), escape(object_pk), e.__class__.__name__)
+            )
         else:
             if whocan == "users" and not self.request.user.is_authenticated:
                 raise serializers.ValidationError("User not authenticated")
 
         # Signal that the request allows to be authorized.
         responses = should_request_be_authorized.send(
-            sender=target.__class__,
-            comment=target,
-            request=self.request
+            sender=target.__class__, comment=target, request=self.request
         )
 
         for (receiver, response) in responses:
@@ -115,11 +123,13 @@ class WriteCommentSerializer(serializers.Serializer):
                 # must be trusted. So inject the CommentSecurityForm values
                 # to pass the form validation step.
                 secform = CommentSecurityForm(target)
-                data.update({
-                    "honeypot": "",
-                    "timestamp": secform['timestamp'].value(),
-                    "security_hash": secform['security_hash'].value()
-                })
+                data.update(
+                    {
+                        "honeypot": "",
+                        "timestamp": secform["timestamp"].value(),
+                        "security_hash": secform["security_hash"].value(),
+                    }
+                )
                 break
 
         self.form = get_form()(target, data=data)
@@ -140,63 +150,73 @@ class WriteCommentSerializer(serializers.Serializer):
         #  * Comment have bad data (http 400).
         site = get_current_site(self.request)
         resp = {
-            'code': -1,
-            'comment': self.form.get_comment_object(site_id=site.id)
+            "code": -1,
+            "comment": self.form.get_comment_object(site_id=site.id),
         }
-        resp['comment'].ip_address = self.request.META.get("REMOTE_ADDR", None)
+        resp["comment"].ip_address = self.request.META.get("REMOTE_ADDR", None)
 
         if self.request.user.is_authenticated:
-            resp['comment'].user = self.request.user
+            resp["comment"].user = self.request.user
 
         # Signal that the comment is about to be saved
-        responses = comment_will_be_posted.send(sender=TmpXtdComment,
-                                                comment=resp['comment'],
-                                                request=self.request)
+        responses = comment_will_be_posted.send(
+            sender=TmpXtdComment, comment=resp["comment"], request=self.request
+        )
         for (receiver, response) in responses:
             if response is False:
-                resp['code'] = 403  # Rejected.
+                resp["code"] = 403  # Rejected.
                 return resp
 
         # Replicate logic from django_comments_xtd.views.on_comment_was_posted.
         if (
-            not settings.COMMENTS_XTD_CONFIRM_EMAIL or
-            self.request.user.is_authenticated
+            not settings.COMMENTS_XTD_CONFIRM_EMAIL
+            or self.request.user.is_authenticated
         ):
-            if views._get_comment_if_exists(resp['comment']) is None:
-                new_comment = views._create_comment(resp['comment'])
-                resp['comment'].xtd_comment = new_comment
-                confirmation_received.send(sender=TmpXtdComment,
-                                           comment=resp['comment'],
-                                           request=self.request)
-                comment_was_posted.send(sender=new_comment.__class__,
-                                        comment=new_comment,
-                                        request=self.request)
-                if resp['comment'].is_public:
-                    resp['code'] = 201
+            if views._get_comment_if_exists(resp["comment"]) is None:
+                new_comment = views._create_comment(resp["comment"])
+                resp["comment"].xtd_comment = new_comment
+                confirmation_received.send(
+                    sender=TmpXtdComment,
+                    comment=resp["comment"],
+                    request=self.request,
+                )
+                comment_was_posted.send(
+                    sender=new_comment.__class__,
+                    comment=new_comment,
+                    request=self.request,
+                )
+                if resp["comment"].is_public:
+                    resp["code"] = 201
                     views.notify_comment_followers(new_comment)
                 else:
-                    resp['code'] = 202
+                    resp["code"] = 202
         else:
-            key = signed.dumps(resp['comment'], compress=True,
-                               extra_key=settings.COMMENTS_XTD_SALT)
-            views.send_email_confirmation_request(resp['comment'], key, site)
-            resp['code'] = 204  # Confirmation sent by mail.
+            key = signed.dumps(
+                resp["comment"],
+                compress=True,
+                extra_key=settings.COMMENTS_XTD_SALT,
+            )
+            views.send_email_confirmation_request(resp["comment"], key, site)
+            resp["code"] = 204  # Confirmation sent by mail.
 
         return resp
 
 
 class FlagSerializer(serializers.ModelSerializer):
-    flag_choices = {'report': CommentFlag.SUGGEST_REMOVAL}
+    flag_choices = {"report": CommentFlag.SUGGEST_REMOVAL}
 
     class Meta:
         model = CommentFlag
-        fields = ('comment', 'flag',)
+        fields = (
+            "comment",
+            "flag",
+        )
 
     def validate(self, data):
         # Validate flag.
-        if data['flag'] not in self.flag_choices:
+        if data["flag"] not in self.flag_choices:
             raise serializers.ValidationError("Invalid flag.")
-        data['flag'] = self.flag_choices[data['flag']]
+        data["flag"] = self.flag_choices[data["flag"]]
         return data
 
 
@@ -210,11 +230,11 @@ class ReadReactionsField(serializers.RelatedField):
             "counter": value.counter,
             "authors": [
                 {
-                    'id': author.id,
-                    'author': settings.COMMENTS_XTD_API_USER_REPR(author)
+                    "id": author.id,
+                    "author": settings.COMMENTS_XTD_API_USER_REPR(author),
                 }
                 for author in value.authors.all()
-            ]
+            ],
         }
 
 
@@ -233,12 +253,23 @@ class ReadCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = XtdComment
-        fields = ('id', 'user_name', 'user_url', 'permalink', 'comment',
-                  'submit_date', 'parent_id', 'level', 'is_removed',
-                  'allow_reply', 'flags', 'reactions')
+        fields = (
+            "id",
+            "user_name",
+            "user_url",
+            "permalink",
+            "comment",
+            "submit_date",
+            "parent_id",
+            "level",
+            "is_removed",
+            "allow_reply",
+            "flags",
+            "reactions",
+        )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs['context']['request']
+        self.request = kwargs["context"]["request"]
         super(ReadCommentSerializer, self).__init__(*args, **kwargs)
 
     def get_submit_date(self, obj):
@@ -247,8 +278,9 @@ class ReadCommentSerializer(serializers.ModelSerializer):
             submit_date = timezone.localtime(obj.submit_date)
         else:
             submit_date = obj.submit_date
-        return formats.date_format(submit_date, 'DATETIME_FORMAT',
-                                   use_l10n=True)
+        return formats.date_format(
+            submit_date, "DATETIME_FORMAT", use_l10n=True
+        )
 
     def get_comment(self, obj):
         if obj.is_removed:
@@ -266,15 +298,20 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         qs = obj.flags.filter(flag=CommentFlag.SUGGEST_REMOVAL)
         flags = []
         for flag in qs:
-            flags.append({
-                "flag": "removal",
-                "user": settings.COMMENTS_XTD_API_USER_REPR(flag.user),
-                "id": flag.user.id
-            })
+            flags.append(
+                {
+                    "flag": "removal",
+                    "user": settings.COMMENTS_XTD_API_USER_REPR(flag.user),
+                    "id": flag.user.id,
+                }
+            )
         return flags
 
 
 class WriteCommentReactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentReaction
-        fields = ('reaction', 'comment',)
+        fields = (
+            "reaction",
+            "comment",
+        )

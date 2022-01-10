@@ -1,10 +1,10 @@
 :root, HTML {
     box-sizing: border-box;
-    font-size: 20px;
+    font-size: 18px;
     margin: 0 auto;
     padding: 0;
     height: 100%;
-    color: #333;
+    color: #444;
 }
 
 *, ::before, ::after {
@@ -13,6 +13,7 @@
 
 h1, h2, h3, h4, h5, h6 {
     font-family: "Oxygen", sans-serif;
+    font-weight: 400;
     color: #444;
 }
 
@@ -25,7 +26,7 @@ h6 { font-size: 1.1rem; margin: 1rem 0 }
 
 li h1, li h2, li h3, li h4, li h5, li h6 {
     margin: 0.5rem;
-    font-weight: 600;
+    font-weight: 400;
 }
 
 body {
@@ -51,29 +52,17 @@ header .container, footer .container {
     flex-direction: row
 }
 
-@media screen and (min-width: 1172px) {
+@media screen and (min-width: 840px) {
     .container {
-        width: 1140px;
-    }
-    .container.md {
-        width: 820px;
-    }
-}
-
-@media screen and (min-width: 840px) and (max-width: 1171px) {
-    .container {
-        width: 100%;
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-    .container.md {
-        width: 820px;
+        width: 732px;
     }
 }
 
 @media screen and (max-width: 839px) {
     .container {
         width: 100%;
+        padding-left: 16px;
+        padding-right: 16px;
         flex-direction: column;
     }
     header .container, footer .container {
@@ -230,19 +219,11 @@ a>* {
 
 /* ------------------------------------ */
 
-@media screen and (min-width: 840px) {
-    .container .intro {
-        width: 900px;
-        padding: 2em;
-    }
-}
-
 .intro {
     width: 100%;
-    padding: 2em 1em;
-    text-align: center;
-    color: black;
-    font-size: 1.1em;
+    padding: 1em 0;
+    line-height: 1.5em;
+    color: #555;
 }
 
 @media screen and (max-width: 375px) {
@@ -262,26 +243,38 @@ a>* {
 main {
     flex: 1 0 auto;
     margin: 0 1em;
-    padding: 1em 0em;
+    padding: 0em;
 }
 
 .subtitle {
-    margin-top: 1.7em;
-    margin-bottom: 1.3em;
+    margin-bottom: 8px;
     font-size: 0.95rem;
     text-transform: uppercase;
+    font-weight: 400;
 }
 
 .column p {
-    /* font-size: 1.1em; */
+    margin: 8px 0 24px;
+    font-size: 0.9rem;
+    line-height: 1.5em;
     color: rgba(0, 0, 0, .8);
+}
+
+.column p.box {
+    padding: 16px;
+    border: 1px solid #44b78b;
+    border-bottom-width: 2px;
+    border-radius: 16px;
 }
 
 .row {
     width: 100%;
-    display: flex;
     margin-left: -.75em;
     margin-right: -.75em;
+}
+
+.flex-row {
+    display: flex;
 }
 
 .column {
@@ -296,33 +289,11 @@ main>article {
 
 /* ------------------------------------ */
 
-.pic {
-    position: relative;
-}
-
-.pic img {
-    width: 100%;
-    object-fit: scale-down;
-    border-style: solid;
-    border-color: rgba(0, 14, 24, .8);
-    border-width: 2px 2px 32px;
-}
-
-.pic .credit {
-    position: absolute;
-    bottom: 12px;
-    right: 16px;
-    color: rgb(211, 211, 211);
-    font-size: 0.8rem;
-}
-
-/* ------------------------------------ */
-
 footer {
     flex-shrink: 0;
     margin: 32px 0 0;
     padding: 8px 0;
-    background-color: rgb(0, 40, 72);
+    background-color: rgb(241, 241, 241);
     font-size: 0.8rem;
     text-align: center;
 }
@@ -330,11 +301,7 @@ footer {
 footer p {
     margin: 0.5rem auto;
     text-align: center;
-    color: white;
-}
-
-footer p a {
-    color: white
+    color: gray;
 }
 
 /* ---------------------------------------------------------------- */
@@ -369,7 +336,7 @@ footer p a {
     padding: 16px;
 }
 
-.marquee div {
+.marquee > div {
     display: flex;
     flex-direction: column;
 }
@@ -648,6 +615,12 @@ textarea.error:focus,
     color: red
 }
 
+
+UL LI {
+    margin: 16px 0;
+    line-height: 1.5rem;
+}
+
 /* ------- avatar-list --------- */
 
 .avatar-list UL {
@@ -690,17 +663,23 @@ textarea.error:focus,
 
 /* ------- helpers --------- */
 
+.centered { margin: 0 auto }
+.mw720 { max-width: 720px }
 .fgrow { flex-grow: 1 }
+.width-fit-content { width: fit-content }
 
-.text-success { color: green }
+.text-success { color: #44b78b }
 .text-info { color: #0088ff }
 .text-warn { color: orange }
 .text-error { color: red }
 
-.fw500 { font-weight: 500 }
+.fw300 { font-weight: 300 }
+.fw400 { font-weight: 400 }
+.fw700 { font-weight: 700 }
 
 .lh1 { line-height: 1 }
 
+.monospace { font-family: "Oxygen Mono" }
 .big { font-size: 1.2rem }
 .small { font-size: 0.75rem }
 
@@ -712,8 +691,10 @@ textarea.error:focus,
 .mx0 { margin-left: 0; margin-right: 0 }
 .my0 { margin-top: 0; margin-bottom: 0 }
 .ml8 { margin-left: 8px }
+.ml16 { margin-left: 16px }
 .ml32 { margin-left: 32px }
 .mt32 { margin-top: 32px }
+.pt8 { padding-top: 8px }
 .pb24 { padding-bottom: 24px }
 .pb32 { padding-bottom: 32px }
 .py06 { padding: .6rem 0 }
@@ -723,3 +704,17 @@ textarea.error:focus,
 .bgc-alice { background-color: aliceblue }
 
 .hide { display: none }
+
+/* --------------------- */
+/* Override comments.css */
+
+.dcx.dcx-custom .comment-box .body {
+    padding: 8px;
+    line-height: 1.5;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.dcx.dcx-custom .comment-box .footer {
+    padding-left: 20px;
+}

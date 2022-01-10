@@ -15,7 +15,7 @@
     </h6>
 
     <div class="central-column">
-      <div class="dcx">
+      <div class="{% dcx_custom_selector %}">
         <div class="comment-list">
           {% if form.reply_to.value == "0" %}
             <div class="comment-box l0-ini">
@@ -72,7 +72,7 @@
           {% endif %}
         </div>
 
-        <div class="mt16">
+        <div class="mt32">
           {% if form.reply_to.value == "0" %}
             {% include "comments/form.html" %}
           {% endif %}

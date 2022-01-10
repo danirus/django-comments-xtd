@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;Register{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row">
+      <div class="column">
+        <h2>{% trans "Register" %}</h2>
+        <p>
+          Sign up to send comments and reactions to this website without having to confirm each contribution by email. Having your own account allows you to post media content in comments. It also gives you the capacity to send your reaction to stories, quotes and shop articles, as long as to react to comments.
+        </p>
+        <h3>{% trans "User registration form" %}<h3>
+        <div class="grid-form">
+          <form method="POST" autocomplete="off">
+            {% csrf_token %}
+
+            <label class="col1" for="{{ form.email.id_for_label }}">
+              {% trans form.email.label %}
+            </label>
+            <div class="col2 {% if 'email' in form.errors %}error{% endif %}">
+              {{ form.email }}
+            </div>
+            {% if "email" in form.errors %}
+              <div class="col2 helper-text error">
+                {{ form.errors.email.0 }}
+              </div>
+            {% endif %}
+
+            <label class="col1" for="{{ form.name.id_for_label }}">
+              {% trans form.name.label %}
+            </label>
+            <div class="col2 {% if 'name' in form.errors %}error{% endif %}">
+              {{ form.name }}
+            </div>
+            {% if "name" in form.errors %}
+              <div class="col2 helper-text error">
+                {{ form.errors.name.0 }}
+              </div>
+            {% endif %}
+
+            <label class="col1" for="{{ form.url.id_for_label }}">
+              {% trans form.url.label %}
+            </label>
+            <div class="col2 {% if 'url' in form.errors %}error{% endif %}">
+              {{ form.url }}
+            </div>
+            {% if "url" in form.errors %}
+              <div class="col2 helper-text error">
+                {{ form.errors.url.0 }}
+              </div>
+            {% endif %}
+
+            <div class="col2">
+              <div class="inline-left">
+                <button class="primary" type="submit" name="submit">
+                  {% trans 'Register' %}
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

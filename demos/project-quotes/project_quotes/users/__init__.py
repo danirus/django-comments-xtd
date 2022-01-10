@@ -1,12 +1,13 @@
 import base64
 import hashlib
 import hmac
-import os
+
+from django.conf import settings
 
 
 def pwd_hexdigest(user):
     return hmac.new(
-        os.environ.get('SECRET_KEY').encode('utf-8'),  # key
+        settings.SECRET_KEY.encode('utf-8'),  # key
         user.password.encode('utf-8'),        # msg
         hashlib.sha256                        # digest method
     ).hexdigest()

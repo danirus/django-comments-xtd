@@ -1,0 +1,48 @@
+{% extends "users/account_base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block nav-edit-profile %}<span class="small">{% trans "Edit profile" %}</span>{% endblock %}
+
+{% block sub_content %}
+<div class="container mt32">
+  <div class="row">
+    <div class="column">
+      <h3>{% trans "Edit Profile" %}</h3>
+      <div class="grid-form xmargin fgrow bt1">
+        <form id="profile_form" method="POST" action="{% url 'edit-profile' %}">
+
+          {% if messages %}
+            {% for message in messages %}
+              <div class="col1-2 alert alert-{{ message.tags }} text-center text-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+
+          {% if form.non_field_errors %}
+            <div class="col1-2 alert alert-error text-center text-error">
+              {{ form.non_field_errors.0 }}
+            </div>
+          {% endif %}
+
+          {% csrf_token %}
+          <label class="col1" for="{{ form.email.id_for_label }}">{% trans "Email address" %}</label>
+          <div class="col2">{{ form.email }}</div>
+
+          <label class="col1" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+          <div class="col2">{{ form.name }}</div>
+
+          <label class="col1" for="{{ form.url.id_for_label }}">{{ form.url.label }}</label>
+          <div class="col2">{{ form.url }}</div>
+
+          <div class="col2">
+            <div class="inline-left">
+              <button class="small primary" type="submit" name="submit">{% trans 'save profile' %}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock sub_content %}

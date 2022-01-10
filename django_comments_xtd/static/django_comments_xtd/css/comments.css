@@ -555,7 +555,6 @@
     border-style: solid;
     border-top-left-radius: 0.3rem;
     border-top-right-radius: 0.3rem;
-    font-size: 0.9rem;
 }
 
 .dcx .comment-box     .body > P,
@@ -703,7 +702,6 @@
 
 .dcx input,
 .dcx textarea {
-    font-family: "Assistant", sans-serif;
     font-size: 0.9rem;
     border: 1px solid rgba(0, 0, 0, .2);
     border-radius: 0.25rem;

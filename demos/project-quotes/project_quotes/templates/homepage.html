@@ -6,90 +6,38 @@
 {% block content %}
 <main>
   <div class="container">
-    <div class="intro big bgc-alice">
-      django-comments-xtd is a reusable Django app that extends django-contrib-comments with thread support, following-up notifications and comments that only hit the database after users confirm them by email.
+    <div class="intro big fw300">
+      The <strong>quotes project</strong> uses only the backend side of django-comments-xtd. Users can send comments, can reply to comments, and can send the like and dislike reactions to comments.
     </div>
   </div>
   <div class="container">
-    <div class="row">
+    <div class="flex-row">
       <section class="column">
-        <h2 class="subtitle">Threaded comments</h2>
+        <h2 class="subtitle text-success">Threaded comments</h2>
         <p>
           Comments can be nested. The maximum thread level is customizable for the whole site and explicitly for each app.model pair.
         </p>
       </section>
       <section class="column">
-        <h2 class="subtitle">Notifications and mute-links</h2>
+        <h2 class="subtitle text-success">Notifications and mute-links</h2>
         <p>
-          Comment authors can receive notifications of follow-up comments. Notifications can be cancelled by clicking on the mute-link.
-        </p>
-      </section>
-      <section class="column">
-        <h2 class="subtitle">Comment confirmation</h2>
-        <p>
-          Comment confirmation via email when comment authors are not authenticated. Comments hit the database once they are confirmed.
+          Comments' authors can receive notifications of follow-up comments. Notifications can be cancelled by clicking on the mute-link.
         </p>
       </section>
     </div>
   </div>
   <div class="container">
-    <div class="row">
+    <div class="flex-row">
       <section class="column">
-        <h2 class="subtitle">Comment reactions</h2>
+        <h2 class="subtitle text-success">Comment confirmation</h2>
+        <p>
+          Comment confirmation via email when comments' authors are not authenticated. Comments hit the database once they are confirmed.
+        </p>
+      </section>
+      <section class="column">
+        <h2 class="subtitle text-success">Comment reactions</h2>
         <p>
           Starting with like and dislike reactions, they can be extended to any set of reactions to suit the comments of your website.
-        </p>
-      </section>
-      <section class="column">
-        <h2 class="subtitle">Object reactions</h2>
-        <p>
-          Reactions posted to the object being commented: story, photo, shop article... Integrate them with the comment form or separared.
-        </p>
-      </section>
-      <section class="column">
-        <h2 class="subtitle">CSS and JavaScript</h2>
-        <p>
-          It uses a full responsive CSS layout and vanilla JavaScript. It does not depend on any frontend framework.
-        </p>
-      </section>
-    </div>
-  </div>
-
-
-  <div class="container">
-    <div class="intro mt32 bt1">
-      <h2>Comments in Action</h2>
-      <h5>Three different apps use django-comments-xtd in this project in different ways. The stories app, the quotes app, and a shop app.</h5>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="row">
-      <section class="column">
-        <h2 class="subtitle">Stories app</h2>
-        <p>
-          Comments can be nested two levels. Reactions have been extended. Both, comments and reactions are sent using vanilla JavaScript.
-        </p>
-        <p>
-          Go to the <a href="stories.html">stories</a> page.
-        </p>
-      </section>
-      <section class="column">
-        <h2 class="subtitle">Quotes app</h2>
-        <p>
-          The quotes app works as if the user had disabled JavaScript in the browser. Everything works as in the stories app, but it's fully driven by the backend.
-        </p>
-        <p>
-          Go to the <a href="quotes.html">quotes</a> page.
-        </p>
-      </section>
-      <section class="column">
-        <h2 class="subtitle">Shop app</h2>
-        <p>
-           The shop illustrates how to use 'object reactions' associated with comments. Users can send a product evaluation and a comment at the same time.
-        </p>
-        <p>
-          Go to the <a href="shop.html">shop</a> page.
         </p>
       </section>
     </div>

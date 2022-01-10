@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;{% trans "Login" %}{% endblock %}
+
+{% block nav-login-class %}active{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row">
+      <div class="column">
+        <h2>{% trans "Log in" %}</h2>
+        <p>
+          Your registration is complete. You can now log in using the form below.
+        </p>
+        <p>
+          This website places <strong>three cookies</strong> in your browser. One called <strong><code>csrftoken</code></strong> to send form data to the web server with security, another called <strong><code>sessionid</code></strong> to keep you logged in, and the last one called <strong><code>language</code></strong> to store your site language preference. It does not use third party tracking systems.
+        </p>
+        <h3>{% trans "Login with your email and password" %}</h3>
+        <div class="grid-form">
+          <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            {% if form.errors %}
+              <div class="col1-2 alert alert-error text-error">
+                {% trans form.non_field_errors.0 %}
+              </div>
+            {% endif %}
+
+            <label class="col1" for="{{ form.email.id_for_label }}">
+              {% trans form.email.label %}
+            </label>
+            <div class="col2">{{ form.email }}</div>
+
+            <label class="col1" for="{{ form.password.id_for_label }}">
+              {% trans form.password.label %}
+            </label>
+            <div class="col2">{{ form.password }}</div>
+
+            <div class="col2">
+              <label for="{{ form.remember.id_for_label }}">
+                {{ form.remember }}&nbsp;{{ form.remember.label }}
+              </label>
+            </div>
+
+            <div class="col2">
+              <div class="inline-left">
+                <button class="primary" type="submit" name="submit">
+                  {% trans 'Log in' %}
+                </button>
+              </div>
+            </div>
+
+            <div class="col2">
+              <a class="small" href="/pascual">{% trans "Lost or forgot your password?" %}</a><br/>
+              <a class="small" href="{% url 'register' %}">{% trans "Have no account? Register." %}</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

@@ -4,8 +4,9 @@ include CHANGELOG.md
 include tox.ini
 include package.json
 include webpack.config.js
-include requirements.pip
-include requirements_tests.pip
+include requirements.txt
+include requirements-tests.txt
+include requirements-dev.txt
 recursive-include docs *
 recursive-include django_comments_xtd/locale *
 recursive-include django_comments_xtd/templates *

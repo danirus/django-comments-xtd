@@ -1,13 +1,13 @@
 from django.conf import settings
 from django.template import loader
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from django_comments_xtd.utils import send_mail
 
 
 def notify_emailaddr_change_confirmation(
-    key, user, email, site,
+    key, user, email, site, scheme,
     text_template="users/emailaddr_change_confirmation.txt",
     html_template="users/emailaddr_change_confirmation.html"
 ):
@@ -19,7 +19,8 @@ def notify_emailaddr_change_confirmation(
                        'new_email': email,
                        'confirmation_url': confirmation_url,
                        'contact': settings.COMMENTS_XTD_FROM_EMAIL,
-                       'site': site}
+                       'site': site,
+                       'scheme': scheme}
     # Prepare text message.
     text_message_template = loader.get_template(text_template)
     text_message = text_message_template.render(message_context)
@@ -35,7 +36,7 @@ def notify_emailaddr_change_confirmation(
 
 
 def send_confirm_user_registration_request(
-    form, key, site,
+    form, key, site, scheme,
     text_tmpl="users/user_registration_confirmation.txt",
     html_tmpl="users/user_registration_confirmation.html"
 ):
@@ -45,7 +46,8 @@ def send_confirm_user_registration_request(
                'email': form.cleaned_data['email'],
                'confirmation_url': confirmation_url,
                'contact': settings.COMMENTS_XTD_CONTACT_EMAIL,
-               'site': site}
+               'site': site,
+               'scheme': scheme}
     return send_confirmation_request(subject, context, text_tmpl, html_tmpl)
 
 

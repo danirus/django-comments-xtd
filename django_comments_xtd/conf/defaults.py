@@ -100,3 +100,22 @@ COMMENTS_XTD_REACTIONS_JS_OVERLAYS = {
         "tooltip": {"pos_bottom": 30, "pos_left": 76},
     }
 }
+
+# All HTML elements rendered by django-comments-xtd use the 'dcx' CSS selector,
+# defined in 'django_comments_xtd/static/django_comments_xtd/css/comments.css'.
+# You can alter the CSS rules applied to your comments adding your own custom
+# selector to the following setting. If you wanted to modify the .body of the
+# comments with, say, a different padding, line-height and font color you could
+# create do so by creating the following selector in your project's CSS:
+#
+#   .dcx.dcx-custom .comment-box .body {
+#       padding: 8px;
+#       line-height: 1.5;
+#       color: #555;
+#   }
+#
+# And adding the following setting to your settings module:
+#
+#    COMMENTS_XTD_CSS_CUSTOM_SELECTOR = "dcx dcx-custom"
+#
+COMMENTS_XTD_CSS_CUSTOM_SELECTOR = "dcx"

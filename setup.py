@@ -1,43 +1,32 @@
-import os.path
-# import sys
+from pathlib import Path
 
 from setuptools import setup, find_packages
-# from setuptools.command.test import test
 
 
-# def run_tests(*args):
-#     from django_comments_xtd.tests import run_tests
-#     errors = run_tests()
-#     if errors:
-#         sys.exit(1)
-#     else:
-#         sys.exit(0)
-
-
-# test.run_tests = run_tests
+BASE_DIR = Path(__file__).resolve().parent
 
 
 readme = ""
-with open(os.path.join(os.path.dirname(__file__), "README.rst"), "r") as readme_file:
+with open(BASE_DIR / "README.rst", "r") as readme_file:
     readme = readme_file.read()
 
 
 requirements = []
-with open("requirements.txt", "r") as req_file:
+with open(BASE_DIR / "requirements.txt", "r") as req_file:
     for item in req_file:
         requirements.append(item)
 
 
 tests_requirements = requirements[:]
-with open("requirements-tests.txt", "r") as req_file:
-    req_file.readline()  # Skip 1st line: '-r requirements.txt'.
+with open(BASE_DIR / "requirements-tests.txt", "r") as req_file:
+    req_file.readline()  # Skip 1st line: '-r requirements.txt'.
     for item in req_file:
         tests_requirements.append(item)
 
 
 dev_requirements = tests_requirements[:]
-with open("requirements-dev.txt", "r") as req_file:
-    req_file.readline()  # Skip 1st line: '-r requirements-tests.txt'.
+with open(BASE_DIR / "requirements-dev.txt", "r") as req_file:
+    req_file.readline()  # Skip 1st line: '-r requirements-tests.txt'.
     for item in req_file:
         dev_requirements.append(item)
 

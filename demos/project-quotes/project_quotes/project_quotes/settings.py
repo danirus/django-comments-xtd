@@ -9,8 +9,12 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+
+
+PRODUCTION = bool(os.getenv("PRODUCTION", False))
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-zm5d+7+c#qlgf^$rwf^5dee^e+p#5g29)ypl^_w+mt4k$n2cs1'
+SECRET_KEY = 'bqac+=!uj4i@-1q-u#w=gy*q6b(y_5*nv84s4vbg#@5s+cq7nc'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if PRODUCTION else True
 
-ALLOWED_HOSTS = []
+if PRODUCTION:
+    ALLOWED_HOSTS = ['localhost',]
+else:
+    ALLOWED_HOSTS = []
 
 INTERNAL_IPS = ['127.0.0.1']
 
@@ -85,12 +92,24 @@ WSGI_APPLICATION = 'project_quotes.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if PRODUCTION:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'dcx-demo-qp',
+            'USER': 'dcx-demo',
+            'PASSWORD': 'dcx-demo',
+            'HOST': 'dcx-postgres',
+            'PORT': '5432'
+        },
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -127,7 +146,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+if PRODUCTION:
+    STATIC_URL = "http://localhost:8049/"
+else:
+    STATIC_URL = 'static/'
+
+STATIC_ROOT = BASE_DIR.parent / "static"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -149,7 +177,7 @@ COMMENTS_APP = "django_comments_xtd"
 
 COMMENTS_HIDE_REMOVED = False
 
-COMMENTS_XTD_SALT="w28dnq7czc1m+=l)=yiydar-r$$pnz#a5#22pjz_&5n%sq^kkr"
+COMMENTS_XTD_SALT = b"w28dnq7czc1m+=l)=yiydar-r$$pnz#a5#22pjz_&5n%sq^kkr"
 COMMENTS_XTD_CONFIRM_EMAIL = True   # Set to False to disable confirmation
 COMMENTS_XTD_FROM_EMAIL = 'staff@example.com'
 COMMENTS_XTD_CONTACT_EMAIL = 'staff@example.com'
@@ -182,3 +210,19 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
         'check_input_allowed': 'quotes.models.check_comments_input_allowed'
     },
 }
+
+# All HTML elements rendered by django-comments-xtd use the 'dcx' CSS selector,
+# defined in 'django_comments_xtd/static/django_comments_xtd/css/comments.css'.
+# You can alter the CSS rules applied to your comments adding your own custom
+# selector to the following setting.
+COMMENTS_XTD_CSS_CUSTOM_SELECTOR = "dcx dcx-custom"
+
+# Display up to the given number of comments in the last page to avoid
+# creating another page containing only these amount of comments.
+COMMENTS_XTD_MAX_LAST_PAGE_ORPHANS = 4
+
+# Number of comments per page. When <=0 pagination is disabled.
+COMMENTS_XTD_ITEMS_PER_PAGE = 10
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -12,14 +12,10 @@ urlpatterns = [
             views.user_register_confirm, name='register-confirm'),
 
     path('account/', views.user_account, name="account"),
-    path('account/edit/', views.edit_user, name="edit-user"),
-
-    path('account/edit/email', views.post_change_email_form_j),
+    path('account/edit/', views.edit_profile, name="edit-profile"),
     re_path(r'^account/change-email/(?P<key>[^/]+)/confirm$',
             views.confirm_change_email, name='change-email-confirm'),
 
-    path('account/edit/pdata', views.post_personal_data_form_j),
-    path('account/avatar/', views.edit_avatar, name="edit-avatar"),
     path('account/password/', views.edit_password, name='edit-password'),
 
     path('account/cancel/', views.user_delete, name='delete'),

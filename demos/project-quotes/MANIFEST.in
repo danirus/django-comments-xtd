@@ -1,0 +1,5 @@
+include README.md
+include requirements.txt
+recursive-include fixtures *
+recursive-include project_quotes/static *
+recursive-include project_quotes/templates *

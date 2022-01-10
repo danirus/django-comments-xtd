@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;{% trans "Account" %}{% endblock %}
+
+{% block nav-account-class %}active{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="marquee">
+      <img src="">
+      <div class="wo-y-margins expand fgrow px1">
+        <div class="width-fit-content">
+          {% if user.name %}
+            <h4 id="user_name">{{ user.name }}</h4>
+          {% else %}
+            <h4 class="muted">{% trans "Unknown name" %}</h4>
+          {% endif %}
+          <h6 class="pt8 pb24 monospace small">{{ user.email }}</h6>
+        </div>
+        <p>
+          {% block nav-edit-profile %}<a class="underline small" href="{% url 'edit-profile' %}">{% trans "Edit profile" %}</a>{% endblock %}
+          &nbsp;&bull;&nbsp;
+          {% block nav-change-pwd %}<a class="underline small" href="{% url 'edit-password' %}">{% trans "Change password" %}</a>{% endblock %}
+          &nbsp;&bull;&nbsp;
+          {% block nav-delete-account %}<a class="underline small" href="{% url 'delete' %}">{% trans "Delete account" %}</a>{% endblock %}
+        </p>
+      </div>
+      <div>
+        <a class="btn primary" href="{% url 'logout' %}">{% trans "Logout" %}</a>
+      </div>
+    </div>
+  </div>
+
+  {% block sub_content %}
+  {% endblock %}
+</main>
+{% endblock content %}

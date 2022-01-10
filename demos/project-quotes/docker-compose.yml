@@ -1,0 +1,57 @@
+version: '2.1'
+
+networks:
+  default:
+    name: dcx-demo
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+services:
+  nginx:
+    image: nginx:latest
+    hostname: dcx-nginx
+    container_name: dcx-nginx
+    ports:
+      - 8049:8049
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./static:/static
+
+  web:
+    image: dcx-demo-project-quotes:${DEMO_QUOTES_VER:-latest}
+    hostname: dcx-demo-project-quotes
+    container_name: dcx-demo-project-quotes
+    build:
+      context: ../..
+      dockerfile: demos/project-quotes/Dockerfile
+      target: build-image
+      args:
+        DEMO_QUOTES_VER: ${DEMO_QUOTES_VER}
+        APP_VER: ${APP_VER}
+    environment:
+      PRODUCTION: True
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8048:8048
+
+  postgres:
+    image: postgres:latest
+    hostname: dcx-postgres
+    container_name: dcx-postgres
+    environment:
+      POSTGRES_DB: dcx-demo-qp
+      POSTGRES_USER: dcx-demo
+      POSTGRES_PASSWORD: dcx-demo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "dcx-demo-qp", "-U", "dcx-demo" ]
+      timeout: 45s
+      interval: 5s
+      retries: 10

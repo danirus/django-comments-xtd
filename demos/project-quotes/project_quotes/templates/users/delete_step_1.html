@@ -1,0 +1,53 @@
+{% extends "users/account_base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block nav-delete-account %}<span class="small">{% trans "Delete account" %}</span>{% endblock %}
+
+{% block sub_content %}
+<div class="container mt32">
+  <div class="row">
+    <div class="column">
+      <h3>{% trans "Delete account" %}</h3>
+      {% blocktrans %}
+        <p>Your contributions are very much appreciated and deleting them might break a chain of comments, therefore they will be preserved after you delete your account. However if you don't want to display your name associated with your contributions you can choose to anonymized them so that the name displayed can not be associated with yours.</p>
+      {% endblocktrans %}
+      <div class="grid-form xmargin fgrow">
+        <form method="POST">
+          {% csrf_token %}
+          {% if 'cancel' in form.errors %}
+            <div class="col1-2 alert alert-error text-center text-error">
+              {% for form_error in form.errors.cancel %}
+                {{ form_error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <label class="col1" for="{{ form.anonymize.id_for_label }}">
+            {% trans form.anonymize.label %}
+          </label>
+          <div class="col2 no-bullet">
+            {{ form.anonymize }}
+          </div>
+
+          <div class="col2">
+            <label for="{{ form.cancel.id_for_label }}">
+              {{ form.cancel }}&nbsp;{{ form.cancel.label }}
+            </label>
+          </div>
+
+          <div class="col2">
+            <div class="inline-left">
+              <button class="primary" type="submit" name="submit">
+                {% trans 'Delete account' %}
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

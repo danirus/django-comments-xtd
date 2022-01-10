@@ -482,6 +482,12 @@ def get_comment(comment_id: str):
     return get_model().objects.get(pk=int(comment_id))
 
 
+@register.simple_tag()
+def dcx_custom_selector():
+    print(f"custom_selector: {settings.COMMENTS_XTD_CSS_CUSTOM_SELECTOR}")
+    return f"{settings.COMMENTS_XTD_CSS_CUSTOM_SELECTOR}"
+
+
 # ----------------------------------------------------------------------
 @register.inclusion_tag("comments/only_users_can_post.html")
 def render_only_users_can_post_template(object):

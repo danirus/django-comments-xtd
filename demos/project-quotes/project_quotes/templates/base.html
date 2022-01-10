@@ -1,4 +1,6 @@
+{% load i18n %}
 {% load static %}
+
 <!doctype html>
 <html>
   <head>
@@ -17,7 +19,7 @@
     <header>
       <div class="container">
         <div class="title">
-          <h1><a href="{% url 'homepage' %}">demo project</a></h1>
+          <h1><a href="{% url 'homepage' %}">quotes project</a></h1>
           <h4>with django-comments-xtd</h4>
         </div>
         <nav class="menu">
@@ -40,7 +42,7 @@
     <footer>
       <div class="container">
         <p>
-          <a href="http://readthedocs.org/docs/django-comments-xtd/">{% trans "documentation" %}</a>
+          <a href="http://readthedocs.org/docs/django-comments-xtd/">{% translate "documentation" %}</a>
           &nbsp;&bull;&nbsp;
           <a href="https://github.com/danirus/django-comments-xtd">source code</a>
           &nbsp;&bull;&nbsp;

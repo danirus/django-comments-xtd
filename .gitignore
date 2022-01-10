@@ -30,3 +30,4 @@ example/env
 demo/project/avatars
 demo/project/project/settings_local.py
 demos/project-quotes/pqenv
+demos/project-quotes/static

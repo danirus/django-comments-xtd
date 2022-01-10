@@ -1,5 +1,6 @@
 	.DEFAULT_GOAL := help
-.PHONY: coverage deps help test tox
+.PHONY: coverage deps help test tox sdist collectstatic \
+	compose-project-quotes-build compose-project-quotes-up
 
 coverage:  ## Run tests with coverage.
 	coverage erase
@@ -19,6 +20,19 @@ test:  ## Run tests.
 
 tox:  ## Run tox.
 	python -m tox
+
+sdist:  # Create source tarballs for django-comments-xtd and demos projects.
+	python setup.py sdist
+	cd demos/project-quotes/ && python setup.py sdist
+
+collectstatic:  # django's collectstatic for demos project.
+	cd demos/project-quotes/ && . pqenv/bin/activate && python project_quotes/manage.py collectstatic --noinput
+
+compose-project-quotes-build: sdist
+	source .env && docker-compose -f demos/project-quotes/docker-compose.yml build web
+
+compose-project-quotes-up: sdist collectstatic
+	source .env && docker-compose -f demos/project-quotes/docker-compose.yml up
 
 help: ## Show help message
 	@IFS=$$'\n' ; \

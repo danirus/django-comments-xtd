@@ -65,7 +65,7 @@ msgstr "Avertir des commentaires suivants"
 
 #: views.py:48
 msgid "comment confirmation request"
-msgstr "Confirmation du commentaire envoyée"
+msgstr "Confirmation du commentaire envoyé"
 
 #: views.py:209
 msgid "new comment posted"

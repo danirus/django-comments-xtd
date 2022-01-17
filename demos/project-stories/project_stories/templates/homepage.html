@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="intro big fw300">
+      The <strong>stories project</strong> uses the backend and the frontend of django-comments-xtd. Comments display the user's avatar. All comment interactions are handled with JavaScript. Users can send comments and can nest two level of replies. Comment reactions have been customized to resemble comment reactions in GitHub.
+    </div>
+  </div>
+  <div class="container">
+    <div class="flex-row">
+      <section class="column">
+        <h2 class="subtitle text-success">Threaded comments</h2>
+        <p>
+          Comments can be nested. The maximum thread level is customizable for the whole site and explicitly for each app.model pair.
+        </p>
+      </section>
+      <section class="column">
+        <h2 class="subtitle text-success">Notifications and mute-links</h2>
+        <p>
+          Comments' authors can receive notifications of follow-up comments. Notifications can be cancelled by clicking on the mute-link.
+        </p>
+      </section>
+    </div>
+  </div>
+  <div class="container">
+    <div class="flex-row">
+      <section class="column">
+        <h2 class="subtitle text-success">Comment confirmation</h2>
+        <p>
+          Comment confirmation via email when comments' authors are not authenticated. Comments hit the database once they are confirmed.
+        </p>
+      </section>
+      <section class="column">
+        <h2 class="subtitle text-success">Comment reactions</h2>
+        <p>
+          Starting with like and dislike reactions, they can be extended to any set of reactions to suit the comments of your website.
+        </p>
+      </section>
+    </div>
+  </div>
+</main>
+{% endblock %}

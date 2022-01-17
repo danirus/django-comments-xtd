@@ -443,4 +443,16 @@ class CommentReaction(models.Model):
         on_delete=models.CASCADE,
     )
     counter = models.IntegerField(default=0)
-    authors = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    authors = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='CommentReactionAuthor',
+        through_fields=('reaction', 'author'),
+    )
+
+
+class CommentReactionAuthor(models.Model):
+    reaction = models.ForeignKey(CommentReaction, on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )

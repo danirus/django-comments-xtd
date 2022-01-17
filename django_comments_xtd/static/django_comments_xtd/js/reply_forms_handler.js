@@ -1,23 +1,27 @@
+import CommentForm from "./comment_form.js";
+
 export default class ReplyFormsHandler {
-  constructor(qsCommentFormWrapper, qsRepliesFormWrapper) {
-    const cFormWrapperEl = document.querySelector(qsCommentFormWrapper);
-    this.cFormEl = cFormWrapperEl.querySelector("form");
-    this.replyData = [];
+  constructor(baseReplyFormId, qsRepliesFormWrapper) {
+    this.baseReplyFormEl = document.getElementById(baseReplyFormId);
+    this.replyMap = new Map();
 
     for (let elem of document.querySelectorAll(qsRepliesFormWrapper)) {
       const rFormEl = elem.querySelector("form");
       if (rFormEl == null) continue;
 
       const rFormWrapperEl = rFormEl.parentNode;
-      const action = rFormEl.action;
+      // const action = rFormEl.action;
       const reply_to = rFormEl.elements['reply_to'].value;
+      const qs_cform = `${rFormWrapperEl.dataset.dcx}-${reply_to}`;
+      rFormWrapperEl.dataset.dcx = qs_cform;
+      console.log(`dataset.dcx: `, rFormWrapperEl.dataset.dcx);
+
 
       // The textarea with "Your reply" placeholder.
       const ta = document.createElement("textarea");
       ta.rows = 1;
       ta.placeholder = "Your reply";
       ta.addEventListener("focus", this.on_focus(reply_to));
-      ta.addEventListener("blur", this.on_blur(reply_to));
 
       // Wrapper for the textarea.
       const replyTADiv = document.createElement("div");
@@ -25,66 +29,90 @@ export default class ReplyFormsHandler {
       replyTADiv.className = "reply-form";
       replyTADiv.appendChild(ta);
 
-      // Find visible element where to append the replyTADiv.
-      // const repBtnDiv = rFormEl.querySelector("[data-dcx=reply-button]");
-      // repBtnDiv.style.display = "none";
-
-      // Append replyTADiv to the parent node of the repBtnDiv.
-      // repBtnDiv.parentNode.appendChild(replyTADiv);
-
-      const newForm = this.cFormEl.cloneNode(true);
-      newForm.action = action;
-      newForm.elements['reply_to'].value = rFormEl.elements['reply_to'].value;
+      const newForm = this.baseReplyFormEl.cloneNode(true);
+      newForm.id = `${newForm.id}-${reply_to}`;
+      newForm.elements['reply_to'].value = reply_to;
+      const post_btn = newForm.elements['post'];
+      post_btn.addEventListener("click", this.on_post(reply_to));
+      const preview_btn = newForm.elements['preview'];
+      preview_btn.addEventListener("click", this.on_preview(reply_to));
+      const cancel_btn = newForm.elements['cancel'];
+      cancel_btn.addEventListener("click", this.on_cancel(reply_to));
       newForm.style.display = "none";
 
-      // Add 'cancel' button to the newForm.
-      const cancelBtn = document.createElement("button");
-      cancelBtn.type = "button";
-      const newFormButtons = newForm.querySelectorAll("button");
-      newFormButtons.forEach(item => item.classList.add("small"));
-      const lastBtn = newFormButtons[newFormButtons.length - 1];
-      cancelBtn.className = lastBtn.className;
-      newFormButtons[0].parentNode.appendChild(cancelBtn);
-
-      // This is to attach to JavaScript, it's better to produce the form
-      // with a django template tag, so that the user can customize it.
-      // And then clone it here, instead of cloning the form.html.
-      // Use the tag as: {% render_comment_reply_form for object %}.
-
       elem.appendChild(replyTADiv);
+      console.log(`newForm:`, newForm);
       rFormEl.replaceWith(newForm);
-
-      const item = {
-        reply_holder: rFormWrapperEl,
-        action: action,
-        reply_to: rFormEl.elements['reply_to'].value,
-        reply_textarea: replyTADiv,
-        new_form: newForm
-      }
-      this.replyData.push(item);
+      this.replyMap.set(reply_to, {
+        'node': rFormWrapperEl,
+        'cform': new CommentForm(`[data-dcx=${qs_cform}]`)
+      });
     }
-    console.log(`replyData:`, this.replyData);
   }
 
   on_focus(reply_to) {
+    // Display the comment form and hide the text area.
     return (event) => {
-      const section = event.target.parentNode.parentNode;
-      if (section == null) {
-        console.error("Could not find the element with [data-dcx=reply-form].");
+      const item = this.replyMap.get(reply_to);
+      if (item === undefined) {
+        console.error(`Could not find reply holder for comment id ${reply_to}`);
         return;
       }
-      event.target.parentNode.style.display = "none";
-      section.classList.toggle("active");
-      section.children[0].style.display = "grid";
-      // event.target.parentNode.className = "reply-form active";
-      console.log(`Form for reply_to ${reply_to} got on focus.`);
+
+      const form = item.node.querySelector("form");
+      const divta = item.node.querySelector("[data-dcx=reply-textarea]");
+      item.node.classList.toggle("active");
+      divta.style.display = "none";
+      form.style.display = "grid";
+      form.elements['comment'].focus();
     }
   }
 
-  on_blur(reply_to) {
+  on_cancel(reply_to) {
+    // Display the text area and hide the comment form.
     return (event) => {
-      event.target.parentNode.className = "reply-form";
-      console.log(`Textarea for reply_to ${reply_to} lost the focus.`);
+      const item = this.replyMap.get(reply_to);
+      if (item === undefined) {
+        console.error(`Could not find reply holder for comment id ${reply_to}`);
+        return;
+      }
+
+      const form = item.node.querySelector("form");
+      const divta = item.node.querySelector("[data-dcx=reply-textarea]");
+      divta.querySelector("textarea").value = form.elements['comment'].value;
+      item.node.classList.toggle("active");
+      form.style.display = "none";
+      divta.style = "";
+    }
+  }
+
+  on_preview(reply_to) {
+    return (event) => {
+      console.log(`Clicked on reply_form with reply_to ${reply_to}`);
+      const item = this.replyMap.get(reply_to);
+      if (item === undefined) {
+        console.error(`Could not find reply holder for comment id ${reply_to}`);
+        return;
+      }
+
+      const form = item.node.querySelector("form");
+      console.log(`form.reply_to:`, form.elements['reply_to'].value);
+      item.cform.post("preview");
+    }
+  }
+
+  on_post(reply_to) {
+    return (event) => {
+      console.log(`Clicked on reply_form with reply_to ${reply_to}`);
+      const item = this.replyMap.get(reply_to);
+      if (item === undefined) {
+        console.error(`Could not find reply holder for comment id ${reply_to}`);
+        return;
+      }
+
+      const form = item.node.querySelector("form");
+      console.log(`form.reply_to:`, form.elements['reply_to'].value);
+      item.cform.post("post");
     }
   }
 }

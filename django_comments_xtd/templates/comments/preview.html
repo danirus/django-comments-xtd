@@ -66,7 +66,9 @@
             <div class="reply-box l0">
               <div class="line-0"></div>
               <div class="content">
-                {% include "comments/form.html" %}
+                <section class="reply-form active">
+                  {% include "comments/form.html" %}
+                </section>
               </div>
             </div>
           {% endif %}
@@ -74,7 +76,10 @@
 
         <div class="mt32">
           {% if form.reply_to.value == "0" %}
-            {% include "comments/form.html" %}
+            <section class="comment-form">
+              <h5 class="text-center">{% translate "Post your comment" %}</h5>
+              {% include "comments/form.html" %}
+            </section>
           {% endif %}
         </div>
       </div>

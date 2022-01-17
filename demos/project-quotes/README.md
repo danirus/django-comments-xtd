@@ -3,10 +3,12 @@
 It is a very simple project with only three dependencies:
  * django>=4,<5
  * django-contrib-comments>=2.1,<2.2
+ * django-comments-xtd
 
 Features:
  * It is a fully backend driven project (no JavaScript needed).
  * Users and visitors can send comments and replies.
+ * Comments can be nested one level.
 
 ## Install
 

@@ -12,23 +12,27 @@ function init() {
    * Initialize main comment form.
    */
   const qs_cform = "[data-dcx=comment-form]";
-  const qs_cform_errors = "[data-dcx=comment-form-errors]";
-  if (document.querySelector(qs_cform) &&
-      document.querySelector(qs_cform_errors)
-  ) {
-    comment_form = new CommentForm(qs_cform, qs_cform_errors);
-  }
-
-  /* ----------------------------------------------
-   * Initialize reply forms.
-   */
-  const qs_rform = "[data-dcx=reply-form]";
-  if (comment_form != null && document.querySelectorAll(qs_rform)) {
-    reply_forms_handler = new ReplyFormsHandler(qs_cform, qs_rform);
+  if (document.querySelector(qs_cform)) {
+    comment_form = new CommentForm(qs_cform);
   }
 
   window.post_comment_form = (submit_button_name) => (
     comment_form ? comment_form.post(submit_button_name) : false
+  );
+
+  /* ----------------------------------------------
+   * Initialize reply forms.
+   */
+  const base_rform_id = "reply-form";
+  const qs_rforms = "[data-dcx=reply-form]";
+  if (document.getElementById(base_rform_id) &&
+      document.querySelectorAll(qs_rforms)
+  ) {
+    reply_forms_handler = new ReplyFormsHandler(base_rform_id, qs_rforms);
+  }
+
+  window.post_comment_reply_form = (submit_button_name) => (
+    reply_forms_handler ? reply_forms_handler.post(submit_button_name) : false
   );
 }
 

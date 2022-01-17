@@ -1,8 +1,7 @@
 export default class CommentForm {
-  constructor(formWrapper, errorsWrapper) {
+  constructor(formWrapper) {
     this.formWrapper = formWrapper;
-    this.errorsWrapper = errorsWrapper;
-    this.url = "";
+    this.url = "";  // Form action URL.
     this._init();
   }
 
@@ -13,29 +12,6 @@ export default class CommentForm {
       this.url = this.formEl.action;
       this.formEl.action = "";
     }
-    this.errorsEl = this.formWrapperEl.querySelector(this.errorsWrapper);
-  }
-
-  clean_errors_el() {
-    const classes = [
-      'alert-success', 'alert-info', 'alert-warn', 'alert-error',
-      'text-success', 'text-info', 'text-warn', 'text-error'
-    ];
-    this.errorsEl.classList.add("hide");
-    this.errorsEl.textContent = "";
-    for (let classname of classes) {
-      this.errorsEl.classList.remove(classname);
-    }
-  }
-
-  set_errors_el_text(text, remove_classes, add_classes) {
-    for (let classname of remove_classes.split(" ")) {
-      this.errorsEl.classList.remove(classname);
-    }
-    for (let classname of add_classes.split(" ")) {
-      this.errorsEl.classList.add(classname);
-    }
-    this.errorsEl.textContent = text;
   }
 
   _disable_btns(value) {
@@ -53,19 +29,27 @@ export default class CommentForm {
   }
 
   post(submit_button_name) {
-    this.clean_errors_el();
+    // this.clean_errors_el();
     if (!this._is_valid())
       return;
     this._disable_btns(true);
+
+    // If the <section data-dcx="preview">...</section> does exist,
+    // delete it. If the user clicks again in the "preview" button
+    // it will be displayed again.
+    const preview = this.formWrapperEl.querySelector("[data-dcx=preview]");
+    if (preview) {
+      preview.remove();
+    }
+
     const formData = new FormData(this.formEl);
-    console.log(`submit_button_name:`, submit_button_name);
     if (submit_button_name != undefined)
       formData.append(submit_button_name, 1);
-    console.log("formData:", formData);
+
     fetch(this.url, {
       method: 'POST',
       headers: {
-        "X-Requested-With": "XMLHttpRequest"
+        "X-Requested-With": "XMLHttpRequest",
       },
       body: formData
     }).then(response => {
@@ -79,25 +63,25 @@ export default class CommentForm {
   }
 
   async handle_preview_comment_response(response) {
-    if (response.status == 200 || response.status == 422) {
-      content = await response.text();
-      this.formWrapperEl.innerHTML = content;
+    if (response.status == 200 || response.status == 400) {
+      const data = await response.json();
+      this.formWrapperEl.innerHTML = data.html;
       this._init();
     }
   }
 
   async handle_post_comment_response(response) {
-    debugger;
-    if (response.status == 422) {
-      content = await response.text();
-      console.log(`handle_post_comment_response status:`, response.status);
-      console.log(`handle_post_comment_response content:`, content);
-      this.formEl.innerHTML = content;
+    if (response.status == 200 || response.status == 400) {
+      const data = await response.json();
+      this.formEl.innerHTML = data.html;
       this._init();
-    } else if (response.status >= 400 && response.status < 500) {
-      this.set_errors_el_text(
-        "Something went wrong, your comment can not be processed.",
-        "hide", "alert-error text-error"
+    } else if (response.status == 201) {
+      const data = await response.json();
+      location.href = data.html;
+    } else if (response.status > 400 && response.status < 500) {
+      alert(
+        "Something went wrong and your comment could not be processed." +
+        "Please, reload the page and try again."
       );
     }
   }

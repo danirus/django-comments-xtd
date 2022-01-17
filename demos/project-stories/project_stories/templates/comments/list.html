@@ -1,0 +1,69 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+<div
+  id="comments"
+  class="comment-list"
+  {% if comment_reactions_enabled %}
+    data-type="reactions-def"
+    data-reactions="{% reactions_enum_strlist %}"
+    {% if user.is_authenticated %}
+      data-reactions-url="{% url 'comments-xtd-api-react' %}"
+    {% endif %}
+    data-reactions-row-length="4"
+    data-reactions-header-title="{% trans 'Pick your reaction' %}"
+    data-pos-bottom="{{ reactions_popover_pos_bottom }}"
+    data-pos-left="{{ reactions_popover_pos_left }}"
+  {% endif %}
+>
+  {% if is_paginated %}
+    {% include "comments/pagination.html" %}
+  {% endif %}
+
+  {% for comment in comment_list %}
+    {% comment %}
+      # Before rendering the comment, check the reply_stack to find out
+      # whether a reply-box has to be rendered.
+    {% endcomment %}
+    {% if reply_stack %}
+      {% with top_comment=reply_stack|get_top_comment %}
+        {% if comment.level <= top_comment.level %}
+          {% for object in reply_stack|pop_comments_gte:comment.level %}
+            {% if object.allow_thread %}
+              {% include "comments/reply_button.html" with comment=object %}
+            {% endif %}
+          {% endfor %}
+          {% push_comment comment %}
+        {% elif comment.level > top_comment.level and comment.level < max_thread_level %}
+          {% push_comment comment %}
+        {% endif %}
+      {% endwith %}
+    {% else %}
+      {% push_comment comment %}
+    {% endif %}
+
+    {% block comment %}
+      {% with page_number=page_obj.number %}
+        {% include "comments/comment.html" %}
+      {% endwith %}
+    {% endblock %}
+
+    {% if forloop.last %}
+      {% comment %}
+        # After rendering the last comment, render the reply form for the
+        # rest of comments still queued in the reply_stack.
+      {% endcomment %}
+      {% for object in reply_stack|pop_comments_gte %}
+        {% if object.allow_thread %}
+          {% include "comments/reply_button.html" with comment=object %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+  {% endfor %}
+
+  {% if is_paginated %}
+    {% include "comments/pagination.html" %}
+  {% endif %}
+</div>

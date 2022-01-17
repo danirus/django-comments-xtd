@@ -31,3 +31,6 @@ demo/project/avatars
 demo/project/project/settings_local.py
 demos/project-quotes/pqenv
 demos/project-quotes/static
+demos/project-stories/psenv
+demos/project-stories/media
+demos/project-stories/static

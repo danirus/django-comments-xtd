@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;Register{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row">
+      <div class="column">
+        <h2>{% trans "Register" %}</h2>
+        <p>
+          Thanks for confirming your email address. Your user account has been created. Please, assign a password to your new account before you can login.
+        </p>
+        <h3>{% trans "Protect your account" %}<h3>
+        <div class="grid-form">
+          <form method="POST" autocomplete="off">
+            {% csrf_token %}{{ form.email }}
+
+            <label class="col1" for="{{ form.password.id_for_label }}">
+              {% trans form.password.label %}
+            </label>
+            <div class="col2 {% if 'password' in form.errors %}error{% endif %}">
+              {{ form.password }}
+            </div>
+            {% if "password" in form.errors %}
+              <div class="col2 helper-text error">
+                {{ form.password.url.0 }}
+              </div>
+            {% endif %}
+
+
+            <div class="col2">
+              <div class="inline-left">
+                <button class="primary" type="submit" name="submit">
+                  {% trans 'Save' %}
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

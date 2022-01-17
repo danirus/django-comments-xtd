@@ -1,0 +1,73 @@
+{% extends "users/account_base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load comments_xtd %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;Account{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/comments.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/reactions.css' %}">
+{% endblock %}
+
+{% block nav-account-class %}active{% endblock %}
+
+{% block sub_content %}
+<div class="container mt32">
+  <div class="row">
+    <div class="column">
+      <h3>{% trans "Your comments to this website" %}</h3>
+      {% if not comments %}
+        <h6 class="text-center">You have not sent comments yet.</h6>
+      {% endif %}
+      {% for comment in comments %}
+        <div class="mt32 {% if not forloop.first %}pt32 bt1{% endif %}">
+          {% trans "Posted to:" %} <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>.
+
+          {% if comment.level > 0 or comment.nested_count %}
+          <ul class="small">
+            {% if comment.level > 0 %}
+            <li>{% trans "In response to another comment." %}</li>
+            {% endif %}
+
+            {% if comment.nested_count %}
+              <li>{% blocktrans count number_of_responses=comment.nested_count %}It has one response.{% plural %}It has {{ number_of_responses }} responses.{% endblocktrans %}</li>
+            {% endif %}
+
+            {% if comment.reactions.count > 0 %}
+              <li>It has reactions:</li>
+              <ul class="mx0 my0 small">
+                {% for reaction in comment.reactions.all %}
+                  {% with reaction_enum=reaction|get_reaction_enum %}
+                    <li class="my0">
+                      {% blocktrans with r_icon=reaction_enum.icon count r_counter=reaction.counter %}
+                      One person reacted with <span class="emoji">&{{ r_icon }}</span>
+                      {% plural %}
+                      {{ r_counter }} people reacted with <span class="emoji">&{{ r_icon }}</span>
+                      {% endblocktrans %}
+                      ({{ reaction|authors_list|join:', ' }})
+                    </li>
+                  {% endwith %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </ul>
+          {% endif %}
+        </div>
+        <div class="{% dcx_custom_selector %} ml32">
+          <div class="comment-box ml0" id="c{{ comment.id}}">
+            <div class="comment">
+              <div class="header">
+                <div>{{ comment.submit_date }}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment %}">¶</a></div>
+              </div>
+              <div class="body">{{ comment.comment|linebreaks|escape }}</div>
+              <div class="footer"></div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock sub_content %}

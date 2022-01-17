@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;Register{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row">
+      <div class="column">
+        <h2>{% trans "Confirm registration" %}</h2>
+        <p>
+          {% blocktrans %}A confirmation message has been sent to <strong><code>{{ email }}</code></strong>.{% endblocktrans %}
+        </p>
+        <p>
+          {% blocktrans %}Allow a few minutes for delivery and be sure to check both your <strong>inbox</strong> and <strong>junk</strong> (or <strong>spam</strong>) folders for the e-Mail.{% endblocktrans %}
+        </p>
+        <h6>{% trans "Click on the confirmation link in the email to complete the registration." %}</h6>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}

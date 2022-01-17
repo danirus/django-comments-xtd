@@ -1,0 +1,47 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+{% load dcx_demo_tags %}
+
+<div id="comment-{{ comment.id }}" class="comment-box-img {% comment_css_thread_range comment %}">
+  {{ comment.level|indent_divs }}
+  <div class="user-avatar">
+    {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}
+  </div>
+  <div class="comment">
+    <div class="header">
+      <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment page_number %}">¶</a></div>
+      {% if not comment.is_removed and comment_flagging_enabled and is_input_allowed %}<div class="small"><a href="{% url 'comments-flag' comment.id %}">report</a></div>{% endif %}
+    </div>
+    <div class="body">
+      {% if comment.is_removed %}
+        <p class="muted">
+          {% trans "This comment has been removed." %}
+        </p>
+      {% else %}
+        {{ comment.comment|linebreaks|escape }}
+      {% endif %}
+    </div>
+    <div id="cm-footer-{{ comment.id }}" class="footer">
+      {% if not comment.is_removed %}
+        {% if comment_reactions_enabled %}
+          {% if comment.reactions.count > 0 %}
+            <div class="reactions" id="cm-reactions-{{ comment.id }}">
+              {% include "comments/comment_reactions.html" %}
+            </div>
+          {% endif %}
+        {% endif %}
+        {% if comment_reactions_enabled and is_input_allowed %}
+          <div>
+            <a data-type="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}?{{ cpage_qs_param }}={{ page_obj.number }}" {% if not user.is_authenticated %}data-login-next="{% get_xtdcomment_permalink comment page_number %}{% endif %}">{% trans "React" %}</a>
+          </div>
+        {% endif %}
+      {% endif %}
+      {% if comment.level == 0 and comment.nested_count and not comment.is_removed %}
+        <div>
+          <span id="comment-{{ comment.id}}-replies" data-type="nreplies" data-comment="{{ comment.id }}" class="small">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

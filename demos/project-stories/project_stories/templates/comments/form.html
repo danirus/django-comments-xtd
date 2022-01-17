@@ -1,0 +1,63 @@
+{% load i18n %}
+{% load comments %}
+
+<form method="POST" autocomplete="off" action="{% comment_form_target %}">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{% url 'comments-xtd-sent' %}" />
+  {% for field in form %}
+    {% if field.is_hidden %}{{ field }}{% endif %}
+  {% endfor %}
+  {% if page_number %}
+    <input type="hidden" name="{{ cpage_qs_param }}" value="{{ page_number }}" />
+  {% endif %}
+  <div class="hide">{{ form.honeypot }}</div>
+
+  {% if 'comment' in form.errors %}
+    <div data-dcx="comment-form-errors" class="col1-2 alert alert-error">{{ form.errors.comment }}</div>
+  {% endif %}
+
+  <div class="col1-2">
+    {{ form.comment }}
+  </div>
+
+  {% if not request.user.is_authenticated or not request.user.get_full_name %}
+    <label for="id_name" class="col1">{{ form.name.label }}</label>
+    <div class="col2 {% if 'name' in form.errors %}error{% endif %}">
+      {{ form.name }}
+    </div>
+    {% if 'name' in form.errors %}
+      <div class="col2 helper-text error">{{ form.name.help_text }}</div>
+    {% endif %}
+  {% endif %}
+
+  {% if not request.user.is_authenticated or not request.user.email %}
+    <label for="id_email" class="col1">{{ form.email.label }}</label>
+    <div class="col2 {% if 'email' in form.errors %}error{% endif %}">
+      {{ form.email }}
+    </div>
+    {% if 'email' in form.errors %}
+      <div class="col2 helper-text error">{{ form.email.help_text }}</div>
+    {% else %}
+      <div class="col2 helper-text">{% url 'login' as login_url %}{% blocktranslate %}Required for comment verification. Otherwise <a href="{{ login_url }}">login</a>.{% endblocktranslate %}</div>
+    {% endif %}
+  {% endif %}
+
+  {% if not request.user.is_authenticated %}
+    <label for="id_url" class="col1">{{ form.url.label }}</label>
+    <div class="col2 {% if 'url' in form.errors %}error{% endif %}">
+      {{ form.url }}
+    </div>
+  {% endif %}
+
+  <div class="col2">
+    {{ form.followup }}
+    <label for="id_followup{% if cid %}_{{ cid }}{% endif %}">&nbsp;{{ form.followup.label }}</label>
+  </div>
+
+  <div class="col2">
+    <div class="inline-left">
+      <button type="submit" class="primary" name="post" value="1" onclick="if (window.post_comment_form != undefined) { window.post_comment_form('post'); return false; } else { return true; }">{% translate 'send' %}</button>&nbsp;
+      <button type="submit" class="secondary" name="preview" value="1" onclick="if (window.post_comment_form != undefined) { window.post_comment_form('preview'); return false; } else { return true; }">{% translate 'preview' %}</button>
+    </div>
+  </div>
+</form>

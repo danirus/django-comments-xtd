@@ -1,0 +1,97 @@
+/* ----------------------------------------------------------*/
+/* Style select element.
+ * https://www.w3schools.com/howto/howto_custom_select.asp
+ */
+
+ .dropdown {
+    position: relative;
+}
+
+.dropdown select {
+    display: none;
+}
+
+.dropdown .option-selected {
+    color: #2196f3;
+    padding: .4rem 1rem;
+    border-radius: 0.25rem;
+    background-color: transparent;
+    font-size: .8rem;
+    line-height: 1.4;
+}
+
+.dropdown .option-selected:hover {
+    color: white;
+    background-color:rgb(5 118 209);
+}
+
+.dropdown .option-selected:after {
+    position: absolute;
+    content: "";
+    top: 15px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-color: #2196f3 transparent transparent transparent;
+}
+
+.dropdown .option-selected:hover:after {
+    border-color: white transparent transparent transparent;
+}
+
+.dropdown .option-selected.select-arrow-active:after {
+    border-color: transparent transparent #2196f3 transparent;
+    top: 8px;
+}
+
+.dropdown .option-selected.select-arrow-active:hover:after {
+    border-color: transparent transparent white transparent;
+    top: 8px;
+}
+
+.dropdown .select-items div, .dropdown .option-selected {
+    font-size: 0.8rem;
+    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+    cursor: pointer;
+}
+
+.dropdown .option-selected { padding: 8px 32px 8px 16px }
+.dropdown .select-items div { padding: 8px 16px; }
+
+.dropdown .select-items {
+    position: absolute;
+    display: table;
+    padding: 0;
+    background-color: white;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+    top: 110%;
+    /* left: 0; */
+    right: 0;
+    z-index: 99;
+}
+
+.dropdown .select-hide {
+    display: none;
+}
+
+.dropdown .select-items div:hover {
+    background-color: #0a6ebd;
+    color: white;
+}
+
+.dropdown .select-items div:hover:first-child {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+}
+
+.dropdown .select-items div:hover:last-child {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+.dropdown .same-as-selected {
+    background-color: rgb(4 92 162);
+    color: white;
+}

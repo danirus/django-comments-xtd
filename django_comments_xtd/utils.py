@@ -205,7 +205,7 @@ def get_user_avatar(comment):
     return "//www.gravatar.com/avatar/%s?%s&d=identicon" % (path, param)
 
 
-def redirect_to(comment, request=None, page_number=None):
+def get_comment_url(comment, request=None, page_number=None):
     cm_abs_url = comment.get_absolute_url()
     cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     cpage = request.GET.get(cpage_qs_param, None) if request else page_number
@@ -214,9 +214,14 @@ def redirect_to(comment, request=None, page_number=None):
         cm_anchor = cm_abs_url[hash_pos:]
         cm_abs_url = cm_abs_url[:hash_pos]
         url = f"{cm_abs_url}?{cpage_qs_param}={cpage}{cm_anchor}"
-        return HttpResponseRedirect(url)
+        return url
     else:
-        return HttpResponseRedirect(cm_abs_url)
+        return cm_abs_url
+
+
+def redirect_to(comment, request=None, page_number=None):
+    url = get_comment_url(comment, request, page_number)
+    return HttpResponseRedirect(url)
 
 
 def get_comment_page_number(request, content_type_id, object_id, comment_id):

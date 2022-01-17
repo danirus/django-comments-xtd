@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;stories{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/comments.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/reactions.css' %}">
+{% endblock %}
+
+{% block nav-stories-class %}active{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">{{ object.title }}</h2>
+    <h6 class="text-center small">{{ object.published_time }}</h6>
+    <div class="central-column">
+      <div class="pb24">
+        {{ object.body|linebreaks }}
+      </div>
+
+      {% get_comment_count for object as comment_count %}
+      {% if comment_count %}
+      <h4 class="text-center">
+        {% blocktrans count comment_count=comment_count %}
+        There is {{ comment_count }} comment
+        {% plural %}
+        There are {{ comment_count }} comments
+        {% endblocktrans %}
+      </h4>
+      {% endif %}
+
+      {% if comment_count %}
+        <div class="{% dcx_custom_selector %} pb32">
+          {% render_xtdcomment_list for object %}
+        </div>
+      {% endif %}
+
+      {% if is_comment_input_allowed %}
+        <div class="{% dcx_custom_selector %}" data-dcx="comment-form">
+          <section class="comment-form">
+            <h5 class="text-center">{% translate "Post your comment" %}</h5>
+            {% render_comment_form for object %}
+          </section>
+        </div>
+      {% else %}
+        <h4 class="text-center">{% trans "New comments are not allowed." %}</h4>
+      {% endif %}
+    </div>
+  </article>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+ window.comments_api_props = {% get_comments_api_props for object %};
+</script>
+<script type="module" src="{% static 'django_comments_xtd/js/comments.js' %}"></script>
+<script type="module" src="{% static 'django_comments_xtd/js/reactions.js' %}"></script>
+<div style="display: none">
+  {% render_comment_reply_form for object %}
+</div>
+{% endblock %}

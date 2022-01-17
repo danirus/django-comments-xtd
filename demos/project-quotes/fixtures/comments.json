@@ -3,7 +3,7 @@
     "model": "django_comments.comment",
     "pk": 1,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": null,
@@ -21,7 +21,7 @@
     "model": "django_comments.comment",
     "pk": 2,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 2,
@@ -39,7 +39,7 @@
     "model": "django_comments.comment",
     "pk": 3,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 4,
@@ -57,7 +57,7 @@
     "model": "django_comments.comment",
     "pk": 4,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 5,
@@ -75,7 +75,7 @@
     "model": "django_comments.comment",
     "pk": 5,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 6,
@@ -93,7 +93,7 @@
     "model": "django_comments.comment",
     "pk": 6,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 7,
@@ -111,7 +111,7 @@
     "model": "django_comments.comment",
     "pk": 7,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 8,
@@ -129,7 +129,7 @@
     "model": "django_comments.comment",
     "pk": 8,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 9,
@@ -147,7 +147,7 @@
     "model": "django_comments.comment",
     "pk": 9,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 10,
@@ -165,7 +165,7 @@
     "model": "django_comments.comment",
     "pk": 10,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 2,
@@ -183,7 +183,7 @@
     "model": "django_comments.comment",
     "pk": 11,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "2",
         "site": 1,
         "user": 3,
@@ -201,7 +201,7 @@
     "model": "django_comments.comment",
     "pk": 12,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 5,
@@ -219,7 +219,7 @@
     "model": "django_comments.comment",
     "pk": 13,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 6,
@@ -237,7 +237,7 @@
     "model": "django_comments.comment",
     "pk": 14,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 7,
@@ -255,7 +255,7 @@
     "model": "django_comments.comment",
     "pk": 15,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 7,
@@ -273,7 +273,7 @@
     "model": "django_comments.comment",
     "pk": 16,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 6,
@@ -291,7 +291,7 @@
     "model": "django_comments.comment",
     "pk": 17,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 6,
@@ -309,7 +309,7 @@
     "model": "django_comments.comment",
     "pk": 18,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 9,
@@ -327,7 +327,7 @@
     "model": "django_comments.comment",
     "pk": 19,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 9,
@@ -345,7 +345,7 @@
     "model": "django_comments.comment",
     "pk": 20,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 9,
@@ -363,7 +363,7 @@
     "model": "django_comments.comment",
     "pk": 21,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 10,
@@ -381,7 +381,7 @@
     "model": "django_comments.comment",
     "pk": 22,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 10,
@@ -399,7 +399,7 @@
     "model": "django_comments.comment",
     "pk": 23,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 10,
@@ -417,7 +417,7 @@
     "model": "django_comments.comment",
     "pk": 24,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 10,
@@ -435,7 +435,7 @@
     "model": "django_comments.comment",
     "pk": 25,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 10,
@@ -453,7 +453,7 @@
     "model": "django_comments.comment",
     "pk": 26,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 8,
@@ -471,7 +471,7 @@
     "model": "django_comments.comment",
     "pk": 27,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 8,
@@ -489,7 +489,7 @@
     "model": "django_comments.comment",
     "pk": 28,
     "fields": {
-        "content_type": 14,
+        "content_type": 15,
         "object_pk": "1",
         "site": 1,
         "user": 8,

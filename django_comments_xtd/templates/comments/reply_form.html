@@ -1,14 +1,13 @@
 {% load i18n %}
 {% load comments %}
 
-<form id="reply-form" method="POST" autocomplete="off" action="{% comment_form_target %}">
+
+<form id="reply-form" method="POST" autocomplete="off" action="{% comment_form_target %}"  style="display: none;">
   {% csrf_token %}
   {% for field in form %}
     {% if field.is_hidden %}{{ field }}{% endif %}
   {% endfor %}
-  {% if page_number %}
-    <input type="hidden" name="{{ cpage_qs_param }}" value="{{ page_number }}" />
-  {% endif %}
+  <input type="hidden" name="{{ comments_page_qs_param }}" value="" />
   <div class="hide">{{ form.honeypot }}</div>
 
   {% if 'comment' in form.errors %}
@@ -27,7 +26,7 @@
       {{ form.name }}
     </div>
     {% if 'name' in form.errors %}
-      <div class="col2 helper-text error">{{ form.name.help_text }}</div>
+      <div class="col2 helper-text error">{{ form.errors.name.0 }}</div>
     {% endif %}
   {% endif %}
 
@@ -37,7 +36,7 @@
       {{ form.email }}
     </div>
     {% if 'email' in form.errors %}
-      <div class="col2 helper-text error">{{ form.email.help_text }}</div>
+      <div class="col2 helper-text error">{{ form.errors.email.0 }}</div>
     {% else %}
       <div class="col2 helper-text">{% url 'login' as login_url %}{% blocktrans %}Required for comment verification. Otherwise <a href="{{ login_url }}">login</a>.{% endblocktrans %}</div>
     {% endif %}

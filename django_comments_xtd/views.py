@@ -189,13 +189,13 @@ def post(request, next=None, using=None):
 
 def json_res(request, template, context, status=200):
     html = loader.render_to_string(template, context, request)
-    return JsonResponse(
-        {
-            "html": html,
-            "reply_to": request.POST.get("reply_to", "0")
-        },
-        status=status
-    )
+    json_context = {
+        "html": html,
+        "reply_to": request.POST.get("reply_to", "0")
+    }
+    if "field_focus" in context:
+        json_context.update({ "field_focus": context["field_focus"] })
+    return JsonResponse(json_context, status=status)
 
 
 def post_js(request, next=None, using=None):
@@ -264,32 +264,34 @@ def post_js(request, next=None, using=None):
 
     # If there are errors or if we requested a preview show the comment.
     if form.errors or preview:
-        if form.errors:
-            print("form.errors:", form.errors)
-        template_list = [
-            "comments/%s/%s/form_js.html"
-            % (model._meta.app_label, model._meta.model_name),
-            "comments/%s/form_js.html" % model._meta.app_label,
-            "comments/form_js.html",
-        ]
+        # Use different template depending on whether it's a reply or not.
+        if form.data.get("reply_to", "0") != "0":
+            template_name = "reply_form_js.html"
+        else:
+            template_name = "form_js.html"
 
+        template_list = [
+            f"comments/%s/%s/{template_name}"
+            % (model._meta.app_label, model._meta.model_name),
+            f"comments/%s/{template_name}" % model._meta.app_label,
+            f"comments/{template_name}",
+        ]
         if form.errors:
-            status = 400
-            display_preview = False
-        elif preview:
-            status = 200
-            display_preview = True
+            field_focus = [key for key in form.errors.keys()][0]
+        else:
+            field_focus = None
 
         context = {
-            "display_preview": display_preview,
+            "display_preview": not form.errors,
             "comment": form.data.get("comment", ""),
             "form": form,
+            "field_focus": field_focus,
             "is_reply": form.data.get("reply_to", "0") != "0",
             "next": data.get("next", next),
             "page_number": cpage,
             "cpage_qs_param": cpage_qs_param,
         }
-        return json_res(request, template_list, context, status=status)
+        return json_res(request, template_list, context, status=200)
 
     # Otherwise create the comment
     comment = form.get_comment_object(site_id=get_current_site(request).id)
@@ -508,8 +510,7 @@ def sent_js(request, comment, using=None):
             "comments/%s/posted_js.html" % app_label,
             "comments/posted_js.html",
         ]
-        print("Returning posted_tmpl.")
-        return json_res(request, posted_tmpl, {"target": target})
+        return json_res(request, posted_tmpl, {"target": target}, status=202)
     else:
         if comment.is_public:
             # Return a render instead of a redirect_to. But use status=201.
@@ -535,7 +536,8 @@ def sent_js(request, comment, using=None):
             return json_res(
                 request,
                 published_tmpl,
-                {"comment": comment, "comment_url": comment_url}
+                {"comment": comment, "comment_url": comment_url},
+                status=201
             )
         else:
             moderated_tmpl = [
@@ -546,7 +548,9 @@ def sent_js(request, comment, using=None):
                 "comments/moderated_js.html",
             ]
             print("Returning moderated_tmpl.")
-            return json_res(request, moderated_tmpl, {"comment": comment})
+            return json_res(
+                request, moderated_tmpl, {"comment": comment}, status=201
+            )
 
 
 def confirm(request, key, template_discarded="comments/discarded.html"):

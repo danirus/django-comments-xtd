@@ -25,18 +25,18 @@ def comments_api_props(obj, user, request=None):
 
     The returned JSON object contains the following attributes::
         {
-            comment_count: <int>,  // Count of comments posted to the object.
-            input_allowed: <bool>,  // Whether to allow comments to this post.
+            comment_count: <int>,  Count of comments posted to the object.
+            input_allowed: <bool>, Whether to allow comments to this post.
             current_user: <str as "user_id:user_name">,
-            is_authenticated: <bool>,  // Whether current_user is authenticated.
-            request_name: <bool>,  // True when auth user has no actual name.
-            request_email_address: <bool>,  // True when auth user has no email.
+            is_authenticated: <bool>,  Whether current_user is authenticated.
+            request_name: <bool>,  True when auth user has no actual name.
+            request_email_address: <bool>,  True when auth user has no email.
             is_authenticated: <bool>,
             who_can_post: 'users' | 'all',
             comment_flagging_enabled: <bool>,
             comment_reactions_enabled: <bool>,
             object_reactions_enabled: <bool>,
-            can_moderate: <bool>,  // Whether current_user can moderate.
+            can_moderate: <bool>,  Whether current_user can moderate.
             react_url: <api-url-to-send-reactions-to-comments>,
             delete_url: <api-url-for-moderators-to-remove-comment>,
             reply_url: <api-url-to-reply-comments>,
@@ -54,6 +54,7 @@ def comments_api_props(obj, user, request=None):
             html_id_suffix: <html_element_id_suffix>,
             max_thread_level: max_thread_level for the content type of the obj.
             reactions_js_overlays: <reactions_js_overlays for content_type>.
+            comments_page_qs_param: <string>, name of comment's page qs param.
         }
     """
     form = CommentSecurityForm(obj)
@@ -105,6 +106,7 @@ def comments_api_props(obj, user, request=None):
         "html_id_suffix": get_html_id_suffix(obj),
         "max_thread_level": max_thread_level_for_content_type(ctype),
         "reactions_js_overlays": reactions_js_overlays,
+        "comments_page_qs_param": settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     }
     if user and user.is_authenticated:
         d["current_user"] = "%d:%s" % (

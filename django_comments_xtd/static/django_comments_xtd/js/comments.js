@@ -1,5 +1,6 @@
 import CommentForm from "./comment_form.js";
-import ReplyFormsHandler from "./reply_forms_handler.js";
+import ReplyFormsHandler from "./reply_forms.js";
+// import ReplyFormsHandler from "./reply_forms_handler.js";
 
 let comment_form = null;
 let reply_forms_handler = null;
@@ -23,17 +24,13 @@ function init() {
   /* ----------------------------------------------
    * Initialize reply forms.
    */
-  const base_rform_id = "reply-form";
+  const qs_rform_base = "[data-dcx=reply-form-template]";
   const qs_rforms = "[data-dcx=reply-form]";
-  if (document.getElementById(base_rform_id) &&
+  if (document.querySelector(qs_rform_base) &&
       document.querySelectorAll(qs_rforms)
   ) {
-    reply_forms_handler = new ReplyFormsHandler(base_rform_id, qs_rforms);
+    reply_forms_handler = new ReplyFormsHandler(qs_rform_base, qs_rforms);
   }
-
-  window.post_comment_reply_form = (submit_button_name) => (
-    reply_forms_handler ? reply_forms_handler.post(submit_button_name) : false
-  );
 }
 
 window.addEventListener("DOMContentLoaded", (_) => init());

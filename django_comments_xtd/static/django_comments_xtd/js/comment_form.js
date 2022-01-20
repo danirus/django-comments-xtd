@@ -63,22 +63,36 @@ export default class CommentForm {
   }
 
   async handle_preview_comment_response(response) {
-    if (response.status == 200 || response.status == 400) {
-      const data = await response.json();
+    const data = await response.json();
+    if (response.status == 200) {
       this.formWrapperEl.innerHTML = data.html;
       this._init();
+      if (data.field_focus) {
+        this.formEl.querySelector(`[name=${data.field_focus}]`).focus();
+      }
+    } else if (response.status == 400) {
+        this.formEl.innerHTML = data.html;
     }
   }
 
   async handle_post_comment_response(response) {
-    if (response.status == 200 || response.status == 400) {
-      const data = await response.json();
-      this.formEl.innerHTML = data.html;
+    const data = await response.json();
+
+    if (response.status == 200) {
+      this.formWrapperEl.innerHTML = data.html;
       this._init();
-    } else if (response.status == 201) {
-      const data = await response.json();
-      location.href = data.html;
-    } else if (response.status > 400 && response.status < 500) {
+      if (data.field_focus) {
+        this.formEl.querySelector(`[name=${data.field_focus}]`).focus();
+      }
+    }
+    else if (
+      response.status == 201 ||
+      response.status == 202 ||
+      response.status == 400
+    ) {
+      this.formEl.innerHTML = data.html;
+    }
+    else if (response.status > 400 && response.status < 500) {
       alert(
         "Something went wrong and your comment could not be processed." +
         "Please, reload the page and try again."

@@ -161,15 +161,15 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         )
 
         # Pass values for Reactions JS Overlays to the context.
-        reactions_js = utils.get_reactions_js_overlays(content_type=app_model)
-        reactions_popover = reactions_js["popover"]
-        reactions_tooltip = reactions_js["tooltip"]
+        roverlays = utils.get_reactions_js_overlays(content_type=app_model)
+        popover_overlay = roverlays["popover"]
+        tooltip_overlay = roverlays["tooltip"]
         context_dict.update(
             {
-                "reactions_popover_pos_bottom": reactions_popover["pos_bottom"],
-                "reactions_popover_pos_left": reactions_popover["pos_left"],
-                "reactions_tooltip_pos_bottom": reactions_tooltip["pos_bottom"],
-                "reactions_tooltip_pos_left": reactions_tooltip["pos_left"],
+                "reactions_popover_pos_bottom": popover_overlay["pos_bottom"],
+                "reactions_popover_pos_left": popover_overlay["pos_left"],
+                "reactions_tooltip_pos_bottom": tooltip_overlay["pos_bottom"],
+                "reactions_tooltip_pos_left": tooltip_overlay["pos_left"],
             }
         )
 
@@ -218,18 +218,24 @@ def render_xtdcomment_list(parser, token):
     return RenderXtdCommentListNode.handle_token(parser, token)
 
 
-class RenderCommentReplyFormNode(RenderCommentFormNode):
+class RenderCommentReplyTemplateNode(RenderCommentFormNode):
     def render(self, context):
+        qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
         ctype, object_pk = self.get_target_ctype_pk(context)
         if object_pk:
             templates = [
-                "comments/%s/%s/reply_form.html"
+                "comments/%s/%s/reply_template.html"
                 % (ctype.app_label, ctype.model),
-                "comments/%s/reply_form.html" % ctype.app_label,
-                "comments/reply_form.html",
+                "comments/%s/reply_template.html" % ctype.app_label,
+                "comments/reply_template.html",
             ]
             context_dict = context.flatten()
-            context_dict["form"] = self.get_form(context)
+            context_dict.update(
+                {
+                    "form": self.get_form(context),
+                    "comments_page_qs_param": qs_param,
+                }
+            )
             formstr = loader.render_to_string(templates, context_dict)
             return formstr
         else:
@@ -237,16 +243,16 @@ class RenderCommentReplyFormNode(RenderCommentFormNode):
 
 
 @register.tag
-def render_comment_reply_form(parser, token):
+def render_comment_reply_template(parser, token):
     """
     Render the comment reply form to be used by the JavaScript plugin.
 
     Syntax::
 
-        {% render_comment_reply_form for [object] %}
-        {% render_comment_reply_form for [app].[model] [object_id] %}
+        {% render_comment_reply_template for [object] %}
+        {% render_comment_reply_template for [app].[model] [object_id] %}
     """
-    return RenderCommentReplyFormNode.handle_token(parser, token)
+    return RenderCommentReplyTemplateNode.handle_token(parser, token)
 
 
 @register.simple_tag()

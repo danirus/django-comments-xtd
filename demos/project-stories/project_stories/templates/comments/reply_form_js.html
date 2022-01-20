@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+{% load dcx_demo_tags %}
+
+<section class="reply-form active" data-dcx="reply-form-{{ form.reply_to.value }}">
+  {% if display_preview %}
+    <section class="comment-preview mb32" data-dcx="preview">
+      <div class="comment-box-img l0-ini">
+        {{ 0|indent_divs }}
+        <div class="user-avatar">
+          {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}
+        </div>
+        <div class="comment">
+          <div class="header">
+            <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
+            <div class="small text-info">{% translate "comment in preview" %}</div>
+          </div>
+          <div class="body">
+            {{ form.cleaned_data.comment|linebreaks|escape }}
+          </div>
+          <div class="footer"></div>
+        </div>
+      </div>
+      <div class="not-reply-box-img l0"></div>
+    </section>
+  {% endif %}
+
+  {% include "comments/reply_form.html" %}
+
+  <div class="reply-form" data-dcx="reply-textarea">
+    <textarea rows="1" placeholder="{% translate 'Your reply' %}"></textarea>
+  </div>
+</section>

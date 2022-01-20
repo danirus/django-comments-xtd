@@ -12,8 +12,8 @@ ENV PATH="${VIRTUAL_ENV}/bin:$PATH"
 
 RUN pip install -U pip
 
-COPY /demos/project-quotes/requirements.txt .
-RUN pip install -r requirements.txt
+COPY /demos/project-quotes/requirements*.txt .
+RUN pip install -r requirements-docker.txt
 
 COPY /demos/project-quotes/dist/dcx-project-quotes-${DEMO_QUOTES_VER}.tar.gz .
 RUN tar -xzf dcx-project-quotes-${DEMO_QUOTES_VER}.tar.gz

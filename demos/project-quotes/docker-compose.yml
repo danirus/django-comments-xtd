@@ -31,7 +31,7 @@ services:
         DEMO_QUOTES_VER: ${DEMO_QUOTES_VER}
         APP_VER: ${APP_VER}
     environment:
-      PRODUCTION: True
+      PRODUCTION: 1
     depends_on:
       postgres:
         condition: service_healthy

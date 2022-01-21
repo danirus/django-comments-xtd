@@ -35,7 +35,6 @@
           {% else %}
             {% with parent=form.reply_to.value|get_comment %}
               <div class="comment-box l0-ini">
-                <div class="thread-space"></div>
                 <div class="comment">
                   <div class="header">
                     <div>{% if parent.url %}<a href="{{ parent.url }}" target="_new">{{ parent.name }}</a>{% else %}{{ parent.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ parent.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink parent page_number %}">¶</a></div>
@@ -50,7 +49,6 @@
 
             <div class="comment-box l0-mid">
               <div class="level-1"></div>
-              <div class="thread-space"></div>
               <div class="comment">
                 <div class="header">
                   <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>

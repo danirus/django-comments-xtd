@@ -1,16 +1,13 @@
 {% load i18n %}
 {% load comments %}
 {% load comments_xtd %}
-{% load dcx_demo_tags %}
 
-{% if display_preview %}
-  <section class="comment-preview mb32" data-dcx="preview">
-    {% if form.reply_to.value == "0" %}
-      <div class="comment-box-img l0-ini">
+<section class="reply-form active data-dcx="reply-form-{{ form.reply_ro.value }}>
+
+  {% if display_preview %}
+    <section class="comment-preview mb32" data-dcx="preview">
+      <div class="comment-box l0-ini">
         {{ 0|indent_divs }}
-        <div class="user-avatar">
-          {% get_user_avatar_or_gravatar comment.user_email "36,identicon" %}
-        </div>
         <div class="comment">
           <div class="header">
             <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
@@ -22,34 +19,13 @@
           <div class="footer"></div>
         </div>
       </div>
-      <div class="not-reply-box-img l0"></div>
-    {% else %}
-      {% with parent=form.reply_to.value|get_comment %}
-        <div class="comment-box-img {% comment_css_thread_range parent %}>
-          {{ parent.level|add:'1'|indent_divs }}
-          <div class="user-avatar">
-            {% get_user_avatar_or_gravatar parent.user_email "36,identicon" %}
-          </div>
-          <div class="comment">
-            <div class="header">
-              {% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}
-            </div>
-            <div class="body">
-              {{ form.cleaned_data.comment|linebreaks|escape }}
-            </div>
-            <div class="footer"></div>
-          </div>
-        </div>
-      {% endwith %}
-    {% endif %}
-  </section>
-{% endif %}
-
-<section class="{% if is_reply or form.reply_to.value > 0 %}reply-form active{% else %}comment-form{% endif %}">
-  {% if not is_reply or form.reply_to.value == 0 %}
-    <h5 class="text-center">{% translate "Post your comment" %}</h5>
-    {% include "comments/form.html" %}
-  {% else %}
-    {% include "comments/reply_form.html" %}
+      <div class="not-reply-box l0"></div>
+    </section>
   {% endif %}
+
+  {% include "comments/reply_form.html" %}
+
+  <div class="reply-form" data-dcx="reply-textarea">
+    <textarea rows="1" placeholder="{% translate 'Your reply' %}"></textarea>
+  </div>
 </section>

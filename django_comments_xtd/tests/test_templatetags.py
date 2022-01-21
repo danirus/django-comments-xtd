@@ -658,7 +658,7 @@ def test_get_xtdcomment_permalink_in_page_eq_1(an_articles_comment):
 def test_get_xtdcomment_permalink_in_page_gt_1(an_articles_comment):
     t = "{% load comments_xtd %}" "{% get_xtdcomment_permalink comment 2 %}"
     output = Template(t).render(Context({"comment": an_articles_comment}))
-    assert output == "/comments/cr/10/1/1/?cpage=2#comment-1"
+    assert output == "/comments/cr/11/1/1/?cpage=2#comment-1"
 
 
 @pytest.mark.django_db
@@ -668,7 +668,7 @@ def test_get_xtdcomment_permalink_in_page_gt_1_custom(an_articles_comment):
         '{% get_xtdcomment_permalink comment 2 "#c%(id)s" %}'
     )
     output = Template(t).render(Context({"comment": an_articles_comment}))
-    assert output == "/comments/cr/10/1/1/?cpage=2#c1"
+    assert output == "/comments/cr/11/1/1/?cpage=2#c1"
 
 
 @pytest.mark.django_db
@@ -724,6 +724,7 @@ def test_get_comments_api_props(an_article):
         "max_thread_level": 3,
         "reactions_js_overlays": reactions_overlays['default'],
         "login_url": "/accounts/login/",
+        "comments_page_qs_param": "cpage"
     }
 
 

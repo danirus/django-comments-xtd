@@ -191,14 +191,14 @@ class FakeRequest:
 def test_redirect_to_with_request(an_articles_comment):
     request = FakeRequest(cpage=2)
     http_response = utils.redirect_to(an_articles_comment, request)
-    assert http_response.url == "/comments/cr/10/1/1/?cpage=2#comment-1"
+    assert http_response.url == "/comments/cr/11/1/1/?cpage=2#comment-1"
 
 
 # ----------------------------------------------
 @pytest.mark.django_db
 def test_redirect_to_with_page_number(an_articles_comment):
     http_response = utils.redirect_to(an_articles_comment, page_number=2)
-    assert http_response.url == "/comments/cr/10/1/1/?cpage=2#comment-1"
+    assert http_response.url == "/comments/cr/11/1/1/?cpage=2#comment-1"
 
 
 # ----------------------------------------------

@@ -45,7 +45,7 @@ from django_comments_xtd.utils import (
     get_current_site_id,
     check_option,
     get_comment_page_number,
-    get_comment_url
+    get_comment_url,
 )
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
@@ -189,12 +189,9 @@ def post(request, next=None, using=None):
 
 def json_res(request, template, context, status=200):
     html = loader.render_to_string(template, context, request)
-    json_context = {
-        "html": html,
-        "reply_to": request.POST.get("reply_to", "0")
-    }
+    json_context = {"html": html, "reply_to": request.POST.get("reply_to", "0")}
     if "field_focus" in context:
-        json_context.update({ "field_focus": context["field_focus"] })
+        json_context.update({"field_focus": context["field_focus"]})
     return JsonResponse(json_context, status=status)
 
 
@@ -517,19 +514,16 @@ def sent_js(request, comment, using=None):
             # In comment_form.js check whether the status is 201 to read
             # the content as the redirect_url.
             published_tmpl = [
-                "comments/%s/%s/published_js.html" %
-                (comment.content_type.app_label, comment.content_type.model),
-                "comments/%s/published_js.html" %
-                comment.content_type.app_label,
+                "comments/%s/%s/published_js.html"
+                % (comment.content_type.app_label, comment.content_type.model),
+                "comments/%s/published_js.html"
+                % comment.content_type.app_label,
                 "comments/published_js.html",
             ]
 
             # response_redirect = redirect_to(comment, request=request)
             page_number = get_comment_page_number(
-                request,
-                comment.content_type.id,
-                comment.object_pk,
-                comment.id
+                request, comment.content_type.id, comment.object_pk, comment.id
             )
             comment_url = get_comment_url(comment, None, page_number)
             print("Returning published_tmpl.")
@@ -537,7 +531,7 @@ def sent_js(request, comment, using=None):
                 request,
                 published_tmpl,
                 {"comment": comment, "comment_url": comment_url},
-                status=201
+                status=201,
             )
         else:
             moderated_tmpl = [

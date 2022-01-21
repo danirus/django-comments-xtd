@@ -71,10 +71,13 @@ class XtdComment(Comment):
     norel_objects = CommentManager()
 
     def get_absolute_url(self, anchor_pattern="#comment-%(id)s"):
-        return reverse(
-            "comments-url-redirect",
-            args=(self.content_type_id, self.object_pk, self.pk),
-        ) + (anchor_pattern % self.__dict__)
+        return (
+            reverse(
+                "comments-url-redirect",
+                args=(self.content_type_id, self.object_pk, self.pk),
+            )
+            + (anchor_pattern % self.__dict__)
+        )
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -445,14 +448,13 @@ class CommentReaction(models.Model):
     counter = models.IntegerField(default=0)
     authors = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        through='CommentReactionAuthor',
-        through_fields=('reaction', 'author'),
+        through="CommentReactionAuthor",
+        through_fields=("reaction", "author"),
     )
 
 
 class CommentReactionAuthor(models.Model):
     reaction = models.ForeignKey(CommentReaction, on_delete=models.CASCADE)
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )

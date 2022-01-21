@@ -106,7 +106,7 @@ COMMENTS_XTD_REACTIONS_JS_OVERLAYS = {
 # You can alter the CSS rules applied to your comments adding your own custom
 # selector to the following setting. If you wanted to modify the .body of the
 # comments with, say, a different padding, line-height and font color you could
-# create do so by creating the following selector in your project's CSS:
+# create do so by creating the following selector in your project's CSS:
 #
 #   .dcx.dcx-custom .comment-box .body {
 #       padding: 8px;

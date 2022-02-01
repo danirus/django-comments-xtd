@@ -1,0 +1,10 @@
+**/*.min.js
+django_comments_xtd/static/django_comments_xtd/dist/*
+docs/_build/**/*.js
+node_modules/**.js
+js_tests/**/*.js
+venv/**/*.js
+demos/project-stories/psenv/**/*.js
+webpack.config.js
+**/webpack.config.js
+Gruntfile.js

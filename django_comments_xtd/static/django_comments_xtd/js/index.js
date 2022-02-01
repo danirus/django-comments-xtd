@@ -1,25 +1,14 @@
-import CommentForm from "./comment_form.js";
-import ReplyFormsHandler from "./reply_forms_handler.js";
+import { init_comments } from "./comments.js";
+import { init_reactions } from "./reactions.js";
 
-
-let comment_form = null;
-let reply_forms_handler = null;
+window.dcx.init_comments = init_comments;
+window.dcx.init_reactions = init_reactions;
 
 window.addEventListener("DOMContentLoaded", (_) => {
-  if (window.comments_api_props != undefined) {
-    const qs_cform = "[data-dcx=comment-form]";
-    const qs_cform_errors = "[data-dcx=comment-form-errors]";
-    if (document.querySelector(qs_cform)) {
-      comment_form = new CommentForm(qs_cform, qs_cform_errors);
+    if (window.dcx === null) {
+        return;
     }
 
-    const qs_rform = "[data-dcx=reply-form]";
-    if (document.querySelectorAll(qs_rform)) {
-      reply_forms_handler = new ReplyFormsHandler(qs_rform);
-    }
-  }
+    init_comments();
+    init_reactions();
 });
-
-window.post_comment_form = (submit_button_name) => (
-  comment_form ? comment_form.post(submit_button_name) : false
-);

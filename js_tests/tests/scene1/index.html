@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/favicon.ico" />
+    <title>dcx-demo&nbsp;&bull;&nbsp;stories</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/css/comments.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/css/reactions.css">
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="title">
+          <h1><a href="/">stories project</a></h1>
+          <h4>with django-comments-xtd</h4>
+        </div>
+        <nav class="menu">
+          <a class="" href="/user/login/">Login</a>
+          <a class="active" href="/stories/">Stories</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <article>
+        <h2 class="text-center">Net Neutrality in Jeopardy</h2>
+        <h6 class="text-center small">April 3, 2021, 2:53 p.m.</h6>
+        <div class="central-column">
+          <div class="pb24">
+            <p>The battle over the future of the Internet is a power grab that pits well-heeled lobbyists, corrupt legislators, phony front groups and the world’s most powerful telecommunications companies against the rest of us — the millions of Americans who use the Internet every day, in increasingly inventive ways.</p>
+            <p>Policymakers are public officials, and it’s their job to serve the public interest. You can play an important role by helping spread the word about Net Neutrality, meeting face to face with elected officials and urging them to protect the open Internet.</p>
+            <p>You can start by urging the Senate to stand up for Net Neutrality.</p>
+          </div>
+          <div class="dcx dcx-custom" data-dcx="comment-form">
+            <section class="comment-form">
+              <h5 class="text-center">Post your comment</h5>
+              <form method="POST" autocomplete="off" action="/comments/post/">
+                <input type="hidden" name="csrfmiddlewaretoken" value="629fDLli5XPgPsvXQ2UxgiozezzghWmB556vDMJQ1oMMovwMDJOiE9kV9k1A2VEW">
+                <input type="hidden" name="next" value="/comments/sent/" />
+                <input type="hidden" name="content_type" value="stories.story" id="id_content_type">
+                <input type="hidden" name="object_pk" value="2" id="id_object_pk">
+                <input type="hidden" name="timestamp" value="1643360605" id="id_timestamp">
+                <input type="hidden" name="security_hash" value="824b48dc57895fee9c4d9a5bc9cfa5ff9687dd67" id="id_security_hash">
+                <input type="hidden" name="reply_to" value="0" id="id_reply_to">
+                <div class="hide"><input type="text" name="honeypot" id="id_honeypot"></div>
+                <div data-dcx="comment-form-errors" class="col1-2 hide alert"></div>
+                <div class="col1-2">
+                  <textarea name="comment" placeholder="Your comment" class="form-control" required id="id_comment"></textarea>
+                </div>
+                <label for="id_name" class="col1">Name</label>
+                <div class="col2 ">
+                  <input type="text" name="name" placeholder="name" class="form-control" required id="id_name">
+                </div>
+                <label for="id_email" class="col1">Mail</label>
+                <div class="col2 ">
+                  <input type="text" name="email" placeholder="mail address" class="form-control" required id="id_email">
+                </div>
+                <div class="col2 helper-text">Required for comment verification. Otherwise <a href="/user/login/">login</a>.</div>
+                <label for="id_url" class="col1">Link</label>
+                <div class="col2 ">
+                  <input type="text" name="url" placeholder="url your name links to (optional)" class="form-control" id="id_url">
+                </div>
+                <div class="col2">
+                  <input type="checkbox" name="followup" id="id_followup" class="custom-control-input">
+                  <label for="id_followup">&nbsp;Notify me about follow-up comments</label>
+                </div>
+                <div class="col2">
+                  <div class="inline-left">
+                    <button type="submit" class="primary" name="post" value="1">send</button>&nbsp;
+                    <button type="submit" class="secondary" name="preview" value="1">preview</button>
+                  </div>
+                </div>
+              </form>
+            </section>
+          </div>
+        </div>
+      </article>
+    </main>
+    <footer>
+      <div class="container">
+        <p>
+          <a href="http://readthedocs.org/docs/django-comments-xtd/">documentation</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd">source code</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd/issues">issues</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd/discussions">discussions</a>
+        </p>
+        <p>django-comments-xtd</p>
+      </div>
+    </footer>
+
+    <script>
+        self.dcx = {}
+    </script>
+    <script> // From https://unpkg.com/unfetch/polyfill.
+      self.fetch||(self.fetch=function(e,n){return n=n||{},new Promise(function(t,s){var r=new XMLHttpRequest,o=[],u=[],i={},a=function(){return{ok:2==(r.status/100|0),statusText:r.statusText,status:r.status,url:r.responseURL,text:function(){return Promise.resolve(r.responseText)},json:function(){return Promise.resolve(r.responseText).then(JSON.parse)},blob:function(){return Promise.resolve(new Blob([r.response]))},clone:a,headers:{keys:function(){return o},entries:function(){return u},get:function(e){return i[e.toLowerCase()]},has:function(e){return e.toLowerCase()in i}}}};for(var c in r.open(n.method||"get",e,!0),r.onload=function(){r.getAllResponseHeaders().replace(/^(.*?):[^\S\n]*([\s\S]*?)$/gm,function(e,n,t){o.push(n=n.toLowerCase()),u.push([n,t]),i[n]=i[n]?i[n]+","+t:t}),t(a())},r.onerror=s,r.withCredentials="include"==n.credentials,n.headers)r.setRequestHeader(c,n.headers[c]);r.send(n.body||null)})});
+    </script>
+    <script src="http://localhost:3000/dist/dcx-3.0.0.js"></script>
+
+    <div style="display: none">
+      <section class="reply-form" data-dcx="reply-form-template">
+        <form id="reply-form" method="POST" autocomplete="off" action="/comments/post/"  style="display: none;">
+          <input type="hidden" name="csrfmiddlewaretoken" value="629fDLli5XPgPsvXQ2UxgiozezzghWmB556vDMJQ1oMMovwMDJOiE9kV9k1A2VEW">
+          <input type="hidden" name="content_type" value="stories.story" id="id_content_type">
+          <input type="hidden" name="object_pk" value="2" id="id_object_pk">
+          <input type="hidden" name="timestamp" value="1643360605" id="id_timestamp">
+          <input type="hidden" name="security_hash" value="824b48dc57895fee9c4d9a5bc9cfa5ff9687dd67" id="id_security_hash">
+          <input type="hidden" name="reply_to" value="0" id="id_reply_to">
+          <input type="hidden" name="cpage" value="" />
+          <div class="hide"><input type="text" name="honeypot" id="id_honeypot"></div>
+          <div data-dcx="comment-form-errors" class="col1-2 hide alert"></div>
+          <div class="col1-2">
+            <textarea name="comment" placeholder="Your comment" class="form-control" required id="id_comment"></textarea>
+          </div>
+          <label for="id_name" class="col1">Name</label>
+          <div class="col2 ">
+            <input type="text" name="name" placeholder="name" class="form-control" required id="id_name">
+          </div>
+          <label for="id_email" class="col1">Mail</label>
+          <div class="col2 ">
+            <input type="text" name="email" placeholder="mail address" class="form-control" required id="id_email">
+          </div>
+          <div class="col2 helper-text">Required for comment verification. Otherwise <a href="/user/login/">login</a>.</div>
+          <label for="id_url" class="col1">Link</label>
+          <div class="col2 ">
+            <input type="text" name="url" placeholder="url your name links to (optional)" class="form-control" id="id_url">
+          </div>
+          <div class="col2">
+            <input type="checkbox" name="followup" id="id_followup" class="custom-control-input">
+            <label for="id_followup">&nbsp;Notify me about follow-up comments</label>
+          </div>
+          <div class="col2">
+            <div class="inline-left">
+              <button type="button" class="primary small" name="post" value="1">send</button>&nbsp;
+              <button type="button" class="secondary small" name="preview" value="1">preview</button>&nbsp;
+              <button type="button" class="secondary small" name="cancel">cancel</button>
+            </div>
+          </div>
+        </form>
+        <div class="reply-form" data-dcx="reply-textarea">
+          <textarea rows="1" placeholder="Your reply"></textarea>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

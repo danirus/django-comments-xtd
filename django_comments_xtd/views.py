@@ -232,14 +232,21 @@ def post_js(request, next=None, using=None):
     except ObjectDoesNotExist:
         error_msg = (
             "No object matching content-type %r and object PK %r exists."
-            % (escape(ctype), escape(object_pk))
+            % (
+                escape(ctype),
+                escape(object_pk),
+            )
         )
         context = {"bad_error": error_msg}
         return json_res(request, "comments/bad_form.html", context, status=400)
     except (ValueError, ValidationError) as e:
         error_msg = (
             "Attempting to get content-type %r and object PK %r raised %s"
-            % (escape(ctype), escape(object_pk), e.__class__.__name__)
+            % (
+                escape(ctype),
+                escape(object_pk),
+                e.__class__.__name__,
+            )
         )
         context = {"bad_error": error_msg}
         return json_res(request, "comments/bad_form.html", context, status=400)
@@ -497,7 +504,6 @@ def sent_js(request, comment, using=None):
             target = model._default_manager.using(using).get(pk=object_pk)
         except Exception:
             context = {"bad_error": "Comment does not exist."}
-            print("Returning bad_form in sent_js.")
             return json_res(
                 request, "comments/bad_form.html", context, status=400
             )
@@ -526,7 +532,6 @@ def sent_js(request, comment, using=None):
                 request, comment.content_type.id, comment.object_pk, comment.id
             )
             comment_url = get_comment_url(comment, None, page_number)
-            print("Returning published_tmpl.")
             return json_res(
                 request,
                 published_tmpl,
@@ -541,7 +546,6 @@ def sent_js(request, comment, using=None):
                 % comment.content_type.app_label,
                 "comments/moderated_js.html",
             ]
-            print("Returning moderated_tmpl.")
             return json_res(
                 request, moderated_tmpl, {"comment": comment}, status=201
             )

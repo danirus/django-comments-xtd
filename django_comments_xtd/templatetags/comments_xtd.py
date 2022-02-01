@@ -490,7 +490,6 @@ def get_comment(comment_id: str):
 
 @register.simple_tag()
 def dcx_custom_selector():
-    print(f"custom_selector: {settings.COMMENTS_XTD_CSS_CUSTOM_SELECTOR}")
     return f"{settings.COMMENTS_XTD_CSS_CUSTOM_SELECTOR}"
 
 

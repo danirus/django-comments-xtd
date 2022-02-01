@@ -2,8 +2,8 @@
 
 <div
     class="active-reactions"
-    data-pos-bottom="{{ reactions_tooltip_pos_bottom }}"
-    data-pos-left="{{ reactions_tooltip_pos_left }}"
+    data-tooltip-pos-bottom="{{ reactions_tooltip_pos_bottom }}"
+    data-tooltip-pos-left="{{ reactions_tooltip_pos_left }}"
 >
   {% for reaction in comment.reactions.all %}
     {% if reaction.counter > 0 %}

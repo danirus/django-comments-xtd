@@ -6,7 +6,9 @@ from django.utils.module_loading import import_string
 
 from django_comments.models import CommentFlag
 from django_comments.views.moderation import perform_flag
-from rest_framework import generics, mixins, permissions, status, renderers
+from rest_framework import (
+    generics, mixins, permissions, status, renderers, filters
+)
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
@@ -36,6 +38,7 @@ class DefaultsMixin():
         if self.kwargs.get('override_drf_defaults', False):
             return None
         return super().pagination_class
+    filter_backends = [filters.OrderingFilter]
 
 
 class CommentCreate(DefaultsMixin, generics.CreateAPIView):

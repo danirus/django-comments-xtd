@@ -245,6 +245,8 @@ class ReadCommentSerializer(serializers.ModelSerializer):
     user_moderator = serializers.SerializerMethodField()
     user_avatar = serializers.SerializerMethodField()
     submit_date = serializers.SerializerMethodField()
+    submit_date_timestamp = serializers.CharField(
+        source="submit_date", read_only=True)
     parent_id = serializers.IntegerField(default=0, read_only=True)
     level = serializers.IntegerField(read_only=True)
     is_removed = serializers.BooleanField(read_only=True)
@@ -257,7 +259,8 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         model = XtdComment
         fields = ('id', 'user_name', 'user_url', 'user_moderator',
                   'user_avatar', 'permalink', 'comment', 'submit_date',
-                  'parent_id', 'level', 'is_removed', 'allow_reply', 'flags')
+                  'submit_date_timestamp', 'parent_id', 'level', 'is_removed',
+                  'allow_reply', 'flags')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs['context']['request']

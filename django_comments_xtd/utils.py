@@ -14,7 +14,6 @@ except ImportError:
     from urllib import urlencode
 
 from django.core.mail import EmailMultiAlternatives
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.crypto import salted_hmac
 
@@ -86,7 +85,7 @@ def get_app_model_options(comment=None, content_type=None):
             default = copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default'])
 
     if comment:
-        content_type = ContentType.objects.get_for_model(comment.content_object)
+        content_type = comment.content_type
         key = "%s.%s" % (content_type.app_label, content_type.model)
     elif content_type:
         key = content_type

@@ -1,5 +1,4 @@
 from django.apps import apps
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils import formats, timezone
 from django.utils.html import escape
@@ -210,7 +209,7 @@ class FlagSerializer(serializers.ModelSerializer):
         elif data['flag'] == 'report':
             option = 'allow_flagging'
         comment = data['comment']
-        ctype = ContentType.objects.get_for_model(comment.content_object)
+        ctype = comment.content_type
         key = "%s.%s" % (ctype.app_label, ctype.model)
         if not get_app_model_options(content_type=key)[option]:
             raise serializers.ValidationError(

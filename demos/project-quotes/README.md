@@ -38,3 +38,18 @@ Run Django's `migrate` command and load the fixture data:
 And finally launch the development server:
 
     $ python manage.py runserver localhost:4048
+
+### Users
+
+The project allows you to login using any of the users provided with the `users.json` fixture. Here are their login email and their password:
+
+ * `admin@example.com`, password `admin`
+ * `fulanito@example.com`, password `fulanito`
+ * `mengo@example.com`, password `mengo`
+ * `daniela.rushmore@example.com`, password `daniela.rushmore`
+ * `lena.rosenthal@example.com`, password `lena.rosenthal`
+ * `amalia.ocean@example.com`, password `amalia.ocean`
+ * `isabel.azul@example.com`, password `isabel.azul`
+ * `joe.bloggs@example.com`, password `joe.bloggs`
+ * `eva.rizzi@example.com`, password `eva.rizzi`
+ * `david.fields@example.com`, password `david.fields`

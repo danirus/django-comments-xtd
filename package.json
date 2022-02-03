@@ -6,6 +6,7 @@
   "scripts": {
     "pretest": "eslint django_comments_xtd/static/django_comments_xtd",
     "watch": "NODE_ENV=development npx webpack --watch",
+    "build:dev": "NODE_ENV=development npx webpack",
     "build": "NODE_ENV=production npx webpack",
     "test": "NODE_ENV=test jest"
   },

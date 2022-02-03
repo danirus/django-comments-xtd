@@ -13,7 +13,8 @@ django*.mo
 db.sqlite3
 docs/_build
 build/
-dist/
+dist/*
+demos/project-quotes/dist/
 node_modules/
 .coverage
 .emacs.desktop*
@@ -34,3 +35,4 @@ demos/project-quotes/static
 demos/project-stories/psenv
 demos/project-stories/media
 demos/project-stories/static
+django_comments_xtd/static/django_comments_xtd/dist/node_modules*

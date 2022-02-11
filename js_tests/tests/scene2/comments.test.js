@@ -11,7 +11,7 @@ let dom;
 let container;
 let qs_cform;
 
-describe("comments.test.js module", () => {
+describe("scene 2 - comments.test.js module", () => {
     beforeEach(async () => {
         const resourceLoader = new ResourceLoader({
             proxy: "http://localhost:3000",
@@ -39,8 +39,18 @@ describe("comments.test.js module", () => {
         expect(getByText(container, 'Post your comment')).toBeInTheDocument();
     });
 
-    it("makes window.dcx.reply_forms_handler attribute === null", () => {
+    it("has a div with [data-dcx=reply-form-template]", () => {
+        const qs_rform_template = "[data-dcx=reply-form-template]";
+        expect(container.querySelector(qs_rform_template));
+    });
+
+    it("has a div with [data-dcx=reply-form]", () => {
+        const qs_rform = "[data-dcx=reply-form]";
+        expect(container.querySelector(qs_rform));
+    });
+
+    it("creates window.dcx.reply_forms_handler attribute !== null", () => {
         expect(dom.window.dcx !== null && dom.window.dcx !== undefined);
-        expect(dom.window.dcx.comment_form === null);
+        expect(dom.window.dcx.comment_form !== null);
     });
 });

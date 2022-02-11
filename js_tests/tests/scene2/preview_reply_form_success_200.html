@@ -1,0 +1,61 @@
+<section class="reply-form active" data-dcx="reply-form-902">
+
+  <section class="comment-preview mb32" data-dcx="preview">
+    <div class="comment-box l0-ini">
+      <div class="comment">
+        <div class="header">
+          <div>Emma</div>
+          <div class="small text-info">comment in preview</div>
+        </div>
+        <div class="body">
+          <p>This is my comment.</p>
+        </div>
+        <div class="footer"></div>
+      </div>
+    </div>
+    <div class="not-reply-box l0"></div>
+  </section>
+
+  <form id="reply-form" method="POST" autocomplete="off" action="/comments/post/">
+    <input type="hidden" name="csrfmiddlewaretoken" value="b0aQZE7jZJXhPfPbAx3yYtw1bhcUcUgObVJfFVyG3innK4azd3nm5PYOvPf6WPvP">
+    <input type="hidden" name="next" value="/comments/sent/">
+    <input type="hidden" name="content_type" value="stories.story" id="id_content_type">
+    <input type="hidden" name="object_pk" value="2" id="id_object_pk">
+    <input type="hidden" name="timestamp" value="1643653407" id="id_timestamp">
+    <input type="hidden" name="security_hash" value="2b1ec81398a8729be7cae785d7095ac2d543fb83" id="id_security_hash">
+    <input type="hidden" name="reply_to" value="902" id="id_reply_to">
+    <div class="hide"><input type="text" name="honeypot" id="id_honeypot"></div>
+    <div data-dcx="comment-form-errors" class="col1-2 hide alert"></div>
+    <div class="col1-2">
+      <textarea name="comment" placeholder="Your comment" class="form-control" required="" id="id_comment">This is my comment.</textarea>
+    </div>
+    <label for="id_name" class="col1">Name</label>
+    <div class="col2 ">
+      <input type="text" name="name" value="Emma" placeholder="name" class="form-control" required="" id="id_name">
+    </div>
+    <label for="id_email" class="col1">Mail</label>
+    <div class="col2 ">
+      <input type="text" name="email" value="emma@example.com" placeholder="mail address" class="form-control" required="" id="id_email">
+    </div>
+    <div class="col2 helper-text">Required for comment verification. Otherwise <a href="/user/login/">login</a>.</div>
+    <label for="id_url" class="col1">Link</label>
+    <div class="col2 ">
+      <input type="text" name="url" placeholder="url your name links to (optional)" class="form-control" id="id_url">
+    </div>
+    <div class="col2">
+      <input type="checkbox" name="followup" id="id_followup" class="custom-control-input">
+      <label for="id_followup">&nbsp;Notify me about follow-up comments</label>
+    </div>
+    <div class="col2">
+      <div class="inline-left">
+        <button type="button" class="primary" name="post" value="1">send</button>&nbsp;
+        <button type="button" class="secondary" name="preview" value="1">preview</button>
+        <button type="button" class="secondary small" name="cancel">cancel</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="reply-form" data-dcx="reply-textarea">
+    <textarea rows="1" placeholder="Your reply"></textarea>
+  </div>
+</section>

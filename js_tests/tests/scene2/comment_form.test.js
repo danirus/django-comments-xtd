@@ -53,7 +53,7 @@ function prepare_valid_form(formEl) {
     fireEvent.change(email_field, {target: {value: "emma@example.com"}});
 }
 
-describe("scene 1 - comments.test.js module", () => {
+describe("scene 2 - comment_form.test.js module", () => {
     beforeEach(async () => {
         const resourceLoader = new ResourceLoader({
             proxy: "http://localhost:3000",
@@ -82,7 +82,7 @@ describe("scene 1 - comments.test.js module", () => {
         expect(dom.window.dcx.comment_form.formEl === form);
     });
 
-    it("previewing empty form focuses on textarea comment", () => {
+    it("focused on form's textarea comment when click on preview", () => {
         const cFormWrapper = container.querySelector(qs_cform);
         const preview = getByRole(cFormWrapper, "button", {name: /preview/i});
         fireEvent.click(preview);
@@ -90,7 +90,7 @@ describe("scene 1 - comments.test.js module", () => {
         expect(dom.window.document.activeElement).toEqual(comment_ta);
     });
 
-    it("previewing form focuses on input name", () => {
+    it("focuses on form's input name when click on preview", () => {
         // This happens only when the comment textarea has content.
         const cFormWrapper = container.querySelector(qs_cform);
         const comment_ta = getByPlaceholderText(cFormWrapper, /your comment/i);
@@ -101,7 +101,7 @@ describe("scene 1 - comments.test.js module", () => {
         expect(dom.window.document.activeElement).toEqual(name_field);
     });
 
-    it("previewing form focuses on input email", () => {
+    it("focuses on form's input email when click on preview", () => {
         // This happens only when both comment and name fields have content.
         const cFormWrapper = container.querySelector(qs_cform);
         const comment_ta = getByPlaceholderText(cFormWrapper, /your comment/i);
@@ -114,7 +114,7 @@ describe("scene 1 - comments.test.js module", () => {
         expect(dom.window.document.activeElement).toEqual(email_field);
     });
 
-    it("preview tampered form receives 400 response", async () => {
+    it("receives http-400 when previewing a tampered form", async () => {
         const cFormWrapper = container.querySelector(qs_cform);
         const formEl = cFormWrapper.querySelector("form");
         prepare_form_with_wrong_email(formEl);
@@ -154,7 +154,7 @@ describe("scene 1 - comments.test.js module", () => {
         dom.window.fetch.mockClear();
     });
 
-    it("preview form with wrong email receives 200 response", async () => {
+    it("receives http-200 when previewing form with wrong email", async () => {
         const cFormWrapper = container.querySelector(qs_cform);
         const formEl = cFormWrapper.querySelector("form");
         prepare_form_with_wrong_email(formEl);
@@ -185,13 +185,13 @@ describe("scene 1 - comments.test.js module", () => {
             }
         );
 
-        await findByText(container, "Enter a valid email address.");
-        const email_input = container.querySelector("form [name=email]");
+        await findByText(cFormWrapper, "Enter a valid email address.");
+        const email_input = cFormWrapper.querySelector("form [name=email]");
         expect(dom.window.document.activeElement).toEqual(email_input);
         dom.window.fetch.mockClear();
     });
 
-    it("preview form receives 200 response", async () => {
+    it("receives http-200 when previewing the comment form", async () => {
         const cFormWrapper = container.querySelector(qs_cform);
         const formEl = cFormWrapper.querySelector("form");
         prepare_valid_form(formEl);
@@ -227,7 +227,7 @@ describe("scene 1 - comments.test.js module", () => {
         dom.window.fetch.mockClear();
     });
 
-    it("post form receives 400 response", async () => {
+    it("receives http-400 when submitting the comment form", async () => {
         const cFormWrapper = container.querySelector(qs_cform);
         const formEl = cFormWrapper.querySelector("form");
         prepare_valid_form(formEl);
@@ -265,7 +265,7 @@ describe("scene 1 - comments.test.js module", () => {
         dom.window.fetch.mockClear();
     });
 
-    it("post form receives 201 response", async () => {
+    it("receives http-201 when submitting the comment form", async () => {
         const cFormWrapper = container.querySelector(qs_cform);
         const formEl = cFormWrapper.querySelector("form");
         prepare_valid_form(formEl);
@@ -302,7 +302,7 @@ describe("scene 1 - comments.test.js module", () => {
         dom.window.fetch.mockClear();
     });
 
-    it("post form receives 202 response", async () => {
+    it("receives http-202 when submitting the comment form", async () => {
         const cFormWrapper = container.querySelector(qs_cform);
         const formEl = cFormWrapper.querySelector("form");
         prepare_valid_form(formEl);
@@ -340,7 +340,7 @@ describe("scene 1 - comments.test.js module", () => {
         dom.window.fetch.mockClear();
     });
 
-    it("post form receives 500 response", async () => {
+    it("receives http-500 when submitting the comment form", async () => {
         const cFormWrapper = container.querySelector(qs_cform);
         const formEl = cFormWrapper.querySelector("form");
         prepare_valid_form(formEl);

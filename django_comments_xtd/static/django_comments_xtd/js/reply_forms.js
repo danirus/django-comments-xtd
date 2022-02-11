@@ -35,9 +35,10 @@ export default class ReplyFormsHandler {
                 newForm.elements[cpage_field].value = cpage;
             }
 
+            const elemParent = elem.parentNode;
             elem.replaceWith(section);
             this.init(reply_to);
-            this.replyMap.set(reply_to, section);
+            this.replyMap.set(reply_to, elemParent);
         }
     }
 
@@ -87,6 +88,7 @@ export default class ReplyFormsHandler {
     is_valid(formEl) {
         for (const el of formEl.querySelectorAll("[required]")) {
             if (!el.reportValidity()) {
+                el.focus();
                 return false;
             }
         }
@@ -97,9 +99,11 @@ export default class ReplyFormsHandler {
         // Display the comment form and hide the text area.
         return (_) => {
             const item = this.get_map_item(reply_to);
-            const form = item.querySelector("form");
-            const divta = item.querySelector("[data-dcx=reply-textarea]");
-            item.classList.toggle("active");
+            const qs_section = `[data-dcx=reply-form-${reply_to}`;
+            const section = item.querySelector(qs_section);
+            const form = section.querySelector("form");
+            const divta = section.querySelector("[data-dcx=reply-textarea]");
+            section.classList.toggle("active");
             divta.style.display = "none";
             form.style = "";
             form.elements.comment.focus();
@@ -110,11 +114,13 @@ export default class ReplyFormsHandler {
     // Display the text area and hide the comment form.
         return (_) => {
             const item = this.get_map_item(reply_to);
-            const form = item.querySelector("form");
-            const divta = item.querySelector("[data-dcx=reply-textarea]");
+            const qs_section = `[data-dcx=reply-form-${reply_to}`;
+            const section = item.querySelector(qs_section);
+            const form = section.querySelector("form");
+            const divta = section.querySelector("[data-dcx=reply-textarea]");
             const comment_value = form.elements.comment.value;
             divta.querySelector("textarea").value = comment_value;
-            item.classList.toggle("active");
+            section.classList.toggle("active");
             form.style.display = "none";
             divta.style = "";
 
@@ -175,14 +181,10 @@ export default class ReplyFormsHandler {
     }
 
     handle_http_200(item, data, reply_to) {
-        const parent = item.parentNode;
-        parent.innerHTML = data.html;
-        const qs_section = `[data-dcx=reply-form-${reply_to}]`;
-        const new_item = parent.querySelector(qs_section);
-        this.replyMap.set(reply_to, new_item);
+        item.innerHTML = data.html;
         this.init(reply_to, true); // 2nd param: is_active = true.
         if (data.field_focus) {
-            new_item.querySelector(`[name=${data.field_focus}]`).focus();
+            item.querySelector(`[name=${data.field_focus}]`).focus();
         }
     }
 

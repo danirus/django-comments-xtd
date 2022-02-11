@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from django.db import models
 from django.db.models import F, Max, Min, Prefetch, Q
+from django.db.models.signals import post_delete
 from django.db.transaction import atomic
 from django.contrib.contenttypes.models import ContentType
 from django.core import signing
@@ -315,6 +316,39 @@ def publish_or_withhold_on_pre_save(sender, instance, raw, using, **kwargs):
         shall_be_public = (not instance.is_removed) and instance.is_public
         publish_or_withhold_nested_comments(instance, shall_be_public)
 
+
+def on_comment_deleted(sender, instance, using, **kwargs):
+    # Create the list of nested comments that have to deleted too.
+    qs = get_model().norel_objects.filter(
+        ~Q(pk=instance.id), parent_id=instance.id
+    )
+    nested = [cm.id for cm in qs]
+    for cm_id in nested:
+        qs = get_model().norel_objects.filter(~Q(pk=cm_id), parent_id=cm_id)
+        nested.extend([cm.id for cm in qs])
+
+    # Update the nested_count attribute up the tree.
+    get_model().norel_objects.filter(
+        thread_id=instance.thread_id,
+        level__lt=instance.level,
+        order__lt=instance.order,
+    ).update(nested_count=F("nested_count") - instance.nested_count - 1)
+
+    # Delete all reactions, and reaction authors, associated
+    # with nested instances.
+    creactions_qs = CommentReaction.objects.filter(comment__pk__in=nested)
+    creactions_ids = [cr.id for cr in creactions_qs]
+
+    CommentReactionAuthor.objects\
+        .filter(reaction__pk__in=creactions_ids)\
+        ._raw_delete(using)
+    creactions_qs._raw_delete(using)
+
+    # Delete all the comments down the tree from instance.
+    get_model().objects.filter(pk__in=nested)._raw_delete(using)
+
+
+post_delete.connect(on_comment_deleted, sender=XtdComment)
 
 # ----------------------------------------------------------------------
 

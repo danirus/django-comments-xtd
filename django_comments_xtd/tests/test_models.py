@@ -127,7 +127,7 @@ class XtdCommentManagerTestCase(ArticleBaseTestCase):
 #  step5     8        3      --       --        c8            <-     c8.c3.c1
 #  step5     9        -      c9                               <-           c9
 #  step6    10        7                                 c10   <- c10.c7.c4.c1
-#  step6    11        8                                 c11   <- c11.c8.c4.c1
+#  step6    11        8                                 c11   <- c11.c8.c3.c1
 
 
 def thread_test_step_1(article, model=get_model(), **kwargs):
@@ -538,10 +538,10 @@ class ThreadStep6TestCase(ArticleBaseTestCase):
             self.c1,  # ->   1         1          1        0      1      6
             self.c3,  # ->   3         1          1        1      2      2
             self.c8,  # ->   8         1          3        2      3      1
-            self.c11,  # ->  11         1          8        3      4      0
+            self.c11,  # ->  11        1          8        3      4      0
             self.c4,  # ->   4         1          1        1      5      2
             self.c7,  # ->   7         1          4        2      6      1
-            self.c10,  # ->  10         1          7        3      7      0
+            self.c10,  # ->  10        1          7        3      7      0
             self.c2,  # ->   2         2          2        0      1      2
             self.c5,  # ->   5         2          2        1      2      1
             self.c6,  # ->   6         2          5        2      3      0
@@ -905,7 +905,354 @@ def test_non_blacklisted_domain_pass(an_article, an_user):
 # ---------------------------------------------------------------------
 # Test BlackListedDomain.
 
-
 def test_BaseReactionEnum_strlist():
     string_list = get_reactions_enum().strlist()
     assert string_list == "+,+1,#128077;-,-1,#128078"
+
+
+# ---------------------------------------------------------------------
+# Test django.db.models.signals.post_delete signal.
+
+@pytest.mark.django_db
+def test_nested_count_after_deleting_comment_1(an_article):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    cm1 = XtdComment.norel_objects.get(pk=1)
+    cm1.delete()
+
+    # It should remove comments 1, 3, 8, 11, 4, 7 and 10.
+    # As the comment deleted was at level 0, there is no nested_count
+    # record to modify.
+
+    for cid in [1, 3, 8, 11, 4, 7, 10]:
+        with pytest.raises(XtdComment.DoesNotExist):
+            XtdComment.objects.get(pk=cid)
+
+
+@pytest.mark.django_db
+def test_nested_count_after_deleting_comment_2(an_article):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    cm2 = XtdComment.norel_objects.get(pk=2)
+    cm2.delete()
+
+    # It should remove comments 2, 5 and 6.
+    # As the comment deleted was at level 0, there is no nested_count
+    # record to modify.
+
+    for cid in [2, 5, 6]:
+        with pytest.raises(XtdComment.DoesNotExist):
+            XtdComment.objects.get(pk=cid)
+
+
+@pytest.mark.django_db
+def test_nested_count_after_deleting_comment_3(an_article):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    cm3 = XtdComment.norel_objects.get(pk=3)
+    cm3.delete()
+
+    # It should remove comments 3, 8 and 11, and leave the following changes:
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      3
+
+    for cid in [3, 8, 11]:
+        with pytest.raises(XtdComment.DoesNotExist):
+            XtdComment.objects.get(pk=cid)
+
+    c1 = XtdComment.norel_objects.get(pk=1)
+    assert(c1.nested_count == 3)
+
+
+@pytest.mark.django_db
+def test_nested_count_after_deleting_comment_4(an_article):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    cm4 = XtdComment.norel_objects.get(pk=4)
+    cm4.delete()
+
+    # It should remove comments 4, 7 and 10, and leave the following changes:
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      3
+
+    for cid in [4, 7, 10]:
+        with pytest.raises(XtdComment.DoesNotExist):
+            XtdComment.objects.get(pk=cid)
+
+    c1 = XtdComment.norel_objects.get(pk=1)
+    assert(c1.nested_count == 3)
+
+
+@pytest.mark.django_db
+def test_nested_count_after_deleting_comment_5(an_article):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    cm5 = XtdComment.norel_objects.get(pk=5)
+    cm5.delete()
+
+    # It should remove comments 5 and 6, and leave the following changes:
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c2   # ->    2         2          2        0      1      0
+
+    for cid in [5, 6]:
+        with pytest.raises(XtdComment.DoesNotExist):
+            XtdComment.objects.get(pk=cid)
+
+    c2 = XtdComment.norel_objects.get(pk=2)
+    assert(c2.nested_count == 0)
+
+
+@pytest.mark.django_db
+def test_nested_count_after_deleting_comment_6(an_article):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    cm6 = XtdComment.norel_objects.get(pk=6)
+    cm6.delete()
+
+    # It should remove comment 6, and leave the following changes:
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c2   # ->    2         2          2        0      1      1
+    #  c5   # ->    5         2          2        1      2      0
+
+    with pytest.raises(XtdComment.DoesNotExist):
+        XtdComment.objects.get(pk=6)
+
+    c2 = XtdComment.norel_objects.get(pk=2)
+    assert(c2.nested_count == 1)
+
+    c5 = XtdComment.norel_objects.get(pk=5)
+    assert(c5.nested_count == 0)
+
+
+@pytest.mark.django_db
+def test_nested_count_after_deleting_comment_7(an_article):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    cm7 = XtdComment.norel_objects.get(pk=7)
+    cm7.delete()
+
+    # It should remove comments 7 and 10, and leave the following changes:
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      4
+    #  c4   # ->    4         1          1        1      5      0
+
+    for cid in [7, 10]:
+        with pytest.raises(XtdComment.DoesNotExist):
+            XtdComment.objects.get(pk=cid)
+
+    c1 = XtdComment.norel_objects.get(pk=1)
+    assert(c1.nested_count == 4)
+
+    c4 = XtdComment.norel_objects.get(pk=4)
+    assert(c4.nested_count == 0)
+
+
+@pytest.mark.django_db
+def test_nested_count_after_deleting_comment_8(an_article):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    cm8 = XtdComment.norel_objects.get(pk=8)
+    cm8.delete()
+
+    # It should remove comments 8 and 11, and leave the following changes:
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      4
+    #  c3   # ->    3         1          1        1      2      0
+
+    for cid in [8, 11]:
+        with pytest.raises(XtdComment.DoesNotExist):
+            XtdComment.objects.get(pk=cid)
+
+    c1 = XtdComment.norel_objects.get(pk=1)
+    assert(c1.nested_count == 4)
+
+    c3 = XtdComment.norel_objects.get(pk=3)
+    assert(c3.nested_count == 0)
+
+
+@pytest.mark.django_db
+def test_nested_count_after_deleting_comment_10(an_article):
+    thread_test_step_1(an_article)
+    thread_test_step_2(an_article)
+    thread_test_step_3(an_article)
+    thread_test_step_4(an_article)
+    thread_test_step_5(an_article)
+    thread_test_step_6(an_article)
+
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      6
+    #  c3   # ->    3         1          1        1      2      2
+    #  c8   # ->    8         1          3        2      3      1
+    #  c11  # ->   11         1          8        3      4      0
+    #  c4   # ->    4         1          1        1      5      2
+    #  c7   # ->    7         1          4        2      6      1
+    #  c10  # ->   10         1          7        3      7      0
+    #  c2   # ->    2         2          2        0      1      2
+    #  c5   # ->    5         2          2        1      2      1
+    #  c6   # ->    6         2          5        2      3      0
+    #  c9   # ->    9         9          9        0      1      0
+
+    cm10 = XtdComment.norel_objects.get(pk=10)
+    cm10.delete()
+
+    # It should remove comments 8 and 11, and leave the following changes:
+    # content -> cmt.id  thread_id  parent_id  level  order  nested
+    #  c1   # ->    1         1          1        0      1      5
+    #  c4   # ->    4         1          1        1      5      1
+    #  c7   # ->    7         1          4        2      6      0
+
+    with pytest.raises(XtdComment.DoesNotExist):
+        XtdComment.objects.get(pk=10)
+
+    c1 = XtdComment.norel_objects.get(pk=1)
+    assert(c1.nested_count == 5)
+
+    c4 = XtdComment.norel_objects.get(pk=4)
+    assert(c4.nested_count == 1)
+
+    c7 = XtdComment.norel_objects.get(pk=7)
+    assert(c7.nested_count == 0)

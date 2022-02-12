@@ -9,7 +9,9 @@
     data-dcx="config"
     data-reactions="{% reactions_enum_strlist %}"
     {% if user.is_authenticated %}
-      data-reactions-url="{% url 'comments-xtd-api-react' %}"
+      data-react-url="{% url 'comments-xtd-api-react' %}"
+    {% else %}
+      data-login-url="{% url 'login' %}"
     {% endif %}
     data-guest-user="{% if user.is_authenticated %}0{% else %}1{% endif %}"
     data-reactions-row-length="4"

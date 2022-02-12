@@ -29,6 +29,7 @@
 .reactions-panel > p {
   margin: 0;
   padding: 8px;
+  text-align: center;
 }
 
 .reactions-tooltip {

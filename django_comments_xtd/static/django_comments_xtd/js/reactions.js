@@ -12,10 +12,12 @@ function init_reactions() {
     }
     window.dcx.reactions = {
         choices: [],
-        url: "/comments/api/react/"
+        login_url: "/login/",
+        react_url: "/comments/api/react/"
     };
     window.dcx.reactions.choices = init_reaction_choices(rroot);
-    window.dcx.reactions.url = init_reactions_url(rroot);
+    window.dcx.reactions.login_url = init_login_url(rroot);
+    window.dcx.reactions.react_url = init_react_url(rroot);
 
     const header_title = rroot.getAttribute("data-reactions-header-title");
     const row_length = init_row_length(rroot);
@@ -87,14 +89,25 @@ function init_row_length(elem) {
     }
 }
 
-function init_reactions_url(elem) {
-    const url = elem.getAttribute("data-reactions-url");
+function init_login_url(elem) {
+    const url = elem.getAttribute("data-login-url");
+    if (url === null || url.length === 0) {
+        if (window.dcx.guest && window.dcx.guest === "1") {
+            throw new Error("Cannot initialize reactions panel => The " +
+                "[data-login-url] attribute does not exist or is empty.");
+        }
+    }
+    return url;
+}
+
+function init_react_url(elem) {
+    const url = elem.getAttribute("data-react-url");
     if (url === null || url.length === 0) {
         if (window.dcx.guest && window.dcx.guest === "0") {
             throw new Error("Cannot initialize reactions panel => The " +
-                "[data-reactions-url] attribute does not exist or is empty.");
+                "[data-react-url] attribute does not exist or is empty.");
         } else {
-            console.info("Couldn't find the data-reactions-url attribute, " +
+            console.info("Couldn't find the data-react-url attribute, " +
                 "but the user is anonymous. She has to login first in order " +
                 "to post comment reactions.");
         }
@@ -235,7 +248,7 @@ function get_cookie(name) {
 }
 
 async function post_reaction(data) {
-    const response = await fetch(window.dcx.reactions.url, {
+    const response = await fetch(window.dcx.reactions.react_url, {
         method: "POST",
         cache: "no-cache",
         credentials: "same-origin",
@@ -263,7 +276,7 @@ function create_reaction_btn(reaction, cid, login_next_url) {
     } else {
         button.addEventListener("click", function(_) {
             window.location.href = (
-                `${window.comments_api_props.login_url}` +
+                `${window.dcx.reactions.login_url}` +
                 `?next=${login_next_url}`
             );
         });

@@ -40,11 +40,8 @@
               id="comments"
               class="comment-list"
               data-dcx="config"
-              data-reactions="+,+1,#128077;-,-1,#128078"
-              data-reactions-url="/comments/api/react/"
-              data-guest-user="1"
-              data-reactions-row-length="4"
-              data-reactions-header-title="Pick your reaction"
+              data-react-url="/comments/api/react/"
+              data-guest-user="0"
               data-popover-pos-bottom="30"
               data-popover-pos-left="10"
               data-tooltip-pos-bottom="30"
@@ -200,6 +197,14 @@
           <textarea rows="1" placeholder="Your reply"></textarea>
         </div>
       </section>
+      <div class="reactions-panel" data-dcx="reactions-panel-template" style="display: none;">
+        <div class="arrow" style="left: 10px;"></div>
+          <h3>Pick your reaction</h3>
+          <p>
+            <button data-title="+1" data-code="+" class="emoji">👍</button>
+            <button data-title="-1" data-code="-" class="emoji">👎</button>
+          </p>
+        </div>
     </div>
   </body>
 </html>

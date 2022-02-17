@@ -786,13 +786,6 @@ def test_render_reactions_buttons(a_comments_reaction):
 
 
 @pytest.mark.django_db
-def test_render_reactions_enum_strlist():
-    t = "{% load comments_xtd %}" "{% reactions_enum_strlist %}"
-    output = Template(t).render(Context({}))
-    assert output == get_reactions_enum().strlist()
-
-
-@pytest.mark.django_db
 def test_authors_list(a_comments_reaction, an_user):
     t = "{% load comments_xtd %}" "{{ reaction|authors_list }}"
     output = Template(t).render(Context({"reaction": a_comments_reaction}))

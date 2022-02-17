@@ -7,15 +7,12 @@
   class="comment-list"
   {% if comment_reactions_enabled %}
     data-dcx="config"
-    data-reactions="{% reactions_enum_strlist %}"
     {% if user.is_authenticated %}
       data-react-url="{% url 'comments-xtd-api-react' %}"
     {% else %}
       data-login-url="{% url 'login' %}"
     {% endif %}
     data-guest-user="{% if user.is_authenticated %}0{% else %}1{% endif %}"
-    data-reactions-row-length="4"
-    data-reactions-header-title="{% trans 'Pick your reaction' %}"
     data-popover-pos-bottom="{{ reactions_popover_pos_bottom }}"
     data-popover-pos-left="{{ reactions_popover_pos_left }}"
     data-tooltip-pos-bottom="{{ reactions_tooltip_pos_bottom }}"

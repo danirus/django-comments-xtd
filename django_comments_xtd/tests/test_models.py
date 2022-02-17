@@ -903,14 +903,6 @@ def test_non_blacklisted_domain_pass(an_article, an_user):
 
 
 # ---------------------------------------------------------------------
-# Test BlackListedDomain.
-
-def test_BaseReactionEnum_strlist():
-    string_list = get_reactions_enum().strlist()
-    assert string_list == "+,+1,#128077;-,-1,#128078"
-
-
-# ---------------------------------------------------------------------
 # Test django.db.models.signals.post_delete signal.
 
 @pytest.mark.django_db

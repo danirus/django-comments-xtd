@@ -440,15 +440,6 @@ class BaseReactionEnum(models.TextChoices):
     def icon(self):
         return self._icons[self]
 
-    @classmethod
-    def strlist(cls):
-        return ";".join(
-            [
-                ",".join([f"{member.value}", member.label, member.icon])
-                for member in cls
-            ]
-        )
-
 
 class ReactionEnum(BaseReactionEnum):
     LIKE_IT = "+", "+1"

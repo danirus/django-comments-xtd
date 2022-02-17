@@ -209,17 +209,8 @@ function init_reactions() {
     if (window.dcx.guest === undefined) {
         window.dcx.guest = rroot.getAttribute("data-guest-user");
     }
-    window.dcx.reactions = {
-        choices: [],
-        login_url: "/login/",
-        react_url: "/comments/api/react/"
-    };
-    window.dcx.reactions.choices = init_reaction_choices(rroot);
-    window.dcx.reactions.login_url = init_login_url(rroot);
-    window.dcx.reactions.react_url = init_react_url(rroot);
-
-    const header_title = rroot.getAttribute("data-reactions-header-title");
-    const row_length = init_row_length(rroot);
+    window.dcx.login_url = init_login_url(rroot);
+    window.dcx.react_url = init_react_url(rroot);
 
     /* ----------------------------------------------
      * Initialize the buttons panels and their components.
@@ -229,7 +220,8 @@ function init_reactions() {
         throw new Error("Cannot initialize reactions panel => There are no " +
             "elements with [data-dcx=reactions-panel].");
     }
-    create_buttons_panels(links, row_length, header_title);
+    // create_buttons_panels(links, row_length, header_title);
+    create_buttons_panels(links);
 
     /* ----------------------------------------------
      * Initialize reactions-tooltips.
@@ -240,52 +232,6 @@ function init_reactions() {
             node.addEventListener("mouseover", on_mouseover_tooltip);
             node.addEventListener("mouseout", on_mouseout_tooltip);
         });
-}
-
-function init_reaction_choices(elem) {
-    const reactions = elem.getAttribute("data-reactions");
-    if (reactions === null) {
-        throw new Error("Cannot initialize reactions panel => Element with " +
-            "[data-dcx=config] attribute is missing " +
-            "[data-reactions] attribute.");
-    } else if (reactions.length === 0) {
-        throw new Error("Cannot initialize reactions panel => The " +
-            "[data-reactions] attribute is empty.");
-    }
-    const choices = reactions.split(";");
-    if (choices.length < 2) {
-        throw new Error("Cannot initialize reactions panels => The " +
-            "[data-reactions] attribute must be a semicolon-" +
-            "separated list of reactions.");
-    } else {
-        // Check that each choice is a comma-separated list of 3 items.
-        for (let i = 0; i < choices.length; i++) {
-            if (choices[i].split(",").length !== 3) {
-                throw new Error("Cannot initialize reactions panels => The " +
-                    "[data-reactions] attribute must be a semicolon-" +
-                    "separated list of reactions with the format: " +
-                    "code,reaction_title,emoji_unicode.");
-            }
-        }
-    }
-
-    return choices;
-}
-
-function init_row_length(elem) {
-    try {
-        const data_row_length = elem.getAttribute("data-reactions-row-length");
-        if (data_row_length === null) {
-            throw new Error("Cannot initialize reactions panel => Element " +
-                "with [data-dcx=config] attribute is missing " +
-                "[data-reactions-row-length] attribute.");
-        }
-        return parseInt(data_row_length);
-    } catch (e) {
-        throw new Error("Cannot initialize reactions panel => The " +
-            "[data-reactions-row-length] attribute must be " +
-            "an integer.");
-    }
 }
 
 function init_login_url(elem) {
@@ -314,7 +260,6 @@ function init_react_url(elem) {
     return url;
 }
 
-
 function toggle_buttons_panel(comment_id) {
     return (event) => {
         event.preventDefault();
@@ -336,42 +281,42 @@ function toggle_buttons_panel(comment_id) {
     };
 }
 
-function create_buttons_panels(nodes, row_length, header_title) {
+function create_buttons_panels(nodes) {
+    const qs_template = "[data-dcx=reactions-panel-template]";
+    const template = document.querySelector(qs_template);
+
     for (const elem of Array.from(nodes)) {
         const comment_id = elem.getAttribute("data-comment");
-        if (comment_id !== null) {
-            const panel = document.createElement("div");
-            panel.className = "reactions-panel";
-            panel.setAttribute("data-crpanel", `${comment_id}`);
-
-            const arrow = document.createElement("div");
-            arrow.className = "arrow";
-            arrow.style.left = "10px";
-            panel.appendChild(arrow);
-
-            const header = document.createElement("h3");
-            header.textContent = header_title;
-            panel.appendChild(header);
-
-            // For each reaction choice create a reaction button.
-            const body = document.createElement("p");
-            for (let i = 0; i < window.dcx.reactions.choices.length; i++) {
-                if (i > 0 && i % row_length === 0) {
-                    body.appendChild(document.createElement("br"));
-                }
-                const login_next_url = elem.getAttribute("data-login-next") || "";
-                const btn = create_reaction_btn(window.dcx.reactions.choices[i], comment_id, login_next_url);
-                btn.addEventListener("mouseover", on_mouseover_reaction_btn(header));
-                btn.addEventListener("mouseout", on_mouseout_reaction_btn(header, header_title));
-                body.appendChild(btn);
-            }
-            panel.appendChild(body);
-            elem.parentNode.insertBefore(panel, elem);
-            calc_buttons_panel_position(comment_id);
-            elem.addEventListener("click", toggle_buttons_panel(comment_id));
+        if (comment_id === null) {
+            continue;
         }
+
+        const panel = template.cloneNode(true);
+        delete panel.dataset.dcx;
+        panel.setAttribute("data-crpanel", `${comment_id}`);
+        const header = panel.querySelector("h3");
+        const header_title = header.textContent;
+        const buttons = panel.querySelectorAll("P > BUTTON");
+
+        for (const btn of Array.from(buttons)) {
+            if (window.dcx.guest === "0") {
+                btn.addEventListener("click", on_click_reaction_btn(btn.dataset.code, comment_id));
+            } else {
+                btn.addEventListener("click", function(_) {
+                    window.location.href = (
+                        `${window.dcx.login_url}?next=${login_next_url}`
+                    );
+                });
+            }
+            btn.addEventListener("mouseover", on_mouseover_reaction_btn(header));
+            btn.addEventListener("mouseout", on_mouseout_reaction_btn(header, header_title));
+        }
+
+        elem.parentNode.insertBefore(panel, elem);
+        calc_buttons_panel_position(comment_id);
+        elem.addEventListener("click", toggle_buttons_panel(comment_id));
     }
-};
+}
 
 function calc_buttons_panel_position(cid) {
     const panel = document.querySelector(`[data-crpanel="${cid}"]`);
@@ -381,8 +326,9 @@ function calc_buttons_panel_position(cid) {
         const left = parseInt(rroot.getAttribute("data-popover-pos-left")) || 0;
         const elem_sel = `[data-dcx="reactions-panel"][data-comment="${cid}"]`;
         const elem = document.querySelector(elem_sel);
-        // elem is the <a>React</a>, and elem.parentNode.parentNode is the element
-        // containing the .active-reactions (reactions already selected by users).
+        // elem is the <a>React</a>, and elem.parentNode.parentNode is the
+        // element containing the .active-reactions (reactions already
+        // selected by users).
         const anchor_pos = elem.getBoundingClientRect();
         const footer_pos = elem.parentNode.parentNode.getBoundingClientRect();
         panel.style.bottom = `${bottom}px`;
@@ -447,7 +393,7 @@ function get_cookie(name) {
 }
 
 async function post_reaction(data) {
-    const response = await fetch(window.dcx.reactions.react_url, {
+    const response = await fetch(window.dcx.react_url, {
         method: "POST",
         cache: "no-cache",
         credentials: "same-origin",
@@ -461,26 +407,6 @@ async function post_reaction(data) {
         body: JSON.stringify(data)
     });
     return response.json();
-}
-
-function create_reaction_btn(reaction, cid, login_next_url) {
-    const [crid, title, emoji] = reaction.split(",");
-    const button = document.createElement("button");
-    button.setAttribute("data-title", title);
-    button.setAttribute("data-code", crid);
-    button.className = "emoji";
-    button.innerHTML = `&${emoji};`;
-    if (window.dcx.guest === "0") {
-        button.addEventListener("click", on_click_reaction_btn(crid, cid));
-    } else {
-        button.addEventListener("click", function(_) {
-            window.location.href = (
-                `${window.dcx.reactions.login_url}` +
-                `?next=${login_next_url}`
-            );
-        });
-    }
-    return button;
 }
 
 function handle_reaction_response(cid, data) {

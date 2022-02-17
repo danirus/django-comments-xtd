@@ -342,6 +342,15 @@ def comment_reaction_form_target(comment):
 
 @register.inclusion_tag("comments/reactions_buttons.html")
 def render_reactions_buttons(user_reactions):
+    """
+    Renders template `comments/reactions_buttons.html`.
+
+    Argument `user_reactions` is a list with `ReactionEnum` items, it
+    contains a user's reactions to a comment. The template display a button
+    per each reaction returned from get_reactions_enum(). Each reaction that
+    is already in the `user_reactions` list is marked as already clicked.
+    This templatetag is used within the `react.html` template.
+    """
     return {
         "reactions": get_reactions_enum(),
         "user_reactions": user_reactions,
@@ -349,21 +358,12 @@ def render_reactions_buttons(user_reactions):
     }
 
 
-@register.simple_tag
-def reactions_enum_strlist():
-    """
-    Returns a string representing the list of available comment reactions.
-
-    Each reaction is a comma-separated list of 3 items: the ID of the
-    reaction, the name, and the HTML code to represent it as a button.
-    By default there are 4 reactions represented by emoji characters. Read
-    the docs to know how to extend comment reactions.
-    """
-    return get_reactions_enum().strlist()
-
-
 @register.filter
 def authors_list(cmt_reaction):
+    """
+    Returns a list with the result of applying the function
+    COMMENTS_XTD_API_USER_REPR to each authour of the given CommentReaction.
+    """
     return [
         settings.COMMENTS_XTD_API_USER_REPR(author)
         for author in cmt_reaction.authors.all()
@@ -372,7 +372,9 @@ def authors_list(cmt_reaction):
 
 @register.filter
 def get_reaction_enum(cmt_reaction):
-    """Returns the ReactionEnum corresponding to the given CommentReaction."""
+    """
+    Returns the ReactionEnum that corresponds to the given CommentReaction.
+    """
     return get_reactions_enum()(cmt_reaction.reaction)
 
 
@@ -497,3 +499,14 @@ def dcx_custom_selector():
 @register.inclusion_tag("comments/only_users_can_post.html")
 def render_only_users_can_post_template(object):
     return {"html_id_suffix": utils.get_html_id_suffix(object)}
+
+
+@register.inclusion_tag("comments/reactions_panel_template.html")
+def render_reactions_panel_template():
+    enums_details = [
+        (enum.value, enum.label, enum.icon) for enum in get_reactions_enum()
+    ]
+    return {
+        "enums_details": enums_details,
+        "break_every": settings.COMMENTS_XTD_REACTIONS_ROW_LENGTH,
+    }

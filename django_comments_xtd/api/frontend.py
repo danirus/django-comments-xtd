@@ -106,7 +106,7 @@ def comments_api_props(obj, user, request=None):
         "html_id_suffix": get_html_id_suffix(obj),
         "max_thread_level": max_thread_level_for_content_type(ctype),
         "reactions_js_overlays": reactions_js_overlays,
-        "comments_page_qs_param": settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
+        "comments_page_qs_param": settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM,
     }
     if user and user.is_authenticated:
         d["current_user"] = "%d:%s" % (

@@ -1,26 +1,9 @@
 # Change Log
 
-# [3.0.0] -
+## [3.0.0] -
 
-    * Fixes issue #194, about setting COMMENTS_HIDE_REMOVED and the new setting
-      COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED. Up until v3.0.0 removed comments
-      were listed but their content were not displayed. They showed a "comment
-      has been removed" message instead. That behaviour didn't comply with
-      parent's app setting COMMENTS_HIDE_REMOVED. COMMENTS_HIDE_REMOVED is True
-      by default, what has the effect of hiding removed comments. As of v3.0.0
-      this is also the behaviour of django-comments-xtd. Additionally a new
-      setting COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED has been created to
-      control whether nested comments of a comment being removed or approved
-      will be withhold or published.
-    * Fixes issue #210, about listing top comments. Since v3.0.0 there is a new
-      way to receive user feedback on comments. The model CommentFlag is no
-      longer used to store such feedback. There is a new model CommentReaction
-      that stores user reactions to comments. For each pair reaction/comment
-      there is a counter and a list of reaction authors, this way it is
-      possible to retrieve most liked comments or any other query related with
-      user reactions. In addition there is new frontend code to handle user
-      reactions. To get aligned with issue #161, the new frontend to handle
-      reactions doesn't have additional dependencies.
+   * Fixes issue #194, about setting COMMENTS_HIDE_REMOVED and the new setting COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED. Up until v3.0.0 removed comments were listed but their content were not displayed. They showed a "comment has been removed" message instead. That behaviour didn't comply with parent's app setting COMMENTS_HIDE_REMOVED. COMMENTS_HIDE_REMOVED is True by default, what has the effect of hiding removed comments. As of v3.0.0 this is also the behaviour of django-comments-xtd. Additionally a new setting COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED has been created to control whether nested comments of a comment being removed or approved will be withhold or published.
+   * Fixes issue #210, about listing top comments. Since v3.0.0 there is a new way to receive user feedback on comments. The model `CommentFlag` is no longer used to store such feedback. There is a new model `CommentReaction` that stores user reactions to comments. For each pair reaction/comment there is a counter and a list of reaction authors, this way it is possible to retrieve most liked comments or any other query related with user reactions. In addition there is new frontend code to handle user reactions. To get aligned with issue #161, the new frontend code doesn't depend on React or Twitter-Bootstrap. It is vanilla JavaScript and vanilla CSS.
 
 ## [2.9.5] - 2021-12-13
 

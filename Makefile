@@ -1,5 +1,5 @@
 	.DEFAULT_GOAL := help
-.PHONY: coverage deps help test tox sdist collectstatic \
+.PHONY: coverage deps help tox sdist collectstatic \
 	compose-project-quotes-build compose-project-quotes-up
 
 coverage:  ## Run tests with coverage.
@@ -14,9 +14,6 @@ deps:  ## Install dependencies.
 
 pep8:  ## Check PEP8 compliance.
 	flake8 --exclude=.tox,docs,django_comments_xtd/tests,django_comments_xtd/__init__.py,django_comments_xtd/migrations --max-line-length=80 --extend-ignore=E203 django_comments_xtd
-
-test:  ## Run tests.
-	py.test
 
 tox:  ## Run tox.
 	python -m tox

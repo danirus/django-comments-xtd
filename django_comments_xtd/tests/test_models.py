@@ -905,6 +905,7 @@ def test_non_blacklisted_domain_pass(an_article, an_user):
 # ---------------------------------------------------------------------
 # Test django.db.models.signals.post_delete signal.
 
+
 @pytest.mark.django_db
 def test_nested_count_after_deleting_comment_1(an_article):
     thread_test_step_1(an_article)
@@ -1007,7 +1008,7 @@ def test_nested_count_after_deleting_comment_3(an_article):
             XtdComment.objects.get(pk=cid)
 
     c1 = XtdComment.norel_objects.get(pk=1)
-    assert(c1.nested_count == 3)
+    assert c1.nested_count == 3
 
 
 @pytest.mark.django_db
@@ -1044,7 +1045,7 @@ def test_nested_count_after_deleting_comment_4(an_article):
             XtdComment.objects.get(pk=cid)
 
     c1 = XtdComment.norel_objects.get(pk=1)
-    assert(c1.nested_count == 3)
+    assert c1.nested_count == 3
 
 
 @pytest.mark.django_db
@@ -1081,7 +1082,7 @@ def test_nested_count_after_deleting_comment_5(an_article):
             XtdComment.objects.get(pk=cid)
 
     c2 = XtdComment.norel_objects.get(pk=2)
-    assert(c2.nested_count == 0)
+    assert c2.nested_count == 0
 
 
 @pytest.mark.django_db
@@ -1118,10 +1119,10 @@ def test_nested_count_after_deleting_comment_6(an_article):
         XtdComment.objects.get(pk=6)
 
     c2 = XtdComment.norel_objects.get(pk=2)
-    assert(c2.nested_count == 1)
+    assert c2.nested_count == 1
 
     c5 = XtdComment.norel_objects.get(pk=5)
-    assert(c5.nested_count == 0)
+    assert c5.nested_count == 0
 
 
 @pytest.mark.django_db
@@ -1159,10 +1160,10 @@ def test_nested_count_after_deleting_comment_7(an_article):
             XtdComment.objects.get(pk=cid)
 
     c1 = XtdComment.norel_objects.get(pk=1)
-    assert(c1.nested_count == 4)
+    assert c1.nested_count == 4
 
     c4 = XtdComment.norel_objects.get(pk=4)
-    assert(c4.nested_count == 0)
+    assert c4.nested_count == 0
 
 
 @pytest.mark.django_db
@@ -1200,10 +1201,10 @@ def test_nested_count_after_deleting_comment_8(an_article):
             XtdComment.objects.get(pk=cid)
 
     c1 = XtdComment.norel_objects.get(pk=1)
-    assert(c1.nested_count == 4)
+    assert c1.nested_count == 4
 
     c3 = XtdComment.norel_objects.get(pk=3)
-    assert(c3.nested_count == 0)
+    assert c3.nested_count == 0
 
 
 @pytest.mark.django_db
@@ -1241,10 +1242,10 @@ def test_nested_count_after_deleting_comment_10(an_article):
         XtdComment.objects.get(pk=10)
 
     c1 = XtdComment.norel_objects.get(pk=1)
-    assert(c1.nested_count == 5)
+    assert c1.nested_count == 5
 
     c4 = XtdComment.norel_objects.get(pk=4)
-    assert(c4.nested_count == 1)
+    assert c4.nested_count == 1
 
     c7 = XtdComment.norel_objects.get(pk=7)
-    assert(c7.nested_count == 0)
+    assert c7.nested_count == 0

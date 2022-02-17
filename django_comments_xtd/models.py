@@ -339,9 +339,9 @@ def on_comment_deleted(sender, instance, using, **kwargs):
     creactions_qs = CommentReaction.objects.filter(comment__pk__in=nested)
     creactions_ids = [cr.id for cr in creactions_qs]
 
-    CommentReactionAuthor.objects\
-        .filter(reaction__pk__in=creactions_ids)\
-        ._raw_delete(using)
+    CommentReactionAuthor.objects.filter(
+        reaction__pk__in=creactions_ids
+    )._raw_delete(using)
     creactions_qs._raw_delete(using)
 
     # Delete all the comments down the tree from instance.

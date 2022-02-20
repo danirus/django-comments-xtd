@@ -11,7 +11,7 @@ let dom;
 let container;
 let qs_cform;
 
-describe("comments.test.js module", () => {
+describe("scene 1 - comments.test.js module", () => {
     beforeEach(async () => {
         const resourceLoader = new ResourceLoader({
             proxy: "http://localhost:3000",

@@ -211,6 +211,7 @@ async function post_reaction(data) {
 }
 
 function handle_reaction_response(cid, data) {
+    const cm_footer = document.getElementById(`cm-footer-${cid}`);
     const cm_reactions_div = document.getElementById(`cm-reactions-${cid}`);
     if (data.counter > 0) {
         const new_list = create_reactions_list(data);
@@ -220,7 +221,6 @@ function handle_reaction_response(cid, data) {
             reactions.className = "reactions";
             reactions.appendChild(new_list);
             reactions.insertAdjacentHTML("beforeend", "&nbsp;");
-            const cm_footer = document.getElementById(`cm-footer-${cid}`);
             cm_footer.insertBefore(reactions, cm_footer.children[0]);
             reactions.insertAdjacentHTML("afterend", "&nbsp;");
         } else {
@@ -229,6 +229,11 @@ function handle_reaction_response(cid, data) {
         }
     } else if (cm_reactions_div) {
         cm_reactions_div.remove();
+        for (const node of cm_footer.childNodes) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                node.textContent = "";
+            }
+        }
     }
     // Recalculate the position of the reactions buttons panel.
     calc_buttons_panel_position(cid);
@@ -243,6 +248,7 @@ function create_reactions_list(data) {
     for (const item of data.list) {
         const reaction = document.createElement("span");
         reaction.className = "reaction";
+        reaction.dataset.reaction = item.value;
         reaction.appendChild(create_tooltip(item));
         const anchor = document.createElement("a");
         anchor.className = "small text-primary";

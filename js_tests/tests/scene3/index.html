@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/favicon.ico" />
+    <title>test reactions.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/css/comments.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost:3000/css/reactions.css">
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="title">
+          <h1><a href="/">stories project</a></h1>
+          <h4>with django-comments-xtd</h4>
+        </div>
+        <nav class="menu">
+          <a class="" href="/user/login/">Login</a>
+          <a class="active" href="/stories/">Stories</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <article>
+        <h2 class="text-center">A human right</h2>
+        <h6 class="text-center small">Feb. 4, 2022, 6:27 a.m.</h6>
+        <div class="central-column">
+          <div class="pb24">
+            <blockquote class="quote">
+              <p>I would like them to understand that we are people. We&#x27;re human beings, and this is a human life. This is reality for us, and all we ask for is acceptance and validation for what we say that we are. It&#x27;s a basic human right.</p>
+            </blockquote>
+            <p class="text-right">
+              <em><a href="https://www.vogue.com/article/model-andreja-pejic-sex-reassignment-surgery">Andreja Pejic</a></em>
+            </p>
+          </div>
+          <h4 class="text-center">There is 1 comment</h4>
+          <div class="dcx dcx-custom pb32">
+            <div
+              id="comments"
+              class="comment-list"
+              data-dcx="config"
+              data-react-url="/comments/api/react/"
+              data-guest-user="0"
+              data-popover-pos-bottom="30"
+              data-popover-pos-left="10"
+              data-tooltip-pos-bottom="30"
+              data-tooltip-pos-left="76"
+              data-page-qs-param="cpage"
+            >
+              <div id="comment-29" class="comment-box l0-ini">
+                <div class="comment">
+                  <div class="header">
+                    <div>Eva Rizzi&nbsp;&sdot;&nbsp;<span class="muted">Feb. 4, 2022, 6:36 a.m.</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="/comments/cr/15/3/29/#comment-29">¶</a></div>
+                    <div class="small"><a href="/comments/flag/29/">report</a></div>
+                  </div>
+                  <div class="body">
+                    <p>Many people claim for their rights. The right to have a job, to have a house, the right to have access to health care and education for their children. Many of them however treat trans people as a a kind of sub-human being, and with that attitude they withhold trans peoples' rights to be human beings, and the right to have their own existence.</p>
+                  </div>
+                  <div id="cm-footer-29" class="footer">
+                    <div>
+                      <a data-dcx="reactions-panel" data-comment="29" class="small" data-user-auth="False" href="/comments/react/29/?cpage=1" data-login-next="/comments/cr/15/3/29/#comment-29">React</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                id="reply-to-29"
+                class="reply-box l0"
+              >
+                <div class="line-0"></div>
+                <div class="content">
+                  <section class="reply-form" data-dcx="reply-form">
+                    <form id="reply-form-902" method="post" action="/comments/reply/902/"><input type="hidden" name="csrfmiddlewaretoken" value="lMutsrM1Jar6XIA1D8wrrH7Yx8sDEBjjSMmUZ7K55sRD397pWcN0VQF954f2TCHy">
+                      <input type="hidden" name="reply_to" value="902" />
+                      <div class="col1-2">
+                        <div class="inline-left">
+                          <button type="submit" class="secondary small" data-dcx="reply-button">Write a reply</button>
+                        </div>
+                      </div>
+                    </form>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dcx dcx-custom" data-dcx="comment-form">
+            <section class="comment-form">
+              <h5 class="text-center">Post your comment</h5>
+              <form method="POST" autocomplete="off" action="/comments/post/">
+                <input type="hidden" name="csrfmiddlewaretoken" value="lMutsrM1Jar6XIA1D8wrrH7Yx8sDEBjjSMmUZ7K55sRD397pWcN0VQF954f2TCHy">
+                <input type="hidden" name="next" value="/comments/sent/" />
+                <input type="hidden" name="content_type" value="stories.story" id="id_content_type">
+                <input type="hidden" name="object_pk" value="2" id="id_object_pk">
+                <input type="hidden" name="timestamp" value="1643897441" id="id_timestamp">
+                <input type="hidden" name="security_hash" value="4e789ea3b206f364658477046fdbf6b82de9dbbc" id="id_security_hash">
+                <input type="hidden" name="reply_to" value="0" id="id_reply_to">
+                <div class="hide"><input type="text" name="honeypot" id="id_honeypot"></div>
+                <div data-dcx="comment-form-errors" class="col1-2 hide alert"></div>
+                <div class="col1-2">
+                  <textarea name="comment" placeholder="Your comment" class="form-control" required id="id_comment"></textarea>
+                </div>
+                <label for="id_name" class="col1">Name</label>
+                <div class="col2 ">
+                  <input type="text" name="name" placeholder="name" class="form-control" required id="id_name" aria-label="name">
+                </div>
+                <label for="id_email" class="col1">Mail</label>
+                <div class="col2 ">
+                  <input type="text" name="email" placeholder="mail address" class="form-control" required id="id_email" aria-label="mail">
+                </div>
+                <div class="col2 helper-text">Required for comment verification. Otherwise <a href="/user/login/">login</a>.</div>
+                <label for="id_url" class="col1">Link</label>
+                <div class="col2 ">
+                  <input type="text" name="url" placeholder="url your name links to (optional)" class="form-control" id="id_url">
+                </div>
+                <div class="col2">
+                  <input type="checkbox" name="followup" id="id_followup" class="custom-control-input">
+                  <label for="id_followup">&nbsp;Notify me about follow-up comments</label>
+                </div>
+
+                <div class="col2">
+                  <div class="inline-left">
+                    <button type="submit" class="primary" name="post" value="1">send</button>&nbsp;
+                    <button type="submit" class="secondary" name="preview" value="1">preview</button>
+                  </div>
+                </div>
+              </form>
+            </section>
+          </div>
+        </div>
+      </article>
+    </main>
+    <footer>
+      <div class="container">
+        <p>
+          <a href="http://readthedocs.org/docs/django-comments-xtd/">documentation</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd">source code</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd/issues">issues</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd/discussions">discussions</a>
+        </p>
+        <p>django-comments-xtd</p>
+      </div>
+    </footer>
+
+    <script>
+        self.dcx = {}
+    </script>
+    <script> // From https://unpkg.com/unfetch/polyfill.
+      self.fetch||(self.fetch=function(e,n){return n=n||{},new Promise(function(t,s){var r=new XMLHttpRequest,o=[],u=[],i={},a=function(){return{ok:2==(r.status/100|0),statusText:r.statusText,status:r.status,url:r.responseURL,text:function(){return Promise.resolve(r.responseText)},json:function(){return Promise.resolve(r.responseText).then(JSON.parse)},blob:function(){return Promise.resolve(new Blob([r.response]))},clone:a,headers:{keys:function(){return o},entries:function(){return u},get:function(e){return i[e.toLowerCase()]},has:function(e){return e.toLowerCase()in i}}}};for(var c in r.open(n.method||"get",e,!0),r.onload=function(){r.getAllResponseHeaders().replace(/^(.*?):[^\S\n]*([\s\S]*?)$/gm,function(e,n,t){o.push(n=n.toLowerCase()),u.push([n,t]),i[n]=i[n]?i[n]+","+t:t}),t(a())},r.onerror=s,r.withCredentials="include"==n.credentials,n.headers)r.setRequestHeader(c,n.headers[c]);r.send(n.body||null)})});
+    </script>
+    <script src="http://localhost:3000/dist/dcx-3.0.0.js"></script>
+
+    <div style="display: none">
+      <section class="reply-form" data-dcx="reply-form-template">
+        <form id="reply-form" method="POST" autocomplete="off" action="/comments/post/"  style="display: none;">
+          <input type="hidden" name="csrfmiddlewaretoken" value="lMutsrM1Jar6XIA1D8wrrH7Yx8sDEBjjSMmUZ7K55sRD397pWcN0VQF954f2TCHy">
+          <input type="hidden" name="content_type" value="stories.story" id="id_content_type">
+          <input type="hidden" name="object_pk" value="2" id="id_object_pk">
+          <input type="hidden" name="timestamp" value="1643897441" id="id_timestamp">
+          <input type="hidden" name="security_hash" value="4e789ea3b206f364658477046fdbf6b82de9dbbc" id="id_security_hash">
+          <input type="hidden" name="reply_to" value="0" id="id_reply_to">
+          <input type="hidden" name="cpage" value="" />
+          <div class="hide"><input type="text" name="honeypot" id="id_honeypot"></div>
+          <div data-dcx="comment-form-errors" class="col1-2 hide alert"></div>
+          <div class="col1-2">
+            <textarea name="comment" placeholder="Your comment" class="form-control" required id="id_comment"></textarea>
+          </div>
+          <label for="id_name" class="col1">Name</label>
+          <div class="col2 ">
+            <input type="text" name="name" placeholder="name" class="form-control" required id="id_name" aria-label="name">
+          </div>
+          <label for="id_email" class="col1">Mail</label>
+          <div class="col2 ">
+            <input type="text" name="email" placeholder="mail address" class="form-control" required id="id_email" aria-label="mail">
+          </div>
+          <div class="col2 helper-text">Required for comment verification. Otherwise <a href="/user/login/">login</a>.</div>
+          <label for="id_url" class="col1">Link</label>
+          <div class="col2 ">
+            <input type="text" name="url" placeholder="url your name links to (optional)" class="form-control" id="id_url">
+          </div>
+          <div class="col2">
+            <input type="checkbox" name="followup" id="id_followup" class="custom-control-input">
+            <label for="id_followup">&nbsp;Notify me about follow-up comments</label>
+          </div>
+          <div class="col2">
+            <div class="inline-left">
+              <button type="button" class="primary small" name="post" value="1">send</button>&nbsp;
+              <button type="button" class="secondary small" name="preview" value="1">preview</button>&nbsp;
+              <button type="button" class="secondary small" name="cancel">cancel</button>
+            </div>
+          </div>
+        </form>
+        <div class="reply-form" data-dcx="reply-textarea">
+          <textarea rows="1" placeholder="Your reply"></textarea>
+        </div>
+      </section>
+      <div class="reactions-panel" data-dcx="reactions-panel-template" style="display: none;">
+        <div class="arrow" style="left: 10px;"></div>
+          <h3>Pick your reaction</h3>
+          <p>
+            <button data-title="+1" data-code="+" class="emoji">👍</button>
+            <button data-title="-1" data-code="-" class="emoji">👎</button>
+          </p>
+        </div>
+    </div>
+  </body>
+</html>

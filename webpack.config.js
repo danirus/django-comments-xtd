@@ -51,7 +51,8 @@ module.exports = {
                         ecma: 5,
                         warnings: false,
                         comparisons: false,
-                        inline: 2
+                        inline: 2,
+                        drop_debugger: !devMode
                     },
                     mangle: {
                         safari10: true
@@ -69,22 +70,4 @@ module.exports = {
     },
 
     plugins: plugins,
-    // module: {
-    //     rules: [
-    //         {
-    //             test: /\.js$/,
-    //             exclude: /node_modules/,
-    //             use: {
-    //                 loader: 'babel-loader',
-    //                 options: {
-    //                     presets: ['@babel/preset-env']
-    //                 }
-    //             }
-    //         },
-    //         {
-    //             test: /\.(svg|gif|png|eot|woff|ttf)$/,
-    //             use: ['url-loader']
-    //         }
-    //     ]
-    // }
 };

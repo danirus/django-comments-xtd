@@ -41,52 +41,64 @@ else:
 # List of possible paths to the list.html template file.
 _list_html_tmpl = []
 if theme_dir_exists:
-    _list_html_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/list.html",
-        "comments/{theme_dir}/{app_label}/list.html",
-        "comments/{theme_dir}/list.html",
-    ])
-_list_html_tmpl.extend([
-    "comments/{app_label}/{model}/list.html",
-    "comments/{app_label}/list.html",
-    "comments/list.html",
-])
+    _list_html_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/list.html",
+            "comments/{theme_dir}/{app_label}/list.html",
+            "comments/{theme_dir}/list.html",
+        ]
+    )
+_list_html_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/list.html",
+        "comments/{app_label}/list.html",
+        "comments/list.html",
+    ]
+)
 
 
 # List of possible paths to the form.html template file.
 _form_html_tmpl = []
 if theme_dir_exists:
-    _form_html_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/form.html",
-        "comments/{theme_dir}/{app_label}/form.html",
-        "comments/{theme_dir}/form.html",
-    ])
-_form_html_tmpl.extend([
-    "comments/{app_label}/{model}/form.html",
-    "comments/{app_label}/form.html",
-    "comments/form.html",
-])
+    _form_html_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/form.html",
+            "comments/{theme_dir}/{app_label}/form.html",
+            "comments/{theme_dir}/form.html",
+        ]
+    )
+_form_html_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/form.html",
+        "comments/{app_label}/form.html",
+        "comments/form.html",
+    ]
+)
 
 
 # List of possible paths to the reply_template.html template file.
 _reply_template_html_tmpl = []
 if theme_dir_exists:
-    _reply_template_html_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/reply_template.html",
-        "comments/{theme_dir}/{app_label}/reply_template.html",
-        "comments/{theme_dir}/reply_template.html",
-    ])
-_reply_template_html_tmpl.extend([
-    "comments/{app_label}/{model}/reply_template.html",
-    "comments/{app_label}/reply_template.html",
-    "comments/reply_template.html",
-])
+    _reply_template_html_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/reply_template.html",
+            "comments/{theme_dir}/{app_label}/reply_template.html",
+            "comments/{theme_dir}/reply_template.html",
+        ]
+    )
+_reply_template_html_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/reply_template.html",
+        "comments/{app_label}/reply_template.html",
+        "comments/reply_template.html",
+    ]
+)
 
 
 if theme_dir_exists:
     _reactions_panel_template_tmpl = [
         f"comments/{theme_dir}/reactions_panel_template.html",
-        "comments/reactions_panel_template.html"
+        "comments/reactions_panel_template.html",
     ]
 else:
     _reactions_panel_template_tmpl = "comments/reactions_panel_template.html"
@@ -207,7 +219,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             pth.format(
                 theme_dir=theme_dir,
                 app_label=ctype.app_label,
-                model=ctype.model
+                model=ctype.model,
             )
             for pth in _list_html_tmpl
         ]
@@ -296,6 +308,7 @@ class RenderXtdCommentFormNode(RenderCommentFormNode):
     This class rewrites the `render` method of its parent class, to
     fetch the template from the theme directory.
     """
+
     def render(self, context):
         ctype, object_pk = self.get_target_ctype_pk(context)
         if object_pk:
@@ -303,17 +316,16 @@ class RenderXtdCommentFormNode(RenderCommentFormNode):
                 pth.format(
                     theme_dir=theme_dir,
                     app_label=ctype.app_label,
-                    model=ctype.model
+                    model=ctype.model,
                 )
                 for pth in _form_html_tmpl
             ]
             context_dict = context.flatten()
-            context_dict['form'] = self.get_form(context)
+            context_dict["form"] = self.get_form(context)
             formstr = loader.render_to_string(template_list, context_dict)
             return formstr
         else:
-            return ''
-
+            return ""
 
 
 @register.tag
@@ -338,7 +350,7 @@ class RenderCommentReplyTemplateNode(RenderCommentFormNode):
                 pth.format(
                     theme_dir=theme_dir,
                     app_label=ctype.app_label,
-                    model=ctype.model
+                    model=ctype.model,
                 )
                 for pth in _reply_template_html_tmpl
             ]
@@ -613,6 +625,7 @@ def dcx_custom_selector():
 def get_dcx_theme_dir():
     return theme_dir
 
+
 # ----------------------------------------------------------------------
 @register.inclusion_tag("comments/only_users_can_post.html")
 def render_only_users_can_post_template(object):
@@ -633,16 +646,19 @@ def render_reactions_panel_template():
 # ----------------------------------------------------------------------
 # Template tag for themes 'avatar_in_thread' and 'avatar_in_header'
 
-def get_gravatar_url(email, size=48, avatar='identicon'):
+
+def get_gravatar_url(email, size=48, avatar="identicon"):
     """
     This is the parameter of the production avatar.
     The first parameter is the way of generating the
     avatar and the second one is the size.
     The way os generating has mp/identicon/monsterid/wavatar/retro/hide.
     """
-    return ("//www.gravatar.com/avatar/%s?%s&d=%s" %
-            (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
-            urlencode({'s': str(size)}), avatar))
+    return "//www.gravatar.com/avatar/%s?%s&d=%s" % (
+        hashlib.md5(email.lower().encode("utf-8")).hexdigest(),
+        urlencode({"s": str(size)}),
+        avatar,
+    )
 
 
 if apps.is_installed("avatar"):
@@ -652,17 +668,19 @@ if apps.is_installed("avatar"):
 
     @cache_result
     @register.simple_tag
-    def get_user_avatar_or_gravatar(email, config='48,identicon'):
-        size, gravatar_type = config.split(',')
+    def get_user_avatar_or_gravatar(email, config="48,identicon"):
+        size, gravatar_type = config.split(",")
         try:
             size_number = int(size)
         except ValueError:
-            raise Http404(_('The given size is not a number: %s' % repr(size)))
+            raise Http404(_("The given size is not a number: %s" % repr(size)))
 
         try:
             user = get_user_model().objects.get(email=email)
             return avatar(user, size_number)
         except get_user_model().DoesNotExist:
             url = get_gravatar_url(email, size_number, gravatar_type)
-            return mark_safe('<img src="%s" height="%d" width="%d">' %
-                            (url, size_number, size_number))
+            return mark_safe(
+                '<img src="%s" height="%d" width="%d">'
+                % (url, size_number, size_number)
+            )

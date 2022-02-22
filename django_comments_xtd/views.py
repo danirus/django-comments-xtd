@@ -37,7 +37,7 @@ from django_comments_xtd import (
     get_reactions_enum,
     signals,
     signed,
-    utils
+    utils,
 )
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
@@ -62,7 +62,7 @@ else:
 if theme_dir_exists:
     _bad_form_tmpl = [
         f"comments/{theme_dir}/bad_form.html",
-        "comments/bad_form.html"
+        "comments/bad_form.html",
     ]
 else:
     _bad_form_tmpl = "comments/bad_form.html"
@@ -71,24 +71,25 @@ else:
 # List of possible paths to the preview.html template file.
 _preview_tmpl = []
 if theme_dir_exists:
-    _preview_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/preview.html",
-        "comments/{theme_dir}/{app_label}/preview.html",
-        "comments/{theme_dir}/preview.html",
-    ])
-_preview_tmpl.extend([
-    "comments/{app_label}/{model}/preview.html",
-    "comments/{app_label}/preview.html",
-    "comments/preview.html",
-])
+    _preview_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/preview.html",
+            "comments/{theme_dir}/{app_label}/preview.html",
+            "comments/{theme_dir}/preview.html",
+        ]
+    )
+_preview_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/preview.html",
+        "comments/{app_label}/preview.html",
+        "comments/preview.html",
+    ]
+)
 
 
 # List of possible paths to the bad_form.html template file.
 if theme_dir_exists:
-    _posted_tmpl = [
-        f"comments/{theme_dir}/posted.html",
-        "comments/posted.html"
-    ]
+    _posted_tmpl = [f"comments/{theme_dir}/posted.html", "comments/posted.html"]
 else:
     _posted_tmpl = "comments/posted.html"
 
@@ -96,68 +97,84 @@ else:
 # List of possible paths to the moderated.html template file.
 _moderated_tmpl = []
 if theme_dir_exists:
-    _moderated_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/moderated.html",
-        "comments/{theme_dir}/{app_label}/moderated.html",
-        "comments/{theme_dir}/moderated.html",
-    ])
-_moderated_tmpl.extend([
-    "comments/{app_label}/{model}/moderated.html",
-    "comments/{app_label}/moderated.html",
-    "comments/moderated.html",
-])
+    _moderated_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/moderated.html",
+            "comments/{theme_dir}/{app_label}/moderated.html",
+            "comments/{theme_dir}/moderated.html",
+        ]
+    )
+_moderated_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/moderated.html",
+        "comments/{app_label}/moderated.html",
+        "comments/moderated.html",
+    ]
+)
 
 
 # List of possible paths to the posted_js.html template file.
 _posted_js_tmpl = []
 if theme_dir_exists:
-    _posted_js_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/posted_js.html",
-        "comments/{theme_dir}/{app_label}/posted_js.html",
-        "comments/{theme_dir}/posted_js.html",
-    ])
-_posted_js_tmpl.extend([
-    "comments/{app_label}/{model}/posted_js.html",
-    "comments/{app_label}/posted_js.html",
-    "comments/posted_js.html",
-])
+    _posted_js_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/posted_js.html",
+            "comments/{theme_dir}/{app_label}/posted_js.html",
+            "comments/{theme_dir}/posted_js.html",
+        ]
+    )
+_posted_js_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/posted_js.html",
+        "comments/{app_label}/posted_js.html",
+        "comments/posted_js.html",
+    ]
+)
 
 
 # List of possible paths to the published_js.html template file.
 _published_js_tmpl = []
 if theme_dir_exists:
-    _published_js_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/published_js.html",
-        "comments/{theme_dir}/{app_label}/published_js.html",
-        "comments/{theme_dir}/published_js.html",
-    ])
-_published_js_tmpl.extend([
-    "comments/{app_label}/{model}/published_js.html",
-    "comments/{app_label}/published_js.html",
-    "comments/published_js.html",
-])
+    _published_js_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/published_js.html",
+            "comments/{theme_dir}/{app_label}/published_js.html",
+            "comments/{theme_dir}/published_js.html",
+        ]
+    )
+_published_js_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/published_js.html",
+        "comments/{app_label}/published_js.html",
+        "comments/published_js.html",
+    ]
+)
 
 
 # List of possible paths to the moderated_js.html template file.
 _moderated_js_tmpl = []
 if theme_dir_exists:
-    _moderated_js_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/moderated_js.html",
-        "comments/{theme_dir}/{app_label}/moderated_js.html",
-        "comments/{theme_dir}/moderated_js.html",
-    ])
-_moderated_js_tmpl.extend([
-    "comments/{app_label}/{model}/moderated_js.html",
-    "comments/{app_label}/moderated_js.html",
-    "comments/moderated_js.html",
-])
+    _moderated_js_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/moderated_js.html",
+            "comments/{theme_dir}/{app_label}/moderated_js.html",
+            "comments/{theme_dir}/moderated_js.html",
+        ]
+    )
+_moderated_js_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/moderated_js.html",
+        "comments/{app_label}/moderated_js.html",
+        "comments/moderated_js.html",
+    ]
+)
 
 
 # List of possible paths to the discarded.html template file.
 if theme_dir_exists:
     _discarded_tmpl = [
         f"comments/{theme_dir}/discarded.html",
-        "comments/discarded.html"
+        "comments/discarded.html",
     ]
 else:
     _discarded_tmpl = "comments/discarded.html"
@@ -166,39 +183,44 @@ else:
 # List of possible paths to the reply.html template file.
 _reply_tmpl = []
 if theme_dir_exists:
-    _reply_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/reply.html",
-        "comments/{theme_dir}/{app_label}/reply.html",
-        "comments/{theme_dir}/reply.html",
-    ])
-_reply_tmpl.extend([
-    "comments/{app_label}/{model}/reply.html",
-    "comments/{app_label}/reply.html",
-    "comments/reply.html",
-])
+    _reply_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/reply.html",
+            "comments/{theme_dir}/{app_label}/reply.html",
+            "comments/{theme_dir}/reply.html",
+        ]
+    )
+_reply_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/reply.html",
+        "comments/{app_label}/reply.html",
+        "comments/reply.html",
+    ]
+)
 
 
 # List of possible paths to the muted.html template file.
 _muted_tmpl = []
 if theme_dir_exists:
-    _muted_tmpl.extend([
-        "comments/{theme_dir}/{app_label}/{model}/muted.html",
-        "comments/{theme_dir}/{app_label}/muted.html",
-        "comments/{theme_dir}/muted.html",
-    ])
-_muted_tmpl.extend([
-    "comments/{app_label}/{model}/muted.html",
-    "comments/{app_label}/muted.html",
-    "comments/muted.html",
-])
+    _muted_tmpl.extend(
+        [
+            "comments/{theme_dir}/{app_label}/{model}/muted.html",
+            "comments/{theme_dir}/{app_label}/muted.html",
+            "comments/{theme_dir}/muted.html",
+        ]
+    )
+_muted_tmpl.extend(
+    [
+        "comments/{app_label}/{model}/muted.html",
+        "comments/{app_label}/muted.html",
+        "comments/muted.html",
+    ]
+)
 
 
 # List of possible paths to the react.html template file.
 if theme_dir_exists:
-    _react_tmpl = [
-        f"comments/{theme_dir}/react.html",
-        "comments/react.html"
-    ]
+    _react_tmpl = [f"comments/{theme_dir}/react.html", "comments/react.html"]
 else:
     _react_tmpl = "comments/react.html"
 
@@ -207,7 +229,7 @@ else:
 if theme_dir_exists:
     _reacted_tmpl = [
         f"comments/{theme_dir}/reacted.html",
-        "comments/reacted.html"
+        "comments/reacted.html",
     ]
 else:
     _reacted_tmpl = "comments/reacted.html"
@@ -291,7 +313,7 @@ def post(request, next=None, using=None):
             pth.format(
                 theme_dir=theme_dir,
                 app_label=model._meta.app_label,
-                model=model._meta.model_name
+                model=model._meta.model_name,
             )
             for pth in _preview_tmpl
         ]
@@ -306,7 +328,7 @@ def post(request, next=None, using=None):
                 "next": data.get("next", next),
                 "page_number": cpage,
                 "cpage_qs_param": cpage_qs_param,
-                "dcx_theme_dir": theme_dir
+                "dcx_theme_dir": theme_dir,
             },
         )
 
@@ -480,9 +502,7 @@ def post_js(request, next=None, using=None):
                 error_msg = "Your comment has been rejected."
 
             context = {"bad_error": error_msg}
-            return render(
-                request, _bad_form_tmpl, context, status=400
-            )
+            return render(request, _bad_form_tmpl, context, status=400)
 
     # Save the comment and signal that it was saved
     comment.save()
@@ -642,7 +662,7 @@ def sent(request, using=None):
                 pth.format(
                     theme_dir=theme_dir,
                     app_label=comment.content_type.app_label,
-                    model=comment.content_type.model
+                    model=comment.content_type.model,
                 )
                 for pth in _moderated_tmpl
             ]
@@ -662,15 +682,11 @@ def sent_js(request, comment, using=None):
             target = model._default_manager.using(using).get(pk=object_pk)
         except Exception:
             context = {"bad_error": "Comment does not exist."}
-            return json_res(
-                request, _bad_form_tmpl, context, status=400
-            )
+            return json_res(request, _bad_form_tmpl, context, status=400)
         app_label, model_name = ctype.split(".", 1)
         template_list = [
             pth.format(
-                theme_dir=theme_dir,
-                app_label=app_label,
-                model=model_name
+                theme_dir=theme_dir, app_label=app_label, model=model_name
             )
             for pth in _posted_js_tmpl
         ]
@@ -684,7 +700,7 @@ def sent_js(request, comment, using=None):
                 pth.format(
                     theme_dir=theme_dir,
                     app_label=comment.content_type.app_label,
-                    model=comment.content_type.model
+                    model=comment.content_type.model,
                 )
                 for pth in _published_js_tmpl
             ]
@@ -703,7 +719,7 @@ def sent_js(request, comment, using=None):
                 pth.format(
                     theme_dir=theme_dir,
                     app_label=comment.content_type.app_label,
-                    model=comment.content_type.model
+                    model=comment.content_type.model,
                 )
                 for pth in _moderated_js_tmpl
             ]
@@ -744,13 +760,11 @@ def confirm(request, key, template_discarded=_discarded_tmpl):
             pth.format(
                 theme_dir=theme_dir,
                 app_label=comment.content_type.app_label,
-                model=comment.content_type.model
+                model=comment.content_type.model,
             )
             for pth in _moderated_tmpl
         ]
-        return render(
-            request, template_list, {"comment": comment}
-        )
+        return render(request, template_list, {"comment": comment})
     else:
         notify_comment_followers(comment)
         return utils.redirect_to(comment, page_number=page_number)
@@ -858,7 +872,7 @@ def reply(request, cid):
         pth.format(
             theme_dir=theme_dir,
             app_label=comment.content_type.app_label,
-            model=comment.content_type.model
+            model=comment.content_type.model,
         )
         for pth in _reply_tmpl
     ]
@@ -910,7 +924,7 @@ def mute(request, key):
         pth.format(
             theme_dir=theme_dir,
             app_label=tmp_comment.content_type.app_label,
-            model=tmp_comment.content_type.model
+            model=tmp_comment.content_type.model,
         )
         for pth in _muted_tmpl
     ]
@@ -946,11 +960,11 @@ def flag(request, comment_id, next=None):
     else:
         return render(
             request,
-            f"comments/flag.html",
+            "comments/flag.html",
             {
                 "comment": comment,
                 "next": next,
-            }
+            },
         )
 
 

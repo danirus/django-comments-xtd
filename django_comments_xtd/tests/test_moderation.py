@@ -10,7 +10,6 @@ from django.contrib.auth.models import AnonymousUser, User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
-import pytest
 
 import django_comments
 from django_comments.models import Comment, CommentFlag
@@ -42,16 +41,20 @@ else:
 
 class ModeratorApprovesComment(TestCase):
     def setUp(self):
-        patcher_app1 = patch(send_mail)
-        patcher_app2 = patch("django_comments_xtd.views.send_mail")
-        self.mailer_app1 = patcher_app1.start()
-        self.mailer_app2 = patcher_app2.start()
+        self.patcher_app1 = patch(send_mail)
+        self.patcher_app2 = patch("django_comments_xtd.views.utils.send_mail")
+        self.mailer_app1 = self.patcher_app1.start()
+        self.mailer_app2 = self.patcher_app2.start()
         self.diary_entry = Diary.objects.create(
             body="What I did on October...",
             allow_comments=True,
             publish=datetime.now(),
         )
         self.form = django_comments.get_form()(self.diary_entry)
+
+    def tearDown(self):
+        self.patcher_app1.stop()
+        self.patcher_app2.stop()
 
     def post_valid_data(self, auth_user=None):
         data = {
@@ -104,16 +107,20 @@ class ModeratorApprovesComment(TestCase):
 
 class ModeratorHoldsComment(TestCase):
     def setUp(self):
-        patcher_app1 = patch(send_mail)
-        patcher_app2 = patch("django_comments_xtd.views.send_mail")
-        self.mailer_app1 = patcher_app1.start()
-        self.mailer_app2 = patcher_app2.start()
+        self.patcher_app1 = patch(send_mail)
+        self.patcher_app2 = patch("django_comments_xtd.views.utils.send_mail")
+        self.mailer_app1 = self.patcher_app1.start()
+        self.mailer_app2 = self.patcher_app2.start()
         self.diary_entry = Diary.objects.create(
             body="What I did Yesterday...",
             allow_comments=True,
             publish=datetime.now() - timedelta(days=5),
         )
         self.form = django_comments.get_form()(self.diary_entry)
+
+    def tearDown(self):
+        self.patcher_app1.stop()
+        self.patcher_app2.stop()
 
     def post_valid_data(self, auth_user=None):
         data = {

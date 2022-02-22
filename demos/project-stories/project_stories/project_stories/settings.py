@@ -245,6 +245,10 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
 # selector to the following setting.
 COMMENTS_XTD_CSS_CUSTOM_SELECTOR = "dcx dcx-custom"
 
+# The theme dir, corresponds with any of the directories listed
+# with the template directory: comments/themes/<theme_dir>.
+COMMENTS_XTD_THEME_DIR = "avatar_in_thread"
+
 COMMENTS_XTD_REACTIONS_ENUM = "project_stories.enums.ReactionEnum"
 
 # Display up to the given number of comments in the last page to avoid

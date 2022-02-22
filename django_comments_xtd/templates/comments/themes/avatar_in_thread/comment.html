@@ -1,7 +1,6 @@
 {% load i18n %}
 {% load comments %}
 {% load comments_xtd %}
-{% load dcx_demo_tags %}
 
 <div id="comment-{{ comment.id }}" class="comment-box-img {% comment_css_thread_range comment %}">
   {{ comment.level|indent_divs }}

@@ -80,13 +80,16 @@ app_model_options_mock = {"tests.article": {"who_can_post": "users"}}
 
 class OnCommentWasPostedTestCase(TestCase):
     def setUp(self):
-        patcher = patch("django_comments_xtd.views.send_mail")
-        self.mock_mailer = patcher.start()
+        self.patcher = patch("django_comments_xtd.views.utils.send_mail")
+        self.mock_mailer = self.patcher.start()
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October..."
         )
         self.form = django_comments.get_form()(self.article)
         self.user = AnonymousUser()
+
+    def tearDown(self):
+        self.patcher.stop()
 
     def post_valid_data(self, auth_user=None, response_code=302):
         data = {
@@ -128,7 +131,7 @@ class OnCommentWasPostedTestCase(TestCase):
 
 class ConfirmCommentTestCase(TestCase):
     def setUp(self):
-        patcher = patch("django_comments_xtd.views.send_mail")
+        patcher = patch("django_comments_xtd.views.utils.send_mail")
         self.mock_mailer = patcher.start()
         # Create random string so that it's harder for zlib to compress
         content = "".join(random.choice(string.printable) for _ in range(6096))
@@ -424,7 +427,7 @@ class MuteFollowUpTestCase(TestCase):
         # follow-up notifications. First comment doesn't have to send any
         #  notification.
         # Second comment has to send one notification (to Bob).
-        patcher = patch("django_comments_xtd.views.send_mail")
+        patcher = patch("django_comments_xtd.views.utils.send_mail")
         self.mock_mailer = patcher.start()
         self.article = Article.objects.create(
             title="September", slug="september", body="John's September"
@@ -533,7 +536,7 @@ class HTMLDisabledMailTestCase(TestCase):
     def setUp(self):
         # Create an article and send a comment. Test method will chech headers
         # to see wheter messages has multiparts or not.
-        patcher = patch("django_comments_xtd.views.send_mail")
+        patcher = patch("django_comments_xtd.views.utils.send_mail")
         self.mock_mailer = patcher.start()
         self.article = Article.objects.create(
             title="September", slug="september", body="John's September"

@@ -37,15 +37,7 @@ from django_comments_xtd import (
     get_reactions_enum,
     signals,
     signed,
-)
-from django_comments_xtd.utils import (
-    send_mail,
-    get_app_model_options,
-    redirect_to,
-    get_current_site_id,
-    check_option,
-    get_comment_page_number,
-    get_comment_url,
+    utils
 )
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
@@ -58,6 +50,169 @@ from django_comments_xtd.models import (
 XtdComment = get_comment_model()
 
 
+if len(settings.COMMENTS_XTD_THEME_DIR) > 0:
+    theme_dir = f"themes/{settings.COMMENTS_XTD_THEME_DIR}"
+    theme_dir_exists = utils.does_theme_dir_exist(f"comments/{theme_dir}")
+else:
+    theme_dir = ""
+    theme_dir_exists = False
+
+
+# List of possible paths to the bad_form.html template file.
+if theme_dir_exists:
+    _bad_form_tmpl = [
+        f"comments/{theme_dir}/bad_form.html",
+        "comments/bad_form.html"
+    ]
+else:
+    _bad_form_tmpl = "comments/bad_form.html"
+
+
+# List of possible paths to the preview.html template file.
+_preview_tmpl = []
+if theme_dir_exists:
+    _preview_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/preview.html",
+        "comments/{theme_dir}/{app_label}/preview.html",
+        "comments/{theme_dir}/preview.html",
+    ])
+_preview_tmpl.extend([
+    "comments/{app_label}/{model}/preview.html",
+    "comments/{app_label}/preview.html",
+    "comments/preview.html",
+])
+
+
+# List of possible paths to the bad_form.html template file.
+if theme_dir_exists:
+    _posted_tmpl = [
+        f"comments/{theme_dir}/posted.html",
+        "comments/posted.html"
+    ]
+else:
+    _posted_tmpl = "comments/posted.html"
+
+
+# List of possible paths to the moderated.html template file.
+_moderated_tmpl = []
+if theme_dir_exists:
+    _moderated_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/moderated.html",
+        "comments/{theme_dir}/{app_label}/moderated.html",
+        "comments/{theme_dir}/moderated.html",
+    ])
+_moderated_tmpl.extend([
+    "comments/{app_label}/{model}/moderated.html",
+    "comments/{app_label}/moderated.html",
+    "comments/moderated.html",
+])
+
+
+# List of possible paths to the posted_js.html template file.
+_posted_js_tmpl = []
+if theme_dir_exists:
+    _posted_js_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/posted_js.html",
+        "comments/{theme_dir}/{app_label}/posted_js.html",
+        "comments/{theme_dir}/posted_js.html",
+    ])
+_posted_js_tmpl.extend([
+    "comments/{app_label}/{model}/posted_js.html",
+    "comments/{app_label}/posted_js.html",
+    "comments/posted_js.html",
+])
+
+
+# List of possible paths to the published_js.html template file.
+_published_js_tmpl = []
+if theme_dir_exists:
+    _published_js_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/published_js.html",
+        "comments/{theme_dir}/{app_label}/published_js.html",
+        "comments/{theme_dir}/published_js.html",
+    ])
+_published_js_tmpl.extend([
+    "comments/{app_label}/{model}/published_js.html",
+    "comments/{app_label}/published_js.html",
+    "comments/published_js.html",
+])
+
+
+# List of possible paths to the moderated_js.html template file.
+_moderated_js_tmpl = []
+if theme_dir_exists:
+    _moderated_js_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/moderated_js.html",
+        "comments/{theme_dir}/{app_label}/moderated_js.html",
+        "comments/{theme_dir}/moderated_js.html",
+    ])
+_moderated_js_tmpl.extend([
+    "comments/{app_label}/{model}/moderated_js.html",
+    "comments/{app_label}/moderated_js.html",
+    "comments/moderated_js.html",
+])
+
+
+# List of possible paths to the discarded.html template file.
+if theme_dir_exists:
+    _discarded_tmpl = [
+        f"comments/{theme_dir}/discarded.html",
+        "comments/discarded.html"
+    ]
+else:
+    _discarded_tmpl = "comments/discarded.html"
+
+
+# List of possible paths to the reply.html template file.
+_reply_tmpl = []
+if theme_dir_exists:
+    _reply_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/reply.html",
+        "comments/{theme_dir}/{app_label}/reply.html",
+        "comments/{theme_dir}/reply.html",
+    ])
+_reply_tmpl.extend([
+    "comments/{app_label}/{model}/reply.html",
+    "comments/{app_label}/reply.html",
+    "comments/reply.html",
+])
+
+
+# List of possible paths to the muted.html template file.
+_muted_tmpl = []
+if theme_dir_exists:
+    _muted_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/muted.html",
+        "comments/{theme_dir}/{app_label}/muted.html",
+        "comments/{theme_dir}/muted.html",
+    ])
+_muted_tmpl.extend([
+    "comments/{app_label}/{model}/muted.html",
+    "comments/{app_label}/muted.html",
+    "comments/muted.html",
+])
+
+
+# List of possible paths to the react.html template file.
+if theme_dir_exists:
+    _react_tmpl = [
+        f"comments/{theme_dir}/react.html",
+        "comments/react.html"
+    ]
+else:
+    _react_tmpl = "comments/react.html"
+
+
+# List of possible paths to the reacted.html template file.
+if theme_dir_exists:
+    _reacted_tmpl = [
+        f"comments/{theme_dir}/reacted.html",
+        "comments/reacted.html"
+    ]
+else:
+    _reacted_tmpl = "comments/reacted.html"
+
+
 @csrf_protect
 @require_POST
 def post(request, next=None, using=None):
@@ -65,7 +220,8 @@ def post(request, next=None, using=None):
     Post a comment.
 
     HTTP POST is required. If ``POST['submit'] == "preview"`` or if there are
-    errors a preview template, ``comments/preview.html``, will be rendered.
+    errors a preview template, ``comments/<theme_dir>/preview.html``, will be
+    rendered.
 
     This function is copied from the original in django-comments. It extends
     it to check whether the comment form has a field with the name indicated in
@@ -132,12 +288,14 @@ def post(request, next=None, using=None):
     # If there are errors or if we requested a preview show the comment.
     if form.errors or preview:
         template_list = [
-            "comments/%s/%s/preview.html"
-            % (model._meta.app_label, model._meta.model_name),
-            "comments/%s/preview.html" % model._meta.app_label,
-            "comments/preview.html",
+            pth.format(
+                theme_dir=theme_dir,
+                app_label=model._meta.app_label,
+                model=model._meta.model_name
+            )
+            for pth in _preview_tmpl
         ]
-
+        print(template_list)
         return render(
             request,
             template_list,
@@ -148,6 +306,7 @@ def post(request, next=None, using=None):
                 "next": data.get("next", next),
                 "page_number": cpage,
                 "cpage_qs_param": cpage_qs_param,
+                "dcx_theme_dir": theme_dir
             },
         )
 
@@ -187,8 +346,8 @@ def post(request, next=None, using=None):
     )
 
 
-def json_res(request, template, context, status=200):
-    html = loader.render_to_string(template, context, request)
+def json_res(request, template_search_list, context, status=200):
+    html = loader.render_to_string(template_search_list, context, request)
     json_context = {"html": html, "reply_to": request.POST.get("reply_to", "0")}
     if "field_focus" in context:
         json_context.update({"field_focus": context["field_focus"]})
@@ -213,7 +372,7 @@ def post_js(request, next=None, using=None):
     object_pk = data.get("object_pk")
     if ctype is None or object_pk is None:
         context = {"bad_error": "Missing content_type or object_pk field."}
-        return json_res(request, "comments/bad_form.html", context, status=400)
+        return json_res(request, _bad_form_tmpl, context, status=400)
 
     try:
         model = apps.get_model(*ctype.split(".", 1))
@@ -221,14 +380,14 @@ def post_js(request, next=None, using=None):
     except (LookupError, TypeError):
         error_msg = "Invalid content_type value: %r" % escape(ctype)
         context = {"bad_error": error_msg}
-        return json_res(request, "comments/bad_form.html", context, status=400)
+        return json_res(request, _bad_form_tmpl, context, status=400)
     except AttributeError:
         error_msg = (
             "The given content-type %r does not resolve to a valid model."
             % escape(ctype)
         )
         context = {"bad_error": error_msg}
-        return json_res(request, "comments/bad_form.html", context, status=400)
+        return json_res(request, _bad_form_tmpl, context, status=400)
     except ObjectDoesNotExist:
         error_msg = (
             "No object matching content-type %r and object PK %r exists."
@@ -238,7 +397,7 @@ def post_js(request, next=None, using=None):
             )
         )
         context = {"bad_error": error_msg}
-        return json_res(request, "comments/bad_form.html", context, status=400)
+        return json_res(request, _bad_form_tmpl, context, status=400)
     except (ValueError, ValidationError) as e:
         error_msg = (
             "Attempting to get content-type %r and object PK %r raised %s"
@@ -249,7 +408,7 @@ def post_js(request, next=None, using=None):
             )
         )
         context = {"bad_error": error_msg}
-        return json_res(request, "comments/bad_form.html", context, status=400)
+        return json_res(request, _bad_form_tmpl, context, status=400)
 
     # Do we want to preview the comment?
     preview = "preview" in data
@@ -261,7 +420,7 @@ def post_js(request, next=None, using=None):
     if form.security_errors():
         error_msg = "The comment form failed security verification."
         context = {"bad_error": error_msg}
-        return json_res(request, "comments/bad_form.html", context, status=400)
+        return json_res(request, _bad_form_tmpl, context, status=400)
 
     cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     cpage = request.POST.get(cpage_qs_param, None)
@@ -275,9 +434,10 @@ def post_js(request, next=None, using=None):
             template_name = "form_js.html"
 
         template_list = [
-            f"comments/%s/%s/{template_name}"
+            f"comments/{theme_dir}/%s/%s/{template_name}"
             % (model._meta.app_label, model._meta.model_name),
-            f"comments/%s/{template_name}" % model._meta.app_label,
+            f"comments/{theme_dir}/%s/{template_name}" % model._meta.app_label,
+            f"comments/{theme_dir}/{template_name}",
             f"comments/{template_name}",
         ]
         if form.errors:
@@ -321,7 +481,7 @@ def post_js(request, next=None, using=None):
 
             context = {"bad_error": error_msg}
             return render(
-                request, "comments/bad_form.html", context, status=400
+                request, _bad_form_tmpl, context, status=400
             )
 
     # Save the comment and signal that it was saved
@@ -330,15 +490,6 @@ def post_js(request, next=None, using=None):
         sender=comment.__class__, comment=comment, request=request
     )
     return sent_js(request, comment, using=using)
-
-
-def get_moderated_tmpl(cmt):
-    return [
-        "comments/%s/%s/moderated.html"
-        % (cmt.content_type.app_label, cmt.content_type.model),
-        "comments/%s/moderated.html" % cmt.content_type.app_label,
-        "comments/moderated.html",
-    ]
 
 
 def send_email_confirmation_request(
@@ -369,7 +520,7 @@ def send_email_confirmation_request(
     else:
         html_message = None
 
-    send_mail(
+    utils.send_mail(
         subject,
         text_message,
         settings.COMMENTS_XTD_FROM_EMAIL,
@@ -419,7 +570,7 @@ def on_comment_will_be_posted(sender, comment, request, **kwargs):
 
     ct = comment.get("content_type")
     ct_str = "%s.%s" % (ct.app_label, ct.model)
-    options = get_app_model_options(content_type=ct_str)
+    options = utils.get_app_model_options(content_type=ct_str)
     if not user_is_authenticated and options["who_can_post"] == "users":
         # Reject comment.
         return False
@@ -482,17 +633,24 @@ def sent(request, using=None):
         except Exception:
             return HttpResponseBadRequest("Comment doesn't exist")
 
-        template_arg = "comments/posted.html"
-        return render(request, template_arg, {"target": target})
+        return render(request, _posted_tmpl, {"target": target})
     else:
         if comment.is_public:
-            return redirect_to(comment, request=request)
+            return utils.redirect_to(comment, request=request)
         else:
-            moderated_tmpl = get_moderated_tmpl(comment)
-            return render(request, moderated_tmpl, {"comment": comment})
+            template_list = [
+                pth.format(
+                    theme_dir=theme_dir,
+                    app_label=comment.content_type.app_label,
+                    model=comment.content_type.model
+                )
+                for pth in _moderated_tmpl
+            ]
+            return render(request, template_list, {"comment": comment})
 
 
 def sent_js(request, comment, using=None):
+
     try:
         comment_pk = comment._get_pk_val()
         comment = XtdComment.objects.get(pk=comment_pk)
@@ -505,53 +663,56 @@ def sent_js(request, comment, using=None):
         except Exception:
             context = {"bad_error": "Comment does not exist."}
             return json_res(
-                request, "comments/bad_form.html", context, status=400
+                request, _bad_form_tmpl, context, status=400
             )
         app_label, model_name = ctype.split(".", 1)
-        posted_tmpl = [
-            "comments/%s/%s/posted_js.html" % (app_label, model_name),
-            "comments/%s/posted_js.html" % app_label,
-            "comments/posted_js.html",
+        template_list = [
+            pth.format(
+                theme_dir=theme_dir,
+                app_label=app_label,
+                model=model_name
+            )
+            for pth in _posted_js_tmpl
         ]
-        return json_res(request, posted_tmpl, {"target": target}, status=202)
+        return json_res(request, template_list, {"target": target}, status=202)
     else:
         if comment.is_public:
             # Return a render instead of a redirect_to. But use status=201.
             # In comment_form.js check whether the status is 201 to read
             # the content as the redirect_url.
-            published_tmpl = [
-                "comments/%s/%s/published_js.html"
-                % (comment.content_type.app_label, comment.content_type.model),
-                "comments/%s/published_js.html"
-                % comment.content_type.app_label,
-                "comments/published_js.html",
+            template_list = [
+                pth.format(
+                    theme_dir=theme_dir,
+                    app_label=comment.content_type.app_label,
+                    model=comment.content_type.model
+                )
+                for pth in _published_js_tmpl
             ]
-
-            # response_redirect = redirect_to(comment, request=request)
-            page_number = get_comment_page_number(
+            page_number = utils.get_comment_page_number(
                 request, comment.content_type.id, comment.object_pk, comment.id
             )
-            comment_url = get_comment_url(comment, None, page_number)
+            comment_url = utils.get_comment_url(comment, None, page_number)
             return json_res(
                 request,
-                published_tmpl,
+                template_list,
                 {"comment": comment, "comment_url": comment_url},
                 status=201,
             )
         else:
-            moderated_tmpl = [
-                "comments/%s/%s/moderated_js.html"
-                % (comment.content_type.app_label, comment.content_type.model),
-                "comments/%s/moderated_js.html"
-                % comment.content_type.app_label,
-                "comments/moderated_js.html",
+            template_list = [
+                pth.format(
+                    theme_dir=theme_dir,
+                    app_label=comment.content_type.app_label,
+                    model=comment.content_type.model
+                )
+                for pth in _moderated_js_tmpl
             ]
             return json_res(
-                request, moderated_tmpl, {"comment": comment}, status=201
+                request, template_list, {"comment": comment}, status=201
             )
 
 
-def confirm(request, key, template_discarded="comments/discarded.html"):
+def confirm(request, key, template_discarded=_discarded_tmpl):
     try:
         tmp_comment = signed.loads(
             str(key), extra_key=settings.COMMENTS_XTD_SALT
@@ -566,7 +727,7 @@ def confirm(request, key, template_discarded="comments/discarded.html"):
     page_number = tmp_comment.pop("page_number", None)
 
     if comment is not None:
-        return redirect_to(comment, page_number=page_number)
+        return utils.redirect_to(comment, page_number=page_number)
 
     # Send signal that the comment confirmation has been received.
     responses = signals.confirmation_received.send(
@@ -579,12 +740,20 @@ def confirm(request, key, template_discarded="comments/discarded.html"):
 
     comment = _create_comment(tmp_comment)
     if comment.is_public is False:
+        template_list = [
+            pth.format(
+                theme_dir=theme_dir,
+                app_label=comment.content_type.app_label,
+                model=comment.content_type.model
+            )
+            for pth in _moderated_tmpl
+        ]
         return render(
-            request, get_moderated_tmpl(comment), {"comment": comment}
+            request, template_list, {"comment": comment}
         )
     else:
         notify_comment_followers(comment)
-        return redirect_to(comment, page_number=page_number)
+        return utils.redirect_to(comment, page_number=page_number)
 
 
 def notify_comment_followers(comment):
@@ -647,7 +816,7 @@ def notify_comment_followers(comment):
             html_message = html_message_template.render(message_context)
         else:
             html_message = None
-        send_mail(
+        utils.send_mail(
             subject,
             text_message,
             settings.COMMENTS_XTD_FROM_EMAIL,
@@ -672,7 +841,7 @@ def reply(request, cid):
         comment.content_type.app_label,
         comment.content_type.model,
     )
-    options = get_app_model_options(content_type=ct_str)
+    options = utils.get_app_model_options(content_type=ct_str)
 
     if not request.user.is_authenticated and options["who_can_post"] == "users":
         path = request.build_absolute_uri()
@@ -685,15 +854,17 @@ def reply(request, cid):
     cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     cpage = request.POST.get(cpage_qs_param, None)
 
-    template_arg = [
-        "comments/%s/%s/reply.html"
-        % (comment.content_type.app_label, comment.content_type.model),
-        "comments/%s/reply.html" % (comment.content_type.app_label,),
-        "comments/reply.html",
+    template_list = [
+        pth.format(
+            theme_dir=theme_dir,
+            app_label=comment.content_type.app_label,
+            model=comment.content_type.model
+        )
+        for pth in _reply_tmpl
     ]
     return render(
         request,
-        template_arg,
+        template_list,
         {
             "comment": comment,
             "form": form,
@@ -735,14 +906,15 @@ def mute(request, key):
         tmp_comment.content_type.app_label, tmp_comment.content_type.model
     )
     target = model._default_manager.get(pk=tmp_comment.object_pk)
-
-    template_arg = [
-        "comments/%s/%s/muted.html"
-        % (tmp_comment.content_type.app_label, tmp_comment.content_type.model),
-        "comments/%s/muted.html" % (tmp_comment.content_type.app_label,),
-        "comments/muted.html",
+    template_list = [
+        pth.format(
+            theme_dir=theme_dir,
+            app_label=tmp_comment.content_type.app_label,
+            model=tmp_comment.content_type.model
+        )
+        for pth in _muted_tmpl
     ]
-    return render(request, template_arg, {"content_object": target})
+    return render(request, template_list, {"content_object": target})
 
 
 @csrf_protect
@@ -759,9 +931,9 @@ def flag(request, comment_id, next=None):
     comment = get_object_or_404(
         get_comment_model(),
         pk=comment_id,
-        site__pk=get_current_site_id(request),
+        site__pk=utils.get_current_site_id(request),
     )
-    check_option(comment, "comment_flagging_enabled")
+    utils.check_option(comment, "comment_flagging_enabled")
 
     # Flag on POST.
     if request.method == "POST":
@@ -773,7 +945,12 @@ def flag(request, comment_id, next=None):
     # Render a form on GET
     else:
         return render(
-            request, "comments/flag.html", {"comment": comment, "next": next}
+            request,
+            f"comments/flag.html",
+            {
+                "comment": comment,
+                "next": next,
+            }
         )
 
 
@@ -783,7 +960,7 @@ def react(request, comment_id, next=None):
     """
     A registered user reacts to a comment. Confirmation on GET, action on POST.
 
-    Templates: :template:`comments/react.html`,
+    Templates: :template:`comments/<theme_dir>/react.html`,
     Context:
         comment
             the `comments.comment` object the user reacted to.
@@ -791,14 +968,13 @@ def react(request, comment_id, next=None):
     comment = get_object_or_404(
         get_comment_model(),
         pk=comment_id,
-        site__pk=get_current_site_id(request),
+        site__pk=utils.get_current_site_id(request),
     )
-    check_option(comment, "comment_reactions_enabled")
+    utils.check_option(comment, "comment_reactions_enabled")
 
     cpage_qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
     cpage = request.GET.get(cpage_qs_param, None)
 
-    # Flag on POST
     if request.method == "POST":
         perform_react(request, comment)
         kwargs = {
@@ -808,7 +984,6 @@ def react(request, comment_id, next=None):
         return next_redirect(
             request, fallback=next or "comments-xtd-react-done", **kwargs
         )
-    # Render a form on GET
     else:
         user_reactions = []
         cr_qs = CommentReaction.objects.filter(
@@ -819,13 +994,14 @@ def react(request, comment_id, next=None):
 
         return render(
             request,
-            "comments/react.html",
+            _react_tmpl,
             {
                 "comment": comment,
                 "user_reactions": user_reactions,
                 "next": next,
                 "page_number": cpage,
                 "cpage_qs_param": cpage_qs_param,
+                "dcx_theme_dir": theme_dir,
             },
         )
 
@@ -867,14 +1043,18 @@ def react_done(request):
         comment = get_object_or_404(
             get_comment_model(),
             pk=comment_pk,
-            site__pk=get_current_site_id(request),
+            site__pk=utils.get_current_site_id(request),
         )
     else:
         comment = None
     return render(
         request,
-        "comments/reacted.html",
-        {"comment": comment, "page_number": int(cpage)},
+        _reacted_tmpl,
+        {
+            "comment": comment,
+            "page_number": int(cpage),
+            "dcx_theme_dir": theme_dir,
+        },
     )
 
 
@@ -884,7 +1064,7 @@ def comment_in_page(request, content_type_id, object_id, comment_id):
     page = request and request.GET.get(qs_param, None) or None
     if not page:
         # Create a CommentsPaginator and get the page of the comment.
-        page = get_comment_page_number(
+        page = utils.get_comment_page_number(
             request, content_type_id, object_id, comment_id
         )
 

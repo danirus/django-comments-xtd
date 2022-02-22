@@ -119,3 +119,14 @@ COMMENTS_XTD_REACTIONS_JS_OVERLAYS = {
 #    COMMENTS_XTD_CSS_CUSTOM_SELECTOR = "dcx dcx-custom"
 #
 COMMENTS_XTD_CSS_CUSTOM_SELECTOR = "dcx"
+
+# Name of the directory containing the theme templates.
+# By default there are 3 theme directories:
+#   'avatar_in_thread', 'avatar_in_header', 'twbs_5'.
+#
+# Use a theme by assigning any of those values to the COMMENTS_XTD_THEME_DIR
+# setting. You can create your own theme templates by adding a new theme
+# directory to your Django project template's directory,
+# under `comments/themes/<your-theme>`.
+#
+COMMENTS_XTD_THEME_DIR = ""

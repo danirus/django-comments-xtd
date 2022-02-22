@@ -1,6 +1,10 @@
+import hashlib
 import json
 import re
+from urllib.parse import urlencode
 
+from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import InvalidPage, PageNotAnInteger
 from django.http import Http404
@@ -24,6 +28,68 @@ from django_comments_xtd.paginator import CommentsPaginator
 
 
 register = Library()
+
+
+if len(settings.COMMENTS_XTD_THEME_DIR) > 0:
+    theme_dir = "themes/%s" % settings.COMMENTS_XTD_THEME_DIR
+    theme_dir_exists = utils.does_theme_dir_exist(f"comments/{theme_dir}")
+else:
+    theme_dir = ""
+    theme_dir_exists = False
+
+
+# List of possible paths to the list.html template file.
+_list_html_tmpl = []
+if theme_dir_exists:
+    _list_html_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/list.html",
+        "comments/{theme_dir}/{app_label}/list.html",
+        "comments/{theme_dir}/list.html",
+    ])
+_list_html_tmpl.extend([
+    "comments/{app_label}/{model}/list.html",
+    "comments/{app_label}/list.html",
+    "comments/list.html",
+])
+
+
+# List of possible paths to the form.html template file.
+_form_html_tmpl = []
+if theme_dir_exists:
+    _form_html_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/form.html",
+        "comments/{theme_dir}/{app_label}/form.html",
+        "comments/{theme_dir}/form.html",
+    ])
+_form_html_tmpl.extend([
+    "comments/{app_label}/{model}/form.html",
+    "comments/{app_label}/form.html",
+    "comments/form.html",
+])
+
+
+# List of possible paths to the reply_template.html template file.
+_reply_template_html_tmpl = []
+if theme_dir_exists:
+    _reply_template_html_tmpl.extend([
+        "comments/{theme_dir}/{app_label}/{model}/reply_template.html",
+        "comments/{theme_dir}/{app_label}/reply_template.html",
+        "comments/{theme_dir}/reply_template.html",
+    ])
+_reply_template_html_tmpl.extend([
+    "comments/{app_label}/{model}/reply_template.html",
+    "comments/{app_label}/reply_template.html",
+    "comments/reply_template.html",
+])
+
+
+if theme_dir_exists:
+    _reactions_panel_template_tmpl = [
+        f"comments/{theme_dir}/reactions_panel_template.html",
+        "comments/reactions_panel_template.html"
+    ]
+else:
+    _reactions_panel_template_tmpl = "comments/reactions_panel_template.html"
 
 
 def paginate_queryset(queryset, context):
@@ -137,11 +203,15 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             # in the context. Therefore, this except raises when used as:
             # {% render_xtdcomment_list for var_not_in_context %}
             return ""
-        template_search_list = [
-            "comments/%s/%s/list.html" % (ctype.app_label, ctype.model),
-            "comments/%s/list.html" % ctype.app_label,
-            "comments/list.html",
+        template_list = [
+            pth.format(
+                theme_dir=theme_dir,
+                app_label=ctype.app_label,
+                model=ctype.model
+            )
+            for pth in _list_html_tmpl
         ]
+        print(template_list)
         qs = self.get_queryset(context)
         qs = self.get_context_value_from_queryset(context, qs)
         context_dict = context.flatten()
@@ -154,6 +224,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         mtl = MTL.get(app_model, settings.COMMENTS_XTD_MAX_THREAD_LEVEL)
         context_dict.update(
             {
+                "dcx_theme_dir": theme_dir,
                 "comments_page_qs_param": qs_param,
                 "max_thread_level": mtl,
                 "reply_stack": [],  # List to control reply rendering.
@@ -193,7 +264,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
         context_dict.update(options)
 
         liststr = loader.render_to_string(
-            self.template_path or template_search_list, context_dict
+            self.template_path or template_list, context_dict
         )
         return liststr
 
@@ -202,7 +273,7 @@ class RenderXtdCommentListNode(RenderCommentListNode):
 def render_xtdcomment_list(parser, token):
     """
     Render the comment list (as returned by ``{% get_xtdcomment_list %}``)
-    through the ``comments/list.html`` template.
+    through the ``comments/list.html`` templates.
 
     Syntax::
 
@@ -218,25 +289,68 @@ def render_xtdcomment_list(parser, token):
     return RenderXtdCommentListNode.handle_token(parser, token)
 
 
+class RenderXtdCommentFormNode(RenderCommentFormNode):
+    """
+    Almost identical to django_comments' RenderCommentFormNode.
+
+    This class rewrites the `render` method of its parent class, to
+    fetch the template from the theme directory.
+    """
+    def render(self, context):
+        ctype, object_pk = self.get_target_ctype_pk(context)
+        if object_pk:
+            template_list = [
+                pth.format(
+                    theme_dir=theme_dir,
+                    app_label=ctype.app_label,
+                    model=ctype.model
+                )
+                for pth in _form_html_tmpl
+            ]
+            context_dict = context.flatten()
+            context_dict['form'] = self.get_form(context)
+            formstr = loader.render_to_string(template_list, context_dict)
+            return formstr
+        else:
+            return ''
+
+
+
+@register.tag
+def render_xtdcomment_form(parser, token):
+    """
+    Render "comments/<theme_dir>/form.html" or "comments/form.html".
+
+    Syntax::
+
+        {% get_xtdcomment_form for [object] as [varname] %}
+        {% get_xtdcomment_form for [app].[model] [object_id] as [varname] %}
+    """
+    return RenderXtdCommentFormNode.handle_token(parser, token)
+
+
 class RenderCommentReplyTemplateNode(RenderCommentFormNode):
     def render(self, context):
         qs_param = settings.COMMENTS_XTD_PAGE_QUERY_STRING_PARAM
         ctype, object_pk = self.get_target_ctype_pk(context)
         if object_pk:
-            templates = [
-                "comments/%s/%s/reply_template.html"
-                % (ctype.app_label, ctype.model),
-                "comments/%s/reply_template.html" % ctype.app_label,
-                "comments/reply_template.html",
+            template_list = [
+                pth.format(
+                    theme_dir=theme_dir,
+                    app_label=ctype.app_label,
+                    model=ctype.model
+                )
+                for pth in _reply_template_html_tmpl
             ]
             context_dict = context.flatten()
             context_dict.update(
                 {
                     "form": self.get_form(context),
                     "comments_page_qs_param": qs_param,
+                    "dcx_theme_dir": theme_dir,
                 }
             )
-            formstr = loader.render_to_string(templates, context_dict)
+            formstr = loader.render_to_string(template_list, context_dict)
             return formstr
         else:
             return ""
@@ -340,7 +454,7 @@ def comment_reaction_form_target(comment):
     return reverse("comments-xtd-react", args=(comment.id,))
 
 
-@register.inclusion_tag("comments/reactions_buttons.html")
+@register.inclusion_tag(f"comments/{theme_dir}/reactions_buttons.html")
 def render_reactions_buttons(user_reactions):
     """
     Renders template `comments/reactions_buttons.html`.
@@ -495,13 +609,17 @@ def dcx_custom_selector():
     return f"{settings.COMMENTS_XTD_CSS_CUSTOM_SELECTOR}"
 
 
+@register.simple_tag()
+def get_dcx_theme_dir():
+    return theme_dir
+
 # ----------------------------------------------------------------------
 @register.inclusion_tag("comments/only_users_can_post.html")
 def render_only_users_can_post_template(object):
     return {"html_id_suffix": utils.get_html_id_suffix(object)}
 
 
-@register.inclusion_tag("comments/reactions_panel_template.html")
+@register.inclusion_tag(_reactions_panel_template_tmpl)
 def render_reactions_panel_template():
     enums_details = [
         (enum.value, enum.label, enum.icon) for enum in get_reactions_enum()
@@ -510,3 +628,41 @@ def render_reactions_panel_template():
         "enums_details": enums_details,
         "break_every": settings.COMMENTS_XTD_REACTIONS_ROW_LENGTH,
     }
+
+
+# ----------------------------------------------------------------------
+# Template tag for themes 'avatar_in_thread' and 'avatar_in_header'
+
+def get_gravatar_url(email, size=48, avatar='identicon'):
+    """
+    This is the parameter of the production avatar.
+    The first parameter is the way of generating the
+    avatar and the second one is the size.
+    The way os generating has mp/identicon/monsterid/wavatar/retro/hide.
+    """
+    return ("//www.gravatar.com/avatar/%s?%s&d=%s" %
+            (hashlib.md5(email.lower().encode('utf-8')).hexdigest(),
+            urlencode({'s': str(size)}), avatar))
+
+
+if apps.is_installed("avatar"):
+
+    from avatar.templatetags.avatar_tags import avatar
+    from avatar.utils import cache_result
+
+    @cache_result
+    @register.simple_tag
+    def get_user_avatar_or_gravatar(email, config='48,identicon'):
+        size, gravatar_type = config.split(',')
+        try:
+            size_number = int(size)
+        except ValueError:
+            raise Http404(_('The given size is not a number: %s' % repr(size)))
+
+        try:
+            user = get_user_model().objects.get(email=email)
+            return avatar(user, size_number)
+        except get_user_model().DoesNotExist:
+            url = get_gravatar_url(email, size_number, gravatar_type)
+            return mark_safe('<img src="%s" height="%d" width="%d">' %
+                            (url, size_number, size_number))

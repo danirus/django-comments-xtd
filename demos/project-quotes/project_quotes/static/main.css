@@ -718,3 +718,11 @@ UL LI {
 .dcx.dcx-custom .comment-box .footer {
     padding-left: 20px;
 }
+
+.dcx.dcx-custom .comment-box-img .body {
+    padding: 4px;
+    line-height: 1.4;
+    color: #555;
+    font-size: 0.9rem;
+}
+

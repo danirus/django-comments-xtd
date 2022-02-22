@@ -40,12 +40,15 @@ factory = APIRequestFactory()
 
 class CommentCreateTestCase(DjangoTestCase):
     def setUp(self):
-        patcher = patch("django_comments_xtd.views.send_mail")
-        self.mock_mailer = patcher.start()
+        self.patcher = patch("django_comments_xtd.views.utils.send_mail")
+        self.mock_mailer = self.patcher.start()
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October..."
         )
         self.form = django_comments.get_form()(self.article)
+
+    def tearDown(self):
+        self.patcher.stop()
 
     @patch.multiple(
         "django_comments_xtd.conf.settings", COMMENTS_XTD_CONFIRM_EMAIL=False

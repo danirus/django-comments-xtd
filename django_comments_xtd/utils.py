@@ -267,3 +267,13 @@ def get_comment_page_number(request, content_type_id, object_id, comment_id):
         if comment_id in [cm.id for cm in page.object_list]:
             return page_number
     raise Exception("Comment %d not listed in any page." % comment_id)
+
+
+def does_theme_dir_exist(theme_dir):
+    from django.template import engines
+
+    for engine in engines.all():
+        for pth in engine.template_dirs:
+            if (pth / theme_dir).exists():
+                return True
+    return False

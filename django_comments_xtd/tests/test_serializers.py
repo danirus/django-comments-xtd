@@ -46,8 +46,8 @@ class FakeRequest:
 
 class WriteCommentSerializerAsVisitorTestCase(TestCase):
     def setUp(self):
-        patcher = patch("django_comments_xtd.views.send_mail")
-        self.mock_mailer = patcher.start()
+        self.patcher = patch("django_comments_xtd.views.utils.send_mail")
+        self.mock_mailer = self.patcher.start()
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October..."
         )
@@ -58,6 +58,9 @@ class WriteCommentSerializerAsVisitorTestCase(TestCase):
         # here.
         for field_name in ["security_hash", "timestamp"]:
             self.form.initial.pop(field_name)
+
+    def tearDown(self):
+        self.patcher.stop()
 
     def test_post_comment_before_connecting_signal(self):
         data = {
@@ -98,8 +101,8 @@ class WriteCommentSerializerAsVisitorTestCase(TestCase):
 
 class WriteCommentSerializerTestCase(TestCase):
     def setUp(self):
-        patcher = patch("django_comments_xtd.views.send_mail")
-        self.mock_mailer = patcher.start()
+        self.patcher = patch("django_comments_xtd.views.utils.send_mail")
+        self.mock_mailer = self.patcher.start()
         self.user = User.objects.create_user(
             "joe", "joe@bloggs.com", "pwd", first_name="Joe", last_name="Bloggs"
         )
@@ -116,6 +119,7 @@ class WriteCommentSerializerTestCase(TestCase):
         should_request_be_authorized.connect(authorize_api_post_comment)
 
     def tearDown(self):
+        self.patcher.stop()
         should_request_be_authorized.disconnect(authorize_api_post_comment)
 
     def test_post_comment_as_registered_user_after_connecting_signal(self):

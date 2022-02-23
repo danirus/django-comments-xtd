@@ -499,7 +499,7 @@ def authors_list(cmt_reaction):
 @register.filter
 def get_reaction_enum(cmt_reaction):
     """
-    Returns the ReactionEnum that corresponds to the given CommentReaction.
+    Helper filter to get the ReactionEnum corresponding to the given CommentReaction.
     """
     return get_reactions_enum()(cmt_reaction.reaction)
 
@@ -508,10 +508,10 @@ def get_reaction_enum(cmt_reaction):
 @register.simple_tag(takes_context=True)
 def comment_css_thread_range(context, comment, prefix="l"):
     """
-    Returns a string of CSS selectors that render vertical lines to represent
-    comment threads. When comment's level matches the max_thread_level there
-    is no vertical line as comments in the max_thread_level can not receive
-    replies.
+    Helper tag to return a string of CSS selectors that render vertical
+    lines to represent comment threads. When comment's level matches the
+    max_thread_level there is no vertical line as comments in the
+    max_thread_level can not receivereplies.
 
     Returns a concatenated string of f'{prefix}{i}' for i in range(level + 1).
     When the given comment has level=2, and the maximum thread level is 2:
@@ -540,15 +540,15 @@ def comment_css_thread_range(context, comment, prefix="l"):
 @register.filter(is_safe=True)
 def reply_css_thread_range(level, prefix="l"):
     """
-    Returns a string of CSS selectors that render vertical lines to represent
-    comment threads. When comment level matches the max_thread_level there is
-    no vertical line, as comments in the max_thread_level can not receive
-    replies.
+    Helper filter to return a string of CSS selectors that render vertical
+    lines to represent comment threads. When comment level matches the
+    max_thread_level there is no vertical line, as comments in the
+    max_thread_level can not receive replies.
 
     Returns a concatenated string of f'{prefix}{i}' for i in range(level + 1).
     If the given comment object has level=1, using the filter as:
 
-        `{{ comment.level|comment_reply_css_thread_range }}`
+        `{{ comment.level|reply_css_thread_range }}`
 
     produces the string: "l0 l1".
     """
@@ -561,8 +561,7 @@ def reply_css_thread_range(level, prefix="l"):
 @register.filter(is_safe=True)
 def indent_divs(level, prefix="level-"):
     """
-    Returns a concatenated string of "<div class="{prefix}{i}"></div>"
-    for i in range(1, level + 1).
+    Helper filter to return a concatenated string of divs for indentation.
 
     When called as {{ 2|indent_divs }} produces the string:
 
@@ -578,8 +577,8 @@ def indent_divs(level, prefix="level-"):
 @register.filter(is_safe=True)
 def hline_div(level, prefix="line-"):
     """
-    Returns a DIV that renders a horizontal line connecting the vertical
-    comment thread line with the comment reply box.
+    Helper filter to eeturns a DIV that renders a horizontal line connecting
+    the vertical comment thread line with the comment reply box.
 
     When called as {{ comment.level|hline_div }} produces the string:
 
@@ -590,11 +589,17 @@ def hline_div(level, prefix="line-"):
 
 @register.filter
 def get_top_comment(reply_stack):
+    """
+    Helper filter used to list comments in the <comments/list.html> template.
+    """
     return reply_stack[-1]
 
 
 @register.filter
 def pop_comments_gte(reply_stack, level_lte=0):
+    """
+    Helper filter used to list comments in the <comments/list.html> template.
+    """
     comments_lte = []
     try:
         for index in range(len(reply_stack) - 1, -1, -1):
@@ -607,6 +612,9 @@ def pop_comments_gte(reply_stack, level_lte=0):
 
 @register.simple_tag(takes_context=True)
 def push_comment(context, comment):
+    """
+    Helper filter used to list comments in the <comments/list.html> template.
+    """
     context["reply_stack"].append(comment)
     return ""
 

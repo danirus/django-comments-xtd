@@ -1,4 +1,4 @@
-#  django-comments-xtd [!(https://github.com/danirus/django-comments-xtd/workflows/tests/badge.svg)](https://github.com/danirus/django-comments-xtd/actions/workflows/ci-pipeline.yml)
+#  django-comments-xtd [![example workflow](https://github.com/danirus/django-comments-xtd/workflows/tests/badge.svg)](https://github.com/danirus/django-comments-xtd/actions/workflows/ci-pipeline.yml)
 
 A Django pluggable application that adds comments to your project.
 
@@ -6,7 +6,7 @@ The current master branch represents is a work-in-progress towards v3.0.0. It ha
 
 Example of django-comments-xtd with one thread level and the default theme:
 
-![Example image of using django-comments-xtd](https://github.com/danirus/django-comments-xtd/blob/master/docs/images/cover.png)
+![Example image of using django-comments-xtd](https://github.com/danirus/django-comments-xtd/blob/rel-3.0.0/docs/images/cover.png)
 
 It extends [django-contrib-comments](https://pypi.python.org/pypi/django-contrib-comments) with the following features:
 

@@ -243,19 +243,6 @@ class RenderXtdCommentListNode(RenderCommentListNode):
             }
         )
 
-        # Pass values for Reactions JS Overlays to the context.
-        roverlays = utils.get_reactions_js_overlays(content_type=app_model)
-        popover_overlay = roverlays["popover"]
-        tooltip_overlay = roverlays["tooltip"]
-        context_dict.update(
-            {
-                "reactions_popover_pos_bottom": popover_overlay["pos_bottom"],
-                "reactions_popover_pos_left": popover_overlay["pos_left"],
-                "reactions_tooltip_pos_bottom": tooltip_overlay["pos_bottom"],
-                "reactions_tooltip_pos_left": tooltip_overlay["pos_left"],
-            }
-        )
-
         # get_app_model_options returns a dict like: {
         #     'who_can_post': 'all' | 'users',
         #     'check_input_allowed': 'string path to function',

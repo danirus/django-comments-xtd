@@ -1,12 +1,7 @@
 import path from 'path';
 
 import {
-    // findByText,
     fireEvent, waitFor,
-    // getByLabelText,
-    // getByPlaceholderText,
-    // getByRole,
-    // waitFor
 } from '@testing-library/dom';
 import '@testing-library/jest-dom/extend-expect';
 import { JSDOM, ResourceLoader } from 'jsdom';
@@ -66,83 +61,81 @@ describe("scene 3 - reactions.test.js module", () => {
     });
 
     it("opens/closes reactions panel by clicking on 'react' link", async() => {
-        const panel_qs = '[data-crpanel="29"]';
         const anchor_qs = "A[data-dcx=reactions-panel]";
 
         const comment_el = container.querySelector("#comment-29");
-        expect(comment_el !== null);
-
-        const reactions_panel_el = comment_el.querySelector(panel_qs);
-        expect(reactions_panel_el !== null);
+        expect(comment_el != null);
 
         const react_anchor_el = comment_el.querySelector(anchor_qs);
-        expect(react_anchor_el !== null);
+        expect(react_anchor_el != null);
 
         fireEvent.click(react_anchor_el);
         await waitFor(() => {
-            expect(reactions_panel_el.style.display === "block");
+            const hdler = dom.window.dcx.reactions_handler;
+            expect(hdler.active_visible_panel === '29');
+            expect(hdler.reactions_panel.comment_id === '29');
+            expect(hdler.reactions_panel.panel_el.style.opacity == '1')
         });
 
         fireEvent.click(react_anchor_el);
         await waitFor(() => {
-            expect(reactions_panel_el.style.display === "");
+            const hdler = dom.window.dcx.reactions_handler;
+            expect(hdler.active_visible_panel === '0');
+            expect(hdler.reactions_panel.comment_id === '29');
+            expect(hdler.reactions_panel.panel_el.style.opacity == '0');
         });
     });
 
     it("clicks on the 'Like' and displays the 'Like'", async () => {
-        const panel_qs = '[data-crpanel="29"]';
+        const panel_qs = "[data-dcx=reactions-panel-template]";
         const anchor_qs = "A[data-dcx=reactions-panel]";
 
         const comment_el = container.querySelector("#comment-29");
-        expect(comment_el !== null);
-
-        const reactions_panel_el = comment_el.querySelector(panel_qs);
-        expect(reactions_panel_el !== null);
+        expect(comment_el != null);
 
         const react_anchor_el = comment_el.querySelector(anchor_qs);
-        expect(react_anchor_el !== null);
+        expect(react_anchor_el != null);
+
+        const reactions_panel_el = container.querySelector(panel_qs);
+        expect(reactions_panel_el != null);
 
         // Click on the 'react' link to open the reactions panel.
         fireEvent.click(react_anchor_el);
         await waitFor(() => {
-            expect(reactions_panel_el.style.display === "block");
+            const hdler = dom.window.dcx.reactions_handler;
+            expect(hdler.active_visible_panel === '29');
+            expect(hdler.reactions_panel.comment_id === '29');
+            expect(hdler.reactions_panel.panel_el.style.opacity == '1')
         });
 
         dom.window.fetch = jest.fn(() => Promise.resolve({
             status: 201,
             json: () => Promise.resolve({
-                counter: 1,
-                list: [{
-                    'value': '+',
-                    'authors': ['Alice Bloggs'],
-                    'counter': 1,
-                    'label': 'Like',
-                    'icon': '#128077'
-                }]
+                html: "<div class=\"active-reactions\"><div class=\"reaction\" data-reaction=\"+\"><span class=\"smaller\">1</span><span class=\"emoji\">&#128077;</span><div class=\"reaction_tooltip\">Daniela Rushmore reacted with Like</div></div></div>",
+                reply_to: "0"
             })
         }));
-
         // Get the like button element, and click on it.
         const like_btn_qs = "button[data-code='+']";
         const like_btn_el = reactions_panel_el.querySelector(like_btn_qs);
-        expect(like_btn_el !== undefined);
+        expect(like_btn_el != undefined);
         fireEvent.click(like_btn_el);
+
+        const formData = new dom.window.FormData();
+        formData.append("reaction", "+");
+        formData.append("csrfmiddlewaretoken", null);
 
         expect(dom.window.fetch.mock.calls.length).toEqual(1);
         expect(dom.window.fetch).toHaveBeenCalledWith(
-            "/comments/api/react/",
+            "/comments/react/29/",
             {
                 method: "POST",
                 cache: "no-cache",
                 credentials: "same-origin",
                 headers: {
-                    "X-CSRFToken": null,
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
+                    "X-Requested-With": "XMLHttpRequest",
                 },
-                redirect: "follow",
-                referrerPolicy: "no-referrer",
-                body: JSON.stringify({comment: "29", reaction: '+'})
+                body: formData
             }
         );
 
@@ -152,75 +145,70 @@ describe("scene 3 - reactions.test.js module", () => {
 
             // The feedback element does exist and has two direct children.
             const feedback_el = comment_el.querySelector(feedback_qs);
-            expect(feedback_el !== null);
+            expect(feedback_el != null);
             expect(feedback_el.children.length === 2);
 
             // The like reaction element does exist too.
             const like_reaction_el = comment_el.querySelector(reaction_qs);
-            expect(like_reaction_el !== null);
-
-            const tooltip_qs = 'A[data-toggle="reactions-tooltip"]';
-            const tooltip_el = like_reaction_el.querySelector(tooltip_qs);
-            expect(tooltip_el.textContent === '1👍');
+            expect(like_reaction_el != null);
+            expect(like_reaction_el.children[0].textContent === '1');
+            expect(like_reaction_el.children[1].textContent === '👍');
         });
 
         dom.window.fetch.mockClear();
     });
 
     it("clicks on the 'Like' to add and remove the 'Like'", async () => {
-        const panel_qs = '[data-crpanel="29"]';
+        const panel_qs = '[data-dcx=reactions-panel-template]';
         const anchor_qs = "A[data-dcx=reactions-panel]";
 
         const comment_el = container.querySelector("#comment-29");
-        expect(comment_el !== null);
-
-        const reactions_panel_el = comment_el.querySelector(panel_qs);
-        expect(reactions_panel_el !== null);
+        expect(comment_el != null);
 
         const react_anchor_el = comment_el.querySelector(anchor_qs);
-        expect(react_anchor_el !== null);
+        expect(react_anchor_el != null);
+
+        const reactions_panel_el = container.querySelector(panel_qs);
+        expect(reactions_panel_el != null);
 
         // Click on the 'react' link to open the reactions panel.
         fireEvent.click(react_anchor_el);
         await waitFor(() => {
-            expect(reactions_panel_el.style.display === "block");
+            const hdler = dom.window.dcx.reactions_handler;
+            expect(hdler.active_visible_panel === '29');
+            expect(hdler.reactions_panel.comment_id === '29');
+            expect(hdler.reactions_panel.panel_el.style.opacity == '1')
         });
 
         dom.window.fetch = jest.fn(() => Promise.resolve({
             status: 201,
             json: () => Promise.resolve({
-                counter: 1,
-                list: [{
-                    'value': '+',
-                    'authors': ['Alice Bloggs'],
-                    'counter': 1,
-                    'label': 'Like',
-                    'icon': '#128077'
-                }]
+                html: "<div class=\"active-reactions\"><div class=\"reaction\" data-reaction=\"+\"><span class=\"smaller\">1</span><span class=\"emoji\">&#128077;</span><div class=\"reaction_tooltip\">Daniela Rushmore reacted with Like</div></div></div>",
+                reply_to: "0"
             })
         }));
 
         // Get the like button element, and click on it to add the Like.
         const like_btn_qs = "button[data-code='+']";
         const like_btn_el = reactions_panel_el.querySelector(like_btn_qs);
-        expect(like_btn_el !== undefined);
+        expect(like_btn_el != undefined);
         fireEvent.click(like_btn_el);
+
+        const formData = new dom.window.FormData();
+        formData.append("reaction", "+");
+        formData.append("csrfmiddlewaretoken", null);
 
         expect(dom.window.fetch.mock.calls.length).toEqual(1);
         expect(dom.window.fetch).toHaveBeenCalledWith(
-            "/comments/api/react/",
+            "/comments/react/29/",
             {
                 method: "POST",
                 cache: "no-cache",
                 credentials: "same-origin",
                 headers: {
-                    "X-CSRFToken": null,
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
+                    "X-Requested-With": "XMLHttpRequest",
                 },
-                redirect: "follow",
-                referrerPolicy: "no-referrer",
-                body: JSON.stringify({comment: "29", reaction: '+'})
+                body: formData
             }
         );
 
@@ -235,11 +223,9 @@ describe("scene 3 - reactions.test.js module", () => {
 
             // The like reaction element does exist too.
             const like_reaction_el = comment_el.querySelector(reaction_qs);
-            expect(like_reaction_el !== null);
-
-            const tooltip_qs = 'A[data-toggle="reactions-tooltip"]';
-            const tooltip_el = like_reaction_el.querySelector(tooltip_qs);
-            expect(tooltip_el.textContent === '1👍');
+            expect(like_reaction_el != null);
+            expect(like_reaction_el.children[0].textContent === '1');
+            expect(like_reaction_el.children[1].textContent === '👍');
         });
         dom.window.fetch.mockClear();
 
@@ -249,28 +235,27 @@ describe("scene 3 - reactions.test.js module", () => {
 
         dom.window.fetch = jest.fn(() => Promise.resolve({
             status: 201,
-            json: () => Promise.resolve({ counter: 0, list: [] })
+            json: () => Promise.resolve({
+                html: "<div class=\"active-reactions\"><div class=\"reaction\" data-reaction=\"+\"></div></div>",
+                reply_to: "0"
+            })
         }));
 
         // Click on the Like button.
-        expect(like_btn_el !== undefined);
+        expect(like_btn_el != undefined);
         fireEvent.click(like_btn_el);
 
         expect(dom.window.fetch.mock.calls.length).toEqual(1);
         expect(dom.window.fetch).toHaveBeenCalledWith(
-            "/comments/api/react/",
+            "/comments/react/29/",
             {
                 method: "POST",
                 cache: "no-cache",
                 credentials: "same-origin",
                 headers: {
-                    "X-CSRFToken": null,
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
+                    "X-Requested-With": "XMLHttpRequest",
                 },
-                redirect: "follow",
-                referrerPolicy: "no-referrer",
-                body: JSON.stringify({comment: "29", reaction: '+'})
+                body: formData
             }
         );
 
@@ -280,7 +265,7 @@ describe("scene 3 - reactions.test.js module", () => {
 
             // The feedback element does exist and has only one direct child.
             const feedback_el = comment_el.querySelector(feedback_qs);
-            expect(feedback_el !== null);
+            expect(feedback_el != null);
             expect(feedback_el.children.length === 1);
 
             // Every feedback element's text child node is empty. They would
@@ -293,115 +278,10 @@ describe("scene 3 - reactions.test.js module", () => {
                 }
             }
 
-            // But the reaction does not.
+            // The reaction data-code="+" does not exist.
             const like_reaction_el = comment_el.querySelector(reaction_qs);
-            expect(like_reaction_el === null);
+            expect(like_reaction_el == null);
         });
-        dom.window.fetch.mockClear();
-    });
-
-    it("clicks and hovers on the 'Like' to see the tooltip", async () => {
-        const panel_qs = '[data-crpanel="29"]';
-        const anchor_qs = "A[data-dcx=reactions-panel]";
-
-        const comment_el = container.querySelector("#comment-29");
-        expect(comment_el !== null);
-
-        const reactions_panel_el = comment_el.querySelector(panel_qs);
-        expect(reactions_panel_el !== null);
-
-        const react_anchor_el = comment_el.querySelector(anchor_qs);
-        expect(react_anchor_el !== null);
-
-        // Click on the 'react' link to open the reactions panel.
-        fireEvent.click(react_anchor_el);
-        await waitFor(() => {
-            expect(reactions_panel_el.style.display === "block");
-        });
-
-        dom.window.fetch = jest.fn(() => Promise.resolve({
-            status: 201,
-            json: () => Promise.resolve({
-                counter: 1,
-                list: [{
-                    'value': '+',
-                    'authors': ['Alice Bloggs'],
-                    'counter': 1,
-                    'label': 'Like',
-                    'icon': '#128077'
-                }]
-            })
-        }));
-
-        // Get the like button element, and click on it.
-        const like_btn_qs = "button[data-code='+']";
-        const like_btn_el = reactions_panel_el.querySelector(like_btn_qs);
-        expect(like_btn_el !== undefined);
-        fireEvent.click(like_btn_el);
-
-        expect(dom.window.fetch.mock.calls.length).toEqual(1);
-        expect(dom.window.fetch).toHaveBeenCalledWith(
-            "/comments/api/react/",
-            {
-                method: "POST",
-                cache: "no-cache",
-                credentials: "same-origin",
-                headers: {
-                    "X-CSRFToken": null,
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                redirect: "follow",
-                referrerPolicy: "no-referrer",
-                body: JSON.stringify({comment: "29", reaction: '+'})
-            }
-        );
-
-        const reaction_qs = '[data-reaction="+"]';
-        let reaction_el = null;
-
-        const tooltip_anchor_qs = 'A[data-toggle="reactions-tooltip"]';
-        let tooltip_anchor_el = null;
-
-        await waitFor(() => {
-            const feedback_qs = '#cm-feedback-29';
-
-            // The feedback element does exist and has two direct children.
-            const feedback_el = comment_el.querySelector(feedback_qs);
-            expect(feedback_el !== null);
-            expect(feedback_el.children.length === 2);
-
-            // The like reaction element does exist too.
-            reaction_el = comment_el.querySelector(reaction_qs);
-            expect(reaction_el !== null);
-
-            tooltip_anchor_el = reaction_el.querySelector(tooltip_anchor_qs);
-            expect(tooltip_anchor_el.textContent === '1👍');
-        });
-
-        // Set 'mouseover' over the tooltip anchor, so that
-        // the tooltip is displayed.
-        fireEvent.mouseOver(tooltip_anchor_el);
-
-        await waitFor(() => {
-            // The tooltip is the first div within the reaction_el
-            // that has a class "reactions-tooltip". Check
-            // whether it has a style with 'display: block'.
-            const tooltip_el = reaction_el.children[0];
-            expect(tooltip_el.classList[0] === 'reactions-tooltip');
-            expect(tooltip_el.style.display === 'block');
-        });
-
-        // Send event 'mouseout' to the tooltip anchor, so that
-        // the tooltip is hidden.
-        fireEvent.mouseOut(tooltip_anchor_el);
-
-        await waitFor(() => {
-            const tooltip_el = reaction_el.children[0];
-            expect(tooltip_el.classList[0] === 'reactions-tooltip');
-            expect(tooltip_el.style.display === '');  // defaults to 'none';
-        });
-
         dom.window.fetch.mockClear();
     });
 });

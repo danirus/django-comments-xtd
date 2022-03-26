@@ -60,10 +60,6 @@ def test_comment_box_props_with_object_and_user(an_user, an_article):
     assert props["default_followup"] == settings.COMMENTS_XTD_DEFAULT_FOLLOWUP
     assert props["html_id_suffix"] == utils.get_html_id_suffix(an_article)
     assert props["max_thread_level"] == max_thread_level_for_content_type(ctype)
-    reactions_overlays = json.dumps(
-        settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS["default"]
-    )
-    assert json.dumps(props["reactions_js_overlays"]) == reactions_overlays
 
 
 def check_input_allowed(object):

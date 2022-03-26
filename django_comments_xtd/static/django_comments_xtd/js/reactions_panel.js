@@ -52,7 +52,6 @@ export default class ReactionsPanel {
 
     add_event_listeners() {
         const buttons = this.panel_el.querySelectorAll("BUTTON");
-        console.log(`Found ${buttons.length} buttons`);
         for (const btn of Array.from(buttons)) {
             btn.addEventListener("click", this.on_react_btn_click);
             btn.addEventListener("mouseover", this.on_react_btn_mouseover);
@@ -67,6 +66,7 @@ export default class ReactionsPanel {
             const formData = new FormData();
             formData.append("reaction", code);
             formData.append("csrfmiddlewaretoken", get_cookie("csrftoken"));
+
             fetch(react_url, {
                 method: "POST",
                 cache: "no-cache",
@@ -98,7 +98,6 @@ export default class ReactionsPanel {
     }
 
     on_react_btn_mouseover(event) {
-        console.log(`on_react_btn_mouseover:`, event.target.dataset.title);
         if (this.panel_title_elem) {
             this.panel_title_elem.textContent = event.target.dataset.title;
         }

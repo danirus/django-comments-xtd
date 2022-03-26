@@ -40,12 +40,8 @@
               id="comments"
               class="comment-list"
               data-dcx="config"
-              data-react-url="/comments/api/react/"
+              data-react-url="/comments/react/0/"
               data-guest-user="0"
-              data-popover-pos-bottom="30"
-              data-popover-pos-left="10"
-              data-tooltip-pos-bottom="30"
-              data-tooltip-pos-left="76"
               data-page-qs-param="cpage"
             >
               <div id="comment-29" class="comment-box l0-ini">
@@ -58,6 +54,8 @@
                     <p>Many people claim for their rights. The right to have a job, to have a house, the right to have access to health care and education for their children. Many of them however treat trans people as a a kind of sub-human being, and with that attitude they withhold trans peoples' rights to be human beings, and the right to have their own existence.</p>
                   </div>
                   <div id="cm-feedback-29" class="footer">
+                    <div class="reactions" id="cm-reactions-29">
+                    </div>
                     <div>
                       <a data-dcx="reactions-panel" data-comment="29" class="small" data-user-auth="False" href="/comments/react/29/?cpage=1" data-login-next="/comments/cr/15/3/29/#comment-29">React</a>
                     </div>
@@ -197,14 +195,15 @@
           <textarea rows="1" placeholder="Your reply"></textarea>
         </div>
       </section>
-      <div class="reactions-panel" data-dcx="reactions-panel-template" style="display: none;">
-        <div class="arrow" style="left: 10px;"></div>
-          <h3>Pick your reaction</h3>
-          <p>
-            <button data-title="+1" data-code="+" class="emoji">👍</button>
-            <button data-title="-1" data-code="-" class="emoji">👎</button>
-          </p>
-        </div>
+    </div>
+    <div class="reactions-panel" data-dcx="reactions-panel-template">
+      <div class="arrow"></div>
+        <h3 class="title">Pick your reaction</h3>
+        <p>
+          <button data-title="+1" data-code="+" class="emoji">👍</button>
+          <button data-title="-1" data-code="-" class="emoji">👎</button>
+        </p>
+      </div>
     </div>
   </body>
 </html>

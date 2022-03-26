@@ -67,7 +67,6 @@ export default class ReactionsHandler {
         if (!data_attr || data_attr !== "reactions-panel") {
             this.reactions_panel.hide();
             if (this.active_visible_panel) {
-                console.log(`reactions off: ${this.active_visible_panel}`);
                 this.panels_visibility.set(this.active_visible_panel, false);
                 this.active_visible_panel = 0;
             }
@@ -78,7 +77,6 @@ export default class ReactionsHandler {
         if (event.key === "Escape") {
             this.reactions_panel.hide();
             if (this.active_visible_panel) {
-                console.log(`reactions off: ${this.active_visible_panel}`);
                 this.panels_visibility.set(this.active_visible_panel, false);
                 this.active_visible_panel = 0;
             }
@@ -105,7 +103,6 @@ export default class ReactionsHandler {
     }
 
     remove_event_listeners() {
-        console.log(`Removing events...`);
         for (const item of this.event_handlers) {
             item.elem.removeEventListener(item.event, item.handler);
         }

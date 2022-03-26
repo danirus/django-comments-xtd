@@ -219,7 +219,6 @@ function init_reactions() {
     if (window.dcx.reactions_handler === null) {
         window.dcx.reactions_handler = new _reactions_handler__WEBPACK_IMPORTED_MODULE_0__["default"](rroot);
         window.addEventListener("beforeunload", (_) => {
-            console.log(`About to call reactions_handler.remove_events()`);
             window.dcx.reactions_handler.remove_event_listeners();
         });
 
@@ -311,7 +310,6 @@ class ReactionsHandler {
         if (!data_attr || data_attr !== "reactions-panel") {
             this.reactions_panel.hide();
             if (this.active_visible_panel) {
-                console.log(`reactions off: ${this.active_visible_panel}`);
                 this.panels_visibility.set(this.active_visible_panel, false);
                 this.active_visible_panel = 0;
             }
@@ -322,7 +320,6 @@ class ReactionsHandler {
         if (event.key === "Escape") {
             this.reactions_panel.hide();
             if (this.active_visible_panel) {
-                console.log(`reactions off: ${this.active_visible_panel}`);
                 this.panels_visibility.set(this.active_visible_panel, false);
                 this.active_visible_panel = 0;
             }
@@ -349,7 +346,6 @@ class ReactionsHandler {
     }
 
     remove_event_listeners() {
-        console.log(`Removing events...`);
         for (const item of this.event_handlers) {
             item.elem.removeEventListener(item.event, item.handler);
         }
@@ -455,7 +451,6 @@ class ReactionsPanel {
 
     add_event_listeners() {
         const buttons = this.panel_el.querySelectorAll("BUTTON");
-        console.log(`Found ${buttons.length} buttons`);
         for (const btn of Array.from(buttons)) {
             btn.addEventListener("click", this.on_react_btn_click);
             btn.addEventListener("mouseover", this.on_react_btn_mouseover);
@@ -470,6 +465,7 @@ class ReactionsPanel {
             const formData = new FormData();
             formData.append("reaction", code);
             formData.append("csrfmiddlewaretoken", get_cookie("csrftoken"));
+
             fetch(react_url, {
                 method: "POST",
                 cache: "no-cache",
@@ -501,7 +497,6 @@ class ReactionsPanel {
     }
 
     on_react_btn_mouseover(event) {
-        console.log(`on_react_btn_mouseover:`, event.target.dataset.title);
         if (this.panel_title_elem) {
             this.panel_title_elem.textContent = event.target.dataset.title;
         }

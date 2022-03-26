@@ -10,7 +10,6 @@ from django_comments_xtd import get_model, utils
 from django_comments_xtd.conf import settings
 from django_comments_xtd.conf.defaults import (
     COMMENTS_XTD_APP_MODEL_OPTIONS,
-    COMMENTS_XTD_REACTIONS_JS_OVERLAYS,
 )
 from django_comments_xtd.paginator import CommentsPaginator
 
@@ -135,33 +134,6 @@ def test_get_app_model_options_with_non_existing_content_type(monkeypatch):
     _options = utils.get_app_model_options(content_type="tralari.tralara")
     expected_options = default_and_article_options["default"]
     assert _options == expected_options
-
-
-# ----------------------------------------------
-@pytest.mark.django_db
-def test_get_reactions_js_overlays_without_args():
-    js_overlays = utils.get_reactions_js_overlays()
-    assert js_overlays == COMMENTS_XTD_REACTIONS_JS_OVERLAYS["default"]
-
-
-# ----------------------------------------------
-reactions_js_overlays = {
-    "default": {
-        "popover": {"pos_bottom": 30, "pos_left": 10},
-        "tooltip": {"pos_bottom": 30, "pos_left": 76},
-    }
-}
-
-
-@pytest.mark.django_db
-def test_get_reactions_js_overlays_without_args_returns_defaults(monkeypatch):
-    monkeypatch.setattr(
-        utils.settings,
-        "COMMENTS_XTD_REACTIONS_JS_OVERLAYS",
-        reactions_js_overlays,
-    )
-    result = utils.get_reactions_js_overlays()
-    assert result == reactions_js_overlays["default"]
 
 
 # ----------------------------------------------

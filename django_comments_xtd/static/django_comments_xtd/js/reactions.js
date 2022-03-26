@@ -19,7 +19,6 @@ function init_reactions() {
     if (window.dcx.reactions_handler === null) {
         window.dcx.reactions_handler = new ReactionsHandler(rroot);
         window.addEventListener("beforeunload", (_) => {
-            console.log(`About to call reactions_handler.remove_events()`);
             window.dcx.reactions_handler.remove_event_listeners();
         });
 

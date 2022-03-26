@@ -1,6 +1,3 @@
-# Idea borrowed from Selwin Ong post:
-# http://ui.co.id/blog/asynchronous-send_mail-in-django
-
 import hashlib
 import queue as queue
 import threading
@@ -20,7 +17,6 @@ from django_comments_xtd import get_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.conf.defaults import (
     COMMENTS_XTD_APP_MODEL_OPTIONS,
-    COMMENTS_XTD_REACTIONS_JS_OVERLAYS,
 )
 from django_comments_xtd.paginator import CommentsPaginator
 
@@ -29,6 +25,8 @@ mail_sent_queue = queue.Queue()
 
 
 class EmailThread(threading.Thread):
+    # Idea borrowed from Selwin Ong post:
+    # http://ui.co.id/blog/asynchronous-send_mail-in-django
     def __init__(
         self, subject, body, from_email, recipient_list, fail_silently, html
     ):
@@ -155,37 +153,6 @@ def check_input_allowed(object):
     'COMMENTS_XTD_APP_MODEL_OPTIONS' in your settings.
     """
     return True
-
-
-# --------------------------------------------------------------------
-def get_reactions_js_overlays(comment=None, content_type=None):
-    """
-    Get the app_model_option from COMMENTS_XTD_REACTIONS_JS_OVERLAYS.
-
-    If a comment is given, the content_type is extracted from it. Otherwise,
-    the content_type kwarg has to be provided. Checks whether there is a
-    matching dictionary for the app_label.model of the content_type, and
-    returns it. Otherwise it returns the default from:
-
-        `django_comments_xtd.conf.defaults.COMMENTS_XTD_REACTIONS_JS_OVERLAYS`.
-
-    """
-    _defaults = dict.copy(COMMENTS_XTD_REACTIONS_JS_OVERLAYS)
-    _settings = dict.copy(settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS)
-    if _defaults != _settings and "default" in _settings:
-        _defaults["default"].update(_settings.pop("default"))
-
-    if comment:
-        content_type = ContentType.objects.get_for_model(comment.content_object)
-        key = "%s.%s" % (content_type.app_label, content_type.model)
-    elif content_type:
-        key = content_type
-    else:
-        return _defaults["default"]
-    try:
-        return settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS[key]
-    except Exception:
-        return _defaults["default"]
 
 
 # --------------------------------------------------------------------

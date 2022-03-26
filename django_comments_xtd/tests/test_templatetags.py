@@ -694,7 +694,6 @@ def test_get_comments_api_props(an_article):
     t = "{% load comments_xtd %}" "{% get_comments_api_props for object %}"
     output = Template(t).render(Context({"object": an_article}))
     props = json.loads(output)
-    reactions_overlays = settings.COMMENTS_XTD_REACTIONS_JS_OVERLAYS
     assert props == {
         "comment_count": 0,
         "input_allowed": True,
@@ -723,7 +722,6 @@ def test_get_comments_api_props(an_article):
         "default_followup": False,
         "html_id_suffix": "7f7a81d9acbab29db51ca501c2d44afe313227bc",
         "max_thread_level": 3,
-        "reactions_js_overlays": reactions_overlays["default"],
         "login_url": "/accounts/login/",
         "comments_page_qs_param": "cpage",
     }

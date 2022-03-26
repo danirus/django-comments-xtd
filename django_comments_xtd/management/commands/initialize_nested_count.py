@@ -1,5 +1,5 @@
-from django.db.utils import ConnectionDoesNotExist
 from django.core.management.base import BaseCommand
+from django.db.utils import ConnectionDoesNotExist
 
 from django_comments_xtd.models import XtdComment
 

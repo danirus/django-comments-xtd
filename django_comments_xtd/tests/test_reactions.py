@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from django.contrib.auth.models import AnonymousUser, User
-from django.test import TestCase, RequestFactory
-
 import django_comments
+
+from django.contrib.auth.models import AnonymousUser, User
+from django.test import RequestFactory, TestCase
+
 from django_comments_xtd import get_model, get_reactions_enum
 from django_comments_xtd.models import CommentReaction
 from django_comments_xtd.tests.models import Article, Diary
@@ -11,7 +12,7 @@ from django_comments_xtd.tests.test_views import (
     post_article_comment,
     post_diary_comment,
 )
-from django_comments_xtd.tests.utils import send_reaction, post_flag
+from django_comments_xtd.tests.utils import post_flag, send_reaction
 
 
 request_factory = RequestFactory()

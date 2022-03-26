@@ -1,9 +1,10 @@
 from datetime import datetime
 
+import pytest
+
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.utils.functional import cached_property
-import pytest
 
 from django_comments_xtd import get_model, utils
 from django_comments_xtd.conf import settings

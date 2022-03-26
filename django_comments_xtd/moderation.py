@@ -3,9 +3,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.template import Context, loader
 
 from django_comments import get_model
-from django_comments.signals import comment_will_be_posted, comment_was_flagged
 from django_comments.models import CommentFlag
-from django_comments.moderation import Moderator, CommentModerator
+from django_comments.moderation import CommentModerator, Moderator
+from django_comments.signals import comment_was_flagged, comment_will_be_posted
 
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import BlackListedDomain, TmpXtdComment

@@ -5,6 +5,7 @@ Tests borrowed from Simon Willison's Django-OpenID project:
 import pytest
 
 from django.conf import settings
+
 from django_comments_xtd import signed
 
 

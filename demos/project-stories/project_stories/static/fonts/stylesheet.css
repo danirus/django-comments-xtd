@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'Oxygen';
+    src: url('Oxygen-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Oxygen';
+    src: url('Oxygen-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Oxygen';
+    src: url('Oxygen-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Oxygen Mono';
+    src: url('OxygenMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}

@@ -5,7 +5,8 @@ from django.contrib import admin
 from django_comments import get_model
 from django_comments.admin import CommentsAdmin
 from django_comments.models import CommentFlag
-from django_comments_xtd.models import XtdComment, BlackListedDomain
+
+from django_comments_xtd.models import BlackListedDomain, XtdComment
 
 
 class XtdCommentsAdmin(CommentsAdmin):

@@ -1,5 +1,6 @@
 include README.md
 include requirements.txt
+include project_quotes/docker-entrypoint.sh
 recursive-include fixtures *
 recursive-include project_quotes/static *
 recursive-include project_quotes/templates *

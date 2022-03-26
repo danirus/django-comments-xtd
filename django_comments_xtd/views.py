@@ -1,21 +1,21 @@
 from __future__ import unicode_literals
 
 from django.apps import apps
-from django.db.models import F
-from django.db.utils import NotSupportedError
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.contenttypes.views import shortcut
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.sites.shortcuts import get_current_site
 from django.core import signing
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db.models import F
+from django.db.utils import NotSupportedError
 from django.http import (
-    JsonResponse,
     Http404,
-    HttpResponseForbidden,
     HttpResponseBadRequest,
+    HttpResponseForbidden,
     HttpResponseRedirect,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404, render, resolve_url
 from django.template import loader
@@ -42,8 +42,8 @@ from django_comments_xtd import (
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
     CommentReaction,
-    TmpXtdComment,
     MaxThreadLevelExceededException,
+    TmpXtdComment,
 )
 
 
@@ -990,7 +990,23 @@ def react(request, comment_id, next=None):
     cpage = request.GET.get(cpage_qs_param, None)
 
     if request.method == "POST":
-        perform_react(request, comment)
+        created = perform_react(request, comment)
+
+        # When the reaction has been sent via JavaScript.
+        if request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
+            obj_meta = comment.content_object._meta
+            template_name = "comment_reactions.html"
+            template_list = [
+                f"comments/{theme_dir}/%s/%s/{template_name}"
+                % (obj_meta.app_label, obj_meta.model_name),
+                f"comments/{theme_dir}/%s/{template_name}" % obj_meta.app_label,
+                f"comments/{theme_dir}/{template_name}",
+                f"comments/{template_name}",
+            ]
+            context = {"comment": comment}
+            status = 201 if created else 200
+            return json_res(request, template_list, context, status=status)
+
         kwargs = {
             "c": comment.pk,
             cpage_qs_param: cpage or request.POST.get(cpage_qs_param, None),
@@ -1046,6 +1062,7 @@ def perform_react(request, comment):
         created=created,
         request=request,
     )
+    return created
 
 
 def react_done(request):

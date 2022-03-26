@@ -57,8 +57,8 @@ Example 3:
   per_page + orphans, so the 2nd page will contain 18 comments.
 
 """
-from django.db.models.query import QuerySet
 from django.core.paginator import Paginator
+from django.db.models.query import QuerySet
 from django.utils.functional import cached_property
 
 

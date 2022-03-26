@@ -1,16 +1,17 @@
 import json
 
-from django_comments_xtd.models import max_thread_level_for_content_type
-from django.contrib.contenttypes.models import ContentType
+import pytest
 from django.contrib.auth.models import AnonymousUser, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 
 from django_comments.models import Comment
-import pytest
 
 from django_comments_xtd import utils
 from django_comments_xtd.api import frontend
 from django_comments_xtd.conf import settings
+
+from django_comments_xtd.models import max_thread_level_for_content_type
 
 
 @pytest.mark.django_db

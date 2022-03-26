@@ -1,0 +1,15 @@
+{% load comments_xtd %}
+
+{% if comment.reactions.count > 0 %}
+  <div class="active-reactions">
+    {% for reaction in comment.reactions.all %}
+      {% if reaction.counter > 0 %}
+        {% with reaction_enum=reaction|get_reaction_enum %}
+          <div class="reaction" data-reaction="{{ reaction.reaction }}"><span class="smaller">{{ reaction.counter }}</span><span class="emoji">&{{ reaction_enum.icon }};</span>
+            <div class="reaction_tooltip">{{ reaction|authors_list|join:', ' }} reacted with {{ reaction_enum.label }}</div>
+          </div>
+        {% endwith %}
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}

@@ -1,27 +1,27 @@
 import collections
-from datetime import datetime
 import json
+from datetime import datetime
 from unittest.mock import patch
 
-from django.db.models.signals import pre_save
+import pytest
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.paginator import PageNotAnInteger
+
+from django.db.models.signals import pre_save
 from django.http.response import Http404
-from django.template import Context, Template, TemplateSyntaxError, loader
+from django.template import Context, loader, Template, TemplateSyntaxError
 from django.test import TestCase as DjangoTestCase
 from django.urls import reverse
-import pytest
 
 from django_comments_xtd import get_model, get_reactions_enum
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
-    XtdComment,
     publish_or_withhold_on_pre_save,
+    XtdComment,
 )
 from django_comments_xtd.templatetags import comments_xtd
-from django_comments_xtd.utils import get_current_site_id, get_html_id_suffix
 
 from django_comments_xtd.tests.models import Article, MyComment
 from django_comments_xtd.tests.test_models import (
@@ -31,6 +31,7 @@ from django_comments_xtd.tests.test_models import (
     thread_test_step_4,
     thread_test_step_5,
 )
+from django_comments_xtd.utils import get_current_site_id, get_html_id_suffix
 
 
 _xtd_model = "django_comments_xtd.tests.models.MyComment"

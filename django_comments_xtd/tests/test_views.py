@@ -1,20 +1,22 @@
 from __future__ import unicode_literals
 
-import re
 import random
+
+import re
 import string
-from unittest.mock import patch
 from datetime import datetime
+from unittest.mock import patch
+
+import django_comments
+from django.contrib.auth.models import AnonymousUser, User
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.contrib.auth.models import AnonymousUser, User
-from django.test import TestCase, RequestFactory
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from django_comments.views import comments
 
-import django_comments
 from django_comments_xtd import signals, signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import XtdComment

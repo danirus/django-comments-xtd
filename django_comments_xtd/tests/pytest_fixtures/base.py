@@ -1,13 +1,14 @@
 from datetime import datetime
-from django_comments_xtd import get_reactions_enum
+
+import pytest
 
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 
-import pytest
-
 from django_comments.models import CommentFlag
+
+from django_comments_xtd import get_reactions_enum
 from django_comments_xtd.models import CommentReaction, XtdComment
 
 from django_comments_xtd.tests.models import Article

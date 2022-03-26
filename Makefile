@@ -1,6 +1,6 @@
 	.DEFAULT_GOAL := help
-.PHONY: coverage deps help tox sdist collectstatic \
-	compose-project-quotes-build compose-project-quotes-up
+.PHONY: coverage deps pep8 check-syntax format-syntax help tox sdist \
+	collectstatic compose-project-quotes-build compose-project-quotes-up
 
 coverage:  ## Run tests with coverage.
 	coverage erase
@@ -15,21 +15,27 @@ deps:  ## Install dependencies.
 pep8:  ## Check PEP8 compliance.
 	flake8 --exclude=.tox,docs,django_comments_xtd/tests,django_comments_xtd/__init__.py,django_comments_xtd/migrations --max-line-length=80 --extend-ignore=E203 django_comments_xtd
 
+check-syntax:
+	ufmt check django_comments_xtd/
+
+format-syntax:
+	ufmt format django_comments_xtd/
+
 tox:  ## Run tox.
 	python -m tox
 
-sdist:  # Create source tarballs for django-comments-xtd and demos projects.
-	python setup.py sdist
-	cd demos/project-quotes/ && python setup.py sdist
+sdist-project-quotes:  # Create source tarballs for django-comments-xtd and demos projects.
+	. venv/bin/activate && python setup.py sdist && deactivate
+	cd demos/project-quotes/ && . pqenv/bin/activate && python setup.py sdist && deactivate
 
-collectstatic:  # django's collectstatic for demos project.
-	cd demos/project-quotes/ && . pqenv/bin/activate && python project_quotes/manage.py collectstatic --noinput
+collectstatic-project-quotes:  # django's collectstatic for demos project.
+	cd demos/project-quotes/ && . pqenv/bin/activate && python project_quotes/manage.py collectstatic --noinput && deactivate
 
-compose-project-quotes-build: sdist
+compose-project-quotes-build: sdist-project-quotes
 	source .env && docker-compose -f demos/project-quotes/docker-compose.yml build web
 
-compose-project-quotes-up: sdist collectstatic
-	source .env && docker-compose -f demos/project-quotes/docker-compose.yml up
+compose-project-quotes-up: sdist-project-quotes collectstatic-project-quotes
+	source .env && docker-compose -f demos/project-quotes/docker-compose.yml up -d
 
 help: ## Show help message
 	@IFS=$$'\n' ; \

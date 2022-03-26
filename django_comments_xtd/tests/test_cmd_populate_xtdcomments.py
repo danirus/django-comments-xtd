@@ -1,15 +1,17 @@
 from datetime import datetime
 from io import StringIO
 
-from django.db.utils import ConnectionHandler
+import pytest
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.management import call_command
-import pytest
+
+from django.db.utils import ConnectionHandler
 
 from django_comments.models import Comment
-from django_comments_xtd.models import XtdComment
+
 from django_comments_xtd.management.commands import populate_xtdcomments
+from django_comments_xtd.models import XtdComment
 
 
 def create_comments(an_article, model=Comment):

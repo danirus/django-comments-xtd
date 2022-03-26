@@ -1,21 +1,21 @@
 from __future__ import unicode_literals
-from django_comments_xtd.models import XtdComment
 
 import importlib
 import re
-from unittest.mock import patch
 from datetime import datetime, timedelta
-
-from django.contrib.auth.models import AnonymousUser, User, Permission
-from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase, RequestFactory
-from django.urls import reverse
+from unittest.mock import patch
 
 import django_comments
+
+from django.contrib.auth.models import AnonymousUser, Permission, User
+from django.contrib.contenttypes.models import ContentType
+from django.test import RequestFactory, TestCase
+from django.urls import reverse
 from django_comments.models import Comment, CommentFlag
 from django_comments.views.moderation import delete
 
 from django_comments_xtd import views
+from django_comments_xtd.models import XtdComment
 from django_comments_xtd.tests.models import (
     Article,
     Diary,

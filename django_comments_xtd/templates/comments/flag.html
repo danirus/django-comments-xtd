@@ -21,10 +21,10 @@
             <div class="header">
               <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment page_number %}">¶</a></div>
             </div>
-            <div class="body">
+            <div class="body body-bordered">
               {{ comment.comment|linebreaks|escape }}
             </div>
-            <div class="footer">
+            <div class="feedback">
               <div class="reactions">
                 {% include "comments/comment_reactions.html" %}
               </div>

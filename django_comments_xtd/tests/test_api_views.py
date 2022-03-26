@@ -2,32 +2,33 @@ import json
 from datetime import datetime
 from unittest.mock import patch
 
-import pytest
+import django_comments
 
-from django.db.models.signals import pre_save
+import pytest
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.urls import reverse
+
+from django.db.models.signals import pre_save
 from django.test import TestCase as DjangoTestCase
+from django.urls import reverse
 
 from rest_framework.test import APIRequestFactory, APITestCase
 
-import django_comments
 from django_comments_xtd import get_model
-from django_comments_xtd.conf import settings
 from django_comments_xtd.api.views import CommentCount, CommentList
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
-    XtdComment,
     publish_or_withhold_on_pre_save,
+    XtdComment,
 )
 from django_comments_xtd.tests.models import Article, MyComment
-from django_comments_xtd.tests.utils import post_comment
 from django_comments_xtd.tests.test_models import (
     thread_test_step_1,
     thread_test_step_2,
     thread_test_step_3,
 )
+from django_comments_xtd.tests.utils import post_comment
 
 
 app_model_options_mock = {"tests.article": {"who_can_post": "users"}}

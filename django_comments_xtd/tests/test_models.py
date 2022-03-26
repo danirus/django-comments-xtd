@@ -1,12 +1,13 @@
-from unittest.mock import patch
 from datetime import datetime
+from unittest.mock import patch
 
-from django.db.models.signals import pre_save
+import pytest
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
+
+from django.db.models.signals import pre_save
 from django.test import TestCase as DjangoTestCase
-import pytest
 
 from django_comments.models import Comment, CommentFlag
 
@@ -14,9 +15,9 @@ from django_comments_xtd import get_form, get_model, get_reactions_enum
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
     BlackListedDomain,
-    XtdComment,
     MaxThreadLevelExceededException,
     publish_or_withhold_on_pre_save,
+    XtdComment,
 )
 from django_comments_xtd.moderation import moderator, SpamModerator
 

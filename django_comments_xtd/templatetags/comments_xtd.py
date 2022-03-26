@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import InvalidPage, PageNotAnInteger
 from django.http import Http404
-from django.template import Library, Node, TemplateSyntaxError, Variable, loader
+from django.template import Library, loader, Node, TemplateSyntaxError, Variable
 from django.urls import reverse
 from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
@@ -499,7 +499,7 @@ def authors_list(cmt_reaction):
 @register.filter
 def get_reaction_enum(cmt_reaction):
     """
-    Helper filter to get the ReactionEnum corresponding to the given CommentReaction.
+    Helper to get the ReactionEnum corresponding to given CommentReaction.
     """
     return get_reactions_enum()(cmt_reaction.reaction)
 

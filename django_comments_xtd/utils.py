@@ -6,9 +6,10 @@ import queue as queue
 import threading
 from urllib.parse import urlencode
 
-from django.core.mail import EmailMultiAlternatives
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
+
+from django.core.mail import EmailMultiAlternatives
 from django.http.response import HttpResponseRedirect
 from django.utils.crypto import salted_hmac
 

@@ -1,16 +1,14 @@
-from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import F
 from django.shortcuts import get_object_or_404
-
-from django_comments_xtd import get_model as get_comment_model
 from django_comments.views.moderation import perform_flag
-from rest_framework import generics, mixins, permissions, status, renderers
+from rest_framework import generics, mixins, permissions, renderers, status
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 
-from django_comments_xtd import get_model
-from django_comments_xtd.conf import settings
+from django_comments_xtd import get_model, get_model as get_comment_model
 from django_comments_xtd.api import serializers
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import CommentReaction
 from django_comments_xtd.utils import check_option, get_current_site_id
 

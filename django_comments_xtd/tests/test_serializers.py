@@ -4,6 +4,8 @@ import json
 from datetime import datetime
 from unittest.mock import Mock, patch
 
+import django_comments
+
 import pytest
 import pytz
 
@@ -12,20 +14,19 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.test import TestCase
 from django.urls import reverse
-
-from rest_framework.test import APIClient
-
-import django_comments
 from django_comments.moderation import CommentModerator
 from django_comments.signals import comment_will_be_posted
 
-from django_comments_xtd.conf import settings
+from rest_framework.test import APIClient
+
 from django_comments_xtd.api.serializers import (
     FlagSerializer,
     ReadCommentSerializer,
-    WriteCommentSerializer,
     WriteCommentReactionSerializer,
+    WriteCommentSerializer,
 )
+
+from django_comments_xtd.conf import settings
 from django_comments_xtd.models import CommentReaction, XtdComment
 from django_comments_xtd.moderation import moderator
 from django_comments_xtd.signals import should_request_be_authorized

@@ -723,9 +723,25 @@ UL.small LI {
 /* --------------------- */
 /* Override comments.css */
 
+.dcx.dcx-custom .comment-box .body {
+    line-height: 1.5;
+    color: #555;
+    font-size: 0.85rem;
+}
+.dcx.dcx-custom .comment-box .body.bordered {
+    padding: 8px;
+}
+
+.dcx.dcx-custom .comment-box .footer {
+    padding-left: 20px;
+}
+
 .dcx.dcx-custom .comment-box-img .body {
-    padding: 4px;
     line-height: 1.4;
     color: #555;
     font-size: 0.9rem;
+}
+
+.dcx.dcx-custom .comment-box-img .body.bordered {
+    padding: 4px;
 }

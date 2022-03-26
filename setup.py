@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 
 readme = ""
-with open(BASE_DIR / "README.rst", "r") as readme_file:
+with open(BASE_DIR / "README.md", "r") as readme_file:
     readme = readme_file.read()
 
 

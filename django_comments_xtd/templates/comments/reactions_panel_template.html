@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="reactions-panel" data-dcx="reactions-panel-template">
-  <div class="arrow" style="left: 10px;"></div>
-  <h3>{% trans "Pick your reaction" %}</h3>
+  <div class="arrow"></div>
+  <h3 class="title">{% trans "Pick your reaction" %}</h3>
   <p>
     {% for value, label, icon in enums_details %}
       <button data-title="{{ label }}" data-code="{{ value }}" class="emoji">&{{ icon }};</button>

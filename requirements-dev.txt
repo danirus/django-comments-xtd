@@ -2,4 +2,5 @@
 black
 ipython
 ipdb
-isort
+ufmt
+usort

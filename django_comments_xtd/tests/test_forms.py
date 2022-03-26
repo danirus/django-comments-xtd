@@ -1,11 +1,11 @@
-from django.test import TestCase
+from unittest.mock import patch
 
 import django_comments
-from django_comments_xtd.models import TmpXtdComment
-from django_comments_xtd.forms import XtdCommentForm
-from django_comments_xtd.tests.models import Article
+from django.test import TestCase
 
-from unittest.mock import patch
+from django_comments_xtd.forms import XtdCommentForm
+from django_comments_xtd.models import TmpXtdComment
+from django_comments_xtd.tests.models import Article
 
 
 class GetFormTestCase(TestCase):

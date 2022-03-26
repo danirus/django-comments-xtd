@@ -2,10 +2,12 @@
 {% load comments %}
 
 
-<section class="reply-form" data-dcx="reply-form-template">
-  {% include "comments/reply_form.html" %}
+<div style="display: none">
+  <section class="reply-form" data-dcx="reply-form-template">
+    {% include "comments/reply_form.html" %}
 
-  <div class="reply-form" data-dcx="reply-textarea">
-    <textarea rows="1" placeholder="{% translate 'Your reply' %}"></textarea>
-  </div>
-</section>
+    <div class="reply-form" data-dcx="reply-textarea">
+      <textarea rows="1" placeholder="{% translate 'Your reply' %}"></textarea>
+    </div>
+  </section>
+</div>

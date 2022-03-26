@@ -1,9 +1,9 @@
 from django_comments_xtd.api.views import (
+    CommentCount,
     CommentCreate,
     CommentList,
-    CommentCount,
-    PostCommentReaction,
     CreateReportFlag,
+    PostCommentReaction,
 )
 
 __all__ = (

@@ -2,25 +2,25 @@ from django.apps import apps
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils import formats, timezone
 from django.utils.html import escape
-from django.utils.translation import gettext as _, activate, get_language
+from django.utils.translation import activate, get_language, gettext as _
 
 from django_comments import get_form
 from django_comments.forms import CommentSecurityForm
 from django_comments.models import CommentFlag
-from django_comments.signals import comment_will_be_posted, comment_was_posted
+from django_comments.signals import comment_was_posted, comment_will_be_posted
 from rest_framework import exceptions, serializers
 
 from django_comments_xtd import get_model, get_reactions_enum, signed, views
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (
     CommentReaction,
+    max_thread_level_for_content_type,
     TmpXtdComment,
     XtdComment,
-    max_thread_level_for_content_type,
 )
 from django_comments_xtd.signals import (
-    should_request_be_authorized,
     confirmation_received,
+    should_request_be_authorized,
 )
 from django_comments_xtd.utils import get_app_model_options
 

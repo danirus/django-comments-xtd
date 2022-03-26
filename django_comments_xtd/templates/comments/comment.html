@@ -9,7 +9,7 @@
       <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_xtdcomment_permalink comment page_number %}">¶</a></div>
       {% if not comment.is_removed and comment_flagging_enabled and is_input_allowed %}<div class="small"><a href="{% url 'comments-flag' comment.id %}">report</a></div>{% endif %}
     </div>
-    <div class="body">
+    <div class="body body-bordered">
       {% if comment.is_removed %}
         <p class="muted">
           {% trans "This comment has been removed." %}
@@ -18,14 +18,12 @@
         {{ comment.comment|linebreaks|escape }}
       {% endif %}
     </div>
-    <div id="cm-footer-{{ comment.id }}" class="footer">
+    <div id="cm-feedback-{{ comment.id }}" class="feedback feedback-bordered">
       {% if not comment.is_removed %}
         {% if comment_reactions_enabled %}
-          {% if comment.reactions.count > 0 %}
-            <div id="cm-reactions-{{ comment.id }}" class="reactions">
-              {% include "comments/comment_reactions.html" %}
-            </div>
-          {% endif %}
+          <div id="cm-reactions-{{ comment.id }}" class="reactions">
+            {% include "comments/comment_reactions.html" %}
+          </div>
         {% endif %}
         {% if comment_reactions_enabled and is_input_allowed %}
           <div>

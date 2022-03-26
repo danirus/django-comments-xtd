@@ -147,13 +147,13 @@ describe("scene 3 - reactions.test.js module", () => {
         );
 
         await waitFor(() => {
-            const footer_qs = '#cm-footer-29';
+            const feedback_qs = '#cm-feedback-29';
             const reaction_qs = '[data-reaction="+"]';
 
-            // The footer does exist and has two direct children.
-            const footer_el = comment_el.querySelector(footer_qs);
-            expect(footer_el !== null);
-            expect(footer_el.children.length === 2);
+            // The feedback element does exist and has two direct children.
+            const feedback_el = comment_el.querySelector(feedback_qs);
+            expect(feedback_el !== null);
+            expect(feedback_el.children.length === 2);
 
             // The like reaction element does exist too.
             const like_reaction_el = comment_el.querySelector(reaction_qs);
@@ -225,13 +225,13 @@ describe("scene 3 - reactions.test.js module", () => {
         );
 
         await waitFor(() => {
-            const footer_qs = '#cm-footer-29';
+            const feedback_qs = '#cm-feedback-29';
             const reaction_qs = '[data-reaction="+"]';
 
-            // The footer does exist and has two direct children.
-            const footer_el = comment_el.querySelector(footer_qs);
-            expect(footer_el !== null);
-            expect(footer_el.children.length === 2);
+            // The feedback element does exist and has two direct children.
+            const feedback_el = comment_el.querySelector(feedback_qs);
+            expect(feedback_el !== null);
+            expect(feedback_el.children.length === 2);
 
             // The like reaction element does exist too.
             const like_reaction_el = comment_el.querySelector(reaction_qs);
@@ -275,19 +275,19 @@ describe("scene 3 - reactions.test.js module", () => {
         );
 
         await waitFor(() => {
-            const footer_qs = '#cm-footer-29';
+            const feedback_qs = '#cm-feedback-29';
             const reaction_qs = '[data-reaction="+"]';
 
-            // The footer does exist and has only one direct child.
-            const footer_el = comment_el.querySelector(footer_qs);
-            expect(footer_el !== null);
-            expect(footer_el.children.length === 1);
+            // The feedback element does exist and has only one direct child.
+            const feedback_el = comment_el.querySelector(feedback_qs);
+            expect(feedback_el !== null);
+            expect(feedback_el.children.length === 1);
 
-            // Every footer's text child node is empty. They would contain
-            // &nbsp; to add padding when there are reactions. But when the
-            // reactions are removed, the plugin shall remove the explicit
-            // paddings too.
-            for (const child of footer_el.childNodes) {
+            // Every feedback element's text child node is empty. They would
+            // contain &nbsp; to add padding when there are reactions. But
+            // when the reactions are removed, the plugin shall remove the
+            // explicit paddings too.
+            for (const child of feedback_el.childNodes) {
                 if (child.nodeType === Node.TEXT_NODE) {
                     expect(child.textContent === "");
                 }
@@ -364,12 +364,12 @@ describe("scene 3 - reactions.test.js module", () => {
         let tooltip_anchor_el = null;
 
         await waitFor(() => {
-            const footer_qs = '#cm-footer-29';
+            const feedback_qs = '#cm-feedback-29';
 
-            // The footer does exist and has two direct children.
-            const footer_el = comment_el.querySelector(footer_qs);
-            expect(footer_el !== null);
-            expect(footer_el.children.length === 2);
+            // The feedback element does exist and has two direct children.
+            const feedback_el = comment_el.querySelector(feedback_qs);
+            expect(feedback_el !== null);
+            expect(feedback_el.children.length === 2);
 
             // The like reaction element does exist too.
             reaction_el = comment_el.querySelector(reaction_qs);

@@ -38,4 +38,4 @@ WORKDIR /dcx-project-quotes-${DEMO_QUOTES_VER}/project_quotes
 
 EXPOSE 8048
 
-CMD uvicorn project_quotes.asgi:application --host 0.0.0.0 --port 8048 --log-level info
+CMD ./docker-entrypoint.sh

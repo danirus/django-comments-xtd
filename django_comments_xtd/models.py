@@ -1,11 +1,12 @@
 from collections import OrderedDict
 
+from django.contrib.contenttypes.models import ContentType
+from django.core import signing
+
 from django.db import models
 from django.db.models import F, Max, Min, Prefetch, Q
 from django.db.models.signals import post_delete
 from django.db.transaction import atomic
-from django.contrib.contenttypes.models import ContentType
-from django.core import signing
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -72,13 +73,10 @@ class XtdComment(Comment):
     norel_objects = CommentManager()
 
     def get_absolute_url(self, anchor_pattern="#comment-%(id)s"):
-        return (
-            reverse(
-                "comments-url-redirect",
-                args=(self.content_type_id, self.object_pk, self.pk),
-            )
-            + (anchor_pattern % self.__dict__)
-        )
+        return reverse(
+            "comments-url-redirect",
+            args=(self.content_type_id, self.object_pk, self.pk),
+        ) + (anchor_pattern % self.__dict__)
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None

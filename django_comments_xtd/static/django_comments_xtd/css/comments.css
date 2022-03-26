@@ -56,11 +56,11 @@
 .dcx .narrow-comment-box .body > P + P { margin-top: 0; }
 
 
-/* ----------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 /* comment-box is used to show the complete comment, with a user-avatar,
  * a comment header (with name, post datetime, and permalink), the comment
- * content, and a comment footer (with comment reaction-buttons, and possible
- * reply link when nested comments are allowed).
+ * content, and a comment footer with the feedback block (comment reaction
+ * buttons, and possible reply link when nested comments are allowed).
  *
  * The .comment-box has the following layout:
  *  |----------------------------------------------------------------|
@@ -70,7 +70,7 @@
  *  |                | |-------------------------------------------| |
  *  |                | | .body                                     | |
  *  |                | |-------------------------------------------| |
- *  |                | | .footer (reaction-buttons, reply-link)    | |
+ *  |                | | .feedback (reaction-buttons, reply-link)  | |
  *  |                | |-------------------------------------------| |
  *  |----------------------------------------------------------------|
  */
@@ -547,7 +547,7 @@
     font-size: 0.8rem;
 }
 
-.dcx .comment-box .body, .dcx .comment-box-img .body {
+.body-bordered {
     padding: 4px;
     border: 1px solid rgba(0, 0, 0, .1);
     border-bottom: 0;
@@ -563,8 +563,7 @@
 .dcx .comment-box     .body > P + P,
 .dcx .comment-box-img .body > P + P { margin-top: 0; }
 
-.dcx .comment-box     .footer,
-.dcx .comment-box-img .footer {
+.feedback-bordered {
     padding: 0 .8rem 4px;
     border: 1px solid rgba(0, 0, 0, .1);
     border-top: 0;
@@ -572,20 +571,28 @@
     border-bottom-right-radius: 0.3rem;
 }
 
-.dcx .comment-box     .footer > DIV,
-.dcx .comment-box-img .footer > DIV {
+.dcx .comment-box .feedback, .dcx .comment-box-img .feedback {
+    font-size: 0.8rem;
+}
+
+.dcx .comment-box     .feedback > DIV,
+.dcx .comment-box-img .feedback > DIV {
     display: inline-block
 }
 
-.dcx .comment-box     .footer > DIV::after,
-.dcx .comment-box-img .footer > DIV::after {
+.dcx .comment-box     .feedback > DIV::after,
+.dcx .comment-box-img .feedback > DIV::after,
+.dcx .comment-box     .feedback > DIV.reactions > DIV:last-child::after,
+.dcx .comment-box-img .feedback > DIV.reactions > DIV:last-child::after {
     content: "·";
     padding: 0 2px;
-    font-size: 0.8rem;
+    /* font-size: 0.8rem; */
     font-weight: 700;
 }
-.dcx .comment-box     .footer > DIV:last-child::after,
-.dcx .comment-box-img .footer > DIV:last-child::after {
+.dcx .comment-box     .feedback > DIV:last-child::after,
+.dcx .comment-box-img .feedback > DIV:last-child::after,
+.dcx .comment-box     .feedback > DIV.reactions::after,
+.dcx .comment-box-img .feedback > DIV.reactions::after {
     content: "";
 }
 
@@ -665,6 +672,19 @@
         padding: 1.5rem 1rem;
     }
 }
+
+/* ----------------------------------------------------- */
+.dcx .user-avatar {
+    display: flex;
+    justify-content: center;
+}
+
+.dcx .flex { display: flex; }
+.dcx .flex-grow { flex-grow: 1 }
+.dcx .flex-dir-col { flex-direction: column; }
+.dcx .flex-justify-flex-end { justify-content: flex-end; }
+.dcx .flex-align-center { align-items: center; }
+.dcx .flex-align-flex-end { align-items: flex-end; }
 
 /* ----------------------------------------------------- */
 .dcx .inline-left {
@@ -758,6 +778,7 @@
 
 .dcx .helper-text.error { color: red }
 .dcx .small { font-size: 0.75rem }
+.dcx .smaller { font-size: 0.65rem }
 .dcx .bold { font-weight: bold }
 
 .dcx .alert {
@@ -781,3 +802,7 @@
 .dcx .mt32 { margin-top: 32px }
 .dcx .mb32 { margin-bottom: 32px }
 .dcx .p16 { padding: 16px }
+.dcx .px0 { padding-left: 0px; padding-right: 0px }
+.dcx .px16 { padding-left: 16px; padding-right: 16px }
+.dcx .py0 { padding-top: 0px; padding-bottom: 0px }
+.dcx .py16 { padding-top: 16px; padding-bottom: 16px }

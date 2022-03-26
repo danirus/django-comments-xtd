@@ -9,8 +9,8 @@ from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import max_thread_level_for_content_type
 from django_comments_xtd.utils import (
-    get_current_site_id,
     get_app_model_options,
+    get_current_site_id,
     get_html_id_suffix,
     get_reactions_js_overlays,
 )

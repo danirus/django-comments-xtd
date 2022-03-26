@@ -1,14 +1,14 @@
 from django.urls import include, path, re_path
-
-from rest_framework.urlpatterns import format_suffix_patterns
 from django_comments.views.comments import comment_done
 from django_comments.views.moderation import (
-    flag_done,
-    delete,
-    delete_done,
     approve,
     approve_done,
+    delete,
+    delete_done,
+    flag_done,
 )
+
+from rest_framework.urlpatterns import format_suffix_patterns
 
 from django_comments_xtd import views
 

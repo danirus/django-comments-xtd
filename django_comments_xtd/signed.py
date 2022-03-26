@@ -39,9 +39,9 @@ These functions make use of all of them.
 from __future__ import unicode_literals
 
 import base64
+import hashlib
 import hmac
 import pickle
-import hashlib
 
 from django_comments_xtd.conf import settings
 

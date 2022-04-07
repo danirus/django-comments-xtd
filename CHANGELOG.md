@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.9.6] - 2022-04-07
+
+  * Update version required for django-comments from 2.1 to 2.2.
+
 ## [2.9.5] - 2021-12-13
 
    * Adds compatibility with Django v4.

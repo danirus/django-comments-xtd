@@ -52,6 +52,11 @@ class Diary(models.Model):
         ordering = ('-publish',)
 
 
+class UUIDDiary(Diary):
+    """Diary, that accepts comments."""
+    uuid = models.UUIDField("uuid", editable=False, primary_key=True)
+
+
 class DiaryCommentModerator(XtdCommentModerator):
     email_notification = True
     enable_field = 'allow_comments'

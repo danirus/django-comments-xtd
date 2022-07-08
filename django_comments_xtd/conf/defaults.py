@@ -68,3 +68,12 @@ COMMENTS_XTD_API_GET_USER_AVATAR = "django_comments_xtd.utils.get_user_avatar"
 # Makes the "Notify me about followup comments" checkbox in the
 # comment form checked (True) or unchecked (False) by default.
 COMMENTS_XTD_DEFAULT_FOLLOWUP = False
+
+
+# If you have additional data to return as a JSON object when using the
+# {% get_commentbox_props %} template tag, extend the class CommentBoxDriver
+# with your required behaviour and define the following setting referring
+# to your customized class.
+COMMENTS_XTD_COMMENTBOX_CLASS = (
+    "django_comments_xtd.api.frontend.CommentBoxDriver"
+)

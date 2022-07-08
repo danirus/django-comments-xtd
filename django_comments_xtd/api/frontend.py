@@ -1,4 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
+from django.utils.module_loading import import_string
 
 from django_comments.forms import CommentSecurityForm
 from rest_framework.response import Response
@@ -152,7 +153,8 @@ def commentbox_props(obj, user, request=None):
     This is transitional function left for backward compatibility
     with applications that are using commentbox_props() function directly.
     """
-    return CommentBoxDriver.get_props(obj, user, request)
+    commentbox_class = import_string(settings.COMMENTS_XTD_COMMENTBOX_CLASS)
+    return commentbox_class.get_props(obj, user, request)
 
 
 def commentbox_props_response(obj, user, request):

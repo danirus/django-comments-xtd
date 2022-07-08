@@ -5,7 +5,7 @@ from django.urls import include, path, re_path
 from django_comments_xtd.tests import views
 
 urlpatterns = [
-    re_path(r'^accounts/login/$', auth_views.LoginView),
+    re_path(r'^accounts/login/$', auth_views.LoginView.as_view()),
     re_path(r'^articles/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/'
             r'(?P<slug>[-\w]+)/$',
             views.dummy_view,

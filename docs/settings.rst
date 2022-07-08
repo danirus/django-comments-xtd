@@ -19,7 +19,7 @@ behaviour.
 
 
 .. setting:: COMMENTS_XTD_MAX_THREAD_LEVEL
-   
+
 ``COMMENTS_XTD_MAX_THREAD_LEVEL``
 =================================
 
@@ -52,8 +52,8 @@ An example::
     COMMENTS_XTD_MAX_THREAD_LEVEL = 0
     COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
         'projects.release': 2,
-	    'blog.stories': 8, 
-        'blog.quotes': 8, 
+	    'blog.stories': 8,
+        'blog.quotes': 8,
 	    'blog.diarydetail': 0 # Omit, defaults to COMMENTS_XTD_MAX_THREAD_LEVEL
     }
 
@@ -67,7 +67,7 @@ level 2::
 
 It defaults to ``{}``. What means the maximum thread level is setup
 with :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL`.
-    
+
 
 .. setting:: COMMENTS_XTD_CONFIRM_EMAIL
 
@@ -167,7 +167,7 @@ tuple with field names, used by the ``get_queryset`` method of ``XtdComment``
 model's manager.
 
 It defaults to ``('thread_id', 'order')``
-             
+
 
 .. setting:: COMMENTS_XTD_MARKUP_FALLBACK_FILTER
 
@@ -283,7 +283,7 @@ Defaults to:
            }
        }
 
-       
+
 .. setting:: COMMENTS_XTD_API_USER_REPR
 
 ``COMMENTS_XTD_API_USER_REPR``
@@ -312,7 +312,7 @@ Defaults to:
 
 .. _Gravatar: http://gravatar.com/
 
-**Optional**. Path to the function used by the web API to retrieve the user's image URL of the user associated with a comment. By default django-comments-xtd tries to retrieve images from Gravatar_. If you use the web API (the JavaScript plugin uses it) then you might want to write a function to provide the URL to the user's image from a comment object. You might be interested on the use case :ref:`ref-change-user-image-or-avatar`, which cover the topic in depth. 
+**Optional**. Path to the function used by the web API to retrieve the user's image URL of the user associated with a comment. By default django-comments-xtd tries to retrieve images from Gravatar_. If you use the web API (the JavaScript plugin uses it) then you might want to write a function to provide the URL to the user's image from a comment object. You might be interested on the use case :ref:`ref-change-user-image-or-avatar`, which cover the topic in depth.
 
  .. code-block:: python
 
@@ -336,3 +336,17 @@ An example::
     COMMENTS_XTD_DEFAULT_FOLLOWUP = True
 
 Defaults to ``False``.
+
+
+.. setting:: COMMENTS_XTD_COMMENTBOX_CLASS
+
+``COMMENTS_XTD_COMMENTBOX_CLASS``
+====================================
+
+**Optional**. Allows to override the class used by the `{% get_commentbox_props %}` template tag, so that the default class can be overriden with your needed functionality. It would be the case if you want to change the queryset returned or if you want to extend the JSON object with additional attributes.
+
+An example::
+
+    COMMENTS_XTD_COMMENTBOX_CLASS = "my_comments.frontend.MyCommentBox"
+
+Defaults to ``django_comments_xtd.api.frontend.CommentBoxDriver``.

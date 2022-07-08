@@ -2,7 +2,7 @@
 
 ## [2.9.7] - 2022-07-08
 
-  * Allows to customize the json object returned by the `get_commentbox_props` template tag. Define the new setting `COMMENTS_XTD_COMMENTBOX_PROPS_CLASS` as the string path to the class that will return the JSON object. It defaults to the class `django_comments_xtd.frontend.CommentBoxDriver`.
+  * Allows to customize the json object returned by the `get_commentbox_props` template tag. Define the new setting `COMMENTS_XTD_COMMENTBOX_CLASS` as the string path to the class that will return the JSON object. It defaults to the class `django_comments_xtd.frontend.CommentBoxDriver`.
 
 ## [2.9.6] - 2022-04-07
 

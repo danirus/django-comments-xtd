@@ -19,7 +19,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.9.5, of
+    This documentation represents the current version, v2.9.7, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.8.5: https://django-comments-xtd.readthedocs.io/en/2.8.5/
@@ -101,7 +101,7 @@ Change Log
 [2.9.7] - 2022-07-08
 --------------------
 
-   * Allows to customize the json object returned by the `get_commentbox_props` template tag. Define the new setting `COMMENTS_XTD_COMMENTBOX_CLASS` as the string path to the class that will return the JSON object. It defaults to the class `django_comments_xtd.frontend.CommentBoxDriver`.
+   * Allows to customize the json object returned by the `get_commentbox_props` template tag. Define the new setting `COMMENTS_XTD_COMMENTBOX_CLASS` as the string path to the class that will return the JSON object. It defaults to the class `django_comments_xtd.api.frontend.CommentBoxDriver`.
 
 [2.9.5] - 2021-12-14
 --------------------

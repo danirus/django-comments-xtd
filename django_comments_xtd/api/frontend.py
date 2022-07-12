@@ -2,6 +2,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.module_loading import import_string
 
 from django_comments.forms import CommentSecurityForm
+from django_comments.utils import get_key_value
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -25,7 +26,7 @@ class CommentBoxDriver(object):
     def get_queryset(cls, ctype, obj, request):
         return XtdComment.objects.filter(
             content_type=ctype,
-            object_pk=obj.pk,
+            object_pk=get_key_value(obj),
             site__pk=get_current_site_id(request),
             is_public=True,
         )
@@ -109,10 +110,10 @@ class CommentBoxDriver(object):
             "flag_url": cls._reverse("comments-flag", args=(0,)),
             "list_url": cls._reverse('comments-xtd-api-list',
                                      kwargs={'content_type': ctype_slug,
-                                             'object_pk': obj.id}),
+                                             'object_pk': get_key_value(obj)}),
             "count_url": cls._reverse('comments-xtd-api-count',
                                       kwargs={'content_type': ctype_slug,
-                                              'object_pk': obj.id}),
+                                              'object_pk': get_key_value(obj)}),
             "send_url": cls._reverse("comments-xtd-api-create"),
             "preview_url": cls._reverse("comments-xtd-api-preview"),
             "form": {

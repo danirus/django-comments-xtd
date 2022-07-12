@@ -3,6 +3,7 @@ from django.apps import apps
 from django.utils.translation import gettext_lazy as _
 
 from django_comments.forms import CommentForm
+from django_comments.utils import get_key
 
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import TmpXtdComment
@@ -60,7 +61,7 @@ class XtdCommentForm(CommentForm):
         ctype = data.get('content_type')
         object_pk = data.get('object_pk')
         model = apps.get_model(ctype.app_label, ctype.model)
-        target = model._default_manager.get(pk=object_pk)
+        target = model._default_manager.get(**{get_key(model): object_pk})
         data.update({'thread_id': 0, 'level': 0, 'order': 1,
                      'parent_id': self.cleaned_data['reply_to'],
                      'followup': self.cleaned_data['followup'],

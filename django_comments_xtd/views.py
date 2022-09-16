@@ -286,7 +286,7 @@ def notify_comment_followers(comment):
         mute_url = reverse('comments-xtd-mute', args=[key.decode('utf-8')])
         message_context = {'user_name': name,
                            'comment': comment,
-                           # 'content_object': target,
+                           'content_object': comment.content_object,
                            'mute_url': mute_url,
                            'site': comment.site}
         text_message = text_message_template.render(message_context)

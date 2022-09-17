@@ -26,7 +26,7 @@ from django_comments.views.utils import next_redirect, confirmation_view
 from django_comments_xtd import (
     comment_was_posted, comment_will_be_posted,
     get_form, get_model as get_comment_model,
-    signals, signed  #  module.
+    signals, signed
 )
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import (

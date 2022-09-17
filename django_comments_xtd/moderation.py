@@ -102,7 +102,7 @@ class SpamModerator(XtdCommentModerator):
         except IndexError:
             return False
         else:
-            if(BlackListedDomain.objects.filter(domain=domain).count()):
+            if BlackListedDomain.objects.filter(domain=domain).count():
                 return False
             return super(SpamModerator, self).allow(comment, content_object,
                                                     request)

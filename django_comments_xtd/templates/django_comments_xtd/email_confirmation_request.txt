@@ -1,20 +1,20 @@
-{{ comment.user_name }},
+{% load i18n %}{{ comment.user_name }},
 
-You or someone in behalf of you have requested to post a comment to the following URL.
+{% trans 'You or someone in behalf of you have requested to post a comment into this page:' %}
 
 URL:  http://{{ site.domain }}{{ comment.content_object.get_absolute_url }}
 
---- Comment: ---
+--- {% trans 'Comment' %}': ---
 {{ comment.comment }}
 ----------------
 
-If you do not wish to post the comment, please ignore this message or report an incident to {{ contact|safe }}. Otherwise click on the link below to confirm the comment.
+{% blocktrans with contact=contact|safe %}If you do not wish to post the comment, please ignore this message or report an incident to {{ contact }}. Otherwise click on the link below to confirm the comment.{% endblocktrans %}
 
 http://{{ site.domain }}{{ confirmation_url }}
 
-If clicking does not work, you can also copy and paste the address into your browser's address window.
-Thanks for your comment!
+{% trans "If clicking does not work, you can also copy and paste the address into your browser's address window." %}
+{% trans 'Thanks for your comment!' %}
 
 --
-Kind regards,
+{% trans 'Kind regards' %},
 {{ site }}

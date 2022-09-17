@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 14:17+0100\n"
+"POT-Creation-Date: 2022-09-17 23:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,9 +18,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: api/serializers.py:192 templates/comments/list.html:17
-#: templates/django_comments_xtd/comment.html:14
-#: templates/django_comments_xtd/comment_tree.html:34
+#: api/serializers.py:277 templates/comments/list.html:17
+#: templates/django_comments_xtd/comment.html:15
+#: templates/django_comments_xtd/comment_tree.html:36
 msgid "This comment has been removed."
 msgstr "Denne kommentaren har blitt fjernet."
 
@@ -28,41 +28,70 @@ msgstr "Denne kommentaren har blitt fjernet."
 msgid "Notify me about follow-up comments"
 msgstr "Varsle meg om svar"
 
-#: forms.py:28
+#: forms.py:29
 msgid "Name"
 msgstr "Navn"
 
-#: forms.py:29
+#: forms.py:31
 msgid "name"
 msgstr "navn"
 
-#: forms.py:32
+#: forms.py:33
 msgid "Mail"
 msgstr "E-post"
 
-#: forms.py:32
+#: forms.py:34
 msgid "Required for comment verification"
 msgstr "Påkrevet for å bekrefte kommentarer"
 
-#: forms.py:33
+#: forms.py:36
 msgid "mail address"
 msgstr "e-postadresse"
 
-#: forms.py:36
+#: forms.py:38
 msgid "Link"
 msgstr "Link"
 
-#: forms.py:38
+#: forms.py:41
 msgid "url your name links to (optional)"
 msgstr "URL som navnet ditt linker til (valgfritt)"
 
-#: forms.py:41
+#: forms.py:45
 msgid "Your comment"
 msgstr "Din kommentar"
 
-#: models.py:70
+#: models.py:68
 msgid "Notify follow-up comments"
 msgstr "Varsle om svar"
+
+#: templates/404.html:9
+msgid "Page not found"
+msgstr ""
+
+#: templates/comments/comment_notification_email.txt:1
+msgid "A new comment has been sent to the following URL:"
+msgstr ""
+
+#: templates/comments/comment_notification_email.txt:5
+#: templates/django_comments_xtd/email_followup_comment.html:5
+#: templates/django_comments_xtd/email_followup_comment.txt:8
+msgid "Sent by"
+msgstr ""
+
+#: templates/comments/comment_notification_email.txt:6
+#, fuzzy
+#| msgid "mail address"
+msgid "Email address"
+msgstr "e-postadresse"
+
+#: templates/comments/comment_notification_email.txt:8
+#: templates/django_comments_xtd/email_confirmation_request.txt:7
+#: templates/django_comments_xtd/email_followup_comment.txt:10
+#: templates/django_comments_xtd/removal_notification_email.txt:3
+#, fuzzy
+#| msgid "Comment reply"
+msgid "Comment"
+msgstr "Tilsvar"
 
 #: templates/comments/delete.html:5
 msgid "Remove comment"
@@ -81,9 +110,15 @@ msgstr ""
 "Som moderator kan du fjerne kommentarer. Kommentarer slettes ikke fra siden, "
 "men teksten skjules. Klikk på fjerneknappen for å fjerne følgende kommentar:"
 
-#: templates/comments/delete.html:41
+#: templates/comments/delete.html:45
 msgid "Remove"
 msgstr "Fjern"
+
+#: templates/comments/delete.html:46 templates/comments/flag.html:57
+#: templates/django_comments_xtd/dislike.html:74
+#: templates/django_comments_xtd/like.html:73
+msgid "cancel"
+msgstr "Avbryt"
 
 #: templates/comments/deleted.html:5
 msgid "Comment removed"
@@ -97,8 +132,7 @@ msgstr "Denne kommentaren har blitt fjernet."
 msgid ""
 "Thank you for taking the time to improve the quality of discussion in our "
 "site."
-msgstr ""
-"Takk for at du tok deg tid til å forbedre diskusjonen på siden vår."
+msgstr "Takk for at du tok deg tid til å forbedre diskusjonen på siden vår."
 
 #: templates/comments/flag.html:5
 msgid "Flag comment"
@@ -114,22 +148,16 @@ msgid ""
 msgstr ""
 "Klikk på rapporteringsknappen for å markere kommentaren som upassende.."
 
-#: templates/comments/flag.html:40
-#: templates/django_comments_xtd/comment.html:10
-#: templates/django_comments_xtd/dislike.html:48
-#: templates/django_comments_xtd/like.html:46
+#: templates/comments/flag.html:41
+#: templates/django_comments_xtd/comment.html:11
+#: templates/django_comments_xtd/dislike.html:49
+#: templates/django_comments_xtd/like.html:47
 msgid "Posted to "
 msgstr "Lagt til på"
 
-#: templates/comments/flag.html:55
+#: templates/comments/flag.html:56
 msgid "Flag"
 msgstr "Rapporter"
-
-#: templates/comments/flag.html:56
-#: templates/django_comments_xtd/dislike.html:73
-#: templates/django_comments_xtd/like.html:72
-msgid "cancel"
-msgstr "Avbryt"
 
 #: templates/comments/flagged.html:5
 msgid "Comment flagged"
@@ -148,7 +176,7 @@ msgid "preview"
 msgstr "forhåndsvis"
 
 #: templates/comments/list.html:25
-#: templates/django_comments_xtd/comment_tree.html:43
+#: templates/django_comments_xtd/comment_tree.html:45
 msgid "Reply"
 msgstr "Svar"
 
@@ -163,8 +191,12 @@ msgid ""
 "confirm\n"
 "            your comment."
 msgstr ""
-"En bekreftelsesmelding har blitt sendt til e-postadressen din. "
-"Vennligst klikk på linken i meldingen for å bekrefte kommentaren."
+"En bekreftelsesmelding har blitt sendt til e-postadressen din. Vennligst "
+"klikk på linken i meldingen for å bekrefte kommentaren."
+
+#: templates/comments/posted.html:17
+msgid "Go back to"
+msgstr ""
 
 #: templates/comments/preview.html:5 templates/comments/preview.html:10
 msgid "Preview your comment"
@@ -178,7 +210,7 @@ msgstr "Forhåndsvis kommentaren din for:"
 msgid "Empty comment."
 msgstr "Tom kommentar"
 
-#: templates/comments/preview.html:41
+#: templates/comments/preview.html:48
 #: templates/django_comments_xtd/reply.html:32
 msgid "Post your comment"
 msgstr "Legg inn din kommentar"
@@ -187,22 +219,28 @@ msgstr "Legg inn din kommentar"
 msgid "List of comments"
 msgstr "Liste over kommentarer"
 
-#: templates/django_comments_xtd/comment_tree.html:13
+#: templates/django_comments_xtd/comment_list.html:21
+#, fuzzy
+#| msgid "Your comment"
+msgid "No comments yet."
+msgstr "Din kommentar"
+
+#: templates/django_comments_xtd/comment_tree.html:12
 msgid "moderator"
 msgstr "moderator"
 
-#: templates/django_comments_xtd/comment_tree.html:13
+#: templates/django_comments_xtd/comment_tree.html:12
 msgid "comment permalink"
 msgstr "Permanent link"
 
-#: templates/django_comments_xtd/comment_tree.html:18
+#: templates/django_comments_xtd/comment_tree.html:17
 #, python-format
 msgid "A user has flagged this comment as inappropriate."
 msgid_plural "%(counter)s users have flagged this comment as inappropriate."
 msgstr[0] "En bruker har rapportert denne kommentaren som upassende."
 msgstr[1] "%(counter)s brukere har rapportert denne kommentaren som upassende."
 
-#: templates/django_comments_xtd/comment_tree.html:22
+#: templates/django_comments_xtd/comment_tree.html:21
 msgid "comment flagged"
 msgstr "kommentar rapportert"
 
@@ -210,7 +248,7 @@ msgstr "kommentar rapportert"
 msgid "flag comment"
 msgstr "rapporter kommentar"
 
-#: templates/django_comments_xtd/comment_tree.html:28
+#: templates/django_comments_xtd/comment_tree.html:30
 msgid "remove comment"
 msgstr "fjern kommentar"
 
@@ -244,21 +282,20 @@ msgstr "Misliker du denne kommentaren?"
 msgid "Please, confirm your opinion about the comment."
 msgstr "Vennligst bekreft din mening om kommentaren."
 
-#: templates/django_comments_xtd/dislike.html:61
+#: templates/django_comments_xtd/dislike.html:62
 msgid ""
 "Click on the \"withdraw\" button if you want to withdraw your negative "
 "opinion on this comment."
 msgstr ""
-"Klikk på avbryt-knappen hvis du vil trekke din negative tilbakemelding "
-"til denne kommentaren."
+"Klikk på avbryt-knappen hvis du vil trekke din negative tilbakemelding til "
+"denne kommentaren."
 
-
-#: templates/django_comments_xtd/dislike.html:69
-#: templates/django_comments_xtd/like.html:68
+#: templates/django_comments_xtd/dislike.html:70
+#: templates/django_comments_xtd/like.html:69
 msgid "Withdraw"
 msgstr "Avbryt"
 
-#: templates/django_comments_xtd/dislike.html:71
+#: templates/django_comments_xtd/dislike.html:72
 msgid "I dislike it"
 msgstr "Jeg misliker den"
 
@@ -271,13 +308,72 @@ msgstr "Du mislikte kommentaren"
 msgid "Thanks for taking the time to participate."
 msgstr "Takk for at du deltar."
 
+#: templates/django_comments_xtd/email_confirmation_request.html:3
+#: templates/django_comments_xtd/email_confirmation_request.txt:3
+msgid ""
+"You or someone in behalf of you have requested to post a comment into this "
+"page:"
+msgstr ""
+
+#: templates/django_comments_xtd/email_confirmation_request.html:7
+#: templates/django_comments_xtd/email_followup_comment.html:8
+#, fuzzy
+#| msgid "Remove comment"
+msgid "The comment"
+msgstr "Fjern kommentar"
+
+#: templates/django_comments_xtd/email_confirmation_request.html:11
+#: templates/django_comments_xtd/email_confirmation_request.txt:11
+#, python-format
+msgid ""
+"If you do not wish to post the comment, please ignore this message or report "
+"an incident to %(contact)s. Otherwise click on the link below to confirm the "
+"comment."
+msgstr ""
+
+#: templates/django_comments_xtd/email_confirmation_request.html:15
+#: templates/django_comments_xtd/email_confirmation_request.txt:15
+msgid ""
+"If clicking does not work, you can also copy and paste the address into your "
+"browser's address window."
+msgstr ""
+
+#: templates/django_comments_xtd/email_confirmation_request.html:17
+#: templates/django_comments_xtd/email_confirmation_request.txt:16
+#, fuzzy
+#| msgid "Post your comment"
+msgid "Thanks for your comment!"
+msgstr "Legg inn din kommentar"
+
+#: templates/django_comments_xtd/email_confirmation_request.html:19
+#: templates/django_comments_xtd/email_confirmation_request.txt:19
+#: templates/django_comments_xtd/email_followup_comment.html:14
+#: templates/django_comments_xtd/email_followup_comment.txt:20
+msgid "Kind regards"
+msgstr "Med vennlig hilsen"
+
+#: templates/django_comments_xtd/email_followup_comment.html:3
 #: templates/django_comments_xtd/email_followup_comment.txt:4
 msgid "There is a new comment following up yours."
 msgstr "Din kommentar har fått et nytt svar."
 
-#: templates/django_comments_xtd/email_followup_comment.txt:20
-msgid "Kind regards"
-msgstr "Med vennlig hilsen"
+#: templates/django_comments_xtd/email_followup_comment.html:12
+#, python-format
+msgid ""
+"Click <a href=\"http://%(site_domain)s%(mute_url)s\">http://%(site_domain)s"
+"%(mute_url_short)s...</a> to mute the comments thread. You will no longer "
+"receive follow-up notifications."
+msgstr ""
+
+#: templates/django_comments_xtd/email_followup_comment.txt:6
+msgid "Post"
+msgstr ""
+
+#: templates/django_comments_xtd/email_followup_comment.txt:15
+msgid ""
+"Click on the following link to mute the comments thread. You will no longer "
+"receive follow-up notifications:"
+msgstr ""
 
 #: templates/django_comments_xtd/like.html:15
 msgid "You liked this comment, do you want to change it?"
@@ -287,7 +383,7 @@ msgstr "Du likte denne kommentaren. Vil du endre den?"
 msgid "Do you like this comment?"
 msgstr "Vil du like denne kommentaren?"
 
-#: templates/django_comments_xtd/like.html:59
+#: templates/django_comments_xtd/like.html:60
 msgid ""
 "Click on the \"withdraw\" button if you want to withdraw your positive "
 "opinion on this comment."
@@ -295,8 +391,7 @@ msgstr ""
 "Klikk på avbryt-knappen hvis du vil trekke tilbake din positive "
 "tilbakemelding til denne kommentaren."
 
-
-#: templates/django_comments_xtd/like.html:70
+#: templates/django_comments_xtd/like.html:71
 msgid "I like it"
 msgstr "Jeg liker den"
 
@@ -349,7 +444,24 @@ msgstr "Kommentartråden har blitt dempet"
 
 #: templates/django_comments_xtd/muted.html:9
 msgid "You will no longer receive email notifications for comments sent to"
-msgstr "Du kommer ikke lenger til å motta e-postvarsler om kommentarer sent til"
+msgstr ""
+"Du kommer ikke lenger til å motta e-postvarsler om kommentarer sent til"
+
+#: templates/django_comments_xtd/only_users_can_post.html:5
+msgid "Only registered users can post comments."
+msgstr ""
+
+#: templates/django_comments_xtd/removal_notification_email.txt:1
+msgid "A removal suggestion has been received for the following comment:"
+msgstr ""
+
+#: templates/django_comments_xtd/removal_notification_email.txt:7
+msgid "Posted to the following URL"
+msgstr ""
+
+#: templates/django_comments_xtd/removal_notification_email.txt:10
+msgid "Removal suggested by"
+msgstr ""
 
 #: templates/django_comments_xtd/reply.html:6
 msgid "Comment reply"
@@ -359,10 +471,28 @@ msgstr "Tilsvar"
 msgid "Reply to comment"
 msgstr "Svar på kommentar"
 
-#: views.py:49
+#: tests/apiauth.py:17
+msgid "Invalid token header. No credentials provided."
+msgstr ""
+
+#: tests/apiauth.py:20
+msgid "Invalid token header.Token string should not contain spaces."
+msgstr ""
+
+#: tests/apiauth.py:27
+msgid ""
+"Invalid token header. Token string should not contain invalid characters."
+msgstr ""
+
+#: views.py:60
 msgid "comment confirmation request"
 msgstr "bekreftelsesforespørsel"
 
-#: views.py:212
+#: views.py:278
 msgid "new comment posted"
 msgstr "ny kommentar lagt inn"
+
+#, fuzzy
+#~| msgid "Kind regards"
+#~ msgid "Kind regards,"
+#~ msgstr "Med vennlig hilsen"

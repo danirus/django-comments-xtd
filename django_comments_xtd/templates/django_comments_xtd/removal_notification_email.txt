@@ -1,10 +1,10 @@
-A removal suggestion has been received for the following comment:
+{% load i18n %}{% trans 'A removal suggestion has been received for the following comment:' %}
 
---- Comment: ---
+--- {% trans 'Comment' %}': ---
 {{ comment.comment }}
 
 
-Posted to the following URL:
+{% trans 'Posted to the following URL' %}':
 http{% if request.is_secure %}s{% endif %}://{{ current_site.domain }}{{ content_object.get_absolute_url }}
 
-Removal suggested by: {{ request.user }}
+{% trans 'Removal suggested by' %}': {{ request.user }}

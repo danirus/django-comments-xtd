@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.6.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-30 13:39+0200\n"
+"POT-Creation-Date: 2022-09-17 23:38+0200\n"
 "PO-Revision-Date: 2020-05-30 14:40+0200\n"
 "Last-Translator: Jean-Paul Ladage <j.ladage@zestsoftware.nl>\n"
 "Language-Team: Jean-Paul Ladage <j.ladage@zestsoftware.nl>\n"
@@ -17,9 +17,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: api/serializers.py:242 templates/comments/list.html:17
+#: api/serializers.py:277 templates/comments/list.html:17
 #: templates/django_comments_xtd/comment.html:15
-#: templates/django_comments_xtd/comment_tree.html:34
+#: templates/django_comments_xtd/comment_tree.html:36
 msgid "This comment has been removed."
 msgstr "Deze reactie is verwijderd."
 
@@ -27,41 +27,70 @@ msgstr "Deze reactie is verwijderd."
 msgid "Notify me about follow-up comments"
 msgstr "Stuur mij een notificatie als iemand op mijn reactie antwoord."
 
-#: forms.py:28
+#: forms.py:29
 msgid "Name"
 msgstr "Naam"
 
-#: forms.py:29
+#: forms.py:31
 msgid "name"
 msgstr "naam"
 
-#: forms.py:32
+#: forms.py:33
 msgid "Mail"
 msgstr "Mail"
 
-#: forms.py:32
+#: forms.py:34
 msgid "Required for comment verification"
 msgstr "Verplicht voor verificatie per e-mail."
 
-#: forms.py:33
+#: forms.py:36
 msgid "mail address"
 msgstr "e-mailadres"
 
-#: forms.py:36
+#: forms.py:38
 msgid "Link"
 msgstr "Link"
 
-#: forms.py:38
+#: forms.py:41
 msgid "url your name links to (optional)"
 msgstr "URL waar uw naam naar linkt (optioneel)."
 
-#: forms.py:41
+#: forms.py:45
 msgid "Your comment"
 msgstr "Uw reactie"
 
-#: models.py:70
+#: models.py:68
 msgid "Notify follow-up comments"
 msgstr "Notificaties bij reacties."
+
+#: templates/404.html:9
+msgid "Page not found"
+msgstr ""
+
+#: templates/comments/comment_notification_email.txt:1
+msgid "A new comment has been sent to the following URL:"
+msgstr ""
+
+#: templates/comments/comment_notification_email.txt:5
+#: templates/django_comments_xtd/email_followup_comment.html:5
+#: templates/django_comments_xtd/email_followup_comment.txt:8
+msgid "Sent by"
+msgstr ""
+
+#: templates/comments/comment_notification_email.txt:6
+#, fuzzy
+#| msgid "mail address"
+msgid "Email address"
+msgstr "e-mailadres"
+
+#: templates/comments/comment_notification_email.txt:8
+#: templates/django_comments_xtd/email_confirmation_request.txt:7
+#: templates/django_comments_xtd/email_followup_comment.txt:10
+#: templates/django_comments_xtd/removal_notification_email.txt:3
+#, fuzzy
+#| msgid "Comment reply"
+msgid "Comment"
+msgstr "Beantwoorden"
 
 #: templates/comments/delete.html:5
 msgid "Remove comment"
@@ -76,11 +105,19 @@ msgid ""
 "As a moderator you can delete comments. Deleting a comment does not remove "
 "it from the site, only prevents your website from showing the text. Click on "
 "the remove button to delete the following comment:"
-msgstr "As beheerder kunt u reacties verwijderen. Deze worden niet echt verwijderd van de website, alleen verborgen."
+msgstr ""
+"As beheerder kunt u reacties verwijderen. Deze worden niet echt verwijderd "
+"van de website, alleen verborgen."
 
-#: templates/comments/delete.html:41
+#: templates/comments/delete.html:45
 msgid "Remove"
 msgstr "Verwijder"
+
+#: templates/comments/delete.html:46 templates/comments/flag.html:57
+#: templates/django_comments_xtd/dislike.html:74
+#: templates/django_comments_xtd/like.html:73
+msgid "cancel"
+msgstr "annuleer"
 
 #: templates/comments/deleted.html:5
 msgid "Comment removed"
@@ -120,12 +157,6 @@ msgstr "Aan "
 msgid "Flag"
 msgstr "Markeer"
 
-#: templates/comments/flag.html:57
-#: templates/django_comments_xtd/dislike.html:74
-#: templates/django_comments_xtd/like.html:73
-msgid "cancel"
-msgstr "annuleer"
-
 #: templates/comments/flagged.html:5
 msgid "Comment flagged"
 msgstr "Reactie gemarkeerd"
@@ -143,7 +174,7 @@ msgid "preview"
 msgstr "voorbeeld"
 
 #: templates/comments/list.html:25
-#: templates/django_comments_xtd/comment_tree.html:43
+#: templates/django_comments_xtd/comment_tree.html:45
 msgid "Reply"
 msgstr "Beantwoorden..."
 
@@ -157,8 +188,13 @@ msgid ""
 "            email address. Please, click on the link in the message to "
 "confirm\n"
 "            your comment."
-msgstr "Er is een bevestigingsbericht gestuurd naar uw e-mailadres.\n"
+msgstr ""
+"Er is een bevestigingsbericht gestuurd naar uw e-mailadres.\n"
 "Klik op de link in het bericht om uw reactie te bevestigen"
+
+#: templates/comments/posted.html:17
+msgid "Go back to"
+msgstr ""
 
 #: templates/comments/preview.html:5 templates/comments/preview.html:10
 msgid "Preview your comment"
@@ -172,7 +208,7 @@ msgstr "Voorbeeldweergave van uw reactie op:"
 msgid "Empty comment."
 msgstr "Lege reactie"
 
-#: templates/comments/preview.html:41
+#: templates/comments/preview.html:48
 #: templates/django_comments_xtd/reply.html:32
 msgid "Post your comment"
 msgstr "Plaats uw reactie"
@@ -181,22 +217,28 @@ msgstr "Plaats uw reactie"
 msgid "List of comments"
 msgstr "Reacties"
 
-#: templates/django_comments_xtd/comment_tree.html:13
+#: templates/django_comments_xtd/comment_list.html:21
+#, fuzzy
+#| msgid "Your comment"
+msgid "No comments yet."
+msgstr "Uw reactie"
+
+#: templates/django_comments_xtd/comment_tree.html:12
 msgid "moderator"
 msgstr "beheerder"
 
-#: templates/django_comments_xtd/comment_tree.html:13
+#: templates/django_comments_xtd/comment_tree.html:12
 msgid "comment permalink"
 msgstr "permalink"
 
-#: templates/django_comments_xtd/comment_tree.html:18
+#: templates/django_comments_xtd/comment_tree.html:17
 #, python-format
 msgid "A user has flagged this comment as inappropriate."
 msgid_plural "%(counter)s users have flagged this comment as inappropriate."
 msgstr[0] "Een gebruiker heeft deze reactie als ongepast gemarkeerd."
 msgstr[1] "%(counter)s gebruikers hebben dit bericht als ongepast gemarkeerd."
 
-#: templates/django_comments_xtd/comment_tree.html:22
+#: templates/django_comments_xtd/comment_tree.html:21
 msgid "comment flagged"
 msgstr "reactie gemarkeerd"
 
@@ -204,7 +246,7 @@ msgstr "reactie gemarkeerd"
 msgid "flag comment"
 msgstr "markeer reactie"
 
-#: templates/django_comments_xtd/comment_tree.html:28
+#: templates/django_comments_xtd/comment_tree.html:30
 msgid "remove comment"
 msgstr "verwijder reactie"
 
@@ -262,13 +304,72 @@ msgstr "U vindt deze reactie niet leuk"
 msgid "Thanks for taking the time to participate."
 msgstr "Bedankt dat actief deelneemt."
 
+#: templates/django_comments_xtd/email_confirmation_request.html:3
+#: templates/django_comments_xtd/email_confirmation_request.txt:3
+msgid ""
+"You or someone in behalf of you have requested to post a comment into this "
+"page:"
+msgstr ""
+
+#: templates/django_comments_xtd/email_confirmation_request.html:7
+#: templates/django_comments_xtd/email_followup_comment.html:8
+#, fuzzy
+#| msgid "Remove comment"
+msgid "The comment"
+msgstr "Verwijder reactie"
+
+#: templates/django_comments_xtd/email_confirmation_request.html:11
+#: templates/django_comments_xtd/email_confirmation_request.txt:11
+#, python-format
+msgid ""
+"If you do not wish to post the comment, please ignore this message or report "
+"an incident to %(contact)s. Otherwise click on the link below to confirm the "
+"comment."
+msgstr ""
+
+#: templates/django_comments_xtd/email_confirmation_request.html:15
+#: templates/django_comments_xtd/email_confirmation_request.txt:15
+msgid ""
+"If clicking does not work, you can also copy and paste the address into your "
+"browser's address window."
+msgstr ""
+
+#: templates/django_comments_xtd/email_confirmation_request.html:17
+#: templates/django_comments_xtd/email_confirmation_request.txt:16
+#, fuzzy
+#| msgid "Post your comment"
+msgid "Thanks for your comment!"
+msgstr "Plaats uw reactie"
+
+#: templates/django_comments_xtd/email_confirmation_request.html:19
+#: templates/django_comments_xtd/email_confirmation_request.txt:19
+#: templates/django_comments_xtd/email_followup_comment.html:14
+#: templates/django_comments_xtd/email_followup_comment.txt:20
+msgid "Kind regards"
+msgstr "Met vriendelijke groet,"
+
+#: templates/django_comments_xtd/email_followup_comment.html:3
 #: templates/django_comments_xtd/email_followup_comment.txt:4
 msgid "There is a new comment following up yours."
 msgstr "Er is een nieuw antwoord op jouw reactie geplaatst."
 
-#: templates/django_comments_xtd/email_followup_comment.txt:20
-msgid "Kind regards"
-msgstr "Met vriendelijke groet,"
+#: templates/django_comments_xtd/email_followup_comment.html:12
+#, python-format
+msgid ""
+"Click <a href=\"http://%(site_domain)s%(mute_url)s\">http://%(site_domain)s"
+"%(mute_url_short)s...</a> to mute the comments thread. You will no longer "
+"receive follow-up notifications."
+msgstr ""
+
+#: templates/django_comments_xtd/email_followup_comment.txt:6
+msgid "Post"
+msgstr ""
+
+#: templates/django_comments_xtd/email_followup_comment.txt:15
+msgid ""
+"Click on the following link to mute the comments thread. You will no longer "
+"receive follow-up notifications:"
+msgstr ""
 
 #: templates/django_comments_xtd/like.html:15
 msgid "You liked this comment, do you want to change it?"
@@ -310,7 +411,8 @@ msgid ""
 msgstr ""
 "\n"
 "            Uw reactie wacht op goedkeuring door de beheerder.<br/>\n"
-"            De inhoud wordt gecontroleerd voordat het gepubliceerd mag worden.<br/>\n"
+"            De inhoud wordt gecontroleerd voordat het gepubliceerd mag "
+"worden.<br/>\n"
 "            Bedankt voor uw geduld en begrip.\n"
 "            "
 
@@ -326,6 +428,7 @@ msgstr ""
 "            Terug naar: <a href=\"%(content_object_url)s\">"
 "%(content_object_str)s</a>\n"
 "            "
+
 #: templates/django_comments_xtd/muted.html:4
 msgid "Comment thread muted"
 msgstr "Discussie gedempd"
@@ -337,8 +440,24 @@ msgstr "Reacties op deze discussies worden gedempd"
 #: templates/django_comments_xtd/muted.html:9
 msgid "You will no longer receive email notifications for comments sent to"
 msgstr ""
-"U ontvangt geen nieuwe notificaties per e-mail als er reacties door anderen"
-" geplaatst worden."
+"U ontvangt geen nieuwe notificaties per e-mail als er reacties door anderen "
+"geplaatst worden."
+
+#: templates/django_comments_xtd/only_users_can_post.html:5
+msgid "Only registered users can post comments."
+msgstr ""
+
+#: templates/django_comments_xtd/removal_notification_email.txt:1
+msgid "A removal suggestion has been received for the following comment:"
+msgstr ""
+
+#: templates/django_comments_xtd/removal_notification_email.txt:7
+msgid "Posted to the following URL"
+msgstr ""
+
+#: templates/django_comments_xtd/removal_notification_email.txt:10
+msgid "Removal suggested by"
+msgstr ""
 
 #: templates/django_comments_xtd/reply.html:6
 msgid "Comment reply"
@@ -348,10 +467,28 @@ msgstr "Beantwoorden"
 msgid "Reply to comment"
 msgstr "Beantwoord deze reactie"
 
-#: views.py:49
+#: tests/apiauth.py:17
+msgid "Invalid token header. No credentials provided."
+msgstr ""
+
+#: tests/apiauth.py:20
+msgid "Invalid token header.Token string should not contain spaces."
+msgstr ""
+
+#: tests/apiauth.py:27
+msgid ""
+"Invalid token header. Token string should not contain invalid characters."
+msgstr ""
+
+#: views.py:60
 msgid "comment confirmation request"
 msgstr "reactiebevestiging gestuurd"
 
-#: views.py:212
+#: views.py:278
 msgid "new comment posted"
 msgstr "Nieuw reactie geplaatst."
+
+#, fuzzy
+#~| msgid "Kind regards"
+#~ msgid "Kind regards,"
+#~ msgstr "Met vriendelijke groet,"

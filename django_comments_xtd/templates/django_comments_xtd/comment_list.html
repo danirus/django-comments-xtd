@@ -18,7 +18,7 @@
                     {% for comment in object_list %}
                     {% include "django_comments_xtd/comment.html" %}
                     {% empty %}
-                    <p class="text-center">No comments yet.</p>
+                    <p class="text-center">{% trans 'No comments yet.' %}</p>
                     {% endfor %}
                 </div>
 

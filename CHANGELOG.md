@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.9.8] - 2022-09-18
+
+ * Fixes [issue 377](https://github.com/danirus/django-comments-xtd/issues/377): content_object is missing in followup notification. View `notify_comment_followers` has been updated to include `content_object` in the context of templates it uses: `email_followup_comment.txt` and `email_followup_comment.html`.
+ * Update translation files to the latest strings found in templates. Next step is to include appropriate translations. See [PR #379](https://github.com/danirus/django-comments-xtd/pull/379).
+
 ## [2.9.7] - 2022-07-08
 
   * Allows to customize the json object returned by the `get_commentbox_props` template tag. Define the new setting `COMMENTS_XTD_COMMENTBOX_CLASS` as the string path to the class that will return the JSON object. It defaults to the class `django_comments_xtd.api.frontend.CommentBoxDriver`.

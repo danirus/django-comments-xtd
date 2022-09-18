@@ -19,3 +19,8 @@ coverage = "^5.5"
 [build-system]
 requires = ["poetry>=1.1,<1.2"]
 build-backend = "poetry.masonry.api"
+
+[tool.pytest]
+addopts = "--create-db"
+django_find_project = false
+python_files = "test_*.py"

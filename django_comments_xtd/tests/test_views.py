@@ -203,6 +203,15 @@ class ConfirmCommentTestCase(TestCase):
                              self.mock_mailer.call_args[0][1]).group("key")
         confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 3)
+        self.assertTrue(
+            # We can find the 'comment' in the text_message.
+            self.mock_mailer.call_args[0][1].index(data['comment']) > -1
+        )
+        articles_title = f"Post: {self.article.title}"
+        self.assertTrue(
+            # We can find article's title (comment.content_object.title).
+            self.mock_mailer.call_args[0][1].index(articles_title) > -1
+        )
         self.assertTrue(self.mock_mailer.call_args[0][3] == ["bob@example.com"])
         self.assertTrue(self.mock_mailer.call_args[0][1].find(
             "There is a new comment following up yours.") > -1)

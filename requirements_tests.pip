@@ -1,2 +1,4 @@
 -r requirements.pip
-coverage
+coverage>=6.4,<6.5
+pytest>=7.1,<7.2
+pytest-django>=4.5,<4.6

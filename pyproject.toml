@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-comments-xtd"
-version = "2.9.7"
+version = "2.9.8"
 description = "Django Comments Framework extension app with thread support, follow up notifications and email confirmations."
 authors = ["Daniela Rus Morales <danirus@eml.cc>"]
 

@@ -3,11 +3,11 @@
 
 {% blocktrans %}There is a new comment following up yours.{% endblocktrans %}
 
-{% trans 'Post' %}': {{ content_object.title }}
+{% trans 'Post' %}: {{ content_object.title }}
 URL:  http://{{ site.domain }}{{ content_object.get_absolute_url }}
-{% trans 'Sent by' %}': {{ comment.name }}, {{ comment.submit_date|date:"SHORT_DATE_FORMAT" }}
+{% trans 'Sent by' %}: {{ comment.name }}, {{ comment.submit_date|date:"SHORT_DATE_FORMAT" }}
 
---- {% trans 'Comment' %}': ---
+--- {% trans 'Comment' %}: ---
 {{ comment.comment }}
 
 

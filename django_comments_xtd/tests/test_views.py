@@ -68,6 +68,17 @@ app_model_options_mock = {
 }
 
 
+class DummyViewTestCase(TestCase):
+    def setUp(self):
+        self.user = AnonymousUser()
+
+    def test_dummy_view_response(self):
+        response = self.client.get(reverse("diary-detail",
+                                           kwargs={"year": 2022, 'month': 10, 'day': 4}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b'Got it')
+
+
 class OnCommentWasPostedTestCase(TestCase):
     def setUp(self):
         patcher = patch('django_comments_xtd.views.send_mail')

@@ -1,6 +1,9 @@
 from io import StringIO
+from unittest.mock import patch
+
 from django.core.management import call_command
 from django.test import TestCase
+from django.utils.connection import ConnectionDoesNotExist
 
 from django_comments_xtd.models import XtdComment
 from django_comments_xtd.tests.models import Article
@@ -57,3 +60,13 @@ class InitializeNesteCountCmdTest(TestCase):
         call_command('initialize_nested_count', stdout=out)
         self.assertIn("Updated 9 XtdComment object(s).", out.getvalue())
         self.check_nested_count()
+
+    def test_command_skips_failed_database(self):
+        out = StringIO()
+        method_ref = ('django_comments_xtd.management.commands'
+                      '.initialize_nested_count.Command'
+                      '.initialize_nested_count')
+        with patch(method_ref) as mock_initialize_nested_count:
+            mock_initialize_nested_count.side_effect = ConnectionDoesNotExist
+            call_command('initialize_nested_count', stdout=out)
+        self.assertIn("DB connection 'default' does not exist.", out.getvalue())

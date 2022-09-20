@@ -22,6 +22,18 @@ from django_comments_xtd.tests.models import (
 from django_comments_xtd.tests.utils import post_comment
 
 
+def _create_user(can_moderate=False):
+    bob = User.objects.create_user("joe", "fulanito@detal.com", "pwd",
+                                   first_name="Joe", last_name="Bloggs")
+    if can_moderate:
+        ct = ContentType.objects.get(app_label="django_comments",
+                                     model="comment")
+        permission = Permission.objects.get(content_type=ct,
+                                            codename="can_moderate")
+        bob.user_permissions.add(permission)
+    return bob
+
+
 class UserModeratorTestCase(TestCase):
     # Test ReadCommentSerializer.user_moderator field.
 
@@ -31,17 +43,6 @@ class UserModeratorTestCase(TestCase):
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October...")
         self.form = django_comments.get_form()(self.article)
-
-    def _create_user(self, can_moderate=False):
-        bob = User.objects.create_user("joe", "fulanito@detal.com", "pwd",
-                                       first_name="Joe", last_name="Bloggs")
-        if can_moderate:
-            ct = ContentType.objects.get(app_label="django_comments",
-                                         model="comment")
-            permission = Permission.objects.get(content_type=ct,
-                                                codename="can_moderate")
-            bob.user_permissions.add(permission)
-        return bob
 
     def _send_auth_comment(self, user):
         data = {"name": "", "email": "",
@@ -53,7 +54,7 @@ class UserModeratorTestCase(TestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_user_moderator_is_False(self):
-        bob = self._create_user(can_moderate=False)
+        bob = _create_user(can_moderate=False)
         self._send_auth_comment(bob)
 
         # Fetch the comment, serialize it and check user_moderator field.
@@ -63,7 +64,7 @@ class UserModeratorTestCase(TestCase):
         self.assertFalse(ser.data['user_moderator'])
 
     def test_user_moderator_is_True(self):
-        bob = self._create_user(can_moderate=True)
+        bob = _create_user(can_moderate=True)
         self._send_auth_comment(bob)
 
         # Fetch the comment, serialize it and check user_moderator field.
@@ -76,7 +77,7 @@ class UserModeratorTestCase(TestCase):
 class PostCommentAsVisitorTestCase(TestCase):
     # Test WriteCommentSerializer as a mere visitor. The function in
     # authorize_api_post_comment in `test/models.py` is not listening for
-    # the signal `should_request_be_authorized` yet. Therefore before
+    # the signal `should_request_be_authorized` yet. Therefore, before
     # connecting the signal with the function the post comment must fail
     # indicating missing fields (timestamp, security_hash and honeypot).
 
@@ -86,7 +87,7 @@ class PostCommentAsVisitorTestCase(TestCase):
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October...")
         self.form = django_comments.get_form()(self.article)
-        # Remove the following fields on purpose, as we don't know them and
+        # Remove the following fields on purpose, as we don't know them, and
         # therefore we don't send them when using the web API (unless when)
         # using the JavaScript plugin, but that is not the case being tested
         # here.
@@ -115,7 +116,7 @@ class PostCommentAsVisitorTestCase(TestCase):
         }
         data.update(self.form.initial)
         client = APIClient()
-        token = "Token 08d9fd42468aebbb8087b604b526ff0821ce4525";
+        token = "Token 08d9fd42468aebbb8087b604b526ff0821ce4525"
         client.credentials(HTTP_AUTHORIZATION=token)
         self.assertTrue(self.mock_mailer.call_count == 0)
         response = client.post(reverse('comments-xtd-api-create'), data)
@@ -123,8 +124,8 @@ class PostCommentAsVisitorTestCase(TestCase):
         self.assertTrue(self.mock_mailer.call_count == 1)
 
     def test_post_comment_as_registered_user_after_connecting_signal(self):
-        bob = User.objects.create_user("joe", "fulanito@detal.com", "pwd",
-                                       first_name="Joe", last_name="Bloggs")
+        User.objects.create_user("joe", "fulanito@detal.com", "pwd",
+                                 first_name="Joe", last_name="Bloggs")
 
         should_request_be_authorized.connect(authorize_api_post_comment)
         data = {
@@ -136,7 +137,7 @@ class PostCommentAsVisitorTestCase(TestCase):
         client.login(username='joe', password='pwd')
         self.assertTrue(self.mock_mailer.call_count == 0)
         response = client.post(reverse('comments-xtd-api-create'), data)
-        self.assertEqual(response.status_code, 201)  # Comment created.
+        self.assertEqual(response.status_code, 201)  # Comment created.
         self.assertTrue(self.mock_mailer.call_count == 0)
 
 
@@ -144,7 +145,7 @@ def get_fake_avatar(comment):
     return f"/fake/avatar/{comment.user.username}"
 
 
-funcpath = "django_comments_xtd.tests.test_serializers.get_fake_avatar"
+get_fake_avatar_function_path = "django_comments_xtd.tests.test_serializers.get_fake_avatar"  # NOQA: E501
 
 
 class ReadCommentsGetUserAvatarTestCase(TestCase):
@@ -184,7 +185,7 @@ class ReadCommentsGetUserAvatarTestCase(TestCase):
                                   submit_date=datetime.now())
 
     @patch.multiple('django_comments_xtd.conf.settings',
-                    COMMENTS_XTD_API_GET_USER_AVATAR=funcpath)
+                    COMMENTS_XTD_API_GET_USER_AVATAR=get_fake_avatar_function_path)  # NOQA: E501
     def test_setting_COMMENTS_XTD_API_GET_USER_AVATAR_works(self):
         qs = XtdComment.objects.all()
         ser = ReadCommentSerializer(qs, context={"request": None}, many=True)

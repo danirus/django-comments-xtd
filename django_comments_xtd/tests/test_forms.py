@@ -33,7 +33,7 @@ class XtdCommentFormTestCase(TestCase):
                 "email": "danirus@eml.cc",
                 "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,
-                "comment": "Es war einmal iene kleine..."}
+                "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
         form = django_comments.get_form()(self.article, data)
         self.assertTrue(self.form.security_errors() == {})
@@ -45,7 +45,7 @@ class XtdCommentFormTestCase(TestCase):
 
     @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_XTD_DEFAULT_FOLLOWUP=False)
-    def test_followup_prechecked(self):
+    def test_followup_pre_checked(self):
         # Have to update form object to re-initialize 'followup' checkbox
         # with settings.
         self.form = django_comments.get_form()(self.article)
@@ -53,9 +53,8 @@ class XtdCommentFormTestCase(TestCase):
 
     @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_XTD_DEFAULT_FOLLOWUP=True)
-    def test_followup_preunchecked(self):
+    def test_followup_pre_unchecked(self):
         # Have to update form object to re-initialize 'followup' checkbox
         # with settings.
         self.form = django_comments.get_form()(self.article)
         self.assertEqual(self.form.fields['followup'].initial, True)
-

@@ -73,8 +73,12 @@ class DummyViewTestCase(TestCase):
         self.user = AnonymousUser()
 
     def test_dummy_view_response(self):
-        response = self.client.get(reverse("diary-detail",
-                                           kwargs={"year": 2022, 'month': 10, 'day': 4}))
+        response = self.client.get(
+            reverse(
+                "diary-detail",
+                kwargs={"year": 2022, 'month': 10, 'day': 4}
+            )
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b'Got it')
 
@@ -130,13 +134,14 @@ class ConfirmCommentTestCase(TestCase):
         self.form = django_comments.get_form()(self.article)
         data = {"name": "Bob", "email": "bob@example.com", "followup": True,
                 "reply_to": 0, "level": 1, "order": 1,
-                "comment": "Es war einmal iene kleine..."}
+                "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
-        response = post_article_comment(data, self.article)
+        post_article_comment(data, self.article)
         self.assertTrue(self.mock_mailer.call_count == 1)
         self.key = str(
-            re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
-                      self.mock_mailer.call_args[0][1]
+            re.search(
+                r'http://.+/confirm/(?P<key>\S+)/',
+                self.mock_mailer.call_args[0][1]
             ).group("key")
         )
         self.addCleanup(patcher.stop)
@@ -144,18 +149,17 @@ class ConfirmCommentTestCase(TestCase):
     def test_confirm_url_is_short_enough(self):
         # Tests that the length of the confirm url's length isn't
         # dependent on the article length.
-        l = len(reverse("comments-xtd-confirm",
-                        kwargs={'key': self.key}))
-        # print("\nXXXXXXXXXXX:", l)
-        self.assertLessEqual(l, 4096, "Urls can only be a max of 4096")
+        length = len(reverse("comments-xtd-confirm",
+                             kwargs={'key': self.key}))
+        self.assertLessEqual(length, 4096, "Urls can only be a max of 4096")
 
     def test_400_on_bad_signature(self):
         response = confirm_comment_url(self.key[:-1])
         self.assertEqual(response.status_code, 400)
 
     def test_consecutive_confirmation_url_visits_doesnt_fail(self):
-        # test that consecutives visits to the same confirmation URL produce
-        # an Http 404 code, as the comment has already been verified in the
+        # test that consecutive visits to the same confirmation URL produce
+        # a Http 404 code, as the comment has already been verified in the
         # first visit
         response = confirm_comment_url(self.key)
         self.assertEqual(response.status_code, 302)
@@ -207,7 +211,7 @@ class ConfirmCommentTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.assertEqual(self.mock_mailer.call_count, 2)
-        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+        self.key = re.search(r'http://.+/confirm/(?P<key>\S+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
         confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 3)
@@ -243,7 +247,7 @@ class ConfirmCommentTestCase(TestCase):
         response = post_diary_comment(data, diary_entry=diary)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
-        self.key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+        self.key = str(re.search(r'http://.+/confirm/(?P<key>\S+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         # 1) confirmation for Bob (sent in `setUp()`)
         # 2) confirmation for Charlie
@@ -256,13 +260,13 @@ class ConfirmCommentTestCase(TestCase):
         self.form = django_comments.get_form()(self.article)
         data = {"name": "Alice", "email": "alice@example.com",
                 "followup": True, "reply_to": 0, "level": 1, "order": 1,
-                "comment": "Es war einmal iene kleine..."}
+                "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
         response = post_article_comment(data, article=self.article)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.assertEqual(self.mock_mailer.call_count, 3)
-        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+        self.key = re.search(r'http://.+/confirm/(?P<key>\S+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
         confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 4)
@@ -283,9 +287,9 @@ class ConfirmCommentTestCase(TestCase):
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Bob's comment he shouldn't get notified about"}
         data.update(self.form.initial)
-        response = post_article_comment(data, self.article)
+        post_article_comment(data, self.article)
         self.assertEqual(self.mock_mailer.call_count, 2)
-        self.key = re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+        self.key = re.search(r'http://.+/confirm/(?P<key>\S+)/',
                              self.mock_mailer.call_args[0][1]).group("key")
         confirm_comment_url(self.key)
         self.assertEqual(self.mock_mailer.call_count, 2)
@@ -369,7 +373,7 @@ class MuteFollowUpTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.assertTrue(self.mock_mailer.call_count == 1)
-        bobkey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+        bobkey = str(re.search(r'http://.+/confirm/(?P<key>\S+)/',
                                self.mock_mailer.call_args[0][1]).group("key"))
         confirm_comment_url(bobkey)  # confirm Bob's comment
 
@@ -382,14 +386,14 @@ class MuteFollowUpTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
         self.assertTrue(self.mock_mailer.call_count == 2)
-        alicekey = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+        alicekey = str(re.search(r'http://.+/confirm/(?P<key>\S+)/',
                                  self.mock_mailer.call_args[0][1]).group("key"))
         confirm_comment_url(alicekey)  # confirm Alice's comment
 
         # Bob receives a follow-up notification
         self.assertTrue(self.mock_mailer.call_count == 3)
         self.bobs_mutekey = str(re.search(
-            r'http://.+/mute/(?P<key>[\S]+)/',
+            r'http://.+/mute/(?P<key>\S+)/',
             self.mock_mailer.call_args[0][1]).group("key"))
         self.addCleanup(patcher.stop)
 
@@ -418,8 +422,9 @@ class MuteFollowUpTestCase(TestCase):
         # Alice confirms her comment...
         self.assertTrue(self.mock_mailer.call_count == 4)
         alicekey = str(
-            re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
-                      self.mock_mailer.call_args[0][1]
+            re.search(
+                r'http://.+/confirm/(?P<key>\S+)/',
+                self.mock_mailer.call_args[0][1]
             ).group("key")
         )
         confirm_comment_url(alicekey)  # confirm Alice's comment
@@ -430,8 +435,8 @@ class MuteFollowUpTestCase(TestCase):
 
 class HTMLDisabledMailTestCase(TestCase):
     def setUp(self):
-        # Create an article and send a comment. Test method will chech headers
-        # to see wheter messages has multiparts or not.
+        # Create an article and send a comment. Test method will check headers
+        # to see whether messages have multiparts or not.
         patcher = patch('django_comments_xtd.views.send_mail')
         self.mock_mailer = patcher.start()
         self.article = Article.objects.create(

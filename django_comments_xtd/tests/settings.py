@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import os
-import imp
 
 
 PRJ_PATH = os.path.abspath(os.path.curdir)
@@ -130,7 +129,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'django_comments_xtd.tests.apiauth.APIRequestAuthentication'
-   ]
+    ]
 }
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'

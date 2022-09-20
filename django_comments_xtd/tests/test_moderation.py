@@ -5,7 +5,6 @@ import re
 from unittest.mock import patch
 from datetime import datetime, timedelta
 
-import django
 from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
@@ -42,10 +41,13 @@ class ModeratorApprovesComment(TestCase):
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
-        response = post_diary_comment(data, self.diary_entry, auth_user=auth_user)
+        response = post_diary_comment(
+            data,
+            self.diary_entry,
+            auth_user=auth_user
+        )
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
-
 
     def test_moderation_with_registered_user(self):
         user = User.objects.create_user("bob", "bob@example.com", "pwd")
@@ -64,7 +66,7 @@ class ModeratorApprovesComment(TestCase):
         self.assertTrue(self.mailer_app1.call_count == 0)
         self.assertTrue(self.mailer_app2.call_count == 1)
         mail_msg = self.mailer_app2.call_args[0][1]
-        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+        key = str(re.search(r'http://.+/confirm/(?P<key>\S+)/',
                             mail_msg).group("key"))
         confirm_comment_url(key)
         self.assertTrue(self.mailer_app1.call_count == 1)
@@ -91,7 +93,11 @@ class ModeratorHoldsComment(TestCase):
                 "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal eine kleine..."}
         data.update(self.form.initial)
-        response = post_diary_comment(data, self.diary_entry, auth_user=auth_user)
+        response = post_diary_comment(
+            data,
+            self.diary_entry,
+            auth_user=auth_user
+        )
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.startswith('/comments/posted/?c='))
 
@@ -112,7 +118,7 @@ class ModeratorHoldsComment(TestCase):
         self.assertTrue(self.mailer_app1.call_count == 0)
         self.assertTrue(self.mailer_app2.call_count == 1)
         mail_msg = self.mailer_app2.call_args[0][1]
-        key = str(re.search(r'http://.+/confirm/(?P<key>[\S]+)/',
+        key = str(re.search(r'http://.+/confirm/(?P<key>\S+)/',
                             mail_msg).group("key"))
         confirm_comment_url(key)
         self.assertTrue(self.mailer_app1.call_count == 1)
@@ -151,7 +157,7 @@ class FlaggingRemovalSuggestion(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, dest_url)
 
-    def test_loggedin_user_can_flag_comment(self):
+    def test_logged_in_user_can_flag_comment(self):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         flag_url = reverse("comments-flag", args=[comment.id])
@@ -217,7 +223,7 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, dest_url)
 
-    def test_loggedin_user_can_like(self):
+    def test_logged_in_user_can_like(self):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
@@ -238,7 +244,7 @@ class FlaggingLikedItAndDislikedIt(TestCase):
                                            flag=LIKEDIT_FLAG)
         self.assertTrue(flags.count() == 1)
 
-    def test_loggedin_user_can_dislike(self):
+    def test_logged_in_user_can_dislike(self):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
@@ -259,52 +265,52 @@ class FlaggingLikedItAndDislikedIt(TestCase):
                                            flag=DISLIKEDIT_FLAG)
         self.assertTrue(flags.count() == 1)
 
-    def test_likedit_can_be_cancelled(self):
+    def test_liked_it_can_be_cancelled(self):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
         request = request_factory.post(like_url)
         request.user = self.user
         request._dont_enforce_csrf_checks = True
-        response = views.like(request, comment.id)
+        views.like(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)
         self.assertTrue(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
-        response = views.like(request, comment.id)
+        views.like(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)
         self.assertTrue(flags.count() == 0)
 
-    def test_dislikedit_can_be_cancelled(self):
+    def test_disliked_it_can_be_cancelled(self):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
         request = request_factory.post(dislike_url)
         request.user = self.user
         request._dont_enforce_csrf_checks = True
-        response = views.dislike(request, comment.id)
+        views.dislike(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
         self.assertTrue(flags.count() == 1)
         # Now we liked the comment again to cancel the flag.
-        response = views.dislike(request, comment.id)
+        views.dislike(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
         self.assertTrue(flags.count() == 0)
 
-    def test_likedit_cancels_dislikedit(self):
+    def test_liked_it_cancels_disliked_it(self):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
         request = request_factory.post(dislike_url)
         request.user = self.user
         request._dont_enforce_csrf_checks = True
-        response = views.dislike(request, comment.id)
+        views.dislike(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
@@ -314,7 +320,7 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         request = request_factory.post(like_url)
         request.user = self.user
         request._dont_enforce_csrf_checks = True
-        response = views.like(request, comment.id)
+        views.like(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=DISLIKEDIT_FLAG)
@@ -324,14 +330,14 @@ class FlaggingLikedItAndDislikedIt(TestCase):
                                            flag=LIKEDIT_FLAG)
         self.assertTrue(flags.count() == 1)
 
-    def test_dislikedit_cancels_likedit(self):
+    def test_disliked_it_cancels_liked_it(self):
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
         request = request_factory.post(like_url)
         request.user = self.user
         request._dont_enforce_csrf_checks = True
-        response = views.like(request, comment.id)
+        views.like(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)
@@ -341,7 +347,7 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         request = request_factory.post(dislike_url)
         request.user = self.user
         request._dont_enforce_csrf_checks = True
-        response = views.dislike(request, comment.id)
+        views.dislike(request, comment.id)
         flags = CommentFlag.objects.filter(comment=comment,
                                            user=self.user,
                                            flag=LIKEDIT_FLAG)

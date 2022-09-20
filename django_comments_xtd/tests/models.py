@@ -12,7 +12,7 @@ class PublicManager(models.Manager):
     """Returns published articles that are not in the future."""
 
     def published(self):
-        return self.get_query_set().filter(publish__lte=datetime.now())
+        return self.get_queryset().filter(publish__lte=datetime.now())
 
 
 class Article(models.Model):

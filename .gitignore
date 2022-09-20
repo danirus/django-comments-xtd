@@ -26,4 +26,3 @@ example/.idea
 example/env
 .pytest_cache/
 .venv
-.idea

@@ -83,6 +83,42 @@ class DummyViewTestCase(TestCase):
         self.assertEqual(response.content, b'Got it')
 
 
+class XtdCommentListViewTestCase(TestCase):
+    def setUp(self) -> None:
+        self.article_ct = ContentType.objects.get(
+            app_label="tests",
+            model="article"
+        )
+        self.site = Site.objects.get(pk=1)
+        self.article = Article.objects.create(
+            title="October", slug="october", body="What I did on October...")
+
+    def test_contains_comment(self):
+        XtdComment.objects.create(
+            content_object=self.article,
+            site=self.site,
+            comment="comment 1 to article",
+            is_removed=False,
+            is_public=True,
+        )
+        response = self.client.get(reverse("comments-xtd-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'comment 1 to article')
+
+    def test_not_contains_removed_comments_or_marker(self):
+        XtdComment.objects.create(
+            content_object=self.article,
+            site=self.site,
+            comment="comment 1 to article",
+            is_removed=True,
+            is_public=True,
+        )
+        response = self.client.get(reverse("comments-xtd-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'comment 1 to article')
+        self.assertNotContains(response, 'This comment has been removed.')
+
+
 class OnCommentWasPostedTestCase(TestCase):
     def setUp(self):
         patcher = patch('django_comments_xtd.views.send_mail')

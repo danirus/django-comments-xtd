@@ -2,7 +2,7 @@ import os
 import sys
 
 
-def setup_django_settings():
+def setup_django_settings():  # pragma: no cover
     if os.environ.get("DJANGO_SETTINGS_MODULE", False):
         return
     os.chdir(os.path.join(os.path.dirname(__file__), ".."))
@@ -10,7 +10,7 @@ def setup_django_settings():
     os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
 
 
-def run_tests():
+def run_tests():  # pragma: no cover
     if not os.environ.get("DJANGO_SETTINGS_MODULE", False):
         setup_django_settings()
 

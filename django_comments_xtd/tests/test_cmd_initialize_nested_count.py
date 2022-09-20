@@ -10,7 +10,7 @@ from django_comments_xtd.tests.test_models import (
 )
 
 
-class InitializeNesteCoundCmdTest(TestCase):
+class InitializeNesteCountCmdTest(TestCase):
     def setUp(self):
         self.article_1 = Article.objects.create(
             title="September", slug="september", body="During September...")

@@ -73,7 +73,7 @@ class CommentCreateTestCase(TestCase):
 
     @patch.multiple('django_comments_xtd.conf.settings',
                     COMMENTS_XTD_APP_MODEL_OPTIONS=app_model_options_mock)
-    def test_post_returns_unauthorize_response(self):
+    def test_post_returns_unauthorized_response(self):
         data = {"name": "Bob", "email": "fulanito@detal.com",
                 "followup": True, "reply_to": 0, "level": 1, "order": 1,
                 "comment": "Es war einmal eine kleine...",

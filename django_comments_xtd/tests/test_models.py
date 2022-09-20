@@ -247,7 +247,7 @@ def thread_test_step_6(article):
                          comment="c11.c8.c3.c1",
                          submit_date=datetime.now(),
                          parent_id=8,
-                        site=site)
+                         site=site)
 
 
 class BaseThreadStep1TestCase(ArticleBaseTestCase):
@@ -268,6 +268,7 @@ class BaseThreadStep1TestCase(ArticleBaseTestCase):
         self.assertTrue(self.c2.parent_id == 2 and self.c2.thread_id == 2)
         self.assertTrue(self.c2.level == 0 and self.c2.order == 1)
         self.assertEqual(self.c2.nested_count, 0)
+
 
 class ThreadStep2TestCase(ArticleBaseTestCase):
     def setUp(self):
@@ -449,7 +450,7 @@ class ThreadStep5TestCase(ArticleBaseTestCase):
         self.assertTrue(self.c6.parent_id == 5 and self.c6.thread_id == 2)
         self.assertTrue(self.c6.level == 2 and self.c6.order == 3)
         self.assertEqual(self.c6.nested_count, 0)
-        # comment 7
+        # comment 7
         self.assertTrue(self.c7.parent_id == 4 and self.c7.thread_id == 1)
         self.assertTrue(self.c7.level == 2 and self.c7.order == 5)  # changed
         self.assertEqual(self.c7.nested_count, 0)
@@ -497,17 +498,17 @@ class ThreadStep6TestCase(ArticleBaseTestCase):
         thread_test_step_6(self.article_1)
 
         (  # content ->    cmt.id  thread_id  parent_id  level  order  nested
-            self.c1,  # ->   1         1          1        0      1      6
-            self.c3,  # ->   3         1          1        1      2      2
-            self.c8,  # ->   8         1          3        2      3      1
-            self.c11, # ->  11         1          8        3      4      0
-            self.c4,  # ->   4         1          1        1      5      2
-            self.c7,  # ->   7         1          4        2      6      1
-            self.c10, # ->  10         1          7        3      7      0
-            self.c2,  # ->   2         2          2        0      1      2
-            self.c5,  # ->   5         2          2        1      2      1
-            self.c6,  # ->   6         2          5        2      3      0
-            self.c9   # ->   9         9          9        0      1      0
+            self.c1,   # ->   1         1          1        0      1      6
+            self.c3,   # ->   3         1          1        1      2      2
+            self.c8,   # ->   8         1          3        2      3      1
+            self.c11,  # ->  11         1          8        3      4      0
+            self.c4,   # ->   4         1          1        1      5      2
+            self.c7,   # ->   7         1          4        2      6      1
+            self.c10,  # ->  10         1          7        3      7      0
+            self.c2,   # ->   2         2          2        0      1      2
+            self.c5,   # ->   5         2          2        1      2      1
+            self.c6,   # ->   6         2          5        2      3      0
+            self.c9    # ->   9         9          9        0      1      0
         ) = XtdComment.objects.all()
 
     def test_threaded_comments_step_6_level_0(self):
@@ -543,11 +544,11 @@ class ThreadStep6TestCase(ArticleBaseTestCase):
         self.assertTrue(self.c8.parent_id == 3 and self.c8.thread_id == 1)
         self.assertTrue(self.c8.level == 2 and self.c8.order == 3)
         self.assertEqual(self.c8.nested_count, 1)
-        # comment 7
+        # comment 7
         self.assertTrue(self.c7.parent_id == 4 and self.c7.thread_id == 1)
         self.assertTrue(self.c7.level == 2 and self.c7.order == 6)
         self.assertEqual(self.c7.nested_count, 1)
-        # comment 6
+        # comment 6
         self.assertTrue(self.c6.parent_id == 5 and self.c6.thread_id == 2)
         self.assertTrue(self.c6.level == 2 and self.c6.order == 3)
         self.assertEqual(self.c6.nested_count, 0)
@@ -557,7 +558,7 @@ class ThreadStep6TestCase(ArticleBaseTestCase):
         self.assertTrue(self.c10.parent_id == 7 and self.c10.thread_id == 1)
         self.assertTrue(self.c10.level == 3 and self.c10.order == 7)
         self.assertEqual(self.c10.nested_count, 0)
-        # comment 11
+        # comment 11
         self.assertTrue(self.c11.parent_id == 8 and self.c11.thread_id == 1)
         self.assertTrue(self.c11.level == 3 and self.c11.order == 4)
         self.assertEqual(self.c11.nested_count, 0)
@@ -592,12 +593,12 @@ class DiaryBaseTestCase(DjangoTestCase):
                                       parent_id=1)  # already max thread level
 
 
-class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
+class PublishOrUnpublishNestedCommentsOneTestCase(ArticleBaseTestCase):
     # Add a threaded comment structure (c1, c2, c3) and verify that
     # removing c1 unpublishes c3.
 
     def setUp(self):
-        super(PublishOrUnpublishNestedComments_1_TestCase, self).setUp()
+        super(PublishOrUnpublishNestedCommentsOneTestCase, self).setUp()
         thread_test_step_1(self.article_1)
         thread_test_step_2(self.article_1)
         #
@@ -624,7 +625,7 @@ class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
         cm1 = XtdComment.objects.get(pk=1)
         self.assertTrue(cm1.is_public)
         self.assertTrue(cm1.is_removed)
-        # Is still public, so the nested_count doesn't change.
+        # Is still public, so the nested_count doesn't change.
         self.assertEqual(cm1.nested_count, 2)
 
         cm3 = XtdComment.objects.get(pk=3)
@@ -639,14 +640,14 @@ class PublishOrUnpublishNestedComments_1_TestCase(ArticleBaseTestCase):
 _model = "django_comments_xtd.tests.models.MyComment"
 
 
-class PublishOrUnpublishNestedComments_2_TestCase(ArticleBaseTestCase):
+class PublishOrUnpublishNestedCommentsTwoTestCase(ArticleBaseTestCase):
     # Then mock the settings so that the project uses a customized
     # comment model (django_comments_xtd.tests.models.MyComment), and repeat
     # the logic adding MyComment instances. Then remove c1 and be sure
     # that c3 gets unpublished.
 
     def setUp(self):
-        super(PublishOrUnpublishNestedComments_2_TestCase, self).setUp()
+        super(PublishOrUnpublishNestedCommentsTwoTestCase, self).setUp()
         thread_test_step_1(self.article_1, model=MyComment,
                            title="Can't be empty 1")
         thread_test_step_2(self.article_1, model=MyComment,

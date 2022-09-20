@@ -9,7 +9,7 @@ from django_comments_xtd.tests.models import Diary, UUIDDiary
 
 
 class CommentBoxTestCase(TestCase):
-    def test_commentbox_props_response(self):
+    def test_comment_box_props_response(self):
         request_factory = RequestFactory()
         request = request_factory.get("/")
         user = User.objects.create_user("bob", "bob@example.com", "pwd")
@@ -29,7 +29,7 @@ class CommentBoxTestCase(TestCase):
         self.assertEqual(d['list_url'], '/comments/api/tests-diary/1/')
         self.assertEqual(d['current_user'], "1:bob")
 
-    def test_commentbox_props_response_anonymous(self):
+    def test_comment_box_props_response_anonymous(self):
         request_factory = RequestFactory()
         request = request_factory.get("/")
         user = AnonymousUser()
@@ -49,7 +49,7 @@ class CommentBoxTestCase(TestCase):
         self.assertEqual(d['list_url'], '/comments/api/tests-diary/1/')
         self.assertEqual(d['current_user'], "0:Anonymous")
 
-    def test_commentbox_props_response_uuid(self):
+    def test_comment_box_props_response_uuid(self):
         request_factory = RequestFactory()
         request = request_factory.get("/")
         user = AnonymousUser()
@@ -66,5 +66,11 @@ class CommentBoxTestCase(TestCase):
         d = response.data
         self.assertEqual(d['comment_count'], 1)
         self.assertEqual(d['form']['object_pk'], str(diary.uuid))
-        self.assertEqual(d['count_url'], f'/comments/api/tests-uuiddiary/{diary.uuid}/count/')
-        self.assertEqual(d['list_url'], f'/comments/api/tests-uuiddiary/{diary.uuid}/')
+        self.assertEqual(
+            d['count_url'],
+            f'/comments/api/tests-uuiddiary/{diary.uuid}/count/'
+        )
+        self.assertEqual(
+            d['list_url'],
+            f'/comments/api/tests-uuiddiary/{diary.uuid}/'
+        )

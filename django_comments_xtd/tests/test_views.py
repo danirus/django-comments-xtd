@@ -83,6 +83,26 @@ class DummyViewTestCase(TestCase):
         self.assertEqual(response.content, b'Got it')
 
 
+class CommentViewsTest(TestCase):
+    def test_like_done_view(self):
+        response = self.client.get(reverse("comments-xtd-like-done"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Your opinion is appreciated')
+        self.assertContains(
+            response,
+            'Thanks for taking the time to participate.'
+        )
+
+    def test_dislike_done_view(self):
+        response = self.client.get(reverse("comments-xtd-dislike-done"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'You disliked the comment')
+        self.assertContains(
+            response,
+            'Thanks for taking the time to participate.'
+        )
+
+
 class XtdCommentListViewTestCase(TestCase):
     def setUp(self) -> None:
         self.article_ct = ContentType.objects.get(

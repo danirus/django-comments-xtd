@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db.models.signals import pre_save
 from django.contrib.contenttypes.models import ContentType
@@ -11,6 +11,19 @@ from django_comments_xtd.models import (XtdComment,
                                         MaxThreadLevelExceededException,
                                         publish_or_unpublish_on_pre_save)
 from django_comments_xtd.tests.models import Article, Diary, MyComment
+
+
+class ArticleManagerTestCase(DjangoTestCase):
+    def test_published(self):
+        self.article_1 = Article.objects.create(
+            title="September", slug="september", body="During September...",
+            publish=datetime.now() - timedelta(days=1))
+        self.article_2 = Article.objects.create(
+            title="October", slug="october", body="What I did on October...",
+            publish=datetime.now() + timedelta(days=1))
+
+        self.assertIn(self.article_1, Article.objects.published())
+        self.assertNotIn(self.article_2, Article.objects.published())
 
 
 class ArticleBaseTestCase(DjangoTestCase):

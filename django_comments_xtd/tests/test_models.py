@@ -213,10 +213,10 @@ def thread_test_step_5(article):
                               submit_date=datetime.now())
 
 
-def thread_test_step_6(article, model=get_model(), **kwargs):
+def thread_test_step_6(article):
+    model = get_model()
     article_ct = ContentType.objects.get(app_label="tests", model="article")
-    if "site" not in kwargs:
-        kwargs["site"] = Site.objects.get(pk=1)
+    site = Site.objects.get(pk=1)
 
     # post Comment 10 to parent_id 7
     model.objects.create(content_type=article_ct,
@@ -225,7 +225,7 @@ def thread_test_step_6(article, model=get_model(), **kwargs):
                          comment="c10.c7.c4.c1",
                          submit_date=datetime.now(),
                          parent_id=7,
-                         **kwargs)
+                         site=site)
 
     # post Comment 11 to parent_id 8
     model.objects.create(content_type=article_ct,
@@ -234,7 +234,7 @@ def thread_test_step_6(article, model=get_model(), **kwargs):
                          comment="c11.c8.c3.c1",
                          submit_date=datetime.now(),
                          parent_id=8,
-                         **kwargs)
+                        site=site)
 
 
 class BaseThreadStep1TestCase(ArticleBaseTestCase):

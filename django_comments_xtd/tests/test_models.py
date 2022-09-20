@@ -215,8 +215,8 @@ def thread_test_step_5(article):
 
 def thread_test_step_6(article, model=get_model(), **kwargs):
     article_ct = ContentType.objects.get(app_label="tests", model="article")
-    if not "site" in kwargs:
-      kwargs["site"] = Site.objects.get(pk=1)
+    if "site" not in kwargs:
+        kwargs["site"] = Site.objects.get(pk=1)
 
     # post Comment 10 to parent_id 7
     model.objects.create(content_type=article_ct,

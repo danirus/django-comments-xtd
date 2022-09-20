@@ -22,13 +22,7 @@ from django_comments_xtd.tests.test_views import (confirm_comment_url,
 request_factory = RequestFactory()
 
 
-send_mail = ''  # string to send_mail function to patch
-try:
-    import imp
-    imp.find_module('django_comments')
-    send_mail = 'django_comments.moderation.send_mail'
-except ImportError:
-    send_mail = 'django.contrib.comments.moderation.send_mail'
+send_mail = 'django_comments.moderation.send_mail'
 
 
 class ModeratorApprovesComment(TestCase):
@@ -224,8 +218,6 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         self.assertEqual(response.url, dest_url)
 
     def test_loggedin_user_can_like(self):
-        if django.VERSION < (1, 5):
-            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
@@ -247,8 +239,6 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         self.assertTrue(flags.count() == 1)
 
     def test_loggedin_user_can_dislike(self):
-        if django.VERSION < (1, 5):
-            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
@@ -270,8 +260,6 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         self.assertTrue(flags.count() == 1)
 
     def test_likedit_can_be_cancelled(self):
-        if django.VERSION < (1, 5):
-            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])
@@ -291,8 +279,6 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         self.assertTrue(flags.count() == 0)
 
     def test_dislikedit_can_be_cancelled(self):
-        if django.VERSION < (1, 5):
-            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
@@ -312,8 +298,6 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         self.assertTrue(flags.count() == 0)
 
     def test_likedit_cancels_dislikedit(self):
-        if django.VERSION < (1, 5):
-            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         dislike_url = reverse("comments-xtd-dislike", args=[comment.id])
@@ -341,8 +325,6 @@ class FlaggingLikedItAndDislikedIt(TestCase):
         self.assertTrue(flags.count() == 1)
 
     def test_dislikedit_cancels_likedit(self):
-        if django.VERSION < (1, 5):
-            return
         comment = django_comments.get_model()\
                                  .objects.for_app_models('tests.diary')[0]
         like_url = reverse("comments-xtd-like", args=[comment.id])

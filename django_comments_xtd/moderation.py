@@ -1,23 +1,15 @@
-from django import VERSION
 try:
     from django.contrib.sites.shortcuts import get_current_site
 except ImportError:
     from django.contrib.sites.models import get_current_site
 
-from django.template import Context, loader
+from django.template import loader
 
-try:
-    from django_comments import get_model
-    from django_comments.signals import (comment_will_be_posted,
-                                         comment_was_flagged)
-    from django_comments.models import CommentFlag
-    from django_comments.moderation import Moderator, CommentModerator
-except ImportError:
-    from django.contrib.comments import get_model
-    from django.contrib.comments.signals import (comment_will_be_posted,
-                                                 comment_was_flagged)
-    from django.contrib.comments.models import CommentFlag
-    from django.contrib.comments.moderation import Moderator, CommentModerator
+from django_comments import get_model
+from django_comments.signals import (comment_will_be_posted,
+                                     comment_was_flagged)
+from django_comments.models import CommentFlag
+from django_comments.moderation import Moderator, CommentModerator
 
 
 from django_comments_xtd.conf import settings
@@ -69,7 +61,7 @@ class XtdCommentModerator(CommentModerator):
              'request': request}
         subject = ('[%s] Comment removal suggestion on "%s"' %
                    (c['current_site'].name, content_object))
-        message = t.render(Context(c) if VERSION < (1, 8) else c)
+        message = t.render(c)
         send_mail(subject, message, settings.COMMENTS_XTD_FROM_EMAIL,
                   recipient_list, fail_silently=True)
 

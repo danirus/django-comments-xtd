@@ -181,14 +181,11 @@ class ConfirmCommentTestCase(TestCase):
         Site.objects.get_current().domain = "testserver"  # django bug #7743
         response = confirm_comment_url(self.key, follow=False)
         data = signed.loads(self.key, extra_key=settings.COMMENTS_XTD_SALT)
-        try:
-            comment = XtdComment.objects.get(
-                content_type=data["content_type"],
-                user_name=data["user_name"],
-                user_email=data["user_email"],
-                submit_date=data["submit_date"])
-        except:
-            comment = None
+        comment = XtdComment.objects.get(
+            content_type=data["content_type"],
+            user_name=data["user_name"],
+            user_email=data["user_email"],
+            submit_date=data["submit_date"])
         self.assertTrue(comment is not None)
         self.assertEqual(response.url, comment.get_absolute_url())
 

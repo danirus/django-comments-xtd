@@ -95,12 +95,6 @@ TEMPLATES = [
     }
 ]
 
-try:
-    imp.find_module('django_comments')
-    django_comments = 'django_comments'
-except ImportError:
-    django_comments = 'django.contrib.comments'
-
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -111,7 +105,7 @@ INSTALLED_APPS = [
 
     'django_comments_xtd',
     'django_comments_xtd.tests',
-    django_comments,
+    'django_comments',
 ]
 COMMENTS_APP = "django_comments_xtd"
 

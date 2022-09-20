@@ -88,7 +88,9 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-            ]
+            ],
+            # needed for django_coverage_plugin
+            'debug': True,
         }
     }
 ]

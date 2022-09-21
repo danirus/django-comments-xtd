@@ -8,7 +8,8 @@ from datetime import datetime
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser, User, Permission
+from django.http import HttpRequest
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from django_comments.models import CommentFlag
@@ -17,9 +18,13 @@ from django_comments.views import comments
 
 from django_comments_xtd import django_comments, signals, signed, views
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
+from django_comments_xtd.models import (
+    XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG, TmpXtdComment
+)
 from django_comments_xtd.tests.models import Article, Diary
-
+from django_comments_xtd.views import (
+    on_comment_will_be_posted, on_comment_was_posted
+)
 
 request_factory = RequestFactory()
 
@@ -66,6 +71,36 @@ app_model_options_mock = {
         'who_can_post': 'users'
     }
 }
+
+
+class ViewUtilitiesTest(TestCase):
+    @patch('django_comments_xtd.views.settings.COMMENTS_APP')
+    def test_on_comment_will_be_posted_returns_true_for_custom_comment_app(
+        self,
+        mock_setting
+    ):
+        mock_setting.return_value = 'custom_comment_app'
+        comment = XtdComment()
+        request = HttpRequest()
+        self.assertTrue(on_comment_will_be_posted(
+            comment=comment,
+            request=request,
+            sender=TmpXtdComment
+        ))
+
+    @patch('django_comments_xtd.views.settings.COMMENTS_APP')
+    def test_on_comment_was_posted_returns_false_for_custom_comment_app(
+        self,
+        mock_setting
+    ):
+        mock_setting.return_value = 'custom_comment_app'
+        comment = XtdComment()
+        request = HttpRequest()
+        self.assertFalse(on_comment_was_posted(
+            comment=comment,
+            request=request,
+            sender=TmpXtdComment
+        ))
 
 
 class DummyViewTestCase(TestCase):
@@ -117,6 +152,17 @@ class CommentViewsTest(TestCase):
         )
         self.assertEqual(response.context['comment'], self.diary_comment)
 
+    def test_like_view_contains_user_url_if_available(self):
+        self.diary_comment.user_url = 'https://example.com/user/me/'
+        self.diary_comment.save()
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-like", args=[self.diary_comment.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Do you like this comment?')
+        self.assertContains(response, 'https://example.com/user/me/')
+
     def test_like_view_already_liked(self):
         CommentFlag.objects.create(
             comment=self.diary_comment,
@@ -145,6 +191,15 @@ class CommentViewsTest(TestCase):
         )
         self.assertEqual(response.context['comment'], self.diary_comment)
 
+    @patch('django_comments_xtd.views.get_app_model_options')
+    def test_like_view_with_feedback_disabled(self, mock_get_app_model_options):
+        mock_get_app_model_options.return_value = {'allow_feedback': False}
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-like", args=[self.comment.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+
     def test_like_done_view(self):
         response = self.client.get(reverse("comments-xtd-like-done"))
         self.assertEqual(response.status_code, 200)
@@ -168,6 +223,17 @@ class CommentViewsTest(TestCase):
             'Please, confirm your opinion about the comment.'
         )
         self.assertEqual(response.context['comment'], self.diary_comment)
+
+    def test_dislike_view_contains_user_url_if_available(self):
+        self.diary_comment.user_url = 'https://example.com/user/me/'
+        self.diary_comment.save()
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-dislike", args=[self.diary_comment.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Do you dislike this comment?')
+        self.assertContains(response, 'https://example.com/user/me/')
 
     def test_dislike_view_already_disliked(self):
         CommentFlag.objects.create(
@@ -197,6 +263,17 @@ class CommentViewsTest(TestCase):
         )
         self.assertEqual(response.context['comment'], self.diary_comment)
 
+    @patch('django_comments_xtd.views.get_app_model_options')
+    def test_dislike_view_with_feedback_disabled(
+        self, mock_get_app_model_options
+    ):
+        mock_get_app_model_options.return_value = {'allow_feedback': False}
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-dislike", args=[self.comment.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+
     def test_dislike_done_view(self):
         response = self.client.get(reverse("comments-xtd-dislike-done"))
         self.assertEqual(response.status_code, 200)
@@ -222,6 +299,26 @@ class CommentViewsTest(TestCase):
         )
         self.assertEqual(response.context['comment'], self.diary_comment)
 
+    def test_flag_view_contains_user_url_if_available(self):
+        self.diary_comment.user_url = 'https://example.com/user/me/'
+        self.diary_comment.save()
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-flag", args=[self.diary_comment.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Flag comment')
+        self.assertContains(response, 'https://example.com/user/me/')
+
+    @patch('django_comments_xtd.views.get_app_model_options')
+    def test_flag_view_with_flagging_disabled(self, mock_get_app_model_options):
+        mock_get_app_model_options.return_value = {'allow_flagging': False}
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-flag", args=[self.comment.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+
     def test_flag_done_view(self):
         response = self.client.get(
             reverse("comments-flag-done"),
@@ -238,6 +335,48 @@ class CommentViewsTest(TestCase):
         )
         self.assertEqual(response.context['comment'], self.comment)
 
+    def test_delete_view(self):
+        self.user.user_permissions.add(
+            Permission.objects.get_by_natural_key(
+                codename='can_moderate',
+                app_label="django_comments",
+                model="comment"
+            )
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-delete", kwargs={'comment_id': self.comment.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Remove comment')
+        self.assertContains(response, 'Remove this comment?')
+        self.assertContains(response, self.comment.get_absolute_url())
+        self.assertContains(response, 'As a moderator you can delete comments.')
+        self.assertContains(
+            response,
+            'Deleting a comment does not remove it from the site, '
+            'only prevents your website from showing the text.'
+        )
+        self.assertEqual(response.context['comment'], self.comment)
+
+    def test_delete_view_contains_user_url_if_available(self):
+        self.comment.user_url = 'https://example.com/user/me/'
+        self.comment.save()
+        self.user.user_permissions.add(
+            Permission.objects.get_by_natural_key(
+                codename='can_moderate',
+                app_label="django_comments",
+                model="comment"
+            )
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-delete", kwargs={'comment_id': self.comment.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Remove comment')
+        self.assertContains(response, 'https://example.com/user/me/')
+
     def test_delete_done_view(self):
         response = self.client.get(
             reverse("comments-delete-done"),
@@ -253,6 +392,28 @@ class CommentViewsTest(TestCase):
             ' of discussion in our site.'
         )
         self.assertEqual(response.context['comment'], self.comment)
+
+    def test_reply_form(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-reply", kwargs={'cid': self.comment.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Comment reply')
+        self.assertContains(response, 'Reply to comment')
+        self.assertContains(response, 'Post your comment')
+        self.assertEqual(response.context['comment'], self.comment)
+
+    def test_reply_contains_user_url_if_available(self):
+        self.comment.user_url = 'https://example.com/user/me/'
+        self.comment.save()
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-reply", kwargs={'cid': self.comment.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Comment reply')
+        self.assertContains(response, 'https://example.com/user/me/')
 
 
 class XtdCommentListViewTestCase(TestCase):

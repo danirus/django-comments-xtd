@@ -11,12 +11,13 @@ from django.contrib.sites.models import Site
 from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
+from django_comments.models import CommentFlag
 
 from django_comments.views import comments
 
 from django_comments_xtd import django_comments, signals, signed, views
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import XtdComment
+from django_comments_xtd.models import XtdComment, LIKEDIT_FLAG, DISLIKEDIT_FLAG
 from django_comments_xtd.tests.models import Article, Diary
 
 
@@ -84,6 +85,7 @@ class DummyViewTestCase(TestCase):
 
 class CommentViewsTest(TestCase):
     def setUp(self) -> None:
+        self.user = User.objects.create_user("bob", "bob@example.com", "pwd")
         self.site = Site.objects.get(pk=1)
         self.article = Article.objects.create(title="September",
                                               slug="september",
@@ -93,6 +95,55 @@ class CommentViewsTest(TestCase):
             site=self.site,
             comment="comment 1 to article",
         )
+        self.diary = Diary.objects.create(body="What I did on September...")
+        self.diary_comment = XtdComment.objects.create(
+            content_object=self.diary,
+            site=self.site,
+            comment="comment 1 to diary",
+        )
+
+    def test_like_view(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-like", args=[self.diary_comment.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Confirm your opinion')
+        self.assertContains(response, 'Do you like this comment?')
+        self.assertContains(response, self.diary.get_absolute_url())
+        self.assertContains(
+            response,
+            'Please, confirm your opinion about the comment.'
+        )
+        self.assertEqual(response.context['comment'], self.diary_comment)
+
+    def test_like_view_already_liked(self):
+        CommentFlag.objects.create(
+            comment=self.diary_comment,
+            user=self.user,
+            flag=LIKEDIT_FLAG,
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-like", args=[self.diary_comment.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Confirm your opinion')
+        self.assertContains(
+            response,
+            "You liked this comment, do you want to change it?"
+        )
+        self.assertContains(response, self.diary.get_absolute_url())
+        self.assertContains(
+            response,
+            'Please, confirm your opinion about the comment.'
+        )
+        self.assertContains(
+            response,
+            'Click on the "withdraw" button if you want '
+            'to withdraw your positive opinion on this comment.'
+        )
+        self.assertEqual(response.context['comment'], self.diary_comment)
 
     def test_like_done_view(self):
         response = self.client.get(reverse("comments-xtd-like-done"))
@@ -103,6 +154,49 @@ class CommentViewsTest(TestCase):
             'Thanks for taking the time to participate.'
         )
 
+    def test_dislike_view(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-dislike", args=[self.diary_comment.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Confirm your opinion')
+        self.assertContains(response, 'Do you dislike this comment?')
+        self.assertContains(response, self.diary.get_absolute_url())
+        self.assertContains(
+            response,
+            'Please, confirm your opinion about the comment.'
+        )
+        self.assertEqual(response.context['comment'], self.diary_comment)
+
+    def test_dislike_view_already_disliked(self):
+        CommentFlag.objects.create(
+            comment=self.diary_comment,
+            user=self.user,
+            flag=DISLIKEDIT_FLAG,
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-xtd-dislike", args=[self.diary_comment.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Confirm your opinion')
+        self.assertContains(
+            response,
+            "You didn't like this comment, do you want to change it?"
+        )
+        self.assertContains(response, self.diary.get_absolute_url())
+        self.assertContains(
+            response,
+            'Please, confirm your opinion about the comment.'
+        )
+        self.assertContains(
+            response,
+            'Click on the "withdraw" button if you want '
+            'to withdraw your negative opinion on this comment.'
+        )
+        self.assertEqual(response.context['comment'], self.diary_comment)
+
     def test_dislike_done_view(self):
         response = self.client.get(reverse("comments-xtd-dislike-done"))
         self.assertEqual(response.status_code, 200)
@@ -111,6 +205,22 @@ class CommentViewsTest(TestCase):
             response,
             'Thanks for taking the time to participate.'
         )
+
+    def test_flag_view(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("comments-flag", args=[self.diary_comment.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Flag comment')
+        self.assertContains(response, 'Flag this comment?')
+        self.assertContains(response, self.diary.get_absolute_url())
+        self.assertContains(
+            response,
+            'Click on the flag button to mark the following comment '
+            'as inappropriate.'
+        )
+        self.assertEqual(response.context['comment'], self.diary_comment)
 
     def test_flag_done_view(self):
         response = self.client.get(

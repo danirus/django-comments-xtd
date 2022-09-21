@@ -1,7 +1,8 @@
+from django.contrib.sites.models import Site
 from django.test import TestCase
 
 from django_comments_xtd import django_comments
-from django_comments_xtd.models import TmpXtdComment
+from django_comments_xtd.models import TmpXtdComment, XtdComment
 from django_comments_xtd.forms import XtdCommentForm
 from django_comments_xtd.tests.models import Article
 
@@ -9,10 +10,37 @@ from unittest.mock import patch
 
 
 class GetFormTestCase(TestCase):
-
     def test_get_form(self):
         # check function django_comments_xtd.get_form retrieves the due class
         self.assertTrue(django_comments.get_form() == XtdCommentForm)
+
+    def test_form_uses_comment_in_kwargs(self):
+        site = Site.objects.get(pk=1)
+        article = Article.objects.create(title="September",
+                                         slug="september",
+                                         body="What I did on September...")
+        comment = XtdComment.objects.create(
+            id=134,
+            content_object=article,
+            site=site,
+            comment="comment 1 to article",
+            is_removed=False,
+            is_public=True,
+        )
+
+        form = XtdCommentForm(target_object=article, comment=None)
+        self.assertNotIn('reply_to', form.initial)
+        self.assertEqual(
+            form.fields['followup'].widget.attrs['id'],
+            'id_followup'
+        )
+
+        form = XtdCommentForm(target_object=article, comment=comment)
+        self.assertEqual(form.initial['reply_to'], 134)
+        self.assertEqual(
+            form.fields['followup'].widget.attrs['id'],
+            'id_followup_134'
+        )
 
 
 class XtdCommentFormTestCase(TestCase):

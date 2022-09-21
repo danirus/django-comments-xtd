@@ -40,6 +40,7 @@ setup(
         'djangorestframework>=3.12,<3.15',
         'docutils',
         'six',
+        'pytz',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

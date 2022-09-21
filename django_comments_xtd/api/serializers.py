@@ -38,6 +38,8 @@ class WriteCommentSerializer(serializers.Serializer):
     followup = serializers.BooleanField(default=False)
     reply_to = serializers.IntegerField(default=0)
 
+    form = None
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs['context']['request']
         super(WriteCommentSerializer, self).__init__(*args, **kwargs)
@@ -75,8 +77,10 @@ class WriteCommentSerializer(serializers.Serializer):
                 raise serializers.ValidationError(
                     "reply_to comment does not exist")
             else:
-                max = max_thread_level_for_content_type(parent.content_type)
-                if parent.level == max:
+                max_thread_level = max_thread_level_for_content_type(
+                    parent.content_type
+                )
+                if parent.level == max_thread_level:
                     raise serializers.ValidationError(
                         "Max thread level reached")
         return value

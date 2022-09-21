@@ -24,11 +24,11 @@ from django_comments_xtd.utils import get_current_site_id
 XtdComment = get_model()
 
 
-class DefaultsMixin():
+class DefaultsMixin:
     @property
     def renderer_classes(self):
         if self.kwargs.get('override_drf_defaults', False):
-            return (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
+            return renderers.JSONRenderer, renderers.BrowsableAPIRenderer
         return super().renderer_classes
 
     @property
@@ -41,6 +41,8 @@ class DefaultsMixin():
 class CommentCreate(DefaultsMixin, generics.CreateAPIView):
     """Create a comment."""
     serializer_class = serializers.WriteCommentSerializer
+
+    resp_dict = {}
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -122,6 +124,8 @@ class ToggleFeedbackFlag(
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     schema = AutoSchema(operation_id_base="Feedback")
+
+    created = None
 
     def post(self, request, *args, **kwargs):
         response = super(ToggleFeedbackFlag, self).post(request, *args,

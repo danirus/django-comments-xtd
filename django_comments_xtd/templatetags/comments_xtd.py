@@ -138,6 +138,7 @@ class BaseLastXtdCommentsNode(Node):
 
 
 class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
+    qs = None
 
     def render(self, context):
         if not isinstance(self.count, int):
@@ -168,6 +169,7 @@ class RenderLastXtdCommentsNode(BaseLastXtdCommentsNode):
 
 
 class GetLastXtdCommentsNode(BaseLastXtdCommentsNode):
+    qs = None
 
     def __init__(self, count, as_varname, content_types):
         super(GetLastXtdCommentsNode, self).__init__(count, content_types)
@@ -303,7 +305,7 @@ class RenderXtdCommentTreeNode(Node):
                                   context.get(attr, False))
         if self.obj:
             obj = self.obj.resolve(context)
-            ctype = ContentType.objects.get_for_model(obj)
+            content_type = ContentType.objects.get_for_model(obj)
             flags_qs = CommentFlag.objects.filter(flag__in=[
                 CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
             ]).prefetch_related('user')
@@ -312,7 +314,7 @@ class RenderXtdCommentTreeNode(Node):
                 .objects\
                 .prefetch_related(prefetch)\
                 .filter(
-                    content_type=ctype,
+                    content_type=content_type,
                     object_pk=obj.pk,
                     site__pk=get_current_site_id(context.get('request')),
                     is_public=True
@@ -342,16 +344,16 @@ class RenderXtdCommentTreeNode(Node):
             if not comments:
                 return ""
 
-            ctype = comments[0]['comment'].content_type
+            content_type = comments[0]['comment'].content_type
 
         if self.template_path:
             template_arg = self.template_path
         else:
             template_arg = [
                 "django_comments_xtd/%s/%s/comment_tree.html" % (
-                    ctype.app_label, ctype.model),
+                    content_type.app_label, content_type.model),
                 "django_comments_xtd/%s/comment_tree.html" % (
-                    ctype.app_label,),
+                    content_type.app_label,),
                 "django_comments_xtd/comment_tree.html"
             ]
         html = loader.render_to_string(template_arg, context_dict)
@@ -366,7 +368,7 @@ class GetXtdCommentTreeNode(Node):
 
     def render(self, context):
         obj = self.obj.resolve(context)
-        ctype = ContentType.objects.get_for_model(obj)
+        content_type = ContentType.objects.get_for_model(obj)
         flags_qs = CommentFlag.objects.filter(flag__in=[
             CommentFlag.SUGGEST_REMOVAL, LIKEDIT_FLAG, DISLIKEDIT_FLAG
         ]).prefetch_related('user')
@@ -375,7 +377,7 @@ class GetXtdCommentTreeNode(Node):
             .objects\
             .prefetch_related(prefetch)\
             .filter(
-                content_type=ctype,
+                content_type=content_type,
                 object_pk=obj.pk,
                 site__pk=get_current_site_id(context.get('request')),
                 is_public=True
@@ -566,10 +568,12 @@ def xtd_comment_gravatar(email, config='48,identicon'):
 # ----------------------------------------------------------------------
 @register.filter
 def comments_xtd_api_list_url(obj):
-    ctype = ContentType.objects.get_for_model(obj)
-    ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
-    return reverse('comments-xtd-api-list', kwargs={'content_type': ctype_slug,
-                                                    'object_pk': obj.id})
+    content_type = ContentType.objects.get_for_model(obj)
+    content_type_slug = "%s-%s" % (content_type.app_label, content_type.model)
+    return reverse(
+        'comments-xtd-api-list',
+        kwargs={'content_type': content_type_slug, 'object_pk': obj.id}
+    )
 
 
 # ----------------------------------------------------------------------
@@ -599,5 +603,5 @@ def can_receive_comments_from(obj, user):
 
 # ----------------------------------------------------------------------
 @register.inclusion_tag('django_comments_xtd/only_users_can_post.html')
-def render_only_users_can_post_template(object):
-    return {'html_id_suffix': get_html_id_suffix(object)}
+def render_only_users_can_post_template(obj):
+    return {'html_id_suffix': get_html_id_suffix(obj)}

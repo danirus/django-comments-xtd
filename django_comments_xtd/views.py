@@ -145,7 +145,7 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
     else:
         user_is_authenticated = False
 
-    if (not settings.COMMENTS_XTD_CONFIRM_EMAIL or user_is_authenticated):
+    if not settings.COMMENTS_XTD_CONFIRM_EMAIL or user_is_authenticated:
         if _get_comment_if_exists(comment) is None:
             new_comment = _create_comment(comment)
             comment.xtd_comment = new_comment
@@ -278,9 +278,8 @@ def notify_comment_followers(comment):
     subject = _("new comment posted")
     text_message_template = loader.get_template(
         "django_comments_xtd/email_followup_comment.txt")
-    if settings.COMMENTS_XTD_SEND_HTML_EMAIL:
-        html_message_template = loader.get_template(
-            "django_comments_xtd/email_followup_comment.html")
+    html_message_template = loader.get_template(
+        "django_comments_xtd/email_followup_comment.html")
 
     for email, (name, key) in six.iteritems(followers):
         mute_url = reverse('comments-xtd-mute', args=[key.decode('utf-8')])
@@ -322,7 +321,7 @@ def reply(request, cid):
                                  REDIRECT_FIELD_NAME)
 
     form = get_form()(comment.content_object, comment=comment)
-    next = request.GET.get("next", reverse("comments-xtd-sent"))
+    next_url = request.GET.get("next", reverse("comments-xtd-sent"))
 
     template_arg = [
         "django_comments_xtd/%s/%s/reply.html" % (
@@ -332,8 +331,11 @@ def reply(request, cid):
             comment.content_type.app_label,),
         "django_comments_xtd/reply.html"
     ]
-    return render(request, template_arg,
-                  {"comment": comment, "form": form, "cid": cid, "next": next})
+    return render(
+        request,
+        template_arg,
+        {"comment": comment, "form": form, "cid": cid, "next": next_url}
+    )
 
 
 def mute(request, key):
@@ -378,7 +380,7 @@ def mute(request, key):
 
 @csrf_protect
 @login_required
-def flag(request, comment_id, next=None):
+def flag(request, comment_id, next_url=None, **kwargs):
     """
     Flags a comment. Confirmation on GET, action on POST.
 
@@ -387,6 +389,7 @@ def flag(request, comment_id, next=None):
         comment
             the flagged `comments.comment` object
     """
+    next_url = next_url or kwargs.get('next')
     comment = get_object_or_404(
         get_comment_model(), pk=comment_id,
         site__pk=get_current_site_id(request))
@@ -399,7 +402,7 @@ def flag(request, comment_id, next=None):
     # Flag on POST
     if request.method == 'POST':
         perform_flag(request, comment)
-        return next_redirect(request, fallback=next or 'comments-flag-done',
+        return next_redirect(request, fallback=next_url or 'comments-flag-done',
                              c=comment.pk)
 
     # Render a form on GET
@@ -411,7 +414,7 @@ def flag(request, comment_id, next=None):
 
 @csrf_protect
 @login_required
-def like(request, comment_id, next=None):
+def like(request, comment_id, next_url=None, **kwargs):
     """
     Like a comment. Confirmation on GET, action on POST.
 
@@ -420,6 +423,7 @@ def like(request, comment_id, next=None):
         comment
             the flagged `comments.comment` object
     """
+    next_url = next_url or kwargs.get('next')
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
     if not get_app_model_options(comment=comment)['allow_feedback']:
@@ -432,7 +436,7 @@ def like(request, comment_id, next=None):
     if request.method == 'POST':
         perform_like(request, comment)
         return next_redirect(request,
-                             fallback=next or 'comments-xtd-like-done',
+                             fallback=next_url or 'comments-xtd-like-done',
                              c=comment.pk)
     # Render a form on GET
     else:
@@ -442,12 +446,12 @@ def like(request, comment_id, next=None):
         return render(request, 'django_comments_xtd/like.html',
                       {'comment': comment,
                        'already_liked_it': request.user in users_likedit,
-                       'next': next})
+                       'next': next_url})
 
 
 @csrf_protect
 @login_required
-def dislike(request, comment_id, next=None):
+def dislike(request, comment_id, next_url=None, **kwargs):
     """
     Dislike a comment. Confirmation on GET, action on POST.
 
@@ -456,6 +460,7 @@ def dislike(request, comment_id, next=None):
         comment
             the flagged `comments.comment` object
     """
+    next_url = next_url or kwargs.get('next')
     comment = get_object_or_404(get_comment_model(), pk=comment_id,
                                 site__pk=get_current_site_id(request))
     if not get_app_model_options(comment=comment)['allow_feedback']:
@@ -468,7 +473,7 @@ def dislike(request, comment_id, next=None):
     if request.method == 'POST':
         perform_dislike(request, comment)
         return next_redirect(request,
-                             fallback=(next or 'comments-xtd-dislike-done'),
+                             fallback=(next_url or 'comments-xtd-dislike-done'),
                              c=comment.pk)
     # Render a form on GET
     else:
@@ -478,7 +483,7 @@ def dislike(request, comment_id, next=None):
         return render(request, 'django_comments_xtd/dislike.html',
                       {'comment': comment,
                        'already_disliked_it': request.user in users_dislikedit,
-                       'next': next})
+                       'next': next_url})
 
 
 def perform_like(request, comment):
@@ -556,6 +561,6 @@ class XtdCommentListView(ListView):
                 if len(prange[index:]) >= self.page_range:
                     prange = prange[index:(index + self.page_range)]
                 else:
-                    prange = prange[-(self.page_range):]
+                    prange = prange[-self.page_range:]
             context['page_range'] = prange
         return context

@@ -104,8 +104,8 @@ def get_current_site_id(request=None):
     return getattr(get_current_site(request), 'pk', 1)  # fallback value
 
 
-def get_html_id_suffix(object):
-    value = "%s" % object.__hash__()
+def get_html_id_suffix(obj):
+    value = "%s" % obj.__hash__()
     suffix = salted_hmac(settings.COMMENTS_XTD_SALT, value).hexdigest()
     return suffix
 

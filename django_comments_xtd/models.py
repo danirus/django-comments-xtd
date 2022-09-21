@@ -31,7 +31,7 @@ class MaxThreadLevelExceededException(Exception):
         # self.max_by_app = max_thread_level_for_content_type(content_type)
 
     def __str__(self):
-        return ("Max thread level reached for comment %d" % self.comment.id)
+        return "Max thread level reached for comment %d" % self.comment.id
 
 
 class XtdCommentManager(CommentManager):
@@ -283,7 +283,7 @@ class TmpXtdComment(dict):
 
     def _get_pk_val(self):
         if self.xtd_comment:
-            return self.xtd_comment._get_pk_val()
+            return self.xtd_comment.pk
         else:
             content_type = "%s.%s" % self.content_type.natural_key()
             return signing.dumps("%s:%s" % (content_type, self.object_pk))
@@ -303,7 +303,7 @@ class TmpXtdComment(dict):
         state = {k: v for k, v in self.items() if k != 'content_object'}
         ct = state.pop('content_type')
         state['content_type_key'] = ct.natural_key()
-        return (TmpXtdComment, (), state)
+        return TmpXtdComment, (), state
 
 
 # ----------------------------------------------------------------------

@@ -27,7 +27,7 @@
         <div class="media-body">
           <div class="comment pb-3">
             <h6 class="mb-1 small d-flex">
-              <div class="mr-auto">
+              <span class="mr-auto">
                 {% now "N j, Y, P" %}&nbsp;-&nbsp;
                 {% if form.cleaned_data.url %}
                 <a href="{{ form.cleaned_data.url }}" target="_new">
@@ -36,7 +36,7 @@
                 {% else %}
                   {{ form.cleaned_data.name }}
                 {% endif %}
-              </div>
+              </span>
             </h6>
             <div class="content">{{ comment }}</div>
           </div>

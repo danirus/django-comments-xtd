@@ -26,7 +26,8 @@
       <div class="card-body">
         <div class="media pb-2">
           <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
-              width="48" height="48" class="mr-3">
+               alt="{{ comment.user_email }}"
+               width="48" height="48" class="mr-3">
           <div class="media-body">
             <h6 class="mb-1 small">
               {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;

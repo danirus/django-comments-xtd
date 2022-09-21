@@ -48,15 +48,15 @@ class LastXtdCommentsTestCase(DjangoTestCase):
         t = ("{% load comments_xtd %}"
              "{% render_last_xtdcomments 5 for tests.article tests.diary %}")
         output = Template(t).render(Context())
-        self.assertEqual(output.count('<a name='), 5)
-        self.assertEqual(output.count('<a name="c6">'), 1)
-        self.assertEqual(output.count('<a name="c5">'), 1)
-        self.assertEqual(output.count('<a name="c4">'), 1)
-        self.assertEqual(output.count('<a name="c3">'), 1)
-        self.assertEqual(output.count('<a name="c2">'), 1)
+        self.assertEqual(output.count('<a id='), 5)
+        self.assertEqual(output.count('<a id="c6">'), 1)
+        self.assertEqual(output.count('<a id="c5">'), 1)
+        self.assertEqual(output.count('<a id="c4">'), 1)
+        self.assertEqual(output.count('<a id="c3">'), 1)
+        self.assertEqual(output.count('<a id="c2">'), 1)
         # We added 6 comments, and we render the last 5, so
         # the first one must not be rendered in the output.
-        self.assertEqual(output.count('<a name="c1">'), 0)
+        self.assertEqual(output.count('<a id="c1">'), 0)
 
     def test_get_last_xtdcomments(self):
         t = ("{% load comments_xtd %}"
@@ -93,18 +93,18 @@ class XtdCommentsTestCase(DjangoTestCase):
              "{% render_xtdcomment_tree for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<a name='), 9)
+        self.assertEqual(output.count('<a id='), 9)
         # See test_models.py, ThreadStep5TestCase to get a quick
         # view of the comments posted and their thread structure.
-        pos_c1 = output.index('<a name="c1"></a>')
-        pos_c3 = output.index('<a name="c3"></a>')
-        pos_c8 = output.index('<a name="c8"></a>')
-        pos_c4 = output.index('<a name="c4"></a>')
-        pos_c7 = output.index('<a name="c7"></a>')
-        pos_c2 = output.index('<a name="c2"></a>')
-        pos_c5 = output.index('<a name="c5"></a>')
-        pos_c6 = output.index('<a name="c6"></a>')
-        pos_c9 = output.index('<a name="c9"></a>')
+        pos_c1 = output.index('<a id="c1"></a>')
+        pos_c3 = output.index('<a id="c3"></a>')
+        pos_c8 = output.index('<a id="c8"></a>')
+        pos_c4 = output.index('<a id="c4"></a>')
+        pos_c7 = output.index('<a id="c7"></a>')
+        pos_c2 = output.index('<a id="c2"></a>')
+        pos_c5 = output.index('<a id="c5"></a>')
+        pos_c6 = output.index('<a id="c6"></a>')
+        pos_c9 = output.index('<a id="c9"></a>')
         self.assertTrue(pos_c1 > 0)
         self.assertTrue(pos_c3 > 0)
         self.assertTrue(pos_c8 > 0)
@@ -126,13 +126,13 @@ class XtdCommentsTestCase(DjangoTestCase):
              "{% render_xtdcomment_tree for object %}")
         output = Template(t).render(Context({'object': self.article,
                                              'user': AnonymousUser()}))
-        self.assertEqual(output.count('<a name='), 4)
+        self.assertEqual(output.count('<a id='), 4)
         # Only the following comments must be displayed, the other ones must
         # have been unpublished when setting the comment 1 is_public to False.
-        pos_c2 = output.index('<a name="c2"></a>')
-        pos_c5 = output.index('<a name="c5"></a>')
-        pos_c6 = output.index('<a name="c6"></a>')
-        pos_c9 = output.index('<a name="c9"></a>')
+        pos_c2 = output.index('<a id="c2"></a>')
+        pos_c5 = output.index('<a id="c5"></a>')
+        pos_c6 = output.index('<a id="c6"></a>')
+        pos_c9 = output.index('<a id="c9"></a>')
         self.assertTrue(pos_c2 > 0)
         self.assertTrue(pos_c5 > 0)
         self.assertTrue(pos_c6 > 0)

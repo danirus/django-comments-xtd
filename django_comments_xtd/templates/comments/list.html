@@ -5,12 +5,12 @@
 <div id="comments" class="media-list">
   {% for comment in comment_list %}
   <div class="media pb-2">
-    <a name="c{{ comment.id }}"></a>
+    <a id="c{{ comment.id }}"></a>
     <span class="mr-3">{{ comment.user_email|xtd_comment_gravatar }}</span>
     <div class="media-body">
       <div class="comment pb-3">
         <h6 class="mb-1 small d-flex">
-          <div class="mr-auto">{{ comment.submit_date }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>
+          <span class="mr-auto">{{ comment.submit_date }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></span>
         </h6>
         <div class="content">
           {% if comment.is_removed %}

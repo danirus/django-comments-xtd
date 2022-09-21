@@ -51,6 +51,13 @@ class Diary(models.Model):
         db_table = 'demo_diary'
         ordering = ('-publish',)
 
+    def get_absolute_url(self):
+        return reverse(
+            'diary-detail',
+            kwargs={'year': self.publish.year,
+                    'month': int(self.publish.strftime('%m').lower()),
+                    'day': self.publish.day})
+
 
 class UUIDDiary(Diary):
     """Diary, that accepts comments."""

@@ -9,7 +9,7 @@ urlpatterns = [
     re_path(r'^confirm/(?P<key>[^/]+)/$', views.confirm,
             name='comments-xtd-confirm'),
     re_path(r'^mute/(?P<key>[^/]+)/$', views.mute, name='comments-xtd-mute'),
-    re_path(r'^reply/(?P<cid>[\d]+)/$', views.reply, name='comments-xtd-reply'),
+    re_path(r'^reply/(?P<cid>\d+)/$', views.reply, name='comments-xtd-reply'),
 
     # Remap comments-flag to check allow-flagg<ing is enabled.
     re_path(r'^flag/(\d+)/$', views.flag, name='comments-flag'),

@@ -75,7 +75,7 @@ def dumps(obj, key=None, compress=False, extra_key=b''):
 
 
 def loads(s, key=None, extra_key=b''):
-    "Reverse of dumps(), raises ValueError if signature fails"
+    """Reverse of dumps(), raises ValueError if signature fails"""
     if isinstance(s, six.text_type):
         s = s.encode('utf8')  # base64 works on bytestrings
     try:

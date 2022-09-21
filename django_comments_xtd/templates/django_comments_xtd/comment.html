@@ -2,13 +2,14 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<div id="c{{ comment.id }}" class="media"><a name="c{{ comment.id }}"></a>
+<div id="c{{ comment.id }}" class="media"><a id="c{{ comment.id }}"></a>
   <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
+       alt="{{ comment.user_email }}"
        height="48" width="48" class="mr-3" />
   <div class="media-body">
     <div class="comment pb-3">
       <h6 class="mb-1 small d-flex">
-        <div class="mr-auto">{% trans "Posted to "%}&nbsp;<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>&nbsp;-&nbsp;{{ comment.submit_date|timesince }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></div>
+        <span class="mr-auto">{% trans "Posted to "%}&nbsp;<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>&nbsp;-&nbsp;{{ comment.submit_date|timesince }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a></span>
       </h6>
       <div class="content">
         {% if comment.is_removed %}

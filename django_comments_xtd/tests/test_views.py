@@ -84,6 +84,17 @@ class DummyViewTestCase(TestCase):
 
 
 class CommentViewsTest(TestCase):
+    def setUp(self) -> None:
+        self.site = Site.objects.get(pk=1)
+        self.article = Article.objects.create(title="September",
+                                              slug="september",
+                                              body="What I did on September...")
+        self.comment = XtdComment.objects.create(
+            content_object=self.article,
+            site=self.site,
+            comment="comment 1 to article",
+        )
+
     def test_like_done_view(self):
         response = self.client.get(reverse("comments-xtd-like-done"))
         self.assertEqual(response.status_code, 200)
@@ -101,6 +112,38 @@ class CommentViewsTest(TestCase):
             response,
             'Thanks for taking the time to participate.'
         )
+
+    def test_flag_done_view(self):
+        response = self.client.get(
+            reverse("comments-flag-done"),
+            data={'c': self.comment.pk}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Comment flagged')
+        self.assertContains(response, 'The comment has been flagged.')
+        self.assertContains(response, self.article.get_absolute_url())
+        self.assertContains(
+            response,
+            'Thank you for taking the time to improve the quality '
+            'of discussion in our site.'
+        )
+        self.assertEqual(response.context['comment'], self.comment)
+
+    def test_delete_done_view(self):
+        response = self.client.get(
+            reverse("comments-delete-done"),
+            data={'c': self.comment.pk}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Comment removed')
+        self.assertContains(response, 'The comment has been removed.')
+        self.assertContains(response, self.article.get_absolute_url())
+        self.assertContains(
+            response,
+            'Thank you for taking the time to improve the quality'
+            ' of discussion in our site.'
+        )
+        self.assertEqual(response.context['comment'], self.comment)
 
 
 class XtdCommentListViewTestCase(TestCase):

@@ -91,14 +91,14 @@ class WriteCommentSerializer(serializers.Serializer):
             model = apps.get_model(*ctype.split(".", 1))
             target = model._default_manager.get(pk=object_pk)
             whocan = get_app_model_options(content_type=ctype)['who_can_post']
-        except (AttributeError, TypeError, LookupError):
+        except (AttributeError, TypeError, LookupError, ValueError):
             raise serializers.ValidationError("Invalid content_type value: %r"
                                               % escape(ctype))
         except model.DoesNotExist:
             raise serializers.ValidationError(
                 "No object matching content-type %r and object PK %r exists."
                 % (escape(ctype), escape(object_pk)))
-        except (ValueError, serializers.ValidationError) as e:
+        except (serializers.ValidationError) as e:
             raise serializers.ValidationError(
                 "Attempting to get content-type %r and object PK %r exists "
                 "raised %s" % (escape(ctype), escape(object_pk),

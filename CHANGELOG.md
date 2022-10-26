@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.9.9] - 2022-10-26
+
+ * Extends compatibility to django-rest-framework v3.14.
+
 ## [2.9.8] - 2022-09-18
 
  * Fixes [issue 377](https://github.com/danirus/django-comments-xtd/issues/377): content_object is missing in followup notification. View `notify_comment_followers` has been updated to include `content_object` in the context of templates it uses: `email_followup_comment.txt` and `email_followup_comment.html`.

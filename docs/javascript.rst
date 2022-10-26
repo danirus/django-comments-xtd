@@ -133,8 +133,8 @@ Django will fetch them from there when rendering the article's detail page:
 
        {% block extra-js %}
        [...]
-       <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.9.8.js' %}"></script>
-       <script src="{% static 'django_comments_xtd/js/plugin-2.9.8.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/vendor~plugin-2.9.9.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/plugin-2.9.9.js' %}"></script>
        {% endblock extra-js %}
 
 
@@ -150,13 +150,13 @@ Plugin sources live inside the **static** directory of django-comments-xtd:
 
        django_comments_xtd/static/django_comments_xtd/js
        ├── src
-       │   ├── comment.jsx
-       │   ├── commentbox.jsx
-       │   ├── commentform.jsx
-       │   ├── index.js
-       │   └── lib.js
-       ├── vendor~plugin-2.9.8.js
-       └── plugin-2.9.8.js
+       │   ├── comment.jsx
+       │   ├── commentbox.jsx
+       │   ├── commentform.jsx
+       │   ├── index.js
+       │   └── lib.js
+       ├── vendor~plugin-2.9.9.js
+       └── plugin-2.9.9.js
 
        1 directory, 7 files
 

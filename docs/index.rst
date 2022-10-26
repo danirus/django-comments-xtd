@@ -19,7 +19,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.9.8, of
+    This documentation represents the current version, v2.9.9, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.8.5: https://django-comments-xtd.readthedocs.io/en/2.8.5/
@@ -96,12 +96,16 @@ specific features, or check out the use cases to see how others customize it.
 Change Log
 ==========
 
+[2.9.9] - 2022-10-26
+--------------------
+
+   * Extends compatibility to django-rest-framework v3.14.
 
 [2.9.8] - 2022-09-18
 --------------------
 
    * Fixes `issue 377 <https://github.com/danirus/django-comments-xtd/issues/377>`_: content_object is missing in followup notification. View `notify_comment_followers` has been updated to include `content_object` in the context of templates it uses: `email_followup_comment.txt` and `email_followup_comment.html`.
- * Update translation files to the latest strings found in templates. Next step is to include appropriate translations. See `PR #379 <https://github.com/danirus/django-comments-xtd/pull/379>`_.
+   * Update translation files to the latest strings found in templates. Next step is to include appropriate translations. See `PR #379 <https://github.com/danirus/django-comments-xtd/pull/379>`_.
 
 [2.9.7] - 2022-07-08
 --------------------

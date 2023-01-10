@@ -33,4 +33,4 @@ jobs:
       - name: Install tox and django
         run: pip install tox "django==${{ matrix.django }}"
       - name: Run unit tests
-        run: tox -e py-3.10-django-${{ matrix.django }}
+        run: tox -e py3.10-django${{ matrix.django }}

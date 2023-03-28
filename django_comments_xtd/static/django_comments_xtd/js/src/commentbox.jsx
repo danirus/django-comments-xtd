@@ -15,11 +15,13 @@ export class CommentBox extends React.Component {
     this.state = {
       previewing: false,
       preview: {name: '', email: '', url: '', comment: ''},
-      tree: [], cids: [], newcids: [], counter: this.props.comment_count
+      tree: [], cids: [], newcids: [], counter: this.props.comment_count,
+      props: props
     };
     this.handle_comment_created = this.handle_comment_created.bind(this);
     this.handle_preview = this.handle_preview.bind(this);
     this.handle_update = this.handle_update.bind(this);
+    window.commentBox = this;
   }
 
   handle_comment_created() {
@@ -58,14 +60,14 @@ export class CommentBox extends React.Component {
   render_comment_form() {
     const {
       allow_comments, who_can_post, is_authenticated, html_id_suffix
-    } = this.props;
+    } = this.state.props;
     if(allow_comments) {
       if (
         who_can_post === 'all' ||
         (who_can_post === 'users' && is_authenticated)
       ) {
         return (
-          <CommentForm {...this.props}
+          <CommentForm {...this.state.props}
                        on_comment_created={this.handle_comment_created} />
         );
       } else {
@@ -159,44 +161,51 @@ export class CommentBox extends React.Component {
   }
 
   load_comments() {
-    $.ajax({
-      url: this.props.list_url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        // Set here a cookie with the last time comments have been retrieved.
-        // I'll use it to add a label 'new' to every new comment received
-        // after the timestamp stored in the cookie.
-        this.create_tree(data);
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.list_url, status, err.toString());
-      }.bind(this)
-    });
+    if(this.state.props.list_url !== undefined) {
+       $.ajax({
+         url: this.state.props.list_url,
+         dataType: 'json',
+         cache: false,
+         success: function(data) {
+           // Set here a cookie with the last time comments have been retrieved.
+           // I'll use it to add a label 'new' to every new comment received
+           // after the timestamp stored in the cookie.
+           this.create_tree(data);
+         }.bind(this),
+         error: function(xhr, status, err) {
+           console.error(this.state.props.list_url, status, err.toString());
+         }.bind(this)
+       });
+    };
   }
 
   load_count() {
     $.ajax({
-      url: this.props.count_url,
+      url: this.state.props.count_url,
       dataType: 'json',
       cache: false,
       success: function(data) {
         this.setState({counter: data.count});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error(this.props.count_url, status, err.toString());
+        console.error(this.state.props.count_url, status, err.toString());
       }.bind(this)
     });
   }
 
   componentDidMount() {
     this.load_comments();
-    if(this.props.polling_interval)
-      setInterval(this.load_count.bind(this), this.props.polling_interval);
+    if(this.state.props.polling_interval)
+      setInterval(this.load_count.bind(this), this.state.props.polling_interval);
+  }
+
+  reload_all() {
+    this.load_count();
+    this.load_comments();
   }
 
   render() {
-    var settings = this.props;
+    var settings = this.state.props;
     var comment_counter = this.render_comment_counter();
     var update_alert = this.render_update_alert();
     var comment_form = this.render_comment_form();

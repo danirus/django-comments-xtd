@@ -12,15 +12,15 @@
 
 {% block content %}
 <div class="container">
-  <div class="row my-4">
-    <div class="col-lg-12 text-center">
+  <div class="row justify-content-center my-4">
+    <div class="col-10 text-center">
       <h2>{{ object.title }}</h2>
       <div class="small">{{ object.publish }}</div>
       <hr/>
     </div>
   </div>
   <div class="row justify-content-center flex-fill">
-    <div class="col-md-7">
+    <div class="col-8 mb-4">
       <article>
         {{ object.body|linebreaks }}
       </article>
@@ -28,7 +28,7 @@
   </div>
 
   <div class="row justify-content-center flex-fill">
-    <div class="col-md-7 pt-3">
+    <div class="col-8">
       <p class="text-center">
         <a href="{% url 'articles-index' %}">Back to the articles list</a>
       </p>
@@ -36,7 +36,7 @@
   </div>
 
   <div class="row justify-content-center flex-fill">
-    <div class="col-md-7">
+    <div class="col-8">
       <div id="comments"></div>
     </div>
   </div>
@@ -44,8 +44,8 @@
 {% endblock content %}
 
 {% block extra_js %}
-<script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script>
  window.comments_props = {% get_commentbox_props for object %};
  window.comments_props_override = {
@@ -53,9 +53,8 @@
    allow_feedback: true,
    show_feedback: true,
    allow_flagging: true,
-   polling_interval: 5000
+   polling_interval: 10000
  };
 </script>
-<script src="{% static 'django_comments_xtd/js/vendor~plugin-2.9.9.js' %}"></script>
-<script src="{% static 'django_comments_xtd/js/plugin-2.9.9.js' %}"></script>
+<script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.9.10.js' %}"></script>
 {% endblock %}

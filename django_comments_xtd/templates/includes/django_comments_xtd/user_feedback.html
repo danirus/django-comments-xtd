@@ -1,24 +1,19 @@
 {% if allow_feedback %}
-<span class="small">
-    {% if show_feedback and item.likedit_users %}
-    <a class="badge badge-primary text-white cfb-counter" data-toggle="tooltip"
-       title="{{ item.likedit_users|join:'<br/>' }}">
-        {{ item.likedit_users|length }}</a>
-    {% endif %}
-
-    <a href="{% url 'comments-xtd-like' item.comment.pk %}"
-       class="{% if not item.likedit %}mutedlink{% endif %}">
-        <span class="fas fa-thumbs-up"></span></a>
-    <span class="text-muted">|</span>
-
-    {% if show_feedback and item.dislikedit_users %}
-    <a class="badge badge-primary text-white cfb-counter" data-toggle="tooltip"
-       title="{{ item.dislikedit_users|join:'<br/>' }}">
-        {{ item.dislikedit_users|length }}</a>
-    {% endif %}
-  
-    <a href="{% url 'comments-xtd-dislike' item.comment.pk %}"
-       class="{% if not item.dislikedit %}mutedlink{% endif %}">
-        <span class="fas fa-thumbs-down"></span></a>
-</span>
+<div class="d-inline small">
+  {% if show_feedback and item.likedit_users %}
+  <a class="badge text-bg-primary text-decoration-none" data-bs-toggle="tooltip"
+      data-bs-title="{{ item.likedit_users|join:'<br/>' }}">
+      {{ item.likedit_users|length }}</a>
+  {% endif %}
+  <a href="{% url 'comments-xtd-like' item.comment.pk %}">
+      <i class="bi bi-hand-thumbs-up{% if item.likedit %}-fill{% endif %}"></i></a>
+  <span class="text-muted">&sdot;</span>
+  {% if show_feedback and item.dislikedit_users %}
+  <a class="badge text-bg-primary text-decoration-none" data-bs-toggle="tooltip"
+      data-bs-title="{{ item.dislikedit_users|join:'<br/>' }}">
+      {{ item.dislikedit_users|length }}</a>
+  {% endif %}
+  <a href="{% url 'comments-xtd-dislike' item.comment.pk %}">
+      <i class="bi bi-hand-thumbs-down{% if item.dislikedit %}-fill{% endif %}"></i></a>
+</div>
 {% endif %}

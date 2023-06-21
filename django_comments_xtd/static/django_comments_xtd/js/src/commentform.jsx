@@ -1,221 +1,370 @@
-import $ from 'jquery';
 import django from 'django';
-
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Remarkable } from 'remarkable';
 
+import { getCookie } from './lib.js';
+import { InitContext } from './context';
 
-export class CommentForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '', email: '', url: '', comment: '',
-      followup: props.default_followup,
-      reply_to: this.props.reply_to || 0,
-      visited: {name: false, email: false, comment: false},
-      errors: {name: false, email: false, comment: false},
-      previewing: false,
-      alert: {message: '', cssc: ''}
-    };
-    this.handle_input_change = this.handle_input_change.bind(this);
-    this.handle_ajax_error = this.handle_ajax_error.bind(this);
-    this.handle_blur = this.handle_blur.bind(this);
-    this.handle_submit = this.handle_submit.bind(this);
-    this.handle_preview = this.handle_preview.bind(this);
-    this.reset_form = this.reset_form.bind(this);
-    this.fhelp = <span className="form-text small invalid-feedback">
-                   {django.gettext("This field is required.")}
-                 </span>;
+
+function FieldIsRequired({replyTo}) {
+  return (
+    <span
+      className="form-text small invalid-feedback"
+      {...((replyTo > 0) && {style: {"fontSize": "0.71rem"}})}
+    >
+      {django.gettext("This field is required.")}
+    </span>
+  );
+}
+
+
+function PreviewComment({avatar, name, url, comment, replyTo}) {
+  const {
+    is_authenticated,
+    current_user
+  } = useContext(InitContext);
+
+  const get_heading_name = () => {
+    if (url.length > 0)
+      return (<a href={url} target="_new">{name}</a>);
+    else if (is_authenticated)
+      return current_user.split(":")[1];
+    else
+      return name;
   }
 
-  handle_input_change(event) {
+  const raw_markup = () => {
+    const md = new Remarkable();
+    const _raw_markup = md.render(comment);
+    return { __html: _raw_markup };
+  }
+
+  return (
+    <div>
+      <hr />
+      {!replyTo && (
+        <h5 className="text-center">
+          {django.gettext("Your comment in preview")}
+        </h5>
+      )}
+      <div className={`comment d-flex ` + ((replyTo > 0) ? "mt-1" : "mt-5")}>
+        <img className="me-3" src={avatar} height="48" width="48" />
+        <div className="d-flex flex-column pb-3">
+          <span style={{fontSize: "0.8rem"}}>
+            {django.gettext("Now")} - {get_heading_name()}  {replyTo > 0 && (
+              <div className="badge badge-info">preview</div>
+            )}
+          </span>
+          <div
+            className="content py-2"
+            dangerouslySetInnerHTML={raw_markup()}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+export function CommentForm({ replyTo, onCommentCreated }) {
+  const {
+    default_followup,
+    default_form,
+    is_authenticated,
+    preview_url,
+    request_email_address,
+    request_name,
+    send_url
+  } = useContext(InitContext);
+
+  const [lstate, setLstate] = useState({
+    previewing: false,
+    avatar: undefined, name: "", email: "", url: "", comment: "",
+    followup: default_followup,
+    errors: { name: false, email: false, comment: false },
+    alert: { message: "", cssc: "" }
+  });
+
+  const handle_input_change = (event) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const iname = target.name;
 
-    this.setState({[iname]: value});
+    setLstate({ ...lstate, [iname]: value });
   }
 
-  handle_blur(field) {
-    function handler(event) {
-      var visited = this.state.visited;
-      visited[field] = true;
-      this.setState({visited: visited});
+  const is_valid_data = () => {
+    let is_valid_name = true, is_valid_email = true;
+
+    if (!is_authenticated || request_name)
+      is_valid_name = (/^\s*$/.test(lstate.name)) ? false : true;
+
+    if (!is_authenticated || request_email_address)
+      is_valid_email = (/\S+@\S+\.\S+/.test(lstate.email)) ? true : false;
+
+    const is_valid_comment = (lstate.comment.length === 0) ? false : true;
+
+    setLstate({
+      ...lstate,
+      errors: {
+        ...lstate.errors,
+        name: !is_valid_name,
+        email: !is_valid_email,
+        comment: !is_valid_comment
+      }
+    });
+
+    return is_valid_name && is_valid_email && is_valid_comment;
+  }
+
+  const handle_submit = (event) => {
+    event.preventDefault();
+    if (!is_valid_data())
+      return;
+
+    const data = {
+      ...default_form,
+      honeypot: '',
+      comment: lstate.comment,
+      name: lstate.name,
+      email: lstate.email,
+      url: lstate.url,
+      followup: lstate.followup,
+      reply_to: replyTo
     };
-    return handler.bind(this);
+
+    const _promise = fetch(
+      send_url,
+      {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    _promise.then(response => {
+      if ([201, 202, 204].includes(response.status)) {
+        let css_class = "";
+        const msg_202 = django.gettext(
+          "Your comment will be reviewed. Thank your for your patience.");
+        const msg_204 = django.gettext(
+          "Thank you, a comment confirmation request has been sent by mail.");
+        const msg_403 = django.gettext(
+          "Sorry, your comment has been rejected.");
+        const message = {
+          202: msg_202,
+          204: msg_204,
+          403: msg_403
+        };
+
+        const cssc = "alert alert-";
+        css_class = (response.status == 403) ? cssc + "danger" : cssc + "info";
+
+        setLstate({
+          ...lstate,
+          alert: {
+            message: message[response.status],
+            cssc: css_class
+          },
+          previewing: false,
+          name: '', email: '', url: '', followup: false, comment: '',
+        });
+
+        onCommentCreated();
+      }
+    })
   }
 
-  validate() {
-    var errors = this.state.errors;
-    errors.name = false;
-    errors.email = false;
+  const handle_preview = (event) => {
+    event.preventDefault();
+    if (!is_valid_data())
+      return;
 
-    if(!this.state.comment.length)
-      errors.comment = true;
-    else errors.comment = false;
-    if(!this.props.is_authenticated || this.props.request_name) {
-      if(/^\s*$/.test(this.state.name))
-        errors.name = true;
-      else errors.name = false;
-    }
-    if(!this.props.is_authenticated || this.props.request_email_address) {
-      if(/\S+@\S+\.\S+/.test(this.state.email))
-        errors.email = false;
-      else errors.email = true;
-    }
-    this.setState({errors: errors});
-
-    if(this.state.errors.comment ||
-       this.state.errors.name ||
-       this.state.errors.email)
-      return false;
-    else return true;
+    const _promise = fetch(
+      preview_url,
+      {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({ email: lstate.email }),
+      }
+    );
+    _promise.then(response => {
+      if (response.status === 200)
+        return response.json();
+      else throw new Error(`Status ${response.status}`);
+    }).then(data => {
+      setLstate({
+        ...lstate,
+        avatar: data.url,
+        previewing: true
+      });
+    }).catch(error => console.error(error));
   }
 
-  render_field_comment() {
-    let div_cssc = "form-group row",
-        input_cssc = "form-control",
-        help = "";
-    if (this.state.reply_to > 0) {
-      input_cssc += " form-control-sm";
+  const get_field_css_classes = (field) => {
+    let css_classes = "row justify-content-center form-group";
+    if (field === "followup")
+      css_classes += " my-3";
+    else
+      css_classes += (replyTo > 0) ? " my-2" : " my-3";
+
+    if (   (field === "name" && lstate.errors.name)
+        || (field === "email" && lstate.errors.email)
+        || (field === "comment" && lstate.errors.comment)
+    ) {
+      css_classes += " has-danger";
     }
-    if (this.state.errors.comment) {
-      div_cssc += (this.state.errors.comment ? " has-danger" : "");
-      input_cssc += " is-invalid";
-      help = this.fhelp;
+
+    return css_classes;
+  }
+
+  const get_input_css_classes = (field) => {
+    let css_classes = "form-control";
+    css_classes += (replyTo > 0) ? " form-control-sm" : "";
+
+    if (   (field === "name" && lstate.errors.name)
+        || (field === "email" && lstate.errors.email)
+        || (field === "comment" && lstate.errors.comment)
+    ) {
+      css_classes += " is-invalid";
     }
-    var placeholder = django.gettext("Your comment");
+
+    return css_classes;
+  }
+
+  const render_comment_field = () => {
     return (
-      <div className={div_cssc}>
-        <div className="offset-md-1 col-md-10">
-          <textarea required name="comment" id="id_comment"
-                    placeholder={placeholder} maxLength="3000"
-                    className={input_cssc} value={this.state.comment}
-                    onChange={this.handle_input_change}
-                    onBlur={this.handle_blur('comment')} />
-          {help}
+      <div className={get_field_css_classes("comment")}>
+        <div className={(replyTo > 0) ? "col-12" : "col-10"}>
+          <textarea
+            required name="comment" id="id_comment"
+            value={lstate.comment} maxLength={3000}
+            placeholder={django.gettext("Your comment")}
+            className={get_input_css_classes("comment")}
+            onChange={handle_input_change}
+          />
+          {lstate.errors.comment && <FieldIsRequired replyTo={replyTo} />}
         </div>
       </div>
     );
   }
 
-  render_field_name() {
-    if(this.props.is_authenticated && !this.props.request_name)
-      return "";
-    let div_cssc = "form-group row",
-        label_cssc = "col-form-label col-md-3 text-right",
-        input_cssc = "form-control",
-        help = "";
-    const placeholder = django.gettext('name');
-    if (this.state.reply_to > 0) {
-      label_cssc += " form-control-sm";
-      input_cssc += " form-control-sm";
-    }
-    if (this.state.errors.name) {
-      div_cssc += " has-danger";
-      input_cssc += " is-invalid";
-      help = this.fhelp;
-    }
+  const render_name_field = () => {
+    if (is_authenticated && !request_name)
+      return <></>;
+
     return (
-      <div className={div_cssc}>
-        <label htmlFor="id_name" className={label_cssc}>
-          {django.gettext("Name")}
-        </label>
-        <div className="col-md-7">
-          <input type="text" name="name" required id="id_name"
-                 value={this.state.name} placeholder={placeholder}
-                 onChange={this.handle_input_change}
-                 onBlur={this.handle_blur('name')}
-                 className={input_cssc} />
-          {help}
+      <div className={get_field_css_classes("name")}>
+        <div className="col-2 text-end">
+          <label
+            htmlFor="id_name"
+            className={
+              (replyTo > 0) ? "form-control-sm" : "col-form-label"
+            }
+          >{django.gettext("Name")}</label>
+        </div>
+        <div className={(replyTo > 0) ? "col-9" : "col-7"}>
+          <input
+            required type="text" name="name" id="id_name"
+            value={lstate.name} placeholder={django.gettext('name')}
+            onChange={handle_input_change}
+            className={get_input_css_classes("name")}
+          />
+          {lstate.errors.name && <FieldIsRequired replyTo={replyTo} />}
         </div>
       </div>
     );
   }
 
-  render_field_email() {
-    if(this.props.is_authenticated && !this.props.request_email_address)
-      return "";
-    let div_cssc = "form-group row",
-        label_cssc = "col-form-label col-md-3 text-right",
-        input_cssc = "form-control",
-        help_cssc = "form-text small",
-        helptext_style = {};
-    const placeholder = django.gettext('mail address'),
-          helptext = django.gettext('Required for comment verification.');
-    if (this.state.reply_to > 0) {
-      label_cssc += " form-control-sm";
-      input_cssc += " form-control-sm";
-      helptext_style = {fontSize: "0.710rem"};
-    }
-    if (this.state.errors.email) {
-      div_cssc += " has-danger";
-      input_cssc += " is-invalid";
-      help_cssc += " invalid-feedback";
-    }
+  const render_email_field = () => {
+    if (is_authenticated && !request_email_address)
+      return <></>;
+
+    let help_cssc = "form-text small";
+    help_cssc += lstate.errors.email ? " invalid-feedback" : "";
+
     return (
-      <div className={div_cssc}>
-        <label htmlFor="id_email" className={label_cssc}>
-          {django.gettext("Mail")}
-        </label>
-        <div className="col-md-7">
-          <input type="text" name="email" required id="id_email"
-                 value={this.state.email} placeholder={placeholder}
-                 onChange={this.handle_input_change}
-                 onBlur={this.handle_blur('email')}
-                 className={input_cssc} />
-          <span className={help_cssc}
-                style={helptext_style}>{helptext}</span>
+      <div className={get_field_css_classes("email")}>
+        <div className="col-2 text-end">
+          <label
+            htmlFor="id_name"
+            className={
+              (replyTo > 0) ? "form-control-sm" : "col-form-label"
+            }
+          >{django.gettext("Mail")}</label>
+        </div>
+        <div className={(replyTo > 0) ? "col-9" : "col-7"}>
+          <input
+            required type="text" name="email" id="id_email"
+            value={lstate.email} placeholder={django.gettext('mail address')}
+            onChange={handle_input_change}
+            className={get_input_css_classes("email")}
+          />
+          <span
+            className={help_cssc}
+            {...((replyTo > 0) && {style: {"fontSize": "0.71rem"}})}
+          >
+            {django.gettext('Required for comment verification.')}
+          </span>
         </div>
       </div>
     );
   }
 
-  render_field_url() {
-    if(this.props.is_authenticated)
-      return "";
-    let label_cssc = "col-form-label col-md-3 text-right",
-        input_cssc = "form-control";
-    if(this.state.reply_to > 0) {
-      label_cssc += " form-control-sm";
-      input_cssc += " form-control-sm";
-    }
-    if(this.state.errors.url)
-    var placeholder = django.gettext("url your name links to (optional)");
+  const render_url_field = () => {
+    if (is_authenticated)
+      return <></>;
+
     return (
-      <div className="form-group row">
-        <label htmlFor="id_url" className={label_cssc}>
-          {django.gettext("Link")}
-        </label>
-        <div className="col-md-7">
-          <input type="text" name="url" id="id_url"
-                 value={this.state.url}
-                 placeholder={placeholder}
-                 onChange={this.handle_input_change}
-                 className={input_cssc} />
+      <div className={get_field_css_classes("url")}>
+        <div className="col-2 text-end">
+          <label
+            htmlFor="id_url"
+            className={
+              (replyTo > 0) ? "form-control-sm" : "col-form-label"
+            }
+          >{django.gettext("Link")}</label>
+        </div>
+        <div className={(replyTo > 0) ? "col-9" : "col-7"}>
+          <input
+            required type="text" name="url" id="id_url"
+            value={lstate.url}
+            placeholder={django.gettext("url your name links to (optional)")}
+            onChange={handle_input_change}
+            className={get_input_css_classes("url")}
+          />
         </div>
       </div>
     );
   }
 
-  render_field_followup() {
-    let label = django.gettext("Notify me about follow-up comments"),
-        label_cssc = "custom-control-label",
-        elem_id = "id_followup";
-    if(this.state.reply_to > 0) {
-        label_cssc += " small";
-        elem_id += `_${this.state.reply_to}`;
-    }
+  const render_followup_field = () => {
+    const elem_id = (replyTo > 0) ? `_${replyTo}` : "id_followup";
+    const cssc = "form-check d-flex justify-content-center align-items-center";
+
     return (
-      <div className="form-group row">
-        <div className="offset-md-3 col-md-7">
-          <div className="custom-control custom-checkbox">
-            <input className="custom-control-input" type="checkbox"
-                   checked={this.state.followup}
-                   onChange={this.handle_input_change}
-                   name="followup" id={elem_id} />
-            <label className={label_cssc} htmlFor={elem_id}>
-              &nbsp;{label}
+      <div className={get_field_css_classes("followup")}>
+        <div className={(replyTo > 0) ? "col-10" : "col-7"}>
+          <div className={cssc}>
+            <input
+              name="followup" type="checkbox"
+              id={elem_id}
+              onChange={handle_input_change}
+              className="form-check-input"
+              checked={lstate.followup}
+            />
+            <label
+              htmlFor={elem_id}
+              className={"ps-2 form-check-label" + (replyTo > 0 && " small")}
+            >
+              &nbsp;{django.gettext("Notify me about follow-up comments")}
             </label>
           </div>
         </div>
@@ -223,232 +372,73 @@ export class CommentForm extends React.Component {
     );
   }
 
-  reset_form() {
-    this.setState({
-      name: '', email: '', url: '', followup: false, comment: '',
-      visited: {name: false, email: false, comment: false},
-      errors: {name: false, email: false, comment: false}
-    });
-  }
-
-  handle_submit_response(status) {
-    let css_class = "";
-    const
-      msg_202 = django.gettext("Your comment will be reviewed. Thank your for your patience."),
-	    msg_204 = django.gettext("Thank you, a comment confirmation request has been sent by mail."),
-	    msg_403 = django.gettext("Sorry, your comment has been rejected.");
-
-    const message = {
-      202: msg_202,
-		  204: msg_204,
-		  403: msg_403
-    };
-	  const cssc = "alert alert-";
-
-    if(status == 403)
-      css_class = cssc + "danger";
-    else css_class = cssc + "info";
-
-    this.setState({alert: {message: message[status], cssc: css_class},
-                   previewing: false});
-    this.reset_form();
-    this.props.on_comment_created();
-  }
-
-  handle_ajax_error(xhr, status, err) {
-    if(xhr.status == 400) {
-      let errors = this.state.errors;
-      xhr.responseJSON.forEach(function(item, idx, array) {
-        errors[item] = true;
-      });
-      this.setState({errors: errors});
-    } else if (xhr.status == 403) {
-      this.handle_submit_response(xhr.status);
-    } else {
-      console.error(xhr, status, err.toString());
-    }
-  }
-
-  handle_submit(event) {
-    event.preventDefault();
-    if(!this.validate())
-      return;
-
-    const data = {
-      ...this.props.form,
-      honeypot: '',
-      comment: this.state.comment,
-      name: this.state.name,
-      email: this.state.email,
-      url: this.state.url,
-      followup: this.state.followup,
-      reply_to: this.state.reply_to
-    };
-
-    $.ajax({
-      method: 'POST',
-      url: this.props.send_url,
-      data: data,
-      dataType: 'json',
-      cache: false,
-      success: function(data, textStatus, xhr) {
-        if([201, 202, 204].indexOf(xhr.status) > -1) {
-	      this.handle_submit_response(xhr.status);
-        }
-      }.bind(this),
-      error: this.handle_ajax_error
-    });
-  }
-
-  handle_preview(event) {
-    event.preventDefault();
-    if(!this.validate())
-      return;
-
-    $.ajax({
-      method: 'POST',
-      url: this.props.preview_url,
-      data: { email: this.state.email },
-      dataType: 'json',
-      success: function(data, textStatus, xhr) {
-        if (xhr.status === 200)
-          this.setState({
-            avatar_url: data.url,
-            previewing: true
-          });
-      }.bind(this),
-      error: this.handle_ajax_error
-    });
-  }
-
-  rawMarkup() {
-    var md = new Remarkable();
-    const rawMarkup = md.render(this.state.comment);
-    return { __html: rawMarkup };
-  }
-
-  render_preview() {
-    if(!this.state.previewing)
-      return "";
-    let heading_name = "";
-
-    // Build Gravatar.
-    const avatar_img = <img className="mr-3" src={this.state.avatar_url}
-                            height="48" width="48"/>;
-
-    if(this.state.url) {
-      heading_name = (<a href={this.state.url} target="_new">
-                      {this.state.name}</a>);
-    } else {
-      if(this.props.is_authenticated)
-        heading_name = this.props.current_user.split(":")[1];
-      else heading_name = this.state.name;
-    }
-
-    let label = "";
-    var header_text = django.gettext("Your comment in preview");
-    let header = <h5 className="text-center">{header_text}</h5>;
-    if(this.state.reply_to > 0) {
-      header = "";
-      label = <div className="badge badge-info">preview</div>;
-    }
-    var nowtext = django.gettext("Now");
-    return (
-      <div>
-        <hr/>
-        {header}
-        <div className="media">
-          {avatar_img}
-          <div className="media-body">
-            <div className="comment pb-3">
-              <h6 className="mb-1 small">
-                {nowtext}&nbsp;-&nbsp;{heading_name}&nbsp;&nbsp;{label}
-              </h6>
-              <div className="preview"
-                   dangerouslySetInnerHTML={this.rawMarkup()} />
+  return (
+    <div>
+      {lstate.previewing && (
+        <PreviewComment
+          avatar={lstate.avatar}
+          name={lstate.name}
+          url={lstate.url}
+          comment={lstate.comment}
+          replyTo={replyTo}
+        />
+      )}
+      <div className={(replyTo === 0) ? "card mt-4 mb-5" : "card mt-2"}>
+        <div className="card-body">
+          {(replyTo === 0) && (
+            <h4 className="card-title text-center pb-3">
+              {django.gettext("Post your comment")}
+            </h4>
+          )}
+          {(lstate.alert.message.length > 0) && (
+            <div className={lstate.alert.cssc}>{lstate.alert.message}</div>
+          )}
+          <form method="POST" onSubmit={handle_submit}>
+            <fieldset>
+              <input type="hidden" name="content_type"
+                defaultValue={default_form.content_type} />
+              <input type="hidden" name="object_pk"
+                defaultValue={default_form.object_pk} />
+              <input type="hidden" name="timestamp"
+                defaultValue={default_form.timestamp} />
+              <input type="hidden" name="security_hash"
+                defaultValue={default_form.security_hash} />
+              <input type="hidden" name="reply_to"
+                defaultValue={replyTo} />
+              <div style={{display:'none'}}>
+                <input type="text" name="honeypot" defaultValue="" />
+              </div>
+              {render_comment_field()}
+              {render_name_field()}
+              {render_email_field()}
+              {render_url_field()}
+              {render_followup_field()}
+            </fieldset>
+            <div
+              className={
+                "row my-2 form-group" + (replyTo > 0 ? " mb-0" : "")
+              }
+            >
+              <div className="d-flex justify-content-center">
+                <button
+                  type="submit"
+                  name="post"
+                  className={
+                    "btn btn-primary me-1" + (replyTo > 0 ? " btn-sm" : "")
+                  }
+                >{django.gettext("send")}</button>
+                <button
+                  name="preview"
+                  className={
+                    "btn btn-secondary" + (replyTo > 0 ? " btn-sm" : "")
+                  }
+                  onClick={handle_preview}
+                >{django.gettext("preview")}</button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
-    );
-  }
-
-  render_form() {
-    let comment = this.render_field_comment();
-    let name = this.render_field_name();
-    let mail = this.render_field_email();
-    let url = this.render_field_url();
-    let followup = this.render_field_followup();
-    let btns_row_class = "form-group row";
-    let btn_submit_class = "btn btn-primary",
-        btn_preview_class = "btn btn-secondary";
-    if(this.state.reply_to != 0) {
-      btns_row_class += " mb-0";
-      btn_submit_class += " btn-sm";
-      btn_preview_class += " btn-sm";
-    }
-    var btn_label_preview = django.gettext("preview");
-    var btn_label_send = django.gettext("send");
-
-    return (
-      <form method="POST" onSubmit={this.handle_submit}>
-        <input type="hidden" name="content_type"
-               defaultValue={this.props.form.content_type}/>
-        <input type="hidden" name="object_pk"
-               defaultValue={this.props.form.object_pk}/>
-        <input type="hidden" name="timestamp"
-               defaultValue={this.props.form.timestamp}/>
-        <input type="hidden" name="security_hash"
-               defaultValue={this.props.form.security_hash}/>
-        <input type="hidden" name="reply_to"
-               defaultValue={this.state.reply_to}/>
-        <fieldset>
-          <div style={{display:'none'}}>
-            <input type="text" name="honeypot" defaultValue=""/>
-          </div>
-          {comment} {name} {mail} {url} {followup}
-        </fieldset>
-
-        <div className={btns_row_class}>
-          <div className="offset-md-3 col-md-7">
-            <button type="submit" name="post"
-                    className={btn_submit_class}>{btn_label_send}</button>&nbsp;
-            <button name="preview" className={btn_preview_class}
-                   onClick={this.handle_preview}>{btn_label_preview}</button>
-          </div>
-        </div>
-      </form>
-    );
-  }
-
-  render() {
-    let preview = this.render_preview();
-    let header = "";
-    let div_class = "card card-block mt-2";
-    var label = django.gettext("Post your comment");
-    if(this.state.reply_to == 0) {
-      header = <h4 className="card-title text-center pb-3">{label}</h4>;
-      div_class = "card card-block mt-4 mb-5";
-    }
-    let alert_div = "";
-    if(this.state.alert.message) {
-      alert_div = (
-        <div className={this.state.alert.cssc}>
-          {this.state.alert.message}
-        </div>
-      );
-    }
-    let form = this.render_form();
-
-    return (<div>
-              {preview}
-              <div className={div_class}>
-                <div className="card-body">
-                  {header}
-                  {alert_div}
-                  {form}
-                </div>
-              </div>
-            </div>);
-  }
+    </div>
+  );
 }

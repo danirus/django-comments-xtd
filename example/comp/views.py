@@ -6,6 +6,5 @@ class HomepageView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        text = open("README.md").read()
-        context['readme_text'] = text.split("\n", 1)[1][1:]
+        context['readme_text'] = open("README.md").read()
         return self.render_to_response(context)

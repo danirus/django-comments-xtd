@@ -9,6 +9,7 @@ plugin*.js.map
 vendor*.js
 vendor*.js.map
 vendor*.LICENSE.txt
+django_comments_xtd/static/django_comments_xtd/js/django-comments-xtd-*.js*
 django*.mo
 db.sqlite3
 docs/_build
@@ -28,3 +29,4 @@ example/env
 .venv
 .idea
 .python-version
+docs/fonts/

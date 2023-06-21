@@ -3,12 +3,16 @@
 {% load comments %}
 {% load comments_xtd %}
 
+{% block title %}
+{{ block.super }}&nbsp;&raquo;&nbsp;{{ object.title}}
+{% endblock %}
+
 {% block menu-class-quotes %}active{% endblock %}
 
 {% block content %}
 <div class="container">
-  <div class="row my-4">
-    <div class="col-lg-12 text-center">
+  <div class="row justify-content-center my-4">
+    <div class="col-8 text-center">
       <h2>{{ object.title }}</h2>
       <div class="small">{{ object.publish }}</div>
       <hr/>
@@ -16,16 +20,16 @@
   </div>
 
   <div class="row justify-content-center flex-fill">
-    <article class="col-md-8">
+    <article class="col-8 mb-4">
       <blockquote class="blockquote">{{ object.quote|linebreaks }}</blockquote>
-      <p class="text-right">
+      <p class="text-end">
         <em>{% if object.url_source %}<a href="{{ object.url_source }}">{{ object.author }}</a>{% else %}{{ object.author }}{% endif %}</em>
       </p>
     </article>
   </div>
 
   <div class="row justify-content-center flex-fill">
-    <div class="col-md-7">
+    <div class="col-8">
       <div id="comments">
         {% get_comment_count for object as comment_count %}
         {% if comment_count %}
@@ -50,7 +54,7 @@
         {% endif %}
 
         {% if comment_count %}
-        <div id="comment-tree">
+        <div id="comment-tree" class="mb-5">
           {% render_xtdcomment_tree for object allow_feedback show_feedback allow_flagging %}
         </div>
         {% endif %}
@@ -62,8 +66,9 @@
 
 {% block extra_js %}
 <script>
- $(function () {
-   $('[data-toggle="tooltip"]').tooltip({'html':true});
- })
+  window.addEventListener('DOMContentLoaded', (_) => {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+  });
 </script>
 {% endblock %}

@@ -7,24 +7,25 @@
 
 {% block content %}
 <div class="container">
-  <div class="mb-4">
-    <h3 class="text-center">{% trans "Reply to comment" %}</h3>
-    <hr/>
+  <div class="row justify-content-center my-4">
+    <div class="col-8 text-center">
+      <h3>{% trans "Reply to comment" %}</h3>
+    </div>
   </div>
-  <div class="row">
-    <div class="offset-md-1 col-md-10">
-      <div class="media">
-        <div class="mr-3">{{ comment.user_email|xtd_comment_gravatar }}</div>
-        <div class="media-body">
-          <div class="comment pb-3">
-            <h6 class="mb-1 small">
-              {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-              {% if comment.user_url %}
-              <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                {{ comment.user_name }}{% if comment.user_url %}</a>{% endif %}
-            </h6>
-            <p>{{ comment.comment }}</p>
-          </div>
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <div class="d-flex">
+        <div class="me-3">
+          {{ comment.user_email|xtd_comment_gravatar }}
+        </div>
+        <div class="d-flex flex-column pb-3">
+          <span style="font-size: 0.8rem">
+            {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+            {% if comment.user_url %}
+            <a href="{{ comment.user_url }}" target="_new" class="text-decoration-none">{% endif %}
+              {{ comment.user_name }}{% if comment.user_url %}</a>{% endif %}
+          </span>
+          <div class="py-2">{{ comment.comment }}</div>
         </div>
       </div>
       <div class="card mt-4 mb-5">

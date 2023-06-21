@@ -1,6 +1,9 @@
+{% extends "django_comments_xtd/base.html" %}
 {% load i18n %}
 {% load comments %}
 {% load comments_xtd %}
+
+{% block title %}{% trans "Comment list" %}{% endblock %}
 
 <div id="comments" class="media-list">
   {% for comment in comment_list %}

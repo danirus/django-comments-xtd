@@ -9,37 +9,36 @@
 {% endblock %}
 
 {% block content %}
-<div class="mb-4">
-  <h3 class="text-center">
-    {% if already_disliked_it %}
-    {% trans "You didn't like this comment, do you want to change it?" %}
-    {% else %}
-    {% trans "Do you dislike this comment?" %}
-    {% endif %}
-  </h3>
-  <hr/>
-</div>
-<p class="lead text-center">{% trans "Please, confirm your opinion about the comment." %}</p>
-<div class="row">
-  <div class="offset-lg-1 col-lg-10">
-    <div class="card mb-4">
-      <div class="card-body">
-        <div class="media pb-2">
+<div class="container">
+  <div class="row justify-content-center my-4">
+    <div class="col-8 text-center">
+      <h3>
+        {% if already_disliked_it %}
+        {% trans "You didn't like this comment, do you want to change it?" %}
+        {% else %}
+        {% trans "Do you dislike this comment?" %}
+        {% endif %}
+      </h3>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <p class="text-center">{% trans "Please, confirm your opinion about the comment." %}</p>
+      <div class="card mb-4">
+        <div class="card-body">
+        <div class="comment d-flex">
           <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
                alt="{{ comment.user_email }}"
-               width="48" height="48" class="mr-3">
-          <div class="media-body">
-            <div class="comment">
-              <h6 class="mb-1 small">
-                {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-                {% if comment.user_url %}
-                <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                  {{ comment.user_name }}
-                  {% if comment.user_url %}
-                </a>{% endif %}
-              </h6>
-              <p>{{ comment.comment }}</p>
-            </div>
+               width="48" height="48" class="me-3">
+          <div class="d-flex flex-column">
+            <span style="font-size: 0.8rem">
+              {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+              {% if comment.user_url %}
+              <a href="{{ comment.user_url }}" target="_new"
+              class="text-decoration-none">{{ comment.user_name }}</a>
+              {% else %}{{ comment.user_name }}{% endif %}
+            </span>
+            <div class="py-2">{{ comment.comment }}</div>
           </div>
         </div>
       </div>
@@ -51,13 +50,10 @@
     </p>
     {% endif %}
     {% endwith %}
-    <div class="visible-lg-block visible-md-block">
-      <hr/>
-    </div>
   </div>
 </div>
-<div class="row">
-  <div class="offset-lg-1 col-lg-10">
+<div class="row justify-content-center">
+  <div class="col-10">
     {% if already_disliked_it %}
     <div class="alert alert-warning text-center">
       {% trans 'Click on the "withdraw" button if you want to withdraw your negative opinion on this comment.' %}

@@ -1,12 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { CommentBox } from './commentbox.jsx';
+import { App } from './app.jsx';
 
-
-ReactDOM.render(
-  React.createElement(CommentBox,
-                      Object.assign(window.comments_props,
-                                    window.comments_props_override)),
-  document.getElementById('comments')
+const root = ReactDOM.createRoot(document.getElementById('comments'));
+root.render(
+  React.createElement(App,
+    Object.assign(window.comments_props, window.comments_props_override)
+  )
 );

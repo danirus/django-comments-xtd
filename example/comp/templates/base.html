@@ -4,45 +4,72 @@
 {% get_available_languages as LANGUAGES %}
 {% get_current_language as current_language %}
 <!DOCTYPE html>
-<html dir="ltr" lang="en">
+<html dir="ltr" lang="en" class="h-100">
   <head>
     <meta charset="utf-8" />
     <title>{% block title %}django-comments-xtd comp demo{% endblock %}</title>
-    <link href="{% static 'django_comments_xtd/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+      html, body {
+        font-family: "Open Sans", Tahoma, sans-serif;
+      }
+      main h1, main h2, main h3 {
+        font-family: "Georgia";
+      }
+      main h1 { line-height: 2.4; }
+      main h2 { line-height: 2.2; }
+      main h3 { line-height: 2.0; }
+      .container {
+        max-width: 960px;
+      }
+      pre { padding: 0 16px; }
+      .comment .content p:last-child {
+        margin-bottom: 0px;
+      }
+      .comment-header .permalink {
+        display: none;
+      }
+      .comment-header:hover .permalink {
+        display: inline;
+      }
+    </style>
   </head>
-  <body>
+  <body class="h-100 d-flex flex-column">
     <div class="container">
-      <div class="d-flex py-4">
-        <h2 class="mr-auto">comp demo</h2>
-        <nav class="nav nav-pills flex-column flex-sm-row align-self-center">
+      <div class="d-flex py-4 align-items-center">
+        <h2 class="flex-grow-1"><a href="/" class="text-decoration-none">comp demo</a></h2>
+        <nav class="nav nav-underline">
           {% if request.user.is_authenticated %}
-          <a class="flex-sm-fill text-sm-center nav-link">Hi, {{ request.user.get_full_name }}</a>
+          <a class="flex-sm-fill text-sm-center nav-link disabled">Hi, {{ request.user.get_full_name }}</a>
           {% endif %}
           <a class="flex-sm-fill text-sm-center nav-link {% block menu-class-homepage %}{% endblock %}"
-             href="{% url 'homepage' %}">{% trans "Home" %}</a>
+            href="{% url 'homepage' %}">{% trans "Home" %}</a>
           <a class="flex-sm-fill text-sm-center nav-link {% block menu-class-articles %}{% endblock %}"
-             href="{% url 'articles-index' %}">{% trans "articles" %}</a>
+            href="{% url 'articles-index' %}">{% trans "articles" %}</a>
           <a class="flex-sm-fill text-sm-center nav-link {% block menu-class-quotes %}{% endblock %}"
-             href="{% url 'quotes-index' %}">{% trans "quotes" %}</a>
+            href="{% url 'quotes-index' %}">{% trans "quotes" %}</a>
           <a class="flex-sm-fill text-sm-center nav-link {% block menu-class-comments %}{% endblock %}"
-             href="{% url 'comments-xtd-list' %}">{% trans "comments" %}</a>
+            href="{% url 'comp-comment-list' %}">{% trans "comments" %}</a>
           {% if 'rosetta' in settings.INSTALLED_APPS %}
           <div class="dropdown">
             <form id="langform" hidden>
               {% csrf_token %}<input type="text" id="language" name="language" /><input type="text" name="next" />
             </form>
             <a class="flex-sm-fill text-sm-center nav-link dropdown-toggle"
-               data-toggle="dropdown"
-               href="#">{{ current_language|language_name }}</a>
-            <div class="dropdown-menu languages" id="selectlanguage">
+              data-bs-toggle="dropdown"
+              href="#">{{ current_language|language_name }}</a>
+            <div class="dropdown-menu languages" onClick="set_language" id="selectlanguage">
               {% for language in LANGUAGES %}
               {% if current_language != language.0 %}
               <a class="dropdown-item" href="#" data-name="language"
-                 data-code="{{ language.0 }}">{{ language.0|language_tuple }}</a>
+                data-code="{{ language.0 }}">{{ language.0|language_tuple }}</a>
               {% else %}
               <a class="dropdown-item disabled"
-                 href="#">{{ language.0|language_name }}</a>
+                href="#">{{ language.0|language_name }}</a>
               {% endif %}
               {% endfor %}
             </div>
@@ -52,34 +79,34 @@
       </div>
     </div>
 
+    <main>
     {% block content %}
     {% endblock %}
+    </main>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <hr/>
-          <p class="text-center text-muted small">django-comments-xtd comp demo.</p>
+    <footer class="mt-auto">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <hr/>
+            <p class="text-center text-muted small">django-comments-xtd comp demo.</p>
+          </div>
         </div>
       </div>
-    </div>
+    </footer>
 
     <script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        crossorigin="anonymous"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-        crossorigin="anonymous"></script>
-    <script
-        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script>
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"></script>
     <script
         type="text/javascript"
         src="{% url 'javascript-catalog' %}"></script>
+    <script
+        type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/2.0.1/remarkable.min.js"></script>
     <script>
      function set_language(event) {
+      debugger;
        event.preventDefault();
        var $link = event.target;
        $form = $('#langform');
@@ -88,10 +115,12 @@
          window.location.reload();
        });
      }
+     /*
      $(function() {
        $('.dropdown-toggle').dropdown();
        $("#selectlanguage A[data-name=language]").click(set_language);
      });
+     */
     </script>
     {% block extra_js %}
     {% endblock %}

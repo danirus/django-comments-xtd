@@ -71,7 +71,7 @@ class CommentBoxDriver(object):
                 count_url: <api-url-to-count-comments>,
                 send_url: <api-url-to-send-a-comment>,
                 preview_url: <api-url-to-preview-users-avatar>,
-                form: {
+                default_form: {
                     content_type: <value>,
                     object_pk: <value>,
                     timestamp: <value>,
@@ -84,7 +84,7 @@ class CommentBoxDriver(object):
             }
         """
 
-        form = CommentSecurityForm(obj)
+        default_form = CommentSecurityForm(obj)
         ctype = ContentType.objects.get_for_model(obj)
         queryset = cls.get_queryset(ctype, obj, request)
         ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
@@ -115,11 +115,11 @@ class CommentBoxDriver(object):
                                               'object_pk': obj.pk}),
             "send_url": cls._reverse("comments-xtd-api-create"),
             "preview_url": cls._reverse("comments-xtd-api-preview"),
-            "form": {
-                "content_type": form['content_type'].value(),
-                "object_pk": form['object_pk'].value(),
-                "timestamp": form['timestamp'].value(),
-                "security_hash": form['security_hash'].value()
+            "default_form": {
+                "content_type": default_form['content_type'].value(),
+                "object_pk": default_form['object_pk'].value(),
+                "timestamp": default_form['timestamp'].value(),
+                "security_hash": default_form['security_hash'].value()
             },
             "default_followup": settings.COMMENTS_XTD_DEFAULT_FOLLOWUP,
             "html_id_suffix": get_html_id_suffix(obj),

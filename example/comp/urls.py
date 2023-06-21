@@ -25,7 +25,7 @@ urlpatterns = [
             XtdCommentListView.as_view(content_types=["articles.article",
                                                       "quotes.quote"],
                                        paginate_by=10, page_range=5),
-            name='comments-xtd-list'),
+            name='comp-comment-list'),
     re_path(r'^feeds/comments/$', LatestCommentFeed(), name='comments-feed'),
     re_path(r'^api-auth/', include('rest_framework.urls',
                                    namespace='rest_framework')),

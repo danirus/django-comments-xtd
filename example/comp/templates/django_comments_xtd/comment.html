@@ -1,0 +1,26 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+<div id="c{{ comment.id }}" class="comment d-flex py-1">
+  <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
+      class="me-3" alt="{{ comment.user_email }}"
+      height="48" width="48" />
+  <div class="d-flex flex-column flex-grow-1">
+    <h6 class="comment-header mb-1 d-flex flex-column" style="font-size: 0.8rem">
+      <span class="pb-1">
+        {% trans "Posted to "%}&nbsp;<a href="{{ comment.content_object.get_absolute_url }}" class="text-decoration-none">{{ comment.content_object }}</a>
+      </span>
+      <span>
+        {{ comment.submit_date|timesince }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new" class="text-decoration-none">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}&nbsp;&nbsp;<a class="permalink text-decoration-none" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
+      </span>
+    </h6>
+    <div class="comment py-2">
+      {% if comment.is_removed %}
+      <p class="text-muted">{% trans "This comment has been removed." %}</p>
+      {% else %}
+      {% include "includes/django_comments_xtd/comment_content.html" with content=comment.comment %}
+      {% endif %}
+    </div>
+  </div>
+</div>

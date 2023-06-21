@@ -24,7 +24,7 @@ class CommentBoxTestCase(TestCase):
         response = commentbox_props_response(diary, user, request)
         d = response.data
         self.assertEqual(d['comment_count'], 1)
-        self.assertEqual(d['form']['object_pk'], str(diary.id))
+        self.assertEqual(d['default_form']['object_pk'], str(diary.id))
         self.assertEqual(d['count_url'], '/comments/api/tests-diary/1/count/')
         self.assertEqual(d['list_url'], '/comments/api/tests-diary/1/')
         self.assertEqual(d['current_user'], "1:bob")
@@ -44,7 +44,7 @@ class CommentBoxTestCase(TestCase):
         response = commentbox_props_response(diary, user, request)
         d = response.data
         self.assertEqual(d['comment_count'], 1)
-        self.assertEqual(d['form']['object_pk'], str(diary.id))
+        self.assertEqual(d['default_form']['object_pk'], str(diary.id))
         self.assertEqual(d['count_url'], '/comments/api/tests-diary/1/count/')
         self.assertEqual(d['list_url'], '/comments/api/tests-diary/1/')
         self.assertEqual(d['current_user'], "0:Anonymous")
@@ -65,7 +65,7 @@ class CommentBoxTestCase(TestCase):
         response = commentbox_props_response(diary, user, request)
         d = response.data
         self.assertEqual(d['comment_count'], 1)
-        self.assertEqual(d['form']['object_pk'], str(diary.uuid))
+        self.assertEqual(d['default_form']['object_pk'], str(diary.uuid))
         self.assertEqual(
             d['count_url'],
             f'/comments/api/tests-uuiddiary/{diary.uuid}/count/'

@@ -49,7 +49,7 @@ class XtdCommentForm(CommentForm):
 
         self.fields['followup'].widget.attrs['id'] = (
             'id_followup%s' % followup_suffix)
-        self.fields['followup'].widget.attrs['class'] = "custom-control-input"
+        self.fields['followup'].widget.attrs['class'] = "form-check-input"
         self.fields['followup'].initial = settings.COMMENTS_XTD_DEFAULT_FOLLOWUP
 
     def get_comment_model(self):

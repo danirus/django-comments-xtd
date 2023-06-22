@@ -61,12 +61,11 @@
             </form>
             <a class="flex-sm-fill text-sm-center nav-link dropdown-toggle"
               data-bs-toggle="dropdown"
-              href="#">{{ current_language|language_name }}</a>
-            <div class="dropdown-menu languages" onClick="set_language" id="selectlanguage">
+              href="#" data-dcx-language-active>{{ current_language|language_name }}</a>
+            <div class="dropdown-menu languages" id="selectlanguage">
               {% for language in LANGUAGES %}
               {% if current_language != language.0 %}
-              <a class="dropdown-item" href="#" data-name="language"
-                data-code="{{ language.0 }}">{{ language.0|language_tuple }}</a>
+              <a class="dropdown-item" href="#" data-dcx-language-code="{{ language.0 }}">{{ language.0|language_tuple }}</a>
               {% else %}
               <a class="dropdown-item disabled"
                 href="#">{{ language.0|language_name }}</a>
@@ -105,16 +104,23 @@
         type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/2.0.1/remarkable.min.js"></script>
     <script>
-     function set_language(event) {
-      debugger;
-       event.preventDefault();
-       var $link = event.target;
-       $form = $('#langform');
-       $form.find('input[name=language]').val($link.dataset.code);
-       $.post('/i18n/setlang/', $form.serialize(), function(d) {
-         window.location.reload();
-       });
-     }
+      function set_language(event) {
+        event.preventDefault();
+        const formEl = document.getElementById('langform');
+        const inputEl = document.querySelector('input[name=language]');
+        inputEl.value = event.target.dataset.dcxLanguageCode;
+        const _promise = fetch('/i18n/setlang/', {
+          method: "POST", mode: "cors", body: new FormData(formEl)
+        });
+        _promise.then(() => window.location.reload());
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const qs_lang_anchors = "[data-dcx-language-code]";
+        for (const item of document.querySelectorAll(qs_lang_anchors)) {
+          item.addEventListener("click", set_language);
+        }
+      });
      /*
      $(function() {
        $('.dropdown-toggle').dropdown();

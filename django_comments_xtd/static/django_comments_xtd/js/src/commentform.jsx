@@ -334,7 +334,7 @@ export function CommentForm({ replyTo, onCommentCreated }) {
         </div>
         <div className={(replyTo > 0) ? "col-9" : "col-7"}>
           <input
-            required type="text" name="url" id="id_url"
+            type="text" name="url" id="id_url"
             value={lstate.url}
             placeholder={django.gettext("url your name links to (optional)")}
             onChange={handle_input_change}

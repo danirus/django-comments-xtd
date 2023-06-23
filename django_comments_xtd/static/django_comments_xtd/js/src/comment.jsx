@@ -47,8 +47,7 @@ export function Comment({data, onCommentCreated}) {
     user_avatar,
     user_moderator,
     user_name,
-    user_url,
-
+    user_url
   } = data;
 
   const {

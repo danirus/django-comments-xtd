@@ -33,7 +33,7 @@ class WriteCommentSerializer(serializers.Serializer):
     honeypot = serializers.CharField(required=False, allow_blank=True)
     name = serializers.CharField(allow_blank=True)
     email = serializers.EmailField(allow_blank=True)
-    url = serializers.URLField(required=False)
+    url = serializers.URLField(required=False, allow_blank=True)
     comment = serializers.CharField(max_length=COMMENT_MAX_LENGTH)
     followup = serializers.BooleanField(default=False)
     reply_to = serializers.IntegerField(default=0)
@@ -89,15 +89,15 @@ class WriteCommentSerializer(serializers.Serializer):
         ctype = data.get("content_type")
         object_pk = data.get("object_pk")
         if ctype is None or object_pk is None:
-            return serializers.ValidationError("Missing content_type or "
-                                               "object_pk field.")
+            return serializers.ValidationError(
+                "Missing content_type or object_pk field.")
         try:
             model = apps.get_model(*ctype.split(".", 1))
             target = model._default_manager.get(pk=object_pk)
             whocan = get_app_model_options(content_type=ctype)['who_can_post']
         except (AttributeError, TypeError, LookupError, ValueError):
-            raise serializers.ValidationError("Invalid content_type value: %r"
-                                              % escape(ctype))
+            raise serializers.ValidationError(
+                "Invalid content_type value: %r" % escape(ctype))
         except model.DoesNotExist:
             raise serializers.ValidationError(
                 "No object matching content-type %r and object PK %r exists."

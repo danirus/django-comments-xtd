@@ -101,7 +101,7 @@ export function CommentBox() {
   }
 
   useEffect(() => {
-    if (polling_interval) {
+    if (polling_interval > 0) {
       setInterval(load_count, polling_interval);
     }
     load_comments();

@@ -8,7 +8,7 @@
   ],
   "ignorePatterns": [
     "build/*",
-    "wdio.conf.js"
+    "jest.config.js"
   ],
   "rules": {
     "indent": [
@@ -32,6 +32,7 @@
     "import/no-unresolved": "off",
     "object-curly-spacing": "off",
     "react/prop-types": "off",
+    "unicorn/consistent-destructuring": "off",
     "unicorn/filename-case": "off",
     "unicorn/prefer-module": "off",
     "unicorn/prefer-query-selector": "off",

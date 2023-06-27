@@ -1,5 +1,5 @@
 import django from 'django';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Remarkable } from 'remarkable';
 
 import { getCookie } from './lib.js';
@@ -7,7 +7,119 @@ import { InitContext, StateContext } from './context.js';
 import { CommentForm } from './commentform.jsx';
 
 
-function reduce_flags(data, current_user) {
+// --------------------------------------------------------------------
+export function UserPart({
+  userName, userUrl, isRemoved, userModerator
+}) {
+  const user = useMemo(() => {
+    return (userUrl && !isRemoved)
+      ? <a
+        href={userUrl}
+        className="text-decoration-none"
+        title="User's link">{userName}</a>
+      : userName;
+  }, [userUrl, isRemoved]);
+
+  const moderator = useMemo(() => {
+    if (userModerator) {
+      const label = django.gettext("moderator");
+      return (
+        <span>&nbsp;
+          <span className="badge text-bg-secondary">{label}</span>
+        </span>
+      );
+    } else
+      return <></>;
+  }, [userModerator]);
+
+  return (<span>{user}{moderator}</span>);
+}
+
+// --------------------------------------------------------------------
+// The TopRightPart displays:
+//  * The "flag this comment" link, and
+//  * The "remove this comment" link.
+
+export function TopRightPart({
+  allowFlagging,
+  canModerate,
+  commentId,
+  deleteUrl,
+  flagUrl,
+  isAuthenticated,
+  isRemoved,
+  loginUrl,
+  removal,
+  removalCount,
+}) {
+  const flagging_count = useMemo(() => {
+    console.log("removalCount:", removalCount);
+    if (isAuthenticated && canModerate && removalCount > 0) {
+      const fmts = django.ngettext(
+        "%s user has flagged this comment as inappropriate.",
+        "%s users have flagged this comment as inappropriate.",
+        removalCount
+      );
+      const text = django.interpolate(fmts, [removalCount]);
+      return (
+        <span className="small text-danger" title={text}>{removalCount}</span>
+      );
+    } else {
+      return <></>;
+    }
+  }, [isAuthenticated, canModerate, removalCount]);
+
+  const flagging_html = useMemo(() => {
+    if (!allowFlagging)
+      return <></>;
+
+    let inapp_msg = "";
+    if (removal) {
+      inapp_msg = django.gettext("I flagged it as inappropriate");
+      return (
+        <span>
+          {flagging_count}&nbsp;
+          <i className="bi bi-flag text-danger" title={inapp_msg}></i>
+        </span>
+      );
+    } else {
+      const url = (isAuthenticated)
+        ? flagUrl.replace('0', commentId)
+        : loginUrl + "?next=" + flagUrl.replace('0', commentId);
+      inapp_msg = django.gettext("flag comment as inappropriate");
+      return (
+        <a className="mutedlink" href={url}>
+          <i className="bi bi-flag" title={inapp_msg}></i>
+        </a>
+      );
+    }
+  }, [allowFlagging, removal]);
+
+  const moderate_html = useMemo(() => {
+    if (isAuthenticated && canModerate) {
+      const remove_msg = django.gettext("remove comment");
+      const url = deleteUrl.replace('0', commentId);
+      return (
+        <a className="mutedlink" href={url}>
+          <i className="bi bi-trash" title={remove_msg}></i>
+        </a>
+      );
+    } else {
+      return <></>;
+    }
+  }, [isAuthenticated, canModerate]);
+
+  if (isRemoved)
+    return <></>;
+
+  return (
+    <div className="d-inline">{flagging_html} {moderate_html}</div>
+  )
+}
+
+
+// --------------------------------------------------------------------
+export function reduce_flags(data, current_user) {
   const flags = {
     like: { is_active: false, users: [] },
     dislike: { is_active: false, users: [] },
@@ -20,26 +132,30 @@ function reduce_flags(data, current_user) {
       case "like": {
         flags.like.users.push(user);
         flags.like.is_active = is_active;
+        break;
       }
       case "dislike": {
         flags.dislike.users.push(user);
         flags.dislike.is_active = is_active;
+        break;
       }
       case "removal": {
         flags.removal.count += 1;
         flags.removal.is_active = is_active;
+        break;
       }
     }
   }
+  console.log("flags:", flags);
   return flags;
 }
 
 
 export function Comment({data, onCommentCreated}) {
+  console.log("data:", data);
   const {
     children,
     comment,
-    id,
     is_removed,
     level,
     permalink,
@@ -77,41 +193,16 @@ export function Comment({data, onCommentCreated}) {
   const [lstate, setLstate] = useState({
     current_user: current_user,
     removal: _flags.removal.is_active,
-    removal_count: _flags.count,
+    removal_count: _flags.removal.count,
     like: _flags.like.is_active,
-    like_users: _flags.like.users || [],
+    like_users: _flags.like.users,
     dislike: _flags.dislike.is_active,
-    dislike_users: _flags.dislike.users || [],
+    dislike_users: _flags.dislike.users,
     reply_form: {
       component: undefined,
       is_visible: false
     }
   });
-
-  const get_username_chunk = () => {
-    let
-      username = user_name,
-      moderator = "";
-
-    if (user_url && !is_removed) {
-      username = (
-        <a
-          href={data.user_url}
-          className="text-decoration-none"
-        >{username}</a>
-      );
-    }
-
-    if (user_moderator) {
-      const label = django.gettext("moderator");
-      moderator = (
-        <span>&nbsp;
-          <span className="badge text-bg-secondary">{label}</span>
-        </span>
-      );
-    }
-    return (<span>{username}{moderator}</span>);
-  }
 
   const get_top_right_chunk = () => {
     let
@@ -149,8 +240,8 @@ export function Comment({data, onCommentCreated}) {
         );
       } else {
         url = (is_authenticated)
-          ? flag_url.replace('0', id)
-          : login_url + "?next=" + flag_url.replace('0', id);
+          ? flag_url.replace('0', data.id)
+          : login_url + "?next=" + flag_url.replace('0', data.id);
         inapp_msg = django.gettext("flag comment as inappropriate");
         flagging_html = (
           <a className="mutedlink" href={url}>
@@ -162,7 +253,7 @@ export function Comment({data, onCommentCreated}) {
 
     if (is_authenticated && can_moderate) {
       const remove_msg = django.gettext("remove comment");
-      url = delete_url.replace('0', id);
+      url = delete_url.replace('0', data.id);
       moderate_html = (
         <a className="mutedlink" href={url}>
           <i className="bi bi-trash" title={remove_msg}></i>
@@ -364,6 +455,7 @@ export function Comment({data, onCommentCreated}) {
               dislike_users: _dislike_users,
             });
           }
+          break;
         }
         case 204: {
           if (flag == 'like') {
@@ -385,11 +477,13 @@ export function Comment({data, onCommentCreated}) {
               dislike_users: _dislike_users
             });
           }
+          break;
         }
         case 400: {
           response.json().then(data => {
             console.error(data);
           });
+          break;
         }
       }
     });
@@ -401,7 +495,7 @@ export function Comment({data, onCommentCreated}) {
       return post_feedback('like');
     }
 
-    const redirect = `${login_url}?next=${like_url.replace('0', id)}`;
+    const redirect = `${login_url}?next=${like_url.replace('0', data.id)}`;
     return window.location.href = redirect;
   }
 
@@ -411,7 +505,7 @@ export function Comment({data, onCommentCreated}) {
       return post_feedback('dislike');
     }
 
-    const redirect = `${login_url}?next=${dislike_url.replace('0', id)}`;
+    const redirect = `${login_url}?next=${dislike_url.replace('0', data.id)}`;
     return window.location.href = redirect;
   }
 
@@ -432,20 +526,37 @@ export function Comment({data, onCommentCreated}) {
           style={{ fontSize: "0.8rem"}}
         >
           <div className="d-inline flex-grow-1">
-            {newcids.includes(id) && (
+            {newcids.includes(data.id) && (
               <span>
                 <span className="badge text-bg-success">new</span>&nbsp;-&nbsp;
               </span>
             )}
             {submit_date}&nbsp;-&nbsp;
-            {get_username_chunk()}&nbsp;&nbsp;
+            <UserPart
+              userName={user_name}
+              userUrl={user_url}
+              isRemoved={is_removed}
+              userModerator={user_moderator}
+            />
+            &nbsp;&nbsp;
             <a
               className="permalink text-decoration-none"
               title={django.gettext("comment permalink")}
               href={permalink}
             >¶</a>
           </div>
-          {get_top_right_chunk()}
+          <TopRightPart
+            allowFlagging={allow_flagging}
+            canModerate={can_moderate}
+            commentId={data.id}
+            deleteUrl={delete_url}
+            flagUrl={flag_url}
+            isAuthenticated={is_authenticated}
+            isRemoved={is_removed}
+            loginUrl={login_url}
+            removal={lstate.removal}
+            removalCount={lstate.removal_count}
+          />
         </h6>
         {render_comment_body()}
         {!is_removed && (

@@ -390,7 +390,7 @@ export function CommentForm({ replyTo, onCommentCreated }) {
               {django.gettext("Post your comment")}
             </h4>
           )}
-          {(lstate.alert.message.length > 0) && (
+          {(lstate.alert.message && lstate.alert.message.length > 0) && (
             <div className={lstate.alert.cssc}>{lstate.alert.message}</div>
           )}
           <form method="POST" onSubmit={handle_submit}>

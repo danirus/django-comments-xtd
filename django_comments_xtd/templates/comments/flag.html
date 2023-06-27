@@ -9,33 +9,33 @@
 {% endblock %}
 
 {% block content %}
-<div class="mb-4">
-  <h3 class="text-center">{% trans "Flag this comment?" %}</h3>
-  <hr/>
-</div>
-<p class="lead text-center">{% trans "Click on the flag button to mark the following comment as inappropriate." %}</p>
-<div class="row">
-  <div class="offset-md-1 col-md-10">
-    <div class="card mb-4">
-      <div class="card-body">
-        <div class="media pb-2">
-          <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
-               alt="{{ comment.user_email }}"
-               width="48" height="48" class="mr-3">
-          <div class="media-body">
-            <h6 class="mb-1 small">
-              {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-              {% if comment.user_url %}
-              <a href="{{ comment.user_url }}" target="_new">{% endif %}
-                {{ comment.user_name }}
+<div class="container">
+  <div class="row justify-content-center my-4">
+    <div class="col-8 text-center">
+      <h3>{% trans "Flag this comment?" %}</h3>
+    </div>
+  </div>
+    <div class="row justify-content-center">
+    <div class="col-8">
+      <p class="text-center">{% trans "Click on the flag button to mark the following comment as inappropriate." %}</p>
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="comment d-flex">
+            <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
+                alt="{{ comment.user_email }}"
+                width="48" height="48" class="me-3">
+            <div class="d-flex flex-column">
+              <span style="font-size: 0.8rem">
+                {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
                 {% if comment.user_url %}
-              </a>{% endif %}
-            </h6>
-            <p>{{ comment.comment }}</p>
+                <a href="{{ comment.user_url }}" target="_new" class="text-decoration-none">{{ comment.user_name }}</a>
+                {% else %}{{ comment.user_name }}{% endif %}
+              </span>
+              <div class="py-2">{{ comment.comment }}</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     {% with object_absolute_url=comment.content_object.get_absolute_url %}
     {% if object_absolute_url %}
     <p class="text-center">
@@ -43,13 +43,10 @@
     </p>
     {% endif %}
     {% endwith %}
-    <div class="visible-md-block">
-      <hr/>
-    </div>
   </div>
 </div>
-<div class="row">
-  <div class="offset-md-1 col-md-10">
+<div class="row justify-content-center">
+  <div class="col-10">
     <form action="." method="post">{% csrf_token %}
       <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
       <div class="form-group">

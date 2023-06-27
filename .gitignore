@@ -30,3 +30,4 @@ example/env
 .idea
 .python-version
 docs/fonts/
+django_comments_xtd/static/django_comments_xtd/js/coverage/

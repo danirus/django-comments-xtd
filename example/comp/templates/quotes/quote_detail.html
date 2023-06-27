@@ -53,11 +53,9 @@
         <h4 class="mt-4 mb-5 text-center text-secondary">Comments are disabled for this quote.</h4>
         {% endif %}
 
-        {% if comment_count %}
         <div id="comment-tree" class="mb-5">
           {% render_xtdcomment_tree for object allow_feedback show_feedback allow_flagging %}
         </div>
-        {% endif %}
       </div>
     </div>
   </div>
@@ -67,8 +65,9 @@
 {% block extra_js %}
 <script>
   window.addEventListener('DOMContentLoaded', (_) => {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    const tooltipQs = '[data-bs-toggle="tooltip"]';
+    const tooltipList = document.querySelectorAll(tooltipQs);
+    [...tooltipList].map(el => new bootstrap.Tooltip(el));
   });
 </script>
 {% endblock %}

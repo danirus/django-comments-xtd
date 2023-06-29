@@ -16,7 +16,7 @@
         {% if not item.comment.is_removed %}
           {% if perms.comments.can_moderate %}
             {% if item.flagged_count %}
-              <span class="badge badge-danger" title="{% blocktrans count counter=item.flagged_count %}A user has flagged this comment as inappropriate.{% plural %}{{ counter }} users have flagged this comment as inappropriate.{% endblocktrans %}">{{ item.flagged_count }}</span>
+              <span class="small text-danger" title="{% blocktrans count counter=item.flagged_count %}A user has flagged this comment as inappropriate.{% plural %}{{ counter }} users have flagged this comment as inappropriate.{% endblocktrans %}">{{ item.flagged_count }}</span>
             {% endif %}
           {% endif %}
           {% if allow_flagging and request.user in item.flagged %}

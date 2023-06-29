@@ -36,6 +36,7 @@
     "unicorn/filename-case": "off",
     "unicorn/prefer-module": "off",
     "unicorn/prefer-query-selector": "off",
+    "unicorn/prefer-string-replace-all": "off",
     "unicorn/prevent-abbreviations": "off"
   }
 }

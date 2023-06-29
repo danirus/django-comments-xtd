@@ -194,15 +194,18 @@ export function FeedbackPart({
 
 
 // --------------------------------------------------------------------
-// The ReplyLinkPart displays:
-//  * The "reply" link.
+// The ReplyFormPart displays:
+//  * The "reply" link. (it can be precedeed with a &bull;)
+//  * The "reply" form.
 
-export function ReplyLinkPart({
+export function ReplyFormPart({
   allowFeedback,
   commentId,
   level,
   maxThreadLevel,
+  onCommentCreated,
   onReplyClick,
+  replyFormVisible,
   replyUrl,
 }) {
   const url = replyUrl.replace('0', commentId);
@@ -212,23 +215,36 @@ export function ReplyLinkPart({
     return <></>;
 
   return (
-    allowFeedback
-      ? (
-        <span>&nbsp;&nbsp;<span className="text-muted">&bull;</span>&nbsp;&nbsp;
+    <>
+      {allowFeedback
+        ? (
+          <span>
+            &nbsp;&nbsp;<span className="text-muted">&bull;</span>&nbsp;&nbsp;
+            <a
+              className="small text-decoration-none"
+              onClick={onReplyClick}
+              href={url}
+            >{label}</a>
+          </span>
+        )
+        : (
           <a
             className="small text-decoration-none"
             onClick={onReplyClick}
             href={url}
           >{label}</a>
-        </span>
-      )
-      : (
-        <a
-          className="small text-decoration-none"
-          onClick={onReplyClick}
-          href={url}
-        >{label}</a>
-      )
+        )
+      }
+      {replyFormVisible
+        ? (
+          <CommentForm
+            replyTo={commentId}
+            onCommentCreated={onCommentCreated}
+          />
+        )
+        : <></>
+      }
+    </>
   );
 }
 
@@ -307,13 +323,16 @@ export function Comment({data, onCommentCreated}) {
     like_users: _flags.like,
     dislike_users: _flags.dislike,
     reply_form: {
-      component: undefined,
+      // component: undefined,
       is_visible: false
     }
   });
 
-  const make_form_invisible = (submit_status) => {
+  const handle_comment_created = (submit_status) => {
     onCommentCreated();
+    if (is_authenticated) {
+      setLstate({ ...lstate, reply_form: { is_visible: false }});
+    }
   }
 
   const handle_reply_click = (event) => {
@@ -325,20 +344,20 @@ export function Comment({data, onCommentCreated}) {
       );
     }
 
-    let component = lstate.reply_form.component;
-    if (component == undefined) {
-      component = (
-        <CommentForm
-          replyTo={data.id}
-          onCommentCreated={make_form_invisible}
-        />
-      );
-    }
+    // let component = lstate.reply_form.component;
+    // if (component == undefined) {
+    //   component = (
+    //     <CommentForm
+    //       replyTo={data.id}
+    //       onCommentCreated={handle_comment_created}
+    //     />
+    //   );
+    // }
 
     setLstate({
       ...lstate,
       reply_form: {
-        component,
+        // component,
         is_visible: !lstate.reply_form.is_visible
       }
     });
@@ -506,15 +525,16 @@ export function Comment({data, onCommentCreated}) {
               userLikeList={lstate.like_users}
               userDislikeList={lstate.dislike_users}
             />
-            <ReplyLinkPart
+            <ReplyFormPart
               allowFeedback={allow_feedback}
               commentId={data.id}
               level={level}
               maxThreadLevel={max_thread_level}
+              onCommentCreated={handle_comment_created}
               onReplyClick={handle_reply_click}
+              replyFormVisible={lstate.reply_form.is_visible}
               replyUrl={reply_url}
             />
-            {render_reply_form()}
           </div>
         )}
         {(children.length > 0) && (

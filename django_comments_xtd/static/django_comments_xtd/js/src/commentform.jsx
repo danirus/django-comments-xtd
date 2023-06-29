@@ -79,6 +79,7 @@ export function CommentForm({ replyTo, onCommentCreated }) {
 
   const [lstate, setLstate] = useState({
     previewing: false,
+    submitted: false,
     avatar: undefined, name: "", email: "", url: "", comment: "",
     followup: default_followup,
     errors: { name: false, email: false, comment: false },
@@ -160,8 +161,13 @@ export function CommentForm({ replyTo, onCommentCreated }) {
           403: msg_403
         };
 
-        const cssc = "alert alert-";
+
+        const cssc = (replyTo > 0 ? "mb-0 " : "") + "small alert alert-";
         css_class = (response.status == 403) ? cssc + "danger" : cssc + "info";
+
+        const _errors = response.status < 300
+          ? { name: false, email: false, comment: false }
+          : { ...lstate.errors };
 
         setLstate({
           ...lstate,
@@ -170,7 +176,9 @@ export function CommentForm({ replyTo, onCommentCreated }) {
             cssc: css_class
           },
           previewing: false,
+          submitted: true,
           name: '', email: '', url: '', followup: false, comment: '',
+          errors: _errors
         });
 
         onCommentCreated();
@@ -393,50 +401,52 @@ export function CommentForm({ replyTo, onCommentCreated }) {
           {(lstate.alert.message && lstate.alert.message.length > 0) && (
             <div className={lstate.alert.cssc}>{lstate.alert.message}</div>
           )}
-          <form method="POST" onSubmit={handle_submit}>
-            <fieldset>
-              <input type="hidden" name="content_type"
-                defaultValue={default_form.content_type} />
-              <input type="hidden" name="object_pk"
-                defaultValue={default_form.object_pk} />
-              <input type="hidden" name="timestamp"
-                defaultValue={default_form.timestamp} />
-              <input type="hidden" name="security_hash"
-                defaultValue={default_form.security_hash} />
-              <input type="hidden" name="reply_to"
-                defaultValue={replyTo} />
-              <div style={{display:'none'}}>
-                <input type="text" name="honeypot" defaultValue="" />
+          {(!lstate.submitted || replyTo === 0) && (
+            <form method="POST" onSubmit={handle_submit}>
+              <fieldset>
+                <input type="hidden" name="content_type"
+                  defaultValue={default_form.content_type} />
+                <input type="hidden" name="object_pk"
+                  defaultValue={default_form.object_pk} />
+                <input type="hidden" name="timestamp"
+                  defaultValue={default_form.timestamp} />
+                <input type="hidden" name="security_hash"
+                  defaultValue={default_form.security_hash} />
+                <input type="hidden" name="reply_to"
+                  defaultValue={replyTo} />
+                <div style={{display:'none'}}>
+                  <input type="text" name="honeypot" defaultValue="" />
+                </div>
+                {render_comment_field()}
+                {render_name_field()}
+                {render_email_field()}
+                {render_url_field()}
+                {render_followup_field()}
+              </fieldset>
+              <div
+                className={
+                  "row my-2 form-group" + (replyTo > 0 ? " mb-0" : "")
+                }
+              >
+                <div className="d-flex justify-content-center">
+                  <button
+                    type="submit"
+                    name="post"
+                    className={
+                      "btn btn-primary me-1" + (replyTo > 0 ? " btn-sm" : "")
+                    }
+                  >{django.gettext("send")}</button>
+                  <button
+                    name="preview"
+                    className={
+                      "btn btn-secondary" + (replyTo > 0 ? " btn-sm" : "")
+                    }
+                    onClick={handle_preview}
+                  >{django.gettext("preview")}</button>
+                </div>
               </div>
-              {render_comment_field()}
-              {render_name_field()}
-              {render_email_field()}
-              {render_url_field()}
-              {render_followup_field()}
-            </fieldset>
-            <div
-              className={
-                "row my-2 form-group" + (replyTo > 0 ? " mb-0" : "")
-              }
-            >
-              <div className="d-flex justify-content-center">
-                <button
-                  type="submit"
-                  name="post"
-                  className={
-                    "btn btn-primary me-1" + (replyTo > 0 ? " btn-sm" : "")
-                  }
-                >{django.gettext("send")}</button>
-                <button
-                  name="preview"
-                  className={
-                    "btn btn-secondary" + (replyTo > 0 ? " btn-sm" : "")
-                  }
-                  onClick={handle_preview}
-                >{django.gettext("preview")}</button>
-              </div>
-            </div>
-          </form>
+            </form>
+          )}
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import {
   reduce_flags,
   Comment,
   FeedbackPart,
-  ReplyLinkPart,
+  ReplyFormPart,
   UserPart,
   TopRightPart
 } from "../src/comment.jsx";
@@ -505,15 +505,17 @@ describe("Test <FeedbackPart />", () => {
 // --------------------------------------------------------------------
 // Test ReplyLinkPart component.
 
-fdescribe("Test <ReplyLinkPart />", () => {
+describe("Test <ReplyFormPart />", () => {
   it("Shows nothing if level >= maxThreadLevel", () => {
     const { container } = render(
-      <ReplyLinkPart
+      <ReplyFormPart
         allowFeedback={false}
         commentId={1}
         level={0}
         maxThreadLevel={0}
+        onCommentCreated={() => {}}
         onReplyClick={() => {}}
+        replyFormVisible={false}
         replyUrl="/reply/0"
       />
     );
@@ -522,15 +524,17 @@ fdescribe("Test <ReplyLinkPart />", () => {
   });
 
   it("Shows clickable reply link with correct URL", () => {
-    const clickHandler = jest.fn();
+    const replyClickHandler = jest.fn();
 
     const { container } = render(
-      <ReplyLinkPart
+      <ReplyFormPart
         allowFeedback={false}
         commentId={1}
         level={0}
         maxThreadLevel={1}
-        onReplyClick={() => clickHandler()}
+        onCommentCreated={() => {}}
+        onReplyClick={() => replyClickHandler()}
+        replyFormVisible={false}
         replyUrl="/reply/0"
       />
     );
@@ -542,21 +546,23 @@ fdescribe("Test <ReplyLinkPart />", () => {
     expect(url).toEqual("/reply/1");
 
     fireEvent.click(reply_link);
-    expect(clickHandler).toHaveBeenCalled();
+    expect(replyClickHandler).toHaveBeenCalled();
 
     expect(container.firstChild.tagName).toEqual("A");
   });
 
   it("Shows clickable reply link with correct URL prefixed with &bull", () => {
-    const clickHandler = jest.fn();
+    const replyClickHandler = jest.fn();
 
     const { container } = render(
-      <ReplyLinkPart
+      <ReplyFormPart
         allowFeedback={true}
         commentId={1}
         level={0}
         maxThreadLevel={1}
-        onReplyClick={() => clickHandler()}
+        onCommentCreated={() => {}}
+        onReplyClick={() => replyClickHandler()}
+        replyFormVisible={false}
         replyUrl="/reply/0"
       />
     );
@@ -568,8 +574,26 @@ fdescribe("Test <ReplyLinkPart />", () => {
     expect(url).toEqual("/reply/1");
 
     fireEvent.click(reply_link);
-    expect(clickHandler).toHaveBeenCalled();
+    expect(replyClickHandler).toHaveBeenCalled();
 
     expect(container.firstChild.tagName).toEqual("SPAN");
+  });
+
+  it("Shows the reply comment form", () => {
+    const { container } = render(
+      <ReplyFormPart
+        allowFeedback={true}
+        commentId={1}
+        level={0}
+        maxThreadLevel={1}
+        onCommentCreated={() => {}}
+        onReplyClick={() => {}}
+        replyFormVisible={true}
+        replyUrl="/reply/0"
+      />
+    );
+
+    const form = container.querySelector("form");
+    expect(form).toBeInTheDocument();
   });
 });

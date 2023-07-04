@@ -4,6 +4,14 @@ import { InitContext, StateContext } from './context.js';
 import { reducer } from './reducer.js';
 import { CommentBox } from './commentbox.jsx';
 
+/*
+ * props is an object containing all the attributes sent
+ * by the get_commentbox_props templatetag (a django-comments-xtd tag).
+ * It happens to be the output of the function commentbox_props, in the
+ * module django_comments_xtd/frontend.py.
+ * Here in JavaScript the structure of the props matches the
+ * InitContext, in the context.js module.
+ */
 
 export function App(props) {
   const initial_state = {

@@ -6,7 +6,7 @@ import { getCookie } from './lib.js';
 import { InitContext } from './context';
 
 
-function FieldIsRequired({replyTo}) {
+export function FieldIsRequired({replyTo}) {
   return (
     <span
       className="form-text small invalid-feedback"
@@ -18,7 +18,7 @@ function FieldIsRequired({replyTo}) {
 }
 
 
-function PreviewComment({avatar, name, url, comment, replyTo}) {
+export function PreviewComment({avatar, name, url, comment, replyTo}) {
   const {
     is_authenticated,
     current_user
@@ -53,8 +53,7 @@ function PreviewComment({avatar, name, url, comment, replyTo}) {
           <span style={{fontSize: "0.8rem"}}>
             {django.gettext("Now")} - {get_heading_name()}  {replyTo > 0 && (
               <div className="badge badge-info">preview</div>
-            )}
-          </span>
+            )}</span>
           <div
             className="content py-2"
             dangerouslySetInnerHTML={raw_markup()}
@@ -103,7 +102,7 @@ export function CommentForm({ replyTo, onCommentCreated }) {
     if (!is_authenticated || request_email_address)
       is_valid_email = (/\S+@\S+\.\S+/.test(lstate.email)) ? true : false;
 
-    const is_valid_comment = (lstate.comment.length === 0) ? false : true;
+    const is_valid_comment = (/^\s*$/.test(lstate.comment)) ? false : true;
 
     setLstate({
       ...lstate,
@@ -120,8 +119,9 @@ export function CommentForm({ replyTo, onCommentCreated }) {
 
   const handle_submit = (event) => {
     event.preventDefault();
-    if (!is_valid_data())
+    if (!is_valid_data()) {
       return;
+    }
 
     const data = {
       ...default_form,
@@ -147,7 +147,7 @@ export function CommentForm({ replyTo, onCommentCreated }) {
       }
     );
     _promise.then(response => {
-      if ([201, 202, 204].includes(response.status)) {
+      if ([201, 202, 204, 403].includes(response.status)) {
         let css_class = "";
         const msg_202 = django.gettext(
           "Your comment will be reviewed. Thank your for your patience.");

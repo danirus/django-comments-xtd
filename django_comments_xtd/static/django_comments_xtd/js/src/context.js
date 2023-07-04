@@ -10,7 +10,7 @@ export const StateContext = React.createContext({
   dispath: () => {}
 });
 
-export const InitContext = React.createContext({
+export const init_context_default = {
   comment_count: 0,
   allow_comments: false,
   current_user: "",
@@ -43,4 +43,6 @@ export const InitContext = React.createContext({
   default_followup: false,
   html_ud_suffix: "",
   max_thread_level: -1
-});
+}
+
+export const InitContext = React.createContext(init_context_default);

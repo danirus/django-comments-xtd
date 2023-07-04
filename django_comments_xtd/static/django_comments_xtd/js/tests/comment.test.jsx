@@ -1,6 +1,8 @@
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { init_context_default, InitContext } from '../src/context.js';
 import {
   reduce_flags,
   Comment,
@@ -109,49 +111,6 @@ describe("Test reduce_flags function", () => {
     }
 
     expect(result).toEqual(expected);
-  });
-});
-
-
-// --------------------------------------------------------------------
-// Test Comment component.
-
-const comment_data_1 = {
-  "id": 1,
-  "user_name": "Daniela",
-  "user_url": "",
-  "user_moderator": false,
-  "user_avatar": ("//www.gravatar.com/avatar/" +
-    "7736a08481eef8523e806cc98ea36192?s=48&d=identicon"),
-  "permalink": "/comments/cr/12/2/#c1",
-  "comment": "The comment",
-  "submit_date": "June 23, 2023, 7:53 a.m.",
-  "parent_id": 1,
-  "level": 0,
-  "is_removed": false,
-  "allow_reply": true,
-  "flags": [],
-  "children": []
-}
-
-
-describe("Test <Comment /> with comment_data_1", () => {
-  // Renders a comment:
-  //  * Without flags
-  //  * Without children
-  //  * Without user URL
-  //  * Without user moderator
-  //  * Without allow reply
-  it("Renders 1 comment based on comment_data_1", () => {
-    render(
-      <Comment
-        data={comment_data_1}
-        onCommentCreated={() => {}}
-      />
-    );
-
-    const username = screen.getByText(/daniela/i);
-    expect(username).toBeInTheDocument();
   });
 });
 
@@ -407,9 +366,9 @@ describe("Test <FeedbackPart />", () => {
     );
 
     expect(container.firstChild).toBeNull();
-    const like_link = container.querySelector("i[hand-thumbs-up]");
+    const like_link = container.querySelector("i.bi-hand-thumbs-up");
     expect(like_link).toBeNull();
-    const dislike_link = container.querySelector("i[hand-thumbs-down]");
+    const dislike_link = container.querySelector("i.bi-hand-thumbs-down");
     expect(dislike_link).toBeNull();
   });
 
@@ -524,62 +483,6 @@ describe("Test <ReplyFormPart />", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("Shows clickable reply link with correct URL", () => {
-    const replyClickHandler = jest.fn();
-
-    const { container } = render(
-      <ReplyFormPart
-        allowFeedback={false}
-        commentId={1}
-        level={0}
-        maxThreadLevel={1}
-        onCommentCreated={() => {}}
-        onReplyClick={() => replyClickHandler()}
-        replyFormVisible={false}
-        replyUrl="/reply/0"
-      />
-    );
-
-    const reply_link = container.querySelector("a");
-    expect(reply_link).toBeInTheDocument();
-
-    const url = reply_link.getAttribute("href");
-    expect(url).toEqual("/reply/1");
-
-    fireEvent.click(reply_link);
-    expect(replyClickHandler).toHaveBeenCalled();
-
-    expect(container.firstChild.tagName).toEqual("A");
-  });
-
-  it("Shows clickable reply link with correct URL prefixed with &bull", () => {
-    const replyClickHandler = jest.fn();
-
-    const { container } = render(
-      <ReplyFormPart
-        allowFeedback={true}
-        commentId={1}
-        level={0}
-        maxThreadLevel={1}
-        onCommentCreated={() => {}}
-        onReplyClick={() => replyClickHandler()}
-        replyFormVisible={false}
-        replyUrl="/reply/0"
-      />
-    );
-
-    const reply_link = container.querySelector("a");
-    expect(reply_link).toBeInTheDocument();
-
-    const url = reply_link.getAttribute("href");
-    expect(url).toEqual("/reply/1");
-
-    fireEvent.click(reply_link);
-    expect(replyClickHandler).toHaveBeenCalled();
-
-    expect(container.firstChild.tagName).toEqual("SPAN");
-  });
-
   it("Shows the reply comment form", () => {
     const { container } = render(
       <ReplyFormPart
@@ -633,5 +536,421 @@ describe("Test <CommentBodyPart />", () => {
     const comment = screen.getByText("This comment has NOT been removed.");
     expect(comment).toBeInTheDocument();
   });
+});
 
+
+// --------------------------------------------------------------------
+// Test Comment component.
+
+const comment_data = {
+  "id": 1,
+  "user_name": "Daniela",
+  "user_url": "",
+  "user_moderator": false,
+  "user_avatar": ("//www.gravatar.com/avatar/" +
+    "7736a08481eef8523e806cc98ea36192?s=48&d=identicon"),
+  "permalink": "/comments/cr/12/2/#c1",
+  "comment": "The comment",
+  "submit_date": "June 23, 2023, 7:53 a.m.",
+  "parent_id": 1,
+  "level": 0,
+  "is_removed": false,
+  "allow_reply": true,
+  "flags": [],
+  "children": []
+}
+
+
+describe("Test <Comment /> with comment_data", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("Renders 1 comment based on comment_data", () => {
+    // Renders a comment:
+    //  * Without flags
+    //  * Without children
+    //  * Without user URL
+    //  * Without user moderator
+    //  * Without allow reply
+    render(
+      <Comment
+        data={comment_data}
+        onCommentCreated={() => {}}
+      />
+    );
+
+    const username = screen.getByText(/daniela/i);
+    expect(username).toBeInTheDocument();
+  });
+
+  it("Tests that handle_reply_link redirects to login", async () => {
+    if (window.location)
+      delete window.location;
+    window.location = {};
+    const set_href = jest.fn(href => href);
+    Object.defineProperty(window.location, 'href', {
+      set: set_href
+    });
+    const props = {
+      ...init_context_default,
+      is_authenticated: false,
+      max_thread_level: 2,  // It has to be > level given in comment_data.
+      who_can_post: "users",
+    }
+    render(
+      <InitContext.Provider value={props}>
+        <Comment
+          data={comment_data}
+          onCommentCreated={() => commentCreatedHandler()}
+        />
+      </InitContext.Provider>
+    );
+    const reply_link = screen.getByText(/reply/i);
+    expect(reply_link).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(reply_link);
+    });
+
+    expect(set_href).toHaveBeenCalled();
+  });
+
+  it("Tests that handle_comment_created is called", async () => {
+    /*
+     * This test renders a comment with a 'reply' link that when
+     * clicked displays a reply form. After submitting the reply form
+     * it checks that Comment's component handle_comment_created
+     * function is called.
+     */
+    global.fetch = jest.fn().mockImplementation(
+      (url, options) => Promise.resolve({
+        url,
+        status: 201,
+        options: { ...options }
+      })
+    );
+    const commentCreatedHandler = jest.fn();
+    const props = {
+      ...init_context_default,
+      max_thread_level: 2  // It has to be > level given in comment_data.
+    }
+    const { container } = render(
+      <InitContext.Provider value={props}>
+        <Comment
+          data={comment_data}
+          onCommentCreated={() => commentCreatedHandler()}
+        />
+      </InitContext.Provider>
+    );
+
+    const reply_link = screen.getByText(/reply/i);
+    expect(reply_link).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(reply_link);
+    });
+
+    // Fill the form.
+    const comment_field = container.querySelector("[name=comment]");
+    fireEvent.change(comment_field, {target: {value: "Fulanito de Tal"}});
+    const name_field = container.querySelector("[name=name]");
+    fireEvent.change(name_field, {target: {value: "Fulanito de Tal"}});
+    const email_field = container.querySelector("[name=email]");
+    fireEvent.change(email_field, {target: {value: "fulanito@example.com"}});
+
+    const post_button = container.querySelector("[name=post]");
+    expect(post_button).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(post_button);
+    });
+    expect(global.fetch).toHaveBeenCalled();
+    expect(commentCreatedHandler).toHaveBeenCalled();
+  });
+
+  it("Tests that handle_comment_created is called (part II)", async () => {
+    /*
+     * This test renders a comment with a 'reply' link that when
+     * clicked displays a reply form. After submitting the reply form
+     * it checks that Comment's component handle_comment_created
+     * function is called. The difference with the previous test
+     * is that this one passes is_authenticated as true, so the
+     * reply form doesn't render the name and email fields.
+     */
+    global.fetch = jest.fn().mockImplementation(
+      (url, options) => Promise.resolve({
+        url,
+        status: 201,
+        options: { ...options }
+      })
+    );
+    const commentCreatedHandler = jest.fn();
+    const props = {
+      ...init_context_default,
+      is_authenticated: true,
+      max_thread_level: 2  // It has to be > level given in comment_data.
+    }
+    const { container } = render(
+      <InitContext.Provider value={props}>
+        <Comment
+          data={comment_data}
+          onCommentCreated={() => commentCreatedHandler()}
+        />
+      </InitContext.Provider>
+    );
+
+    const reply_link = screen.getByText(/reply/i);
+    expect(reply_link).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(reply_link);
+    });
+
+    // Fill the form.
+    const comment_field = container.querySelector("[name=comment]");
+    fireEvent.change(comment_field, {target: {value: "Fulanito de Tal"}});
+
+    const post_button = container.querySelector("[name=post]");
+    expect(post_button).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(post_button);
+    });
+    expect(global.fetch).toHaveBeenCalled();
+    expect(commentCreatedHandler).toHaveBeenCalled();
+  });
+
+  it("Tests that action_like calls post_feedback with 201", async () => {
+    global.fetch = jest.fn().mockImplementation(
+      (url, options) => Promise.resolve({
+        url,
+        status: 201,
+        options: { ...options }
+      })
+    );
+    const props = {
+      ...init_context_default,
+      is_authenticated: true,
+      allow_feedback: true,
+      show_feedback: true
+    }
+    const { container } = render(
+      <InitContext.Provider value={props}>
+        <Comment
+          data={comment_data}
+          onCommentCreated={() => {}}
+        />
+      </InitContext.Provider>
+    );
+
+    const like_link = container.querySelector("i.bi-hand-thumbs-up");
+    expect(like_link).toBeInTheDocument();
+
+    const own_like_link_1 = container.querySelector("i.bi-hand-thumbs-up-fill");
+    expect(own_like_link_1).toBeNull();
+
+    await act(async () => {
+      fireEvent.click(like_link);
+    });
+
+    expect(global.fetch).toHaveBeenCalled();
+    const own_like_link_2 = container.querySelector("i.bi-hand-thumbs-up-fill");
+    expect(own_like_link_2).toBeInTheDocument();
+  });
+
+  it("Tests that action_like calls post_feedback with 204", async () => {
+    global.fetch = jest.fn().mockImplementation(
+      (url, options) => Promise.resolve({
+        url,
+        status: 204,
+        options: { ...options }
+      })
+    );
+    const props = {
+      ...init_context_default,
+      is_authenticated: true,
+      current_user: "1:admin",
+      allow_feedback: true,
+      show_feedback: true
+    }
+    const comment_data_xtd = {
+      ...comment_data,
+      flags: [{id: 1, user: "admin", flag: "like"}]
+    }
+    const { container } = render(
+      <InitContext.Provider value={props}>
+        <Comment
+          data={comment_data_xtd}
+          onCommentCreated={() => {}}
+        />
+      </InitContext.Provider>
+    );
+
+    let own_like_link = container.querySelector("i.bi-hand-thumbs-up-fill");
+    expect(own_like_link).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(own_like_link);
+    });
+
+    expect(global.fetch).toHaveBeenCalled();
+    own_like_link = container.querySelector("i.bi-hand-thumbs-up-fill");
+    expect(own_like_link).toBeNull();
+
+    let like_link = container.querySelector("i.bi-hand-thumbs-up");
+    expect(like_link).toBeInTheDocument();
+  });
+
+  it("Tests that action_dislike calls post_feedback with 201", async () => {
+    global.fetch = jest.fn().mockImplementation(
+      (url, options) => Promise.resolve({
+        url,
+        status: 201,
+        options: { ...options }
+      })
+    );
+    const props = {
+      ...init_context_default,
+      is_authenticated: true,
+      allow_feedback: true,
+      show_feedback: true
+    }
+    const { container } = render(
+      <InitContext.Provider value={props}>
+        <Comment
+          data={comment_data}
+          onCommentCreated={() => {}}
+        />
+      </InitContext.Provider>
+    );
+
+    const dislike_link = container.querySelector("i.bi-hand-thumbs-down");
+    expect(dislike_link).toBeInTheDocument();
+
+    const own_dislike_1 = container.querySelector("i.bi-hand-thumbs-down-fill");
+    expect(own_dislike_1).toBeNull();
+
+    await act(async () => {
+      fireEvent.click(dislike_link);
+    });
+
+    expect(global.fetch).toHaveBeenCalled();
+    const own_dislike_2 = container.querySelector("i.bi-hand-thumbs-down-fill");
+    expect(own_dislike_2).toBeInTheDocument();
+  });
+
+  it("Tests that action_dislike calls post_feedback with 204", async () => {
+    global.fetch = jest.fn().mockImplementation(
+      (url, options) => Promise.resolve({
+        url,
+        status: 204,
+        options: { ...options }
+      })
+    );
+    const props = {
+      ...init_context_default,
+      is_authenticated: true,
+      current_user: "1:admin",
+      allow_feedback: true,
+      show_feedback: true
+    }
+    const comment_data_xtd = {
+      ...comment_data,
+      flags: [{id: 1, user: "admin", flag: "dislike"}]
+    }
+    const { container } = render(
+      <InitContext.Provider value={props}>
+        <Comment
+          data={comment_data_xtd}
+          onCommentCreated={() => {}}
+        />
+      </InitContext.Provider>
+    );
+
+    let own_dislike = container.querySelector("i.bi-hand-thumbs-down-fill");
+    expect(own_dislike).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(own_dislike);
+    });
+
+    expect(global.fetch).toHaveBeenCalled();
+    own_dislike = container.querySelector("i.bi-hand-thumbs-down-fill");
+    expect(own_dislike).toBeNull();
+
+    let dislike_link = container.querySelector("i.bi-hand-thumbs-down");
+    expect(dislike_link).toBeInTheDocument();
+  });
+
+  it("Tests that action_like triggers window.location.href", async () => {
+    if (window.location)
+      delete window.location;
+    window.location = {};
+    let redirect_to = "";
+    const set_href = jest.fn(href => redirect_to = href);
+    Object.defineProperty(window.location, 'href', {
+      set: set_href
+    });
+    const props = {
+      ...init_context_default,
+      is_authenticated: false,
+      allow_feedback: true,
+      show_feedback: true,
+      login_url: "/login",
+      like_url: "/like/0"
+    }
+    const { container } = render(
+      <InitContext.Provider value={props}>
+        <Comment
+          data={comment_data}
+          onCommentCreated={() => {}}
+        />
+      </InitContext.Provider>
+    );
+
+    const like_link = container.querySelector("i.bi-hand-thumbs-up");
+    expect(like_link).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(like_link);
+    });
+
+    expect(set_href).toHaveBeenCalled();
+    expect(redirect_to).toBe("/login?next=/like/1");
+  });
+
+  it("Tests that action_dislike triggers window.location.href", async () => {
+    if (window.location)
+      delete window.location;
+    window.location = {};
+    let redirect_to = "";
+    const set_href = jest.fn(href => redirect_to = href);
+    Object.defineProperty(window.location, 'href', {
+      set: set_href
+    });
+    const props = {
+      ...init_context_default,
+      is_authenticated: false,
+      allow_feedback: true,
+      show_feedback: true,
+      login_url: "/login",
+      dislike_url: "/dislike/0"
+    }
+    const { container } = render(
+      <InitContext.Provider value={props}>
+        <Comment
+          data={comment_data}
+          onCommentCreated={() => {}}
+        />
+      </InitContext.Provider>
+    );
+
+    const dislike_link = container.querySelector("i.bi-hand-thumbs-down");
+    expect(dislike_link).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(dislike_link);
+    });
+
+    expect(set_href).toHaveBeenCalled();
+    expect(redirect_to).toBe("/login?next=/dislike/1");
+  });
 });

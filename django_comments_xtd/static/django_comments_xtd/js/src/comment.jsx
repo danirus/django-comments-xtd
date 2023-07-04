@@ -249,8 +249,31 @@ export function ReplyFormPart({
 }
 
 // --------------------------------------------------------------------
+// The ReplyFormPart displays:
+//  * The "reply" link. (it can be precedeed with a &bull;)
+//  * The "reply" form.
+
+export function CommentBodyPart({ allowFeedback, comment, isRemoved }) {
+  const rawMarkup = useMemo(() => {
+    const md = new Remarkable();
+    const _markup = md.render(comment);
+    return { __html: _markup };
+  }, [comment]);
+
+  const extra_space = (allowFeedback) ? "py-1" : "pt-1 pb-3";
+
+  if (isRemoved) {
+    const cls = `text-muted ${extra_space}`;
+    return <p className={cls}><em>{comment}</em></p>;
+  } else {
+    const cls = `content ${extra_space}`;
+    return <div className={cls} dangerouslySetInnerHTML={rawMarkup}/>;
+  }
+}
+
+// --------------------------------------------------------------------
 export function reduce_flags(data, current_user) {
-  const flags = {
+  const result = {
     like: [],
     dislike: [],
     removal: { is_active: false, count: 0 }
@@ -259,39 +282,26 @@ export function reduce_flags(data, current_user) {
     const user = [item.id, item.user].join(":");
     switch (item.flag) {
       case "like": {
-        flags.like.push(user);
+        result.like.push(user);
         break;
       }
       case "dislike": {
-        flags.dislike.push(user);
+        result.dislike.push(user);
         break;
       }
       case "removal": {
-        flags.removal.count += 1;
-        flags.removal.is_active = user === current_user ? true : false;
+        result.removal.count += 1;
+        result.removal.is_active = user === current_user ? true : false;
         break;
       }
     }
   }
-  return flags;
+  return result;
 }
 
 
-export function Comment({data, onCommentCreated}) {
-  console.log("data:", data);
-  const {
-    children,
-    comment,
-    is_removed,
-    level,
-    permalink,
-    submit_date,
-    user_avatar,
-    user_moderator,
-    user_name,
-    user_url
-  } = data;
-
+export function Comment(props) {
+  const { data } = props;
   const {
     allow_feedback,
     allow_flagging,
@@ -313,8 +323,7 @@ export function Comment({data, onCommentCreated}) {
   const { state } = useContext(StateContext);
   const { newcids } = state;
 
-  const { flags } = data;
-  const _flags = reduce_flags(flags, current_user);
+  const _flags = reduce_flags(data.flags, current_user);
 
   const [lstate, setLstate] = useState({
     current_user: current_user,
@@ -322,16 +331,13 @@ export function Comment({data, onCommentCreated}) {
     removal_count: _flags.removal.count,
     like_users: _flags.like,
     dislike_users: _flags.dislike,
-    reply_form: {
-      // component: undefined,
-      is_visible: false
-    }
+    is_reply_form_visible: false
   });
 
-  const handle_comment_created = (submit_status) => {
+  const handle_comment_created = () => {
     onCommentCreated();
     if (is_authenticated) {
-      setLstate({ ...lstate, reply_form: { is_visible: false }});
+      setLstate({ ...lstate, is_reply_form_visible: false });
     }
   }
 
@@ -344,48 +350,10 @@ export function Comment({data, onCommentCreated}) {
       );
     }
 
-    // let component = lstate.reply_form.component;
-    // if (component == undefined) {
-    //   component = (
-    //     <CommentForm
-    //       replyTo={data.id}
-    //       onCommentCreated={handle_comment_created}
-    //     />
-    //   );
-    // }
-
     setLstate({
       ...lstate,
-      reply_form: {
-        // component,
-        is_visible: !lstate.reply_form.is_visible
-      }
+      is_reply_form_visible: !lstate.is_reply_form_visible
     });
-  }
-
-  const raw_markup = () => {
-    var md = new Remarkable();
-    const rawMarkup = md.render(comment);
-    return { __html: rawMarkup };
-  }
-
-  const render_comment_body = () => {
-    const extra_space = (allow_feedback) ? "py-1" : "pt-1 pb-3";
-    if(is_removed) {
-      const cls = `text-muted ${extra_space}`;
-      return (<p className={cls}><em>{comment}</em></p>);
-    } else {
-      const cls = `content ${extra_space}`;
-      return (
-        <div className={cls} dangerouslySetInnerHTML={raw_markup()}/>
-      );
-    }
-  }
-
-  const render_reply_form = () => {
-    if(!lstate.reply_form.is_visible)
-      return "";
-    return (<div>{lstate.reply_form.component}</div>);
   }
 
   const post_feedback = (flag) => {
@@ -447,8 +415,8 @@ export function Comment({data, onCommentCreated}) {
     event.preventDefault();
     if (is_authenticated) {
       return post_feedback('like');
-    }
 
+    }
     const redirect = `${login_url}?next=${like_url.replace('0', data.id)}`;
     return window.location.href = redirect;
   }
@@ -473,7 +441,7 @@ export function Comment({data, onCommentCreated}) {
 
   return (
     <div id={`c${data.id}`} className="comment d-flex">
-      <img src={user_avatar} className="me-3" height="48" width="48" />
+      <img src={data.user_avatar} className="me-3" height="48" width="48" />
       <div className="d-flex flex-column flex-grow-1 pb-3">
         <h6
           className="comment-header mb-1 d-flex justify-content-between"
@@ -485,18 +453,18 @@ export function Comment({data, onCommentCreated}) {
                 <span className="badge text-bg-success">new</span>&nbsp;-&nbsp;
               </span>
             )}
-            {submit_date}&nbsp;-&nbsp;
+            {data.submit_date}&nbsp;-&nbsp;
             <UserPart
-              userName={user_name}
-              userUrl={user_url}
-              isRemoved={is_removed}
-              userModerator={user_moderator}
+              userName={data.user_name}
+              userUrl={data.user_url}
+              isRemoved={data.is_removed}
+              userModerator={data.user_moderator}
             />
             &nbsp;&nbsp;
             <a
               className="permalink text-decoration-none"
               title={django.gettext("comment permalink")}
-              href={permalink}
+              href={data.permalink}
             >¶</a>
           </div>
           <TopRightPart
@@ -506,14 +474,18 @@ export function Comment({data, onCommentCreated}) {
             deleteUrl={delete_url}
             flagUrl={flag_url}
             isAuthenticated={is_authenticated}
-            isRemoved={is_removed}
+            isRemoved={data.is_removed}
             loginUrl={login_url}
             userRequestedRemoval={lstate.removal}
             removalCount={lstate.removal_count}
           />
         </h6>
-        {render_comment_body()}
-        {!is_removed && (
+        <CommentBodyPart
+          allowFeedback={allow_feedback}
+          comment={data.comment}
+          isRemoved={data.is_removed}
+        />
+        {!data.is_removed && (
           <div>
             <FeedbackPart
               allowFeedback={allow_feedback}
@@ -528,22 +500,22 @@ export function Comment({data, onCommentCreated}) {
             <ReplyFormPart
               allowFeedback={allow_feedback}
               commentId={data.id}
-              level={level}
+              level={data.level}
               maxThreadLevel={max_thread_level}
               onCommentCreated={handle_comment_created}
               onReplyClick={handle_reply_click}
-              replyFormVisible={lstate.reply_form.is_visible}
+              replyFormVisible={lstate.is_reply_form_visible}
               replyUrl={reply_url}
             />
           </div>
         )}
-        {(children.length > 0) && (
+        {(data.children.length > 0) && (
           <div className="pt-3">
-            {children?.map((item) => (
+            {data.children?.map((item) => (
               <Comment
                 key={item.id}
                 data={item}
-                onCommentCreated={onCommentCreated}
+                onCommentCreated={props.onCommentCreated}
               />
             ))}
           </div>

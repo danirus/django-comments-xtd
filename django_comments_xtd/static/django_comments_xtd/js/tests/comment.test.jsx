@@ -7,7 +7,8 @@ import {
   FeedbackPart,
   ReplyFormPart,
   UserPart,
-  TopRightPart
+  TopRightPart,
+  CommentBodyPart
 } from "../src/comment.jsx";
 
 
@@ -133,7 +134,6 @@ const comment_data_1 = {
   "children": []
 }
 
-const onCommentCreate = () => {};
 
 describe("Test <Comment /> with comment_data_1", () => {
   // Renders a comment:
@@ -146,7 +146,7 @@ describe("Test <Comment /> with comment_data_1", () => {
     render(
       <Comment
         data={comment_data_1}
-        onCommentCreated={onCommentCreate}
+        onCommentCreated={() => {}}
       />
     );
 
@@ -155,8 +155,9 @@ describe("Test <Comment /> with comment_data_1", () => {
   });
 });
 
+
 // --------------------------------------------------------------------
-// Test UserPart component.
+// Test <UserPart /> component.
 
 describe("Test <UserPart />", () => {
   it("Shows the username", () => {
@@ -596,4 +597,41 @@ describe("Test <ReplyFormPart />", () => {
     const form = container.querySelector("form");
     expect(form).toBeInTheDocument();
   });
+});
+
+
+// --------------------------------------------------------------------
+// Test CommentBodyPart component.
+
+describe("Test <CommentBodyPart />", () => {
+  it("Shows comment wrapped in <em> when the isRemoved", () => {
+    const { container } = render(
+      <CommentBodyPart
+        allowFeedback={false}
+        comment="This comment has been removed."
+        isRemoved={true}
+      />
+    );
+
+    const em_elem = container.querySelector("em");
+    expect(em_elem).toBeInTheDocument();
+    const comment = screen.getByText("This comment has been removed.");
+    expect(comment).toBeInTheDocument();
+  });
+
+  it("Shows comment not wrapped in <em> when isRemoved is false", () => {
+    const { container } = render(
+      <CommentBodyPart
+        allowFeedback={true}
+        comment="This comment has NOT been removed."
+        isRemoved={false}
+      />
+    );
+
+    const em_elem = container.querySelector("em");
+    expect(em_elem).toBeNull();
+    const comment = screen.getByText("This comment has NOT been removed.");
+    expect(comment).toBeInTheDocument();
+  });
+
 });

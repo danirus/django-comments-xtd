@@ -249,9 +249,7 @@ export function ReplyFormPart({
 }
 
 // --------------------------------------------------------------------
-// The ReplyFormPart displays:
-//  * The "reply" link. (it can be precedeed with a &bull;)
-//  * The "reply" form.
+// The CommentBodyPart component.
 
 export function CommentBodyPart({ allowFeedback, comment, isRemoved }) {
   const rawMarkup = useMemo(() => {
@@ -335,7 +333,7 @@ export function Comment(props) {
   });
 
   const handle_comment_created = () => {
-    onCommentCreated();
+    props.onCommentCreated();
     if (is_authenticated) {
       setLstate({ ...lstate, is_reply_form_visible: false });
     }

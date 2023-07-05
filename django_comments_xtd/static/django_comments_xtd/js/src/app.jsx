@@ -16,8 +16,8 @@ import { CommentBox } from './commentbox.jsx';
 export function App(props) {
   const initial_state = {
     tree: [],
-    cids: [],
-    newcids: [],
+    cids: new Set(),
+    newcids: new Set(),
     counter: props.comment_count
   }
   const [ state, dispatch ] = useReducer(reducer, initial_state);

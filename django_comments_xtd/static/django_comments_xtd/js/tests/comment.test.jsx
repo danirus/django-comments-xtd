@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import { act } from 'react-dom/test-utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { init_context_default, InitContext } from '../src/context.js';
+import { reducer } from '../src/reducer.js';
+import {
+  init_context_default,
+  InitContext,
+  StateContext,
+} from '../src/context.js';
 import {
   reduce_flags,
   Comment,
@@ -13,6 +18,13 @@ import {
   CommentBodyPart
 } from "../src/comment.jsx";
 
+
+const initial_state = {
+  tree: [],
+  cids: new Set(),
+  newcids: new Set(),
+  counter: 1
+};
 
 // --------------------------------------------------------------------
 // Test function reduce_flags.
@@ -573,12 +585,21 @@ describe("Test <Comment /> with comment_data", () => {
     //  * Without user URL
     //  * Without user moderator
     //  * Without allow reply
-    render(
-      <Comment
-        data={comment_data}
-        onCommentCreated={() => {}}
-      />
-    );
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={init_context_default}>
+            <Comment
+              data={comment_data}
+              onCommentCreated={() => {}}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+
+    render(<TestComp />);
 
     const username = screen.getByText(/daniela/i);
     expect(username).toBeInTheDocument();
@@ -598,14 +619,22 @@ describe("Test <Comment /> with comment_data", () => {
       max_thread_level: 2,  // It has to be > level given in comment_data.
       who_can_post: "users",
     }
-    render(
-      <InitContext.Provider value={props}>
-        <Comment
-          data={comment_data}
-          onCommentCreated={() => commentCreatedHandler()}
-        />
-      </InitContext.Provider>
-    );
+
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={props}>
+            <Comment
+              data={comment_data}
+              onCommentCreated={() => commentCreatedHandler()}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+    render(<TestComp />);
+
     const reply_link = screen.getByText(/reply/i);
     expect(reply_link).toBeInTheDocument();
     await act(async () => {
@@ -634,14 +663,21 @@ describe("Test <Comment /> with comment_data", () => {
       ...init_context_default,
       max_thread_level: 2  // It has to be > level given in comment_data.
     }
-    const { container } = render(
-      <InitContext.Provider value={props}>
-        <Comment
-          data={comment_data}
-          onCommentCreated={() => commentCreatedHandler()}
-        />
-      </InitContext.Provider>
-    );
+
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={props}>
+            <Comment
+              data={comment_data}
+              onCommentCreated={() => commentCreatedHandler()}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+    const { container } = render(<TestComp />);
 
     const reply_link = screen.getByText(/reply/i);
     expect(reply_link).toBeInTheDocument();
@@ -689,14 +725,22 @@ describe("Test <Comment /> with comment_data", () => {
       is_authenticated: true,
       max_thread_level: 2  // It has to be > level given in comment_data.
     }
-    const { container } = render(
-      <InitContext.Provider value={props}>
-        <Comment
-          data={comment_data}
-          onCommentCreated={() => commentCreatedHandler()}
-        />
-      </InitContext.Provider>
-    );
+
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={props}>
+            <Comment
+              data={comment_data}
+              onCommentCreated={() => commentCreatedHandler()}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+
+    const { container } = render(<TestComp />);
 
     const reply_link = screen.getByText(/reply/i);
     expect(reply_link).toBeInTheDocument();
@@ -732,14 +776,22 @@ describe("Test <Comment /> with comment_data", () => {
       allow_feedback: true,
       show_feedback: true
     }
-    const { container } = render(
-      <InitContext.Provider value={props}>
-        <Comment
-          data={comment_data}
-          onCommentCreated={() => {}}
-        />
-      </InitContext.Provider>
-    );
+
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={props}>
+            <Comment
+              data={comment_data}
+              onCommentCreated={() => {}}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+
+    const { container } = render(<TestComp />);
 
     const like_link = container.querySelector("i.bi-hand-thumbs-up");
     expect(like_link).toBeInTheDocument();
@@ -775,14 +827,22 @@ describe("Test <Comment /> with comment_data", () => {
       ...comment_data,
       flags: [{id: 1, user: "admin", flag: "like"}]
     }
-    const { container } = render(
-      <InitContext.Provider value={props}>
-        <Comment
-          data={comment_data_xtd}
-          onCommentCreated={() => {}}
-        />
-      </InitContext.Provider>
-    );
+
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={props}>
+            <Comment
+              data={comment_data_xtd}
+              onCommentCreated={() => {}}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+
+    const { container } = render(<TestComp />);
 
     let own_like_link = container.querySelector("i.bi-hand-thumbs-up-fill");
     expect(own_like_link).toBeInTheDocument();
@@ -813,14 +873,22 @@ describe("Test <Comment /> with comment_data", () => {
       allow_feedback: true,
       show_feedback: true
     }
-    const { container } = render(
-      <InitContext.Provider value={props}>
-        <Comment
-          data={comment_data}
-          onCommentCreated={() => {}}
-        />
-      </InitContext.Provider>
-    );
+
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={props}>
+            <Comment
+              data={comment_data}
+              onCommentCreated={() => {}}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+
+    const { container } = render(<TestComp />);
 
     const dislike_link = container.querySelector("i.bi-hand-thumbs-down");
     expect(dislike_link).toBeInTheDocument();
@@ -856,14 +924,22 @@ describe("Test <Comment /> with comment_data", () => {
       ...comment_data,
       flags: [{id: 1, user: "admin", flag: "dislike"}]
     }
-    const { container } = render(
-      <InitContext.Provider value={props}>
-        <Comment
-          data={comment_data_xtd}
-          onCommentCreated={() => {}}
-        />
-      </InitContext.Provider>
-    );
+
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={props}>
+            <Comment
+              data={comment_data_xtd}
+              onCommentCreated={() => commentCreatedHandler()}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+
+    const { container } = render(<TestComp />);
 
     let own_dislike = container.querySelector("i.bi-hand-thumbs-down-fill");
     expect(own_dislike).toBeInTheDocument();
@@ -897,14 +973,22 @@ describe("Test <Comment /> with comment_data", () => {
       login_url: "/login",
       like_url: "/like/0"
     }
-    const { container } = render(
-      <InitContext.Provider value={props}>
-        <Comment
-          data={comment_data}
-          onCommentCreated={() => {}}
-        />
-      </InitContext.Provider>
-    );
+
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={props}>
+            <Comment
+              data={comment_data}
+              onCommentCreated={() => {}}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+
+    const { container } = render(<TestComp />);
 
     const like_link = container.querySelector("i.bi-hand-thumbs-up");
     expect(like_link).toBeInTheDocument();
@@ -934,14 +1018,20 @@ describe("Test <Comment /> with comment_data", () => {
       login_url: "/login",
       dislike_url: "/dislike/0"
     }
-    const { container } = render(
-      <InitContext.Provider value={props}>
-        <Comment
-          data={comment_data}
-          onCommentCreated={() => {}}
-        />
-      </InitContext.Provider>
-    );
+    const TestComp = () => {
+      const [ state, dispatch ] = useReducer(reducer, initial_state);
+      return (
+        <StateContext.Provider value={{ state, dispatch }}>
+          <InitContext.Provider value={props}>
+            <Comment
+              data={comment_data}
+              onCommentCreated={() => {}}
+            />
+          </InitContext.Provider>
+        </StateContext.Provider>
+      );
+    }
+    const { container } = render(<TestComp />);
 
     const dislike_link = container.querySelector("i.bi-hand-thumbs-down");
     expect(dislike_link).toBeInTheDocument();

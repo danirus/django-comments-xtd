@@ -446,7 +446,7 @@ export function Comment(props) {
           style={{ fontSize: "0.8rem"}}
         >
           <div className="d-inline flex-grow-1">
-            {newcids.includes(data.id) && (
+            {newcids.has(data.id) && (
               <span>
                 <span className="badge text-bg-success">new</span>&nbsp;-&nbsp;
               </span>

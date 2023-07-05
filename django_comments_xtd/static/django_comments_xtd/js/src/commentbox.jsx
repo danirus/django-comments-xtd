@@ -6,11 +6,11 @@ import { Comment } from './comment.jsx';
 import { CommentForm } from './commentform.jsx';
 
 
-function CommentCounter({counter, cids}) {
+function CommentCounter({counter}) {
   const text = useMemo(() => {
-    const fmts = django.ngettext("%s comment.", "%s comments.", cids.length);
-    return django.interpolate(fmts, [cids.length]);
-  }, [cids]);
+    const fmts = django.ngettext("%s comment.", "%s comments.", counter);
+    return django.interpolate(fmts, [counter]);
+  }, [counter]);
 
   return (counter > 0)
     ? <h5 className="text-center">{text}</h5>
@@ -56,7 +56,7 @@ function CommentFormWrapper({replyTo, onCommentCreated}) {
 
 
 function UpdateAlert({counter, cids, onClick }) {
-  const diff = counter - cids.length;
+  const diff = counter - cids.size;
 
   if (diff > 0) {
     const fmts = django.ngettext(
@@ -109,10 +109,10 @@ export function CommentBox() {
 
   return (
     <div>
-      <CommentCounter counter={counter} cids={cids} />
+      <CommentCounter counter={counter} />
       <CommentFormWrapper replyTo={0} onCommentCreated={load_comments} />
       <UpdateAlert
-        counter={counter} cids={cids} handleUpdate={load_comments}
+        counter={counter} cids={cids} onClick={load_comments}
       />
       <div className="comment-tree">
         {tree.map(item => (

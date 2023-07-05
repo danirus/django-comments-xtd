@@ -1,10 +1,11 @@
-function create_tree(cids, data) {
-  console.log()
+export function create_tree(cids, data) {
   const tree = new Array();
   const corder = new Array();
   const comments = {};
   const children = {};
-  let in_cids = [], cur_cids = [], new_cids = [];
+  let in_cids = new Set();
+  let cur_cids = new Set();
+  let new_cids = new Set();
 
   function get_children(cid) {
     return children[cid].map(index => {
@@ -16,7 +17,7 @@ function create_tree(cids, data) {
   }
 
   for (const item of data) {
-    in_cids.push(item.id);
+    in_cids.add(item.id);
     comments[item.id] = item;
     if (item.level === 0) {
       corder.push(item.id);
@@ -32,17 +33,17 @@ function create_tree(cids, data) {
     tree.push(comments[id]);
   }
 
-  if (in_cids.length > 0) {
-    if (cids.length > 0) {
+  if (in_cids.size > 0) {
+    if (cids.size > 0) {
       for (const id of in_cids) {
-        if (cids.includes(id)) {
-          new_cids.push(id);
+        if (!cids.has(id)) {
+          new_cids.add(id);
         }
-        cur_cids.push(id);
+        cur_cids.add(id);
       }
     } else {
       cur_cids = in_cids;
-      new_cids = [];
+      new_cids = new Set();
     }
   }
 
@@ -50,7 +51,7 @@ function create_tree(cids, data) {
     tree,
     cids: cur_cids,
     newcids: new_cids,
-    counter: cur_cids.length
+    counter: cur_cids.size
   }
 }
 

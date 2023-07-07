@@ -36,7 +36,7 @@ To get started using django-comments-xtd follow these steps:
    The thread level can also be established on a per ``<app>.<model>`` basis by using the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` setting. Use it to establish different maximum threading levels for each model. ie: no nested comments for quotes, up to thread level 2 for blog stories, etc.
 
 #. Set the :setting:`COMMENTS_XTD_CONFIRM_EMAIL` to ``True`` to require comment confirmation by email for no logged-in users.
-   
+
 #. Run ``manage.py migrate`` to create the tables.
 
 #. Add the URLs of the comments-xtd app to your project's ``urls.py``:
@@ -52,7 +52,7 @@ To get started using django-comments-xtd follow these steps:
 #. Customize your project's email settings:
 
    .. code-block:: python
-   
+
        EMAIL_HOST = "smtp.mail.com"
        EMAIL_PORT = "587"
        EMAIL_HOST_USER = "alias@mail.com"
@@ -68,7 +68,7 @@ To get started using django-comments-xtd follow these steps:
    * ``comments/preview.html``, used to preview the comment or when there are errors submitting it.
 
    * ``comments/posted.html``, which gets rendered after the comment is sent.
-   
+
 #. Add extra settings to control comments in your project. Check the available settings in the :ref:`Django Comments Framework <settings-comments>` and in the :ref:`django-comments-xtd app <settings-comments-xtd>`.
 
 

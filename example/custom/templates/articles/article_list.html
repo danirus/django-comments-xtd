@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container">
   <div class="row justify-content-center flex-fill">
-    <div class="col-lg-7">
+    <div class="col-8 mb-4">
       {% if object_list %}
       <UL>
         {% for article in object_list %}
@@ -21,6 +21,11 @@
         {% endfor %}
       </UL>
       {% endif %}
+    </div>
+  </div>
+
+  <div class="row justify-content-center flex-fill">
+    <div class="col-8">
       <p class="text-center">
         <a href="{% url 'homepage' %}">{% trans "Home" %}</a>
       </p>

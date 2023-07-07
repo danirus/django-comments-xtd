@@ -4,17 +4,17 @@
 {% block header %}Homepage{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container my-3">
   <div class="row justify-content-center flex-fill">
-    <div class="col-lg-7">
-      <div class="row">
-        <p>{{ readme_text|markdown }}</p>
-      </div>
-      <div class="row">
-        <p class="text-center">
-          <a href="{% url 'articles-index' %}">Article list</a>
-        </p>
-      </div>
+    <div class="col-8">
+      <p>{{ readme_text|markdown }}</p>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <p class="text-center">
+        <a href="{% url 'articles-index' %}">Article list</a>
+      </p>
     </div>
   </div>
 </div>

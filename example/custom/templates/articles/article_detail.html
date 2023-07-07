@@ -6,47 +6,60 @@
 {% block header %}Article Detail{% endblock %}
 
 {% block content %}
-<div class="text-center">
-  <H3>{{ object.title }}</H3>
-  <div class="small">{{ object.publish }}</div>
-</div>
-<hr/>
-<article>
-  {{ object.body|linebreaks }}
-</article>
-<p class="text-center">
-  <a href="{% url 'articles-index' %}">back to the articles list</a>
-</p>
-
-<div id="comments">
-  {% get_comment_count for object as comment_count %}
-  {% if comment_count %}
-  <H5 class="text-center">
-    {% blocktrans count comment_count=comment_count %}
-    There is {{ comment_count }} comment below.
-    {% plural %}
-    There are {{ comment_count }} comments below.
-    {% endblocktrans %}
-  </H5>
-  <hr/>
-  {% endif %}
-
-  {% if object.allow_comments %}
-  <div class="comment">
-    <H4 class="text-center">Post your comment</H4>
-    <div class="well">
-      {% render_comment_form for object %}
+<div class="container">
+  <div class="row justify-content-center my-4">
+    <div class="col-10 text-center">
+      <H3>{{ object.title }}</H3>
+      <div class="small">{{ object.publish }}</div>
+      <hr/>
     </div>
   </div>
-  {% else %}
-  <h5 class="text-center">comments are disabled for this article</h5>
-  {% endif %}
+  <div class="row justify-content-center flex-fill">
+    <div class="col-8 mb-4">
+      <article>
+        {{ object.body|linebreaks }}
+      </article>
+    </div>
+  </div>
 
-  {% if comment_count %}
-  <hr/>
-  <ul class="media-list" id="comment-list">
-    {% render_xtdcomment_tree for object %}
-  </ul>
-  {% endif %}
+  <div class="row justify-content-center flex-fill">
+    <div class="col-8">
+      <p class="text-center">
+        <a href="{% url 'articles-index' %}">back to the articles list</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="row justify-content-center flex-fill">
+    <div class="col-8">
+      <div id="comments">
+        {% get_comment_count for object as comment_count %}
+        {% if comment_count %}
+        <H5 class="text-center">
+          {% blocktrans count comment_count=comment_count %}
+          There is {{ comment_count }} comment below.
+          {% plural %}
+          There are {{ comment_count }} comments below.
+          {% endblocktrans %}
+        </H5>
+        {% endif %}
+
+        {% if object.allow_comments %}
+          <div class="card card-block mt-4 mb-5">
+            <div class="card-body">
+              <h4 class="card-title text-center pb-3">Post your comment</h4>
+              {% render_comment_form for object %}
+            </div>
+          </div>
+        {% else %}
+        <h4 class="mt-4 mb-5 text-center text-secondary">Comments are disabled for this quote.</h4>
+        {% endif %}
+
+        {% if comment_count %}
+        {% render_comment_list for object %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

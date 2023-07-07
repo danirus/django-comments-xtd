@@ -12,6 +12,7 @@
       <h6 class="comment-header mb-1 d-flex justify-content-between" style="font-size: 0.8rem">
         <div class="d-inline flex-grow-1">
           <span>{{ comment.submit_date }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new" class="text-decoration-none">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}</span>
+          {% if comment.title %} - <em>{{ comment.title }}</em>{% endif %}
           <span>{% if comment.user and comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="badge text-bg-secondary">{% trans "moderator" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink text-decoration-none" title="{% trans 'comment permalink' %}" href="{% get_comment_permalink comment %}">¶</a>
         </div>
         <div class="d-inline">

@@ -12,7 +12,7 @@ class PublicManager(models.Manager):
 
     if django.VERSION < (1, 6):
         get_queryset = models.Manager.get_query_set
-    
+
     def published(self):
         return self.get_queryset().filter(publish__lte=timezone.now())
 

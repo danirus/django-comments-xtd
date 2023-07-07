@@ -5,57 +5,59 @@
 {% block header %}Article Detail{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-lg-12 col-md-12">
-    <div class="text-center">
+<div class="container">
+  <div class="row justify-content-center my-4">
+    <div class="col-10 text-center">
       <h3>{{ object.title }}</h3>
       <div class="small">{{ object.publish }}</div>
-    </div>
-    <hr/>
-    <article>
-      {{ object.body|linebreaks }}
-    </article>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-lg-12 col-md-12">
-    <div class="bottom-link text-center">
-      <a href="{% url 'articles-index' %}">back to the articles list</a>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="offset-lg-1 offset-md-1 col-lg-10 col-md-10">
-    <div id="comments">
-      {% get_comment_count for object as comment_count %}
-      {% if comment_count %}
-      <H6 class="text-center">
-        {% blocktrans count comment_count=comment_count %}
-        There is {{ comment_count }} comment below.
-        {% plural %}
-        There are {{ comment_count }} comments below.
-        {% endblocktrans %}
-      </H6>
       <hr/>
-      {% endif %}
+    </div>
+  </div>
+  <div class="row justify-content-center flex-fill">
+    <div class="col-8 mb-4">
+      <article>
+        {{ object.body|linebreaks }}
+      </article>
+    </div>
+  </div>
 
-      {% if object.allow_comments %}
-        <div class="comment">
-          <h5 class="text-center">Post your comment</h5>
-          <div class="well my-4">
+  <div class="row justify-content-center flex-fill">
+    <div class="col-8">
+      <p class="text-center">
+        <a href="{% url 'articles-index' %}">back to the articles list</a>
+      </p>
+    </div>
+  </div>
+
+  <div class="row justify-content-center flex-fill">
+    <div class="col-8">
+      <div id="comments">
+        {% get_comment_count for object as comment_count %}
+        {% if comment_count %}
+        <H5 class="text-center">
+          {% blocktrans count comment_count=comment_count %}
+          There is {{ comment_count }} comment below.
+          {% plural %}
+          There are {{ comment_count }} comments below.
+          {% endblocktrans %}
+        </H5>
+        {% endif %}
+
+        {% if object.allow_comments %}
+        <div class="card card-block mt-4 mb-5">
+          <div class="card-body">
+            <h4 class="card-title text-center pb-3">Post your comment</h4>
             {% render_comment_form for object %}
           </div>
         </div>
-      {% else %}
-        <h5 class="text-center">comments are disabled for this article</h5>
-      {% endif %}
+        {% else %}
+        <h4 class="mt-4 mb-5 text-center text-secondary">Comments are disabled for this quote.</h4>
+        {% endif %}
 
-      {% if comment_count %}
-      <hr/>
-      {% render_comment_list for object %}
-      {% endif %}
+        {% if comment_count %}
+        {% render_comment_list for object %}
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>

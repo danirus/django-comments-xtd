@@ -19,11 +19,11 @@ It extends the once official `django-contrib-comments <https://pypi.python.org/p
 #. Registered users can like/dislike comments and can suggest comments removal.
 #. Template tags to list/render the last N comments posted to any given list of app.model pairs.
 #. Emails sent through threads (can be disable to allow other solutions, like a Celery app).
-#. Fully functional JavaScript plugin using ReactJS, jQuery, Bootstrap, Remarkable and MD5.
+#. Fully functional JavaScript plugin using ReactJS, Bootstrap 5.3 and Remarkable.
 
 Example sites and tests work under officially Django `supported versions <https://www.djangoproject.com/download/#supported-versions>`_:
 
-* Django 4.1, 4.0, 3.2
+* Django 4.2, 4.1, 4.0, 3.2
 * Python 3.10, 3.9, 3.8
 
 Additional Dependencies:

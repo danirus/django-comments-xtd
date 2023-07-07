@@ -50,28 +50,28 @@
     {% endif %}
     {% endwith %}
   </div>
-</div>
-<div class="row justify-content-center">
-  <div class="col-10">
-    {% if already_liked_it %}
-    <div class="alert alert-warning text-center">
-      {% trans 'Click on the "withdraw" button if you want to withdraw your positive opinion on this comment.' %}
-    </div>
-    {% endif %}
-    <div class="my-5">
-      <form action="." method="post" class="form-horizontal">{% csrf_token %}
-        <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
-        <div class="form-group">
-          <div class="text-center">
-            {% if already_liked_it %}
-            <input type="submit" name="submit" class="btn btn-warning" value="{% trans 'Withdraw' %}"/>
-            {% else %}
-            <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'I like it' %}"/>
-            {% endif %}
-            <a class="btn btn-secondary" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
+  <div class="row justify-content-center">
+    <div class="col-10">
+      {% if already_liked_it %}
+      <div class="alert alert-warning text-center">
+        {% trans 'Click on the "withdraw" button if you want to withdraw your positive opinion on this comment.' %}
+      </div>
+      {% endif %}
+      <div class="my-5">
+        <form action="." method="post">{% csrf_token %}
+          <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
+          <div class="form-group">
+            <div class="text-center">
+              {% if already_liked_it %}
+              <input type="submit" name="submit" class="btn btn-warning" value="{% trans 'Withdraw' %}"/>
+              {% else %}
+              <input type="submit" name="submit" class="btn btn-primary" value="{% trans 'I like it' %}"/>
+              {% endif %}
+              <a class="btn btn-secondary" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </div>

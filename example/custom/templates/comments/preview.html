@@ -2,38 +2,52 @@
 {% load i18n %}
 {% load comments_xtd %}
 
+{% block title %}{% trans "Preview your comment" %}{% endblock %}
+
 {% block content %}
-<h4>{% trans "Preview your comment:" %}</h4>
-<div class="row">
-  <div class="col-lg-offset-1 col-md-offset-1 col-lg-10 col-md-10">
-    <div class="media">
+<div class="container">
+  <div class="row justify-content-center my-4">
+    <div class="col-12 text-center">
+      <h3>
+        {% trans "Preview of your comment for:" %}<br/>
+        <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+      </h3>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <hr/>
       {% if not comment %}
       <em>{% trans "Empty comment." %}</em>
       {% else %}
-      <div class="media-left">
-        <a href="{{ form.cleaned_data.url }}">
+      <div class="d-flex">
+        <div class="me-3">
           {{ form.cleaned_data.email|xtd_comment_gravatar }}
-        </a>
-      </div>
-      <div class="media-body">
-        <h6 class="media-heading">
-          {% now "N j, Y, P" %}&nbsp;-&nbsp;
-          {% if form.cleaned_data.url %}
-          <a href="{{ form.cleaned_data.url }}" target="_new">{% endif %}
-            {{ form.cleaned_data.name }}
-            {% if form.cleaned_data.url %}</a>{% endif %}
-        </h6>
-        <span>{{ form.cleaned_data.title }}</span><br/>
-        <div class="well well-sm">{{ comment }}</div>
+        </div>
+        <div class="d-flex flex-column pb-3">
+          <span style="font-size: 0.8rem">
+            {% now "N j, Y, P" %}&nbsp;-&nbsp;
+            {% if form.cleaned_data.url %}
+            <a href="{{ form.cleaned_data.url }}" target="_new">
+              {{ form.cleaned_data.name }}
+            </a>
+            {% else %}
+              {{ form.cleaned_data.name }}
+            {% endif %}
+            {% if form.cleaned_data.title %}- {{ form.cleaned_data.title }}
+            {% else %}- <i>comment without title</i>{% endif %}
+          </span>
+          <div class="py-2">{{ comment }}</div>
+        </div>
       </div>
       {% endif %}
-    </div>
-    <div class="visible-lg-block visible-md-block">
-      <hr/>
+      <div class="card mt-4 mb-5">
+        <div class="card-body">
+          <h4 class="card-title text-center pb-3">{% trans "Post your comment" %}</h4>
+          {% include "comments/form.html" %}
+        </div>
+      </div>
     </div>
   </div>
-</div>
-<div class="well well-lg">
-  {% include "comments/form.html" %}
 </div>
 {% endblock %}

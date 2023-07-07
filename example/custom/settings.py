@@ -9,6 +9,10 @@ PROJECT_DIR = os.path.abspath(os.path.curdir)
 
 DEBUG = True
 
+INTERNAL_IPS = [
+    '127.0.0.1'
+]
+
 ADMINS = (
     ('Alice Bloggs', 'alice@example.com'),
 )
@@ -74,22 +78,23 @@ SECRET_KEY = 'v2824l&2-n+4zznbsk9c-ap5i)b3e8b+%*a=dxqlahm^%)68jn'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-	'DIRS': [
-	    os.path.join(os.path.dirname(__file__), "templates"),
-	],
+	    'DIRS': [
+	        os.path.join(os.path.dirname(__file__), "templates"),
+	    ],
         'APP_DIRS': True,
-	'OPTIONS': {
-	    'context_processors': [
+	    'OPTIONS': {
+            'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-		'django.contrib.auth.context_processors.auth',
+                'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-	    ],
-	},
+            ],
+        },
     },
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -97,7 +102,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
-ROOT_URLCONF = 'custom.urls'
+ROOT_URLCONF = 'urls'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -108,16 +113,17 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'debug_toolbar',
     'django_markdown2',
-    'custom.articles',
-    'custom.mycomments',
+    'articles',
+    'mycomments',
     'django_comments_xtd',
     'django_comments',
 )
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-    
-# EMAIL_HOST          = "smtp.gmail.com" 
+
+# EMAIL_HOST          = "smtp.gmail.com"
 # EMAIL_PORT          = "587"
 # EMAIL_HOST_USER     = "username@gmail.com"
 # EMAIL_HOST_PASSWORD = ""
@@ -125,7 +131,7 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 # DEFAULT_FROM_EMAIL  = "Alice Bloggs <alice@example.com>"
 # SERVER_EMAIL        = DEFAULT_FROM_EMAIL
 
-# Fill in actual EMAIL settings above, and comment out the 
+# Fill in actual EMAIL settings above, and comment out the
 # following line to let this django demo sending emails
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -139,5 +145,9 @@ COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
                                      # other backend (say Celery based) send
                                      # your emails.
 
-COMMENTS_XTD_MODEL = 'custom.mycomments.models.MyComment'
-COMMENTS_XTD_FORM_CLASS = 'custom.mycomments.forms.MyCommentForm'
+COMMENTS_XTD_MODEL = 'mycomments.models.MyComment'
+COMMENTS_XTD_FORM_CLASS = 'mycomments.forms.MyCommentForm'
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.sql.SQLPanel',
+]

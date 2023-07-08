@@ -1,5 +1,15 @@
 # Change Log
 
+## [2.9.10] - 2023-07-08
+
+ * Updates ReactJS plugin. It has been rewritten to use React Hooks.
+ * Add tests to cover over 90% functionality of the JavaScript plugin.
+ * Replaces Webpack with Rollup to create the JavaScript bundle.
+ * Updates the UI to use Bootstrap 5.3.0.
+ * Updates the demo sites to Bootstrap 5.3.0.
+ * Extends python tests to Django 4.2 using Python 3.11.
+ * Updates the docs.
+
 ## [2.9.9] - 2022-10-26
 
  * Extends compatibility to django-rest-framework v3.14.

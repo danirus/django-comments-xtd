@@ -4,6 +4,8 @@
 Only signed in users can comment
 ================================
 
+.. _logout: http://localhost:8000/admin/logout
+
 This page describes how to setup django-comments-xtd so that only registered
 users can write comments or flag them. That means mere visitors will be
 able to see the comments but won't be able to send them. In order to do so a
@@ -179,8 +181,7 @@ adding the pair ``'who_can_post': 'users'`` to the ``'articles.article'``
 dictionary entry of the :setting:`COMMENTS_XTD_APP_MODEL_OPTIONS`, as we did
 with the quotes app. That will make it work.
 
-Run the site and check that as a mere visitor (`logout
-<http://localhost:8000/admin/logout>`_ first) you can not send comments to
+Run the site and check that as a mere visitor (logout_ first) you can not send comments to
 articles. Instead of the comment form there must be a message in blue saying
 that **Only registered users can post comments.** If you `login
 <http://localhost:8000/admin/login/>`_ and visit an article's page the comment
@@ -234,8 +235,7 @@ in it:
       </p>
     </div>
 
-With all the changes already done,
-`logout <http://localhost:8000/admin/logout/>`_ of the comp site and reload
+With all the changes already done, logout_ of the comp site and reload
 the article's page. You should see the message with the login link.
 
 .. image:: ../images/only-users-can-post.png

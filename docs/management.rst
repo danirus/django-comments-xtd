@@ -27,7 +27,7 @@ An example::
      $ python manage.py initialize_nested_count
 
 
-.. management:: populate_xtd_comments
+.. _populate_xtd_comments:
 
 ``populate_xtd_comments``
 =========================

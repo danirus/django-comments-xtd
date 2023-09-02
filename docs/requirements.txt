@@ -1,1 +1,2 @@
-docutils<0.18
+sphinx>=6,<8
+sphinx-nefertiti>=0.1.10

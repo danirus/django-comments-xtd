@@ -10,8 +10,6 @@ django-comments-xtd
 .. module:: django_comments_xtd
    :synopsis: django-comments-extended.
 
-.. highlightlang:: html+django
-
 A Django pluggable application that adds comments to your project. It extends
 the once official `Django Comments Framework
 <https://pypi.python.org/pypi/django-contrib-comments>`_.
@@ -292,8 +290,9 @@ Change Log
 
     * Fixes issue `#116 <https://github.com/danirus/django-comments-xtd/issues/116>`_.
     * Updates package.json JavaScript dependencies:
-     * babel-cli from 6.24.1 to 6.26.0.
-     * jquery from 3.2.1 to 3.3.1.
+
+      * babel-cli from 6.24.1 to 6.26.0.
+      * jquery from 3.2.1 to 3.3.1.
 
 [2.3.0] - 2018-11-29
 --------------------
@@ -301,10 +300,12 @@ Change Log
     * Upgrades Twitter-Bootstrap from v3 to v4.
     * Fixes issue with tutorial fixtures (bug `#114 <https://github.com/danirus/django-comments-xtd/issues/114>`_).
     * Upgrade all JavaScript dependencies. Check packages.json for details. The major changes are:
-     * ReactJS updates from 15.5 to 16.5.
-     * Babel updates from 6 to 7.
-     * Webpack from 2.4.1 to 4.21.0.
-     * Bootstrap from 3.3.7 to 4.1.3.
+
+      * ReactJS updates from 15.5 to 16.5.
+      * Babel updates from 6 to 7.
+      * Webpack from 2.4.1 to 4.21.0.
+      * Bootstrap from 3.3.7 to 4.1.3.
+
     * Updates webpack.config.js.
     * Demo sites and tutorial have been adapted to Twitter Bootstrap v4.
     * Fixes issues `#94 <https://github.com/danirus/django-comments-xtd/issues/94>`_, `#108 <https://github.com/danirus/django-comments-xtd/issues/108>`_, `#111 <https://github.com/danirus/django-comments-xtd/issues/111>`_.

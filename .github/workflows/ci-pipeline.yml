@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        django: ["3.2", "4.0", "4.1", "4.2"]
+        django: ["3.2", "4.0", "4.1", "4.2", "5.0"]
     steps:
       - uses: actions/checkout@v2
       - name: Python setup

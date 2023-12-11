@@ -1,4 +1,4 @@
-Django>=3,<5
+Django>=3,<6
 pytz
 django-contrib-comments>=2.2,<2.3
 djangorestframework>=3.13,<3.15

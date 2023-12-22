@@ -273,8 +273,11 @@ class ReadCommentSerializer(serializers.ModelSerializer):
             submit_date = timezone.localtime(obj.submit_date)
         else:
             submit_date = obj.submit_date
-        return formats.date_format(submit_date, settings.DATETIME_FORMAT,
-                                   use_l10n=True)
+        return formats.date_format(
+            submit_date,
+            settings.COMMENTS_XTD_API_DATETIME_FORMAT,
+            use_l10n=True
+        )
 
     def get_comment(self, obj):
         if obj.is_removed:

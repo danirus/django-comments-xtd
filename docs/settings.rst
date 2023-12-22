@@ -305,6 +305,24 @@ Defaults to:
        COMMENTS_XTD_API_USER_REPR = lambda u: u.username
 
 
+.. setting:: COMMENTS_XTD_API_DATETIME_FORMAT
+
+``COMMENTS_XTD_API_DATETIME_FORMAT``
+====================================
+
+**Optional**. Like global setting ``DATETIME_FORMAT``. It allows to format the ``submit_date`` retrieved using ``ReadCommentSerializer``. The given format string must be based on Django's `date formatting characters <https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#std-templatefilter-date>`_. It defaults to ``settings.DATETIME_FORMAT``:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_API_DATETIME_FORMAT = "Y-b-d H:i:s O"
+
+Defaults to:
+
+   .. code-block:: python
+
+       COMMENTS_XTD_API_USER_REPR = settings.DATETIME_FORMAT
+
+
 .. setting:: COMMENTS_XTD_API_GET_USER_AVATAR
 
 ``COMMENTS_XTD_API_GET_USER_AVATAR``

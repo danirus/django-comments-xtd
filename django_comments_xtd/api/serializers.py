@@ -24,10 +24,6 @@ from django_comments_xtd.utils import get_app_model_options
 
 COMMENT_MAX_LENGTH = getattr(settings, 'COMMENT_MAX_LENGTH', 3000)
 
-COMMENTS_XTD_API_DATETIME_FORMAT = getattr(
-    settings, 'COMMENTS_XTD_API_DATETIME_FORMAT', settings.DATETIME_FORMAT
-)
-
 
 class WriteCommentSerializer(serializers.Serializer):
     content_type = serializers.CharField()
@@ -278,7 +274,9 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         else:
             submit_date = obj.submit_date
         return formats.date_format(
-            submit_date, COMMENTS_XTD_API_DATETIME_FORMAT, use_l10n=True
+            submit_date,
+            settings.COMMENTS_XTD_API_DATETIME_FORMAT,
+            use_l10n=True
         )
 
     def get_comment(self, obj):

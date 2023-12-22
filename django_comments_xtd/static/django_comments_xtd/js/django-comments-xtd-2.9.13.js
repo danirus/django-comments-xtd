@@ -1328,4 +1328,4 @@
   root.render( /*#__PURE__*/React.createElement(App, Object.assign(window.comments_props, window.comments_props_override)));
 
 })(React, ReactDOM, django, remarkable);
-//# sourceMappingURL=django-comments-xtd-2.9.12.js.map
+//# sourceMappingURL=django-comments-xtd-2.9.13.js.map

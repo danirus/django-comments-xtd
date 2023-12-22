@@ -17,7 +17,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.9.12, of
+    This documentation represents the current version, v2.9.13, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.8.5: https://django-comments-xtd.readthedocs.io/en/2.8.5/
@@ -93,6 +93,11 @@ specific features, or check out the use cases to see how others customize it.
 
 Change Log
 ==========
+
+[2.9.13] - 2023-12-22
+---------------------
+
+   * Fixes issue related to missing frontend files within the package distribution.
 
 [2.9.12] - 2023-12-22
 ---------------------

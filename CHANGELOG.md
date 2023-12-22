@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.9.13] - 2023-12-22
+
+ * Fixes issue related to missing frontend files within the package distribution.
+
 ## [2.9.12] - 2023-12-22
 
  * Fixes [issue 407](<https://github.com/danirus/django-comments-xtd/issues/377): `ReadCommentSerializer.get_submit_date` does not properly use `DATETIME_FORMAT` setting.

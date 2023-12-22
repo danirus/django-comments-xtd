@@ -233,7 +233,8 @@ class RenderSubmitDateTestCase(TestCase):
                          'Jan. 10, 2021, 11:15 a.m.')
 
     @patch.multiple(
-        'django_comments_xtd.conf.settings', COMMENTS_XTD_API_DATETIME_FORMAT="Y-b-d H:i:s O")
+        'django_comments_xtd.conf.settings',
+        COMMENTS_XTD_API_DATETIME_FORMAT="Y-b-d H:i:s O")
     @patch.multiple('django.conf.settings', USE_TZ=True)
     @patch.multiple('django_comments_xtd.conf.settings', USE_TZ=True)
     def test_submit_date_uses_COMMENTS_XTD_API_DATETIME_FORMAT(self):

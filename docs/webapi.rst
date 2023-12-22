@@ -360,6 +360,18 @@ This method retrieves the list of comments posted to a given content type and ob
        ]
 
 
+Modify ``submit_date``'s format
+-------------------------------
+
+The ``submit_date`` field is rendered using the datetime format string provided in the ``DATETIME_FORMAT`` setting.
+
+Use Django's `date formatting characteres <https://docs.djangoproject.com/en/5.0/ref/templates/builtins/#std-templatefilter-date>`_ to feed your ``DATETIME_FORMAT`` setting and produce the adecuate output for the ``submit_date`` in your API:
+
+.. code-block:: python
+
+    DATETIME_FORMAT = "Y-b-d H:i:s O"
+
+
 Retrieve comments count
 =======================
 

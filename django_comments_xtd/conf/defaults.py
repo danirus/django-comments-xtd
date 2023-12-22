@@ -59,6 +59,11 @@ def username(u):
 COMMENTS_XTD_API_USER_REPR = username
 
 
+# Defines the datetime format string that will be used to render the
+# `submit_date` field, when using the `ReadCommentSerializer`.
+COMMENTS_XTD_API_DATETIME_FORMAT = settings.DATETIME_FORMAT
+
+
 # Function to obtain comment's avatar. Receives the comment as a parameter.
 # Rewrite this function to make the web API use a different logic.
 # Should return an URL.

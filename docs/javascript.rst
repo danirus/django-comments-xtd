@@ -100,7 +100,7 @@ Django will fetch it from there when rendering the article's detail page:
 
        {% block extra-js %}
        [...]
-       <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.9.10.js' %}"></script>
+       <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.9.12.js' %}"></script>
        {% endblock extra-js %}
 
 Code structure
@@ -126,8 +126,8 @@ Plugin sources live inside the **static** directory of django-comments-xtd:
        │   ├── commentform.test.jsx
        │   ├── reducer.test.jsx
        │   └── lib.test.js
-       ├── django-comments-xtd-2.9.10.js
-       └── django-comments-xtd-2.9.10.min.js
+       ├── django-comments-xtd-2.9.12.js
+       └── django-comments-xtd-2.9.12.min.js
 
 The application entry point is located inside the ``index.js`` file. The
 ``props`` passed to the **CommentBox** object are those declared in the

@@ -232,12 +232,13 @@ class RenderSubmitDateTestCase(TestCase):
         self.assertEqual(ser.data[0]['submit_date'],
                          'Jan. 10, 2021, 11:15 a.m.')
 
-    @patch.multiple(
-            'django_comments_xtd.conf.settings',
-            DATETIME_FORMAT="Y-b-d H:i:s O")
     @patch.multiple('django.conf.settings', USE_TZ=True)
-    @patch.multiple('django_comments_xtd.conf.settings', USE_TZ=True)
-    def test_submit_date_uses_DATETIME_FORMAT(self):
+    @patch.multiple(
+        'django_comments_xtd.conf.settings',
+        USE_TZ=True,
+        COMMENTS_XTD_API_DATETIME_FORMAT="Y-b-d H:i:s O",
+    )
+    def test_submit_date_uses_COMMENTS_XTD_API_DATETIME_FORMAT(self):
         self.create_comment(submit_date_is_aware=True)
         qs = XtdComment.objects.all()
         ser = ReadCommentSerializer(qs, context={"request": None}, many=True)

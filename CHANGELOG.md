@@ -1,5 +1,14 @@
 # Change Log
 
+## [2.9.12] - 2023-12-22
+
+ * Fixes [issue 407](<https://github.com/danirus/django-comments-xtd/issues/377): `ReadCommentSerializer.get_submit_date` does not properly use `DATETIME_FORMAT` setting.
+ * Adds the new setting `COMMENTS_XTD_API_DATETIME_FORMAT`.
+
+## [2.9.11] - 2023-12-11
+
+ * Adds support for Django 5.0.
+
 ## [2.9.10] - 2023-07-08
 
  * Updates ReactJS plugin. It has been rewritten to use React Hooks.

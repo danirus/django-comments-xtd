@@ -17,7 +17,7 @@ the once official `Django Comments Framework
 
 .. note::
 
-    This documentation represents the current version, v2.9.10, of
+    This documentation represents the current version, v2.9.12, of
     django-comments-xtd. For old versions of the documentation:
 
     * v2.8.5: https://django-comments-xtd.readthedocs.io/en/2.8.5/
@@ -93,6 +93,17 @@ specific features, or check out the use cases to see how others customize it.
 
 Change Log
 ==========
+
+[2.9.12] - 2023-12-22
+---------------------
+
+   * Fixes `issue 407: <https://github.com/danirus/django-comments-xtd/issues/377>`_: ``ReadCommentSerializer.get_submit_date`` does not properly use ``DATETIME_FORMAT`` setting.
+   * Adds the new setting ``COMMENTS_XTD_API_DATETIME_FORMAT``.
+
+[2.9.11] - 2023-12-11
+---------------------
+
+   * Adds support for Django 5.0.
 
 [2.9.10] - 2023-07-08
 ---------------------

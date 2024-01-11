@@ -38,7 +38,6 @@ class DefaultsMixin:
         if self.kwargs.get('override_drf_defaults', False):
             return None
         return super().pagination_class
-    filter_backends = [filters.OrderingFilter]
 
 
 class CommentCreate(DefaultsMixin, generics.CreateAPIView):
@@ -73,6 +72,7 @@ class CommentList(DefaultsMixin, generics.ListAPIView):
     """List all comments for a given ContentType and object ID."""
     serializer_class = serializers.ReadCommentSerializer
     permission_classes = (permissions.AllowAny,)
+    filter_backends = [filters.OrderingFilter]
 
     def get_queryset(self, **kwargs):
         content_type_arg = self.kwargs.get('content_type', None)

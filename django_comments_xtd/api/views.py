@@ -6,7 +6,9 @@ from django.utils.module_loading import import_string
 
 from django_comments.models import CommentFlag
 from django_comments.views.moderation import perform_flag
-from rest_framework import generics, mixins, permissions, status, renderers
+from rest_framework import (
+    generics, mixins, permissions, status, renderers, filters
+)
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
@@ -70,6 +72,7 @@ class CommentList(DefaultsMixin, generics.ListAPIView):
     """List all comments for a given ContentType and object ID."""
     serializer_class = serializers.ReadCommentSerializer
     permission_classes = (permissions.AllowAny,)
+    filter_backends = [filters.OrderingFilter]
 
     def get_queryset(self, **kwargs):
         content_type_arg = self.kwargs.get('content_type', None)

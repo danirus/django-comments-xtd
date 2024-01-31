@@ -1,4 +1,4 @@
-import django from 'django';
+import { django_gettext } from './lib.js';
 import React, { useContext, useState } from 'react';
 import { Remarkable } from 'remarkable';
 
@@ -12,7 +12,7 @@ export function FieldIsRequired({replyTo}) {
       className="form-text small invalid-feedback"
       {...((replyTo > 0) && {style: {"fontSize": "0.71rem"}})}
     >
-      {django.gettext("This field is required.")}
+      {django_gettext("This field is required.")}
     </span>
   );
 }
@@ -44,14 +44,14 @@ export function PreviewComment({avatar, name, url, comment, replyTo}) {
       <hr />
       {!replyTo && (
         <h5 className="text-center">
-          {django.gettext("Your comment in preview")}
+          {django_gettext("Your comment in preview")}
         </h5>
       )}
       <div className={`comment d-flex ` + ((replyTo > 0) ? "mt-1" : "mt-5")}>
         <img className="me-3" src={avatar} height="48" width="48" />
         <div className="d-flex flex-column pb-3">
           <span style={{fontSize: "0.8rem"}}>
-            {django.gettext("Now")} - {get_heading_name()}  {replyTo > 0 && (
+            {django_gettext("Now")} - {get_heading_name()}  {replyTo > 0 && (
               <div className="badge badge-info">preview</div>
             )}</span>
           <div
@@ -149,11 +149,11 @@ export function CommentForm({ replyTo, onCommentCreated }) {
     _promise.then(response => {
       if ([201, 202, 204, 403].includes(response.status)) {
         let css_class = "";
-        const msg_202 = django.gettext(
+        const msg_202 = django_gettext(
           "Your comment will be reviewed. Thank your for your patience.");
-        const msg_204 = django.gettext(
+        const msg_204 = django_gettext(
           "Thank you, a comment confirmation request has been sent by mail.");
-        const msg_403 = django.gettext(
+        const msg_403 = django_gettext(
           "Sorry, your comment has been rejected.");
         const message = {
           202: msg_202,
@@ -254,7 +254,7 @@ export function CommentForm({ replyTo, onCommentCreated }) {
           <textarea
             required name="comment" id="id_comment"
             value={lstate.comment} maxLength={3000}
-            placeholder={django.gettext("Your comment")}
+            placeholder={django_gettext("Your comment")}
             className={get_input_css_classes("comment")}
             onChange={handle_input_change}
           />
@@ -276,12 +276,12 @@ export function CommentForm({ replyTo, onCommentCreated }) {
             className={
               (replyTo > 0) ? "form-control-sm" : "col-form-label"
             }
-          >{django.gettext("Name")}</label>
+          >{django_gettext("Name")}</label>
         </div>
         <div className={(replyTo > 0) ? "col-9" : "col-7"}>
           <input
             required type="text" name="name" id="id_name"
-            value={lstate.name} placeholder={django.gettext('name')}
+            value={lstate.name} placeholder={django_gettext('name')}
             onChange={handle_input_change}
             className={get_input_css_classes("name")}
           />
@@ -306,12 +306,12 @@ export function CommentForm({ replyTo, onCommentCreated }) {
             className={
               (replyTo > 0) ? "form-control-sm" : "col-form-label"
             }
-          >{django.gettext("Mail")}</label>
+          >{django_gettext("Mail")}</label>
         </div>
         <div className={(replyTo > 0) ? "col-9" : "col-7"}>
           <input
             required type="text" name="email" id="id_email"
-            value={lstate.email} placeholder={django.gettext('mail address')}
+            value={lstate.email} placeholder={django_gettext('mail address')}
             onChange={handle_input_change}
             className={get_input_css_classes("email")}
           />
@@ -319,7 +319,7 @@ export function CommentForm({ replyTo, onCommentCreated }) {
             className={help_cssc}
             {...((replyTo > 0) && {style: {"fontSize": "0.71rem"}})}
           >
-            {django.gettext('Required for comment verification.')}
+            {django_gettext('Required for comment verification.')}
           </span>
         </div>
       </div>
@@ -338,13 +338,13 @@ export function CommentForm({ replyTo, onCommentCreated }) {
             className={
               (replyTo > 0) ? "form-control-sm" : "col-form-label"
             }
-          >{django.gettext("Link")}</label>
+          >{django_gettext("Link")}</label>
         </div>
         <div className={(replyTo > 0) ? "col-9" : "col-7"}>
           <input
             type="text" name="url" id="id_url"
             value={lstate.url}
-            placeholder={django.gettext("url your name links to (optional)")}
+            placeholder={django_gettext("url your name links to (optional)")}
             onChange={handle_input_change}
             className={get_input_css_classes("url")}
           />
@@ -372,7 +372,7 @@ export function CommentForm({ replyTo, onCommentCreated }) {
               htmlFor={elem_id}
               className={"ps-2 form-check-label" + (replyTo > 0 && " small")}
             >
-              &nbsp;{django.gettext("Notify me about follow-up comments")}
+              &nbsp;{django_gettext("Notify me about follow-up comments")}
             </label>
           </div>
         </div>
@@ -395,7 +395,7 @@ export function CommentForm({ replyTo, onCommentCreated }) {
         <div className="card-body">
           {(replyTo === 0) && (
             <h4 className="card-title text-center pb-3">
-              {django.gettext("Post your comment")}
+              {django_gettext("Post your comment")}
             </h4>
           )}
           {(lstate.alert.message && lstate.alert.message.length > 0) && (
@@ -435,14 +435,14 @@ export function CommentForm({ replyTo, onCommentCreated }) {
                     className={
                       "btn btn-primary me-1" + (replyTo > 0 ? " btn-sm" : "")
                     }
-                  >{django.gettext("send")}</button>
+                  >{django_gettext("send")}</button>
                   <button
                     name="preview"
                     className={
                       "btn btn-secondary" + (replyTo > 0 ? " btn-sm" : "")
                     }
                     onClick={handle_preview}
-                  >{django.gettext("preview")}</button>
+                  >{django_gettext("preview")}</button>
                 </div>
               </div>
             </form>

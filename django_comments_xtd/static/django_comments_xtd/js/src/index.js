@@ -11,14 +11,17 @@ function execute_xtd() {
   }
   if (NodeList.prototype.isPrototypeOf(comments)) {
     comments.forEach(async (item) => {
-      const root = ReactDOM.createRoot(item);
-      var _props = props;
-      if (item.querySelector('.comments-props') != null) {
-        _props = JSON.parse(item.querySelector('.comments-props').getAttribute('data-comments'));
+      if (item.getAttribute('data-comments-added') == null) {
+        item.setAttribute('data-comments-added', true);
+        const root = ReactDOM.createRoot(item);
+        var _props = props;
+        if (item.querySelector('.comments-props') != null) {
+          _props = JSON.parse(item.querySelector('.comments-props').getAttribute('data-comments'));
+        }
+        root.render(
+          React.createElement(App, _props)
+        )
       }
-      root.render(
-        React.createElement(App, _props)
-      )
     });
   }
 }

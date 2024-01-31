@@ -38,36 +38,36 @@ Before installing the frontend dependencies we will prepare a Python virtualenv
 in which we will have all the backend dependencies installed. Let's start by
 creating the virtualenv and fetching the sources:
 
-   .. code-block:: shell
+.. code-block:: shell
 
-       $ virtualenv ~/venv/django-comments-xtd
-       $ source ~/venv/django-comments-xtd/bin/activate
-       $ cd ~/src/  # or cd into your sources dir of choice.
-       $ git clone https://github.com/danirus/django-comments-xtd.git
-       $ cd django-comments-xtd
-       $ pip install -e .
+    virtualenv ~/venv/django-comments-xtd
+    source ~/venv/django-comments-xtd/bin/activate
+    cd ~/src/  # or cd into your sources dir of choice.
+    git clone https://github.com/danirus/django-comments-xtd.git
+    cd django-comments-xtd
+    pip install -e .
 
 Check whether the app passes the battery of tests:
 
-   .. code-block:: shell
+.. code-block:: shell
 
-       $ pytest -x
+    python -m pytest -x
 
 As the sample Django project you can use the **comp** example site. Install
 first the django-markdown2 package (required by the comp example project) and
 setup the project:
 
-   .. code-block:: shell
+.. code-block:: shell
 
-       $ cd example/comp
-       $ pip install django-markdown2
-       $ pip install django-rosetta
-       $ python manage.py migrate
-       $ python manage.py loaddata ../fixtures/auth.json
-       $ python manage.py loaddata ../fixtures/sites.json
-       $ python manage.py loaddata ../fixtures/articles.json
-       $ python manage.py loaddata ../fixtures/quotes.json
-       $ python manage.py runserver
+    cd example/comp
+    pip install django-markdown2
+    pip install django-rosetta
+    python manage.py migrate
+    python manage.py loaddata ../fixtures/auth.json
+    python manage.py loaddata ../fixtures/sites.json
+    python manage.py loaddata ../fixtures/articles.json
+    python manage.py loaddata ../fixtures/quotes.json
+    python manage.py runserver
 
 Now the project is ready and the plugin will load from the existing bundle
 files. Check it out by visiting an article's page and sending some comments. No
@@ -80,71 +80,75 @@ Install frontend packages
 At this point open another terminal and cd into django-comments-xtd source
 directory again, then install all the frontend dependencies:
 
-   .. code-block:: shell
+.. code-block:: shell
 
-       $ cd ~/src/django-comments-xtd
-       $ npm install
+    cd ~/src/django-comments-xtd
+    npm install
 
 It will install all the dependencies listed in the **package.json** file in the
 local `node_modules` directory. Once it's finished run webpack to build the
 bundles and watch for changes in the source tree:
 
-   .. code-block:: shell
+.. code-block:: shell
 
-       $ npm run compile
+       npm run compile
 
 Rollup puts the bundle in the static directory of django-comments-xtd and
 Django will fetch it from there when rendering the article's detail page:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% block extra-js %}
-       [...]
-       <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.9.13.js' %}"></script>
-       {% endblock extra-js %}
+    {% block extra-js %}
+    [...]
+    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.9.13.js' %}"></script>
+    {% endblock extra-js %}
 
 Code structure
 ==============
 
 Plugin sources live inside the **static** directory of django-comments-xtd:
 
-   .. code-block:: shell
+.. code-block:: shell
 
-       $ cd ~/src/django-comments-xtd
-       $ tree django_comments_xtd/static/django_comments_xtd/js
+    cd ~/src/django-comments-xtd
+    tree django_comments_xtd/static/django_comments_xtd/js
 
-       django_comments_xtd/static/django_comments_xtd/js
-       ├── src
-       │   ├── app.js
-       │   ├── comment.jsx
-       │   ├── commentbox.jsx
-       │   ├── commentform.jsx
-       │   ├── index.js
-       │   └── lib.js
-       ├── tests
-       │   ├── comment.test.jsx
-       │   ├── commentform.test.jsx
-       │   ├── reducer.test.jsx
-       │   └── lib.test.js
-       ├── django-comments-xtd-2.9.12.js
-       └── django-comments-xtd-2.9.12.min.js
+Which results in:
+
+.. code-block::
+
+    django_comments_xtd/static/django_comments_xtd/js
+    ├── src
+    │   ├── app.js
+    │   ├── comment.jsx
+    │   ├── commentbox.jsx
+    │   ├── commentform.jsx
+    │   ├── index.js
+    │   └── lib.js
+    ├── tests
+    │   ├── comment.test.jsx
+    │   ├── commentform.test.jsx
+    │   ├── reducer.test.jsx
+    │   └── lib.test.js
+    ├── django-comments-xtd-2.9.12.js
+    └── django-comments-xtd-2.9.12.min.js
 
 The application entry point is located inside the ``index.js`` file. The
 ``props`` passed to the **CommentBox** object are those declared in the
 ``var window.comments_props`` defined in the django template:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       <script>
-         window.comments_props = {% get_commentbox_props for object %};
-         window.comments_props_override = {
-           allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
-           allow_feedback: true,
-           show_feedback: true,
-           allow_flagging: true,
-           polling_interval: 2000,
-         };
-       </script>
+    <script>
+      window.comments_props = {% get_commentbox_props for object %};
+      window.comments_props_override = {
+        allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+        allow_feedback: true,
+        show_feedback: true,
+        allow_flagging: true,
+        polling_interval: 2000,
+      };
+    </script>
 
 And are overriden by those declared in the
 ``window.comments_props_override``.

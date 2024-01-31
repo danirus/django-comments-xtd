@@ -14,7 +14,7 @@ Django-comments-xtd provides 5 template tags and 3 filters. Load the module to m
 .. contents:: Table of Contents
    :depth: 1
    :local:
-    
+
 
 .. index::
    single: render_xtdcomment_tree
@@ -23,17 +23,18 @@ Django-comments-xtd provides 5 template tags and 3 filters. Load the module to m
 .. templatetag:: render_xtdcomment_tree
 
 .. _render-xtdcomment-tree:
-                 
+
 Tag ``render_xtdcomment_tree``
 ==============================
 
 Tag syntax:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% render_xtdcomment_tree [for <object>] [with var_name_1=<obj_1> var_name_2=<obj_2>]
-                                 [allow_flagging] [allow_feedback] [show_feedback]
-                                 [using <template>] %}
+      {% render_xtdcomment_tree
+          [for <object>] [with var_name_1=<obj_1> var_name_2=<obj_2>]
+          [allow_flagging] [allow_feedback] [show_feedback]
+          [using <template>] %}
 
 
 Renders the threaded structure of comments posted to the given object using the first template found from the list:
@@ -56,13 +57,13 @@ Example usage
 
 In the usual scenario the tag is used in the object detail template, i.e.: ``blog/article_detail.html``, to include all comments posted to the article, in a tree structure:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% render_xtdcomment_tree for article allow_flagging allow_feedback show_feedback  %}
+    {% render_xtdcomment_tree for article allow_flagging allow_feedback show_feedback  %}
 
 
-   
-       
+
+
 .. index::
    single: get_xtdcomment_tree
    pair: tag; get_xtdcomment_tree
@@ -74,42 +75,42 @@ Tag ``get_xtdcomment_tree``
 
 Tag syntax:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% get_xtdcomment_tree for [object] as [varname] [with_feedback] %}
+      {% get_xtdcomment_tree for [object] as [varname] [with_feedback] %}
 
 
 Returns a dictionary to the template context under the name given in ``[varname]`` with the comments posted to the given ``[object]``. The dictionary has the form:
 
-   .. code-block:: python
+.. code-block:: python
 
-       {
-           'comment': xtdcomment_object,
-           'children': [ list_of_child_xtdcomment_dicts ]
-       }
+    {
+        'comment': xtdcomment_object,
+        'children': [ list_of_child_xtdcomment_dicts ]
+    }
 
 The comments will be ordered by the ``thread_id`` and ``order`` within the thread, as stated by the setting :setting:`COMMENTS_XTD_LIST_ORDER`.
 
 When the optional argument ``with_feedback`` is specified the returned dictionary will contain two additional attributes with the list of users who liked the comment and the list of users who disliked it:
 
-   .. code-block:: python
+.. code-block:: python
 
-       {
-           'xtdcomment': xtdcomment_object,
-           'children': [ list_of_child_xtdcomment_dicts ],
-           'likedit': [user_a, user_b, ...],
-           'dislikedit': [user_n, user_m, ...]
-       }
+    {
+        'xtdcomment': xtdcomment_object,
+        'children': [ list_of_child_xtdcomment_dicts ],
+        'likedit': [user_a, user_b, ...],
+        'dislikedit': [user_n, user_m, ...]
+    }
 
-       
+
 Example usage
 -------------
 
 Get an ordered dictionary with the comments posted to a given blog story and store the dictionary in a template context variabled called ``comment_tree``:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% get_xtdcomment_tree for story as comments_tree with_feedback %}
+    {% get_xtdcomment_tree for story as comments_tree with_feedback %}
 
 
 .. index::
@@ -167,7 +168,7 @@ Get the list of the last 10 comments two models, ``Story`` and ``Quote``, have r
     {% endif %}
 
 
-    
+
 .. index::
    single: get_xtdcomment_count
    pair: tag; get_xtdcomment_count
@@ -238,15 +239,15 @@ This filter has been named ``xtd_comment_gravatar_url`` as oposed to simply ``gr
    pair: filter; render_markup_comment
 
 .. templatetag:: render_markup_comment
-   
+
 Filter ``render_markup_comment``
 ================================
 
 Filter syntax:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {{ comment.comment|render_markup_comment }}
+    {{ comment.comment|render_markup_comment }}
 
 
 Renders a comment using a markup language specified in the first line of the comment. It uses `django-markup <https://github.com/bartTC/django-markup>`_ to parse the comments with a markup language parser and produce the corresponding output.
@@ -256,16 +257,16 @@ Example usage
 
 A comment posted with a content like:
 
-   .. code-block:: text
+.. code-block:: text
 
-       #!markdown
-       An [example](http://url.com/ "Title")
+    #!markdown
+    An [example](http://url.com/ "Title")
 
 Would be rendered as a markdown text, producing the output:
 
-   .. code-block:: html
-       
-       <p><a href="http://url.com/" title="Title">example</a></p>
+.. code-block:: html
+
+    <p><a href="http://url.com/" title="Title">example</a></p>
 
 Available markup languages are:
 

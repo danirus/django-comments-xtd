@@ -37,19 +37,23 @@ comments.
 Preparation
 ===========
 
-Before we install any package we will set up a virtualenv and install
-everything we need in it.
+Before we install any package we will set up a virtualenv:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-       $ mkdir ~/django-comments-xtd-tutorial
-       $ cd ~/django-comments-xtd-tutorial
-       $ virtualenv venv
-       $ source venv/bin/activate
-       (venv)$ pip install django-comments-xtd
-       (venv)$ wget https://github.com/danirus/django-comments-xtd/raw/master/example/tutorial.tar.gz
-       (venv)$ tar -xvzf tutorial.tar.gz
-       (venv)$ cd tutorial
+    mkdir ~/django-comments-xtd-tutorial
+    cd ~/django-comments-xtd-tutorial
+    virtualenv venv
+    source venv/bin/activate
+
+And we will install everything we need in it:
+
+.. code-block:: bash
+
+    pip install django-comments-xtd
+    wget https://github.com/danirus/django-comments-xtd/raw/master/example/tutorial.tar.gz
+    tar -xvzf tutorial.tar.gz
+    cd tutorial
 
 By installing django-comments-xtd we install all its dependencies, Django and
 django-contrib-comments among them. So we are ready to work on the project.
@@ -70,11 +74,11 @@ Take a look at the content of the tutorial directory, it contains:
 Let's finish the initial setup, load the fixtures and run the development
 server:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-       (venv)$ python manage.py migrate
-       (venv)$ python manage.py loaddata fixtures/*.json
-       (venv)$ python manage.py runserver
+    python manage.py migrate
+    python manage.py loaddata fixtures/*.json
+    python manage.py runserver
 
 Head to http://localhost:8000 and visit the tutorial site.
 
@@ -93,49 +97,49 @@ Configuration
 Now that the project is running we are ready to add comments. Edit the settings
 module, ``tutorial/settings.py``, and make the following changes:
 
-   .. code-block:: python
+.. code-block:: python
 
-       INSTALLED_APPS = [
-           ...
-           'django_comments_xtd',
-           'django_comments',
-           'blog',
-       ]
-       ...
-       COMMENTS_APP = 'django_comments_xtd'
+    INSTALLED_APPS = [
+        ...
+        'django_comments_xtd',
+        'django_comments',
+        'blog',
+    ]
+    ...
+    COMMENTS_APP = 'django_comments_xtd'
 
-       # Either enable sending mail messages to the console:
-       EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    # Either enable sending mail messages to the console:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-       # Or set up the EMAIL_* settings so that Django can send emails:
-       EMAIL_HOST = "smtp.mail.com"
-       EMAIL_PORT = "587"
-       EMAIL_HOST_USER = "alias@mail.com"
-       EMAIL_HOST_PASSWORD = "yourpassword"
-       EMAIL_USE_TLS = True
-       DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
+    # Or set up the EMAIL_* settings so that Django can send emails:
+    EMAIL_HOST = "smtp.mail.com"
+    EMAIL_PORT = "587"
+    EMAIL_HOST_USER = "alias@mail.com"
+    EMAIL_HOST_PASSWORD = "yourpassword"
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
 
 
 Edit the urls module of the project, ``tutorial/tutorial/urls.py`` and mount
 the URL patterns of django_comments_xtd in the path ``/comments/``. The urls
 installed with django_comments_xtd include django_comments' urls too:
 
-   .. code-block:: python
+.. code-block:: python
 
-       from django.urls import include, path
+    from django.urls import include, path
 
-       urlpatterns = [
-           ...
-           path(r'comments/', include('django_comments_xtd.urls')),
-           ...
-       ]
+    urlpatterns = [
+        ...
+        path(r'comments/', include('django_comments_xtd.urls')),
+        ...
+    ]
 
 
 Now let Django create the tables for the two new applications:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-       $ python manage.py migrate
+    python manage.py migrate
 
 
 Be sure that the domain field of the ``Site`` instance points to the correct
@@ -165,17 +169,17 @@ anonymous users too by simply setting :setting:`COMMENTS_XTD_CONFIRM_EMAIL` to
 
 Now let's append the following entries to the tutorial settings module:
 
-   .. code-block:: python
+.. code-block:: python
 
-       #  To help obfuscating comments before they are sent for confirmation.
-       COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
-                            b"Aequam memento rebus in arduis servare mentem.")
+    #  To help obfuscating comments before they are sent for confirmation.
+    COMMENTS_XTD_SALT = (b"Timendi causa est nescire. "
+                        b"Aequam memento rebus in arduis servare mentem.")
 
-       # Source mail address used for notifications.
-       COMMENTS_XTD_FROM_EMAIL = "webmaster@example.com"
+    # Source mail address used for notifications.
+    COMMENTS_XTD_FROM_EMAIL = "webmaster@example.com"
 
-       # Contact mail address to show in messages.
-       COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
+    # Contact mail address to show in messages.
+    COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
 
 
 Comments tags
@@ -184,29 +188,29 @@ Comments tags
 Next step consist of editing ``blog/post_detail.html`` and loading the
 ``comments`` templatetag module after the ``extends`` tag:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% extends "base.html" %}
-       {% load comments %}
+    {% extends "base.html" %}
+    {% load comments %}
 
 Now we will change the blog post detail template to:
 
- #. Show the number of comments posted to the blog story,
- #. List the comments already posted, and
- #. Show the comment form, so that comments can be sent.
+#. Show the number of comments posted to the blog story,
+#. List the comments already posted, and
+#. Show the comment form, so that comments can be sent.
 
 By using the :ttag:`get_comment_count` tag we will show the number of comments
 posted. Change the code around the link element to make it look as follows:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% get_comment_count for object as comment_count %}
-       <div class="py-4 text-center">
-         <a href="{% url 'blog:post-list' %}">Back to the post list</a>
-         &nbsp;&sdot;&nbsp;
-         {{ comment_count }} comment{{ comment_count|pluralize }}
-         ha{{ comment_count|pluralize:"s,ve" }} been posted.
-       </div>
+    {% get_comment_count for object as comment_count %}
+    <div class="py-4 text-center">
+      <a href="{% url 'blog:post-list' %}">Back to the post list</a>
+      &nbsp;&sdot;&nbsp;
+      {{ comment_count }} comment{{ comment_count|pluralize }}
+      ha{{ comment_count|pluralize:"s,ve" }} been posted.
+    </div>
 
 Now let's add the code to list the comments posted to the story. We can make
 use of two template tags, :ttag:`render_comment_list` and
@@ -217,11 +221,11 @@ template.
 When using the first, :ttag:`render_comment_list`, with a ``blog.post`` object,
 Django will look for the template ``list.html`` in the following directories:
 
-   .. code-block:: shell
+.. code-block:: shell
 
-       comments/blog/post/list.html
-       comments/blog/list.html
-       comments/list.html
+    comments/blog/post/list.html
+    comments/blog/list.html
+    comments/list.html
 
 Both, django-contrib-comments and django-comments-xtd, provide the last template
 of the list, ``comments/list.html``. The one provided within
@@ -236,14 +240,14 @@ Let's modify the ``blog/post_detail.html`` template to make use of the
 :ttag:`render_comment_list`. Add the following code at the end of the page,
 before the ``endblock`` tag:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% if comment_count %}
-       <hr/>
-       <div class="comments">
-         {% render_comment_list for object %}
-       </div>
-       {% endif %}
+    {% if comment_count %}
+    <hr/>
+    <div class="comments">
+      {% render_comment_list for object %}
+    </div>
+    {% endif %}
 
 
 Below the list of comments we want to display the comment form. There are two
@@ -255,16 +259,16 @@ control over the fields.
 We will use the first tag, :ttag:`render_comment_form`. Again, add the
 following code before the ``endblock`` tag:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% if object.allow_comments %}
-       <div class="card card-block mb-5">
-         <div class="card-body">
-           <h4 class="card-title text-center pb-3">Post your comment</h4>
-             {% render_comment_form for object %}
-         </div>
-       </div>
-       {% endif %}
+    {% if object.allow_comments %}
+    <div class="card card-block mb-5">
+      <div class="card-body">
+        <h4 class="card-title text-center pb-3">Post your comment</h4>
+          {% render_comment_form for object %}
+      </div>
+    </div>
+    {% endif %}
 
 
 .. note:: The ``{% if object.allow_comments %}`` and corresponding ``{% endif %}`` are not necessary in your code. I use it in this tutorial (and in the demo sites) as a way to disable comments whenever the author of a blog post decides so. It has been mentioned `here <https://github.com/danirus/django-comments-xtd/issues/108>`_ too.
@@ -274,22 +278,22 @@ Finally, before completing this first set of changes, we could show the number
 of comments along with post titles in the blog's home page. For this we have to
 edit ``blog/post_list.html`` and make the following changes:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% extends "base.html" %}
-       {% load comments %}
+    {% extends "base.html" %}
+    {% load comments %}
 
-       ...
-           {% for object in object_list %}
-           ...
-           {% get_comment_count for object as comment_count %}
-           <p class="date">Published {{ object.publish }}
-             {% if comment_count %}
-             &sdot;&nbsp;{{ comment_count }} comment{{ comment_count|pluralize }}
-             {% endif %}
-           </p>
-           ...
-           {% endfor %}
+    ...
+        {% for object in object_list %}
+        ...
+        {% get_comment_count for object as comment_count %}
+        <p class="date">Published {{ object.publish }}
+          {% if comment_count %}
+          &sdot;&nbsp;{{ comment_count }} comment{{ comment_count|pluralize }}
+          {% endif %}
+        </p>
+        ...
+        {% endfor %}
 
 
 Now we are ready to send comments. If you are logged in in the admin site, your
@@ -334,11 +338,11 @@ flagged for moderation. Also we want Django to send an email to registered
 Let's start adding our email address to the :setting:`MANAGERS` in the
 ``tutorial/settings.py`` module:
 
-   .. code-block:: python
+.. code-block:: python
 
-       MANAGERS = (
-           ('Joe Bloggs', 'joe.bloggs@example.com'),
-       )
+    MANAGERS = (
+        ('Joe Bloggs', 'joe.bloggs@example.com'),
+    )
 
 
 Now we will create a new ``Moderator`` class that inherits from Django Comments
@@ -355,23 +359,23 @@ for non-registered users, nested comments, follow-up notifications, etc.
 
 Let's add those changes to the ``blog/model.py`` file:
 
-   .. code-block:: python
+.. code-block:: python
 
-       ...
-       # Append these imports below the current ones.
-       from django_comments.moderation import CommentModerator
-       from django_comments_xtd.moderation import moderator
+    ...
+    # Append these imports below the current ones.
+    from django_comments.moderation import CommentModerator
+    from django_comments_xtd.moderation import moderator
 
-       ...
+    ...
 
-       # Add this code at the end of the file.
-       class PostCommentModerator(CommentModerator):
-           email_notification = True
-           auto_moderate_field = 'publish'
-           moderate_after = 365
+    # Add this code at the end of the file.
+    class PostCommentModerator(CommentModerator):
+        email_notification = True
+        auto_moderate_field = 'publish'
+        moderate_after = 365
 
 
-       moderator.register(Post, PostCommentModerator)
+    moderator.register(Post, PostCommentModerator)
 
 
 That makes it, moderation is ready. Visit any of the blog posts with a
@@ -423,9 +427,9 @@ moderation comments containing badwords_.
 Let us first disable comment confirmation. Edit the ``tutorial/settings.py``
 file and add:
 
-   .. code-block:: python
+.. code-block:: python
 
-       COMMENTS_XTD_CONFIRM_EMAIL = False
+    COMMENTS_XTD_CONFIRM_EMAIL = False
 
 
 django-comments-xtd comes with a **Moderator** class that inherits from
@@ -433,16 +437,16 @@ django-comments-xtd comes with a **Moderator** class that inherits from
 filtering for us. We just have to change ``blog/models.py`` and replace
 ``CommentModerator`` with ``SpamModerator``, as follows:
 
-   .. code-block:: python
+.. code-block:: python
 
-       # Remove the CommentModerator imports and leave only this:
-       from django_comments_xtd.moderation import moderator, SpamModerator
+    # Remove the CommentModerator imports and leave only this:
+    from django_comments_xtd.moderation import moderator, SpamModerator
 
-       # Our class Post PostCommentModerator now inherits from SpamModerator
-       class PostCommentModerator(SpamModerator):
-           ...
+    # Our class Post PostCommentModerator now inherits from SpamModerator
+    class PostCommentModerator(SpamModerator):
+        ...
 
-       moderator.register(Post, PostCommentModerator)
+    moderator.register(Post, PostCommentModerator)
 
 
 Now we can add a domain to the ``BlackListed`` model in the admin_ interface.
@@ -475,61 +479,65 @@ We assume we already have a list of ``BlackListed`` domains and we don't need
 further spam control. So we will disable comment confirmation by email. Edit
 the ``settings.py`` file:
 
-   .. code-block:: python
+.. code-block:: python
 
-       COMMENTS_XTD_CONFIRM_EMAIL = False
+    COMMENTS_XTD_CONFIRM_EMAIL = False
 
 
 Now edit ``blog/models.py`` and add the code corresponding to our new
 ``PostCommentModerator``:
 
-   .. code-block:: python
+.. code-block:: python
 
-       # Below the other imports:
-       from django_comments_xtd.moderation import moderator, SpamModerator
-       from blog.badwords import badwords
+    # Below the other imports:
+    from django_comments_xtd.moderation import moderator, SpamModerator
+    from blog.badwords import badwords
 
-       ...
+    ...
 
-       class PostCommentModerator(SpamModerator):
-           email_notification = True
+    class PostCommentModerator(SpamModerator):
+        email_notification = True
 
-           def moderate(self, comment, content_object, request):
-               # Make a dictionary where the keys are the words of the message
-               # and the values are their relative position in the message.
-               def clean(word):
-                   ret = word
-                   if word.startswith('.') or word.startswith(','):
-                       ret = word[1:]
-                   if word.endswith('.') or word.endswith(','):
-                       ret = word[:-1]
-                   return ret
+        def moderate(self, comment, content_object, request):
+            # Make a dictionary where the keys are the words of the message
+            # and the values are their relative position in the message.
+            def clean(word):
+                ret = word
+                if word.startswith('.') or word.startswith(','):
+                    ret = word[1:]
+                if word.endswith('.') or word.endswith(','):
+                    ret = word[:-1]
+                return ret
 
-               lowcase_comment = comment.comment.lower()
-               msg = dict([(clean(w), i)
-                           for i, w in enumerate(lowcase_comment.split())])
-               for badword in badwords:
-                   if isinstance(badword, str):
-                       if lowcase_comment.find(badword) > -1:
-                           return True
-                   else:
-                       lastindex = -1
-                       for subword in badword:
-                           if subword in msg:
-                               if lastindex > -1:
-                                   if msg[subword] == (lastindex + 1):
-                                       lastindex = msg[subword]
-                               else:
-                                   lastindex = msg[subword]
-                           else:
-                               break
-                       if msg.get(badword[-1]) and msg[badword[-1]] == lastindex:
-                           return True
-               return super(PostCommentModerator, self).moderate(comment,
-                                                                 content_object,
-                                                                 request)
+            lowcase_comment = comment.comment.lower()
+            msg = dict([
+                (clean(w), i)
+                for i, w in enumerate(lowcase_comment.split())
+            ])
 
-       moderator.register(Post, PostCommentModerator)
+            for badword in badwords:
+                if isinstance(badword, str):
+                    if lowcase_comment.find(badword) > -1:
+                        return True
+                else:
+                    lastindex = -1
+                    for subword in badword:
+                        if subword in msg:
+                            if lastindex > -1:
+                                if msg[subword] == (lastindex + 1):
+                                    lastindex = msg[subword]
+                            else:
+                                lastindex = msg[subword]
+                        else:
+                            break
+                    if msg.get(badword[-1]) and msg[badword[-1]] == lastindex:
+                        return True
+
+            return super(PostCommentModerator, self).moderate(
+                comment, content_object, request
+            )
+
+    moderator.register(Post, PostCommentModerator)
 
 
 Now we can try to send a comment with any of the bad words listed in badwords_.
@@ -581,10 +589,10 @@ list newer comments first.
 Let's start by editing ``tutorial/settings.py`` to set up the maximum thread
 level to 1 and a comment ordering such that newer comments are retrieve first:
 
-   .. code-block:: python
+.. code-block:: python
 
-       COMMENTS_XTD_MAX_THREAD_LEVEL = 1  # default is 0
-       COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')  # default is ('thread_id', 'order')
+    COMMENTS_XTD_MAX_THREAD_LEVEL = 1  # default is 0
+    COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')  # default is ('thread_id', 'order')
 
 Now we have to modify the blog post detail template to load the ``comments_xtd``
 templatetag and make use of :ttag:`render_xtdcomment_tree`. We also want to move
@@ -593,46 +601,46 @@ below the blog post, followed by the list of comments.
 
 Edit ``blog/post_detail.html`` to make it look like follows:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% extends "base.html" %}
-       {% load comments %}
-       {% load comments_xtd %}
+    {% extends "base.html" %}
+    {% load comments %}
+    {% load comments_xtd %}
 
-       {% block title %}{{ object.title }}{% endblock %}
+    {% block title %}{{ object.title }}{% endblock %}
 
-       {% block content %}
-       <div class="pb-3">
-         <h1 class="page-header text-center">{{ object.title }}</h1>
-         <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
-       </div>
-       <div>
-         {{ object.body|linebreaks }}
-       </div>
+    {% block content %}
+    <div class="pb-3">
+      <h1 class="page-header text-center">{{ object.title }}</h1>
+      <p class="small text-center">{{ object.publish|date:"l, j F Y" }}</p>
+    </div>
+    <div>
+      {{ object.body|linebreaks }}
+    </div>
 
-       {% get_comment_count for object as comment_count %}
-       <div class="py-4 text-center">
-         <a href="{% url 'blog:post-list' %}">Back to the post list</a>
-         &nbsp;&sdot;&nbsp;
-         {{ comment_count }} comment{{ comment_count|pluralize }}
-         ha{{ comment_count|pluralize:"s,ve"}} been posted.
-       </div>
+    {% get_comment_count for object as comment_count %}
+    <div class="py-4 text-center">
+      <a href="{% url 'blog:post-list' %}">Back to the post list</a>
+      &nbsp;&sdot;&nbsp;
+      {{ comment_count }} comment{{ comment_count|pluralize }}
+      ha{{ comment_count|pluralize:"s,ve"}} been posted.
+    </div>
 
-       {% if object.allow_comments %}
-       <div class="comment mt-3 mb-5">
-         <h4 class="text-center mb-4">Your comment</h4>
-         <div class="card pt-4">
-           {% render_comment_form for object %}
-         </div>
-       </div>
-       {% endif %}
+    {% if object.allow_comments %}
+    <div class="comment mt-3 mb-5">
+      <h4 class="text-center mb-4">Your comment</h4>
+      <div class="card pt-4">
+        {% render_comment_form for object %}
+      </div>
+    </div>
+    {% endif %}
 
-       {% if comment_count %}
-       <ul class="media-list">
-         {% render_xtdcomment_tree for object %}
-       </ul>
-       {% endif %}
-       {% endblock %}
+    {% if comment_count %}
+    <ul class="media-list">
+      {% render_xtdcomment_tree for object %}
+    </ul>
+    {% endif %}
+    {% endblock %}
 
 
 The tag :ttag:`render_xtdcomment_tree` renders the template
@@ -664,14 +672,14 @@ If we wanted to disable nested comments site wide, and enable nested comments
 up to level one for blog posts, we would set it up as follows in our
 ``settings.py`` module:
 
-   .. code-block:: python
+.. code-block:: python
 
-       COMMENTS_XTD_MAX_THREAD_LEVEL = 0  # site wide default
-       COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
-           # Objects of the app blog, model post, can be nested
-           # up to thread level 1.
-   	       'blog.post': 1,
-       }
+    COMMENTS_XTD_MAX_THREAD_LEVEL = 0  # site wide default
+    COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
+        # Objects of the app blog, model post, can be nested
+        # up to thread level 1.
+        'blog.post': 1,
+    }
 
 The ``nested_count`` field
 --------------------------
@@ -716,16 +724,16 @@ actions users can perform on comments: flag them as inappropriate, like/dislike 
 
 It defaults to:
 
-   .. code-block:: python
+.. code-block:: python
 
-       COMMENTS_XTD_APP_MODEL_OPTIONS = {
-           'default': {
-               'allow_flagging': False,
-               'allow_feedback': False,
-               'show_feedback': False,
-               'who_can_post': 'all'  # Valid values: 'all', users'
-           }
-       }
+    COMMENTS_XTD_APP_MODEL_OPTIONS = {
+        'default': {
+            'allow_flagging': False,
+            'allow_feedback': False,
+            'show_feedback': False,
+            'who_can_post': 'all'  # Valid values: 'all', users'
+        }
+    }
 
 We will go through the first three options in the following sections. As for the last option, *who_can_post*, I recommend you to read the special use case :ref:`ref-recipe-only-signed-in-can-comment`, that explains the topic in depth.
 
@@ -737,12 +745,12 @@ Enabling the comment removal flag is about including the **allow_flagging**
 argument in the ``render_xtdcomment_tree`` template tag. Edit the
 ``blog/post_detail.html`` template and append the argument:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       ...
-       <ul class="media-list">
-         {% render_xtdcomment_tree for object allow_flagging %}
-       </ul>
+    ...
+    <ul class="media-list">
+      {% render_xtdcomment_tree for object allow_flagging %}
+    </ul>
 
 
 The **allow_flagging** argument makes the templatetag populate a variable
@@ -750,15 +758,15 @@ The **allow_flagging** argument makes the templatetag populate a variable
 ``django_comments_xtd/comment_tree.html`` is rendered. Edit now the settings
 module and enable the ``allow_flagging`` option for the ``blog.post``:
 
-   .. code-block:: python
+.. code-block:: python
 
-       COMMENTS_XTD_APP_MODEL_OPTIONS = {
-           'blog.post': {
-               'allow_flagging': True,
-               'allow_feedback': False,
-               'show_feedback': False,
-           }
-       }
+    COMMENTS_XTD_APP_MODEL_OPTIONS = {
+        'blog.post': {
+            'allow_flagging': True,
+            'allow_feedback': False,
+            'show_feedback': False,
+        }
+    }
 
 Now let's suggest a removal. First we need to login in the admin_ interface so
 that we are not an anonymous user. Then we can visit any of the blog posts we
@@ -801,15 +809,15 @@ class **SpamModerator**, which inherits from **XtdCommentModerator**, just add
 ``removal_suggestion_notification = True`` to your ``PostCommentModeration``
 class. Otherwise add the following code:
 
-   .. code-block:: python
+.. code-block:: python
 
-      from django_comments_xtd.moderation import moderator, XtdCommentModerator
+  from django_comments_xtd.moderation import moderator, XtdCommentModerator
 
-      ...
-      class PostCommentModerator(XtdCommentModerator):
-          removal_suggestion_notification = True
+  ...
+  class PostCommentModerator(XtdCommentModerator):
+      removal_suggestion_notification = True
 
-      moderator.register(Post, PostCommentModerator)
+  moderator.register(Post, PostCommentModerator)
 
 Be sure that ``PostCommentModerator`` is the only moderation class registered
 for the ``Post`` model, and be sure as well that the :setting:`MANAGERS`
@@ -836,11 +844,11 @@ like/dislike buttons is about adding an argument to the
 ``render_xtdcomment_tree``, the argument ``allow_feedback``.
 Edit the ``blog/post_detail.html`` template and add the new argument:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       <ul class="media-list">
-         {% render_xtdcomment_tree for object allow_flagging allow_feedback %}
-       </ul>
+    <ul class="media-list">
+      {% render_xtdcomment_tree for object allow_flagging allow_feedback %}
+    </ul>
 
 
 The **allow_feedback** argument makes the templatetag populate a variable
@@ -849,15 +857,15 @@ The **allow_feedback** argument makes the templatetag populate a variable
 module and enable the ``allow_feedback`` option for the ``blog.post``
 **app.label** pair:
 
-   .. code-block:: python
+.. code-block:: python
 
-       COMMENTS_XTD_APP_MODEL_OPTIONS = {
-           'blog.post': {
-               'allow_flagging': True,
-               'allow_feedback': True,
-               'show_feedback': False,
-           }
-       }
+    COMMENTS_XTD_APP_MODEL_OPTIONS = {
+        'blog.post': {
+            'allow_flagging': True,
+            'allow_feedback': True,
+            'show_feedback': False,
+        }
+    }
 
 The blog post detail template is ready to show the like/dislike buttons,
 refresh your browser.
@@ -881,46 +889,46 @@ users who actually liked/disliked comments. Again addind an argument to the
 ``blog/post_detail.html`` and add the argument ``show_feedback``
 to the template tag:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       [...]
-       <ul class="media-list">
-         {% render_xtdcomment_tree for object allow_flagging allow_feedback show_feedback %}
-       </ul>
-       {% endif %}
-       {% endblock %}
+    [...]
+    <ul class="media-list">
+      {% render_xtdcomment_tree for object allow_flagging allow_feedback show_feedback %}
+    </ul>
+    {% endif %}
+    {% endblock %}
 
-       {% block extra-js %}
-       <script
-         src="https://code.jquery.com/jquery-3.3.1.min.js"
-         crossorigin="anonymous"></script>
-       <script
-         src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-         crossorigin="anonymous"></script>
-       <script
-         src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-         crossorigin="anonymous"></script>
-       <script>
-         $(function() {
-           $('[data-toggle="tooltip"]').tooltip({html: true});
-         });
-       </script>
-       {% endblock %}
+    {% block extra-js %}
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+      integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+      crossorigin="anonymous"></script>
+    <script>
+      $(function() {
+        $('[data-toggle="tooltip"]').tooltip({html: true});
+      });
+    </script>
+    {% endblock %}
 
 Also change the settings and enable the ``show_feedback`` option for
 ``blog.post``:
 
-   .. code-block:: python
+.. code-block:: python
 
-       COMMENTS_XTD_APP_MODEL_OPTIONS = {
-           'blog.post': {
-               'allow_flagging': True,
-               'allow_feedback': True,
-               'show_feedback': True,
-           }
-       }
+    COMMENTS_XTD_APP_MODEL_OPTIONS = {
+        'blog.post': {
+            'allow_flagging': True,
+            'allow_feedback': True,
+            'show_feedback': True,
+        }
+    }
 
 We loaded jQuery and twitter-bootstrap_ libraries from their respective default
 CDNs as the code above uses bootstrap's tooltip functionality to show the list
@@ -967,19 +975,19 @@ Now we will install `django-markdown2
 <https://pypi.python.org/pypi/django-markdown2>`_, and create the template
 directory and the template file:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-       (venv)$ pip install django-markdown2
-       (venv)$ mkdir -p templates/includes/django_comments_xtd/
-       (venv)$ touch templates/includes/django_comments_xtd/comment_content.html
+    (venv)$ pip install django-markdown2
+    (venv)$ mkdir -p templates/includes/django_comments_xtd/
+    (venv)$ touch templates/includes/django_comments_xtd/comment_content.html
 
 We have to add ``django_markdown2`` to our :setting:`INSTALLED_APPS`, and add
 the following template code to the file ``comment_content.html`` we just created:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
-       {% load md2 %}
-       {{ content|markdown:"safe, code-friendly, code-color" }}
+    {% load md2 %}
+    {{ content|markdown:"safe, code-friendly, code-color" }}
 
 Now our project is ready to show comments posted in Markdown. After reloading,
 the comment's page will look like this:
@@ -1015,19 +1023,19 @@ The JavaScript plugin uses the Web API provided within the app. In order to
 enable it install the `django-rest-framework
 <http://www.django-rest-framework.org/>`_:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-       (venv)$ pip install djangorestframework
+  pip install djangorestframework
 
 Once installed, add it to our tutorial :setting:`INSTALLED_APPS` setting:
 
-   .. code-block:: python
+.. code-block:: python
 
-       INSTALLED_APPS = [
-           ...
-           'rest_framework',
-           ...
-       ]
+    INSTALLED_APPS = [
+        ...
+        'rest_framework',
+        ...
+    ]
 
 To know more about the Web API provided by django-comments-xtd read on the
 :doc:`webapi` page.
@@ -1041,15 +1049,15 @@ flag comments for removal (allow_flagging option), to like/dislike comments
 (allow_feedback), and we want users to see the list of people who
 liked/disliked comments:
 
-   .. code-block:: python
+.. code-block:: python
 
-       COMMENTS_XTD_APP_MODEL_OPTIONS = {
-           'blog.post': {
-               'allow_flagging': True,
-               'allow_feedback': True,
-               'show_feedback': True,
-           }
-       }
+    COMMENTS_XTD_APP_MODEL_OPTIONS = {
+        'blog.post': {
+            'allow_flagging': True,
+            'allow_feedback': True,
+            'show_feedback': True,
+        }
+    }
 
 The i18n JavaScript Catalog
 ---------------------------
@@ -1068,14 +1076,14 @@ has it), but we will not remove its support from the plugin, we will simply
 enable the JavaScript Catalog URL, so that the plugin can access its functions.
 Edit ``tutorial/urls.py`` and add the following url:
 
-   .. code-block:: python
+.. code-block:: python
 
-       from django.views.i18n import JavaScriptCatalog
+    from django.views.i18n import JavaScriptCatalog
 
-       urlpatterns = [
-           ...
-           path(r'jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
-       ]
+    urlpatterns = [
+        ...
+        path(r'jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    ]
 
 In the next section we will use the new URL to load the i18n JavaScript catalog.
 
@@ -1084,7 +1092,7 @@ Load the plugin
 
 Now let's edit ``blog/post_detail.html`` and make it look as follows:
 
-   .. code-block:: html+django
+.. code-block:: html+django
 
     {% extends "base.html" %}
     {% load static %}
@@ -1113,14 +1121,14 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
     <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
     <script>
-     window.comments_props = {% get_commentbox_props for object %};
-     window.comments_props_override = {
-         allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
-         allow_feedback: true,
-         show_feedback: true,
-         allow_flagging: true,
-         polling_interval: 5000  // In milliseconds.
-     };
+      window.comments_props = {% get_commentbox_props for object %};
+      window.comments_props_override = {
+          allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+          allow_feedback: true,
+          show_feedback: true,
+          allow_flagging: true,
+          polling_interval: 5000  // In milliseconds.
+      };
     </script>
     <script
       src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -1148,15 +1156,15 @@ Now let's edit ``blog/post_detail.html`` and make it look as follows:
 The blog post page is now ready to handle comments through the JavaScript
 plugin, including the following features:
 
- #. Post comments.
- #. Preview comments, with instant preview update while typing.
- #. Reply comment in the same page, with instant preview while typing.
- #. Notifications of new incoming comments using active polling (override
-    *polling_interval* parameter, see the content of first *<script>* tag in
-    the code above).
- #. Button to reload the tree of comments, highlighting new comments (see
+#. Post comments.
+#. Preview comments, with instant preview update while typing.
+#. Reply comment in the same page, with instant preview while typing.
+#. Notifications of new incoming comments using active polling (override
+   *polling_interval* parameter, see the content of first *<script>* tag in
+   the code above).
+#. Button to reload the tree of comments, highlighting new comments (see
     image below).
- #. Immediate like/dislike actions.
+#. Immediate like/dislike actions.
 
 .. image:: images/update-comment-tree.png
 

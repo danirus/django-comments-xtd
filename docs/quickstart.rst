@@ -20,20 +20,20 @@ To get started using django-comments-xtd follow these steps:
 
 #. Set the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` to ``N``, being ``N`` the maximum level of threading up to which comments will be nested in your project.
 
-   .. code-block:: python
+.. code-block:: python
 
-       # 0: No nested comments:
-       #  Comment (level 0)
-       # 1: Nested up to level one:
-       #  Comment (level 0)
-       #   |-- Comment (level 1)
-       # 2: Nested up to level two:
-       #  Comment (level 0)
-       #   |-- Comment (level 1)
-       #        |-- Comment (level 2)
-       COMMENTS_XTD_MAX_THREAD_LEVEL = 2
+    # 0: No nested comments:
+    #  Comment (level 0)
+    # 1: Nested up to level one:
+    #  Comment (level 0)
+    #   |-- Comment (level 1)
+    # 2: Nested up to level two:
+    #  Comment (level 0)
+    #   |-- Comment (level 1)
+    #        |-- Comment (level 2)
+    COMMENTS_XTD_MAX_THREAD_LEVEL = 2
 
-   The thread level can also be established on a per ``<app>.<model>`` basis by using the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` setting. Use it to establish different maximum threading levels for each model. ie: no nested comments for quotes, up to thread level 2 for blog stories, etc.
+The thread level can also be established on a per ``<app>.<model>`` basis by using the :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` setting. Use it to establish different maximum threading levels for each model. ie: no nested comments for quotes, up to thread level 2 for blog stories, etc.
 
 #. Set the :setting:`COMMENTS_XTD_CONFIRM_EMAIL` to ``True`` to require comment confirmation by email for no logged-in users.
 
@@ -41,23 +41,23 @@ To get started using django-comments-xtd follow these steps:
 
 #. Add the URLs of the comments-xtd app to your project's ``urls.py``:
 
-   .. code-block:: python
+.. code-block:: python
 
-       urlpatterns = [
-           ...
-           url(r'^comments/', include('django_comments_xtd.urls')),
-           ...
-       ]
+    urlpatterns = [
+        ...
+        url(r'^comments/', include('django_comments_xtd.urls')),
+        ...
+    ]
 
 #. Customize your project's email settings:
 
-   .. code-block:: python
+.. code-block:: python
 
-       EMAIL_HOST = "smtp.mail.com"
-       EMAIL_PORT = "587"
-       EMAIL_HOST_USER = "alias@mail.com"
-       EMAIL_HOST_PASSWORD = "yourpassword"
-       DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
+    EMAIL_HOST = "smtp.mail.com"
+    EMAIL_PORT = "587"
+    EMAIL_HOST_USER = "alias@mail.com"
+    EMAIL_HOST_PASSWORD = "yourpassword"
+    DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
 
 #. To allow a quick start django-comments-xtd makes use of `twitter-bootstrap`_. From django-comments-xtd v2.3 on it uses Twitter-Bootstrap v4. From django-comments-xtd v1.7.1 to v2.2 it uses Twitter-Bootstrap v3. If you want to build your own templates, use the `comments <https://django-contrib-comments.readthedocs.io/en/latest/quickstart.html#comment-template-tags>`_ templatetag module, provided by the `django-comments <https://django-contrib-comments.readthedocs.io/en/latest/index.html>`_ app. Create a ``comments`` directory in your templates directory and copy the templates you want to customise from the Django Comments Framework. The following are the most important:
 

@@ -44,9 +44,7 @@ function waitForElm(selector) {
   });
 }
 
-if (typeof window.comments_props != 'undefined') {
-  execute_xtd();
-}
+execute_xtd();
 
 waitForElm('#comments, .comments').then((elm) => {
   execute_xtd();

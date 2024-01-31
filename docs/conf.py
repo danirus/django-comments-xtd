@@ -106,6 +106,9 @@ pygments_style = 'sphinx'
 # documentation.
 html_theme_options = {
     "style": "green",
+    "monospace_font": "Ubuntu Mono",
+    "monospace_font_size": "1.1rem",
+    "documentation_font_size": "1.1rem",
     "repository_url": "https://github.com/danirus/django-comments-xtd",
     "repository_name": "django-comments-xtd"
 }

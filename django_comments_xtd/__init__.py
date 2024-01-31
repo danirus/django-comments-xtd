@@ -1,7 +1,6 @@
 from django.utils.module_loading import import_string
 
 import django_comments
-from django_comments.feeds import LatestCommentFeed
 from django_comments.signals import comment_was_posted, comment_will_be_posted
 
 

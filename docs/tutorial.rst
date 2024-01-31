@@ -997,10 +997,10 @@ to the browser improving the overall usability. By making use of the JavaScript
 plugin users don't have to leave the blog post page to preview, submit or reply
 comments, or to like/dislike them. But it comes at the cost of using:
 
- * ReactJS
- * jQuery (to handle Ajax calls).
- * Twitter-Bootstrap (for the UI).
- * Remarkable (for Markdown support).
+* ReactJS
+* jQuery (to handle Ajax calls).
+* Twitter-Bootstrap (for the UI).
+* Remarkable (for Markdown support).
 
 To know more about the client side of the application and the build process
 read the specific page on the :doc:`javascript`.

@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.9.14] -
+
+ * Adds ordering filter to the CommentList API class.
+
 ## [2.9.13] - 2023-12-22
 
  * Fixes issue related to missing frontend files within the package distribution.

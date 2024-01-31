@@ -42,32 +42,37 @@ Setup
 =====
 
 The recommended way to run a demo site is within its own `virtualenv
-<http://www.virtualenv.org/en/latest/>`_. Once in a new virtualenv, clone the
+<http://www.virtualenv.org/en/latest/>`_:
+
+.. code-block:: bash
+
+    virtualenv venv
+    source venv/bin/activate
+
+Once in a new virtualenv, clone the
 code and cd into any of the 3 demo sites. Then run the migrate command and
 load the data in the fixtures directory:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-    $ virtualenv venv
-    $ source venv/bin/activate
-    (venv)$ git clone git://github.com/danirus/django-comments-xtd.git
-    (venv)$ cd django-comments-xtd/
-    (venv)$ python setup.py install
-    (venv)$ npm install
-    (venv)$ node_modules/webpack/bin/webpack.js -p
-    (venv)$ cd django_comments_xtd
-    (venv)$ django-admin compilemessages -l fi
-    (venv)$ django-admin compilemessages -l fr
-    (venv)$ django-admin compilemessages -l es
-    (venv)$ cd ../example/[simple|custom|comp]
-    (venv)$ pip install -r requirements.txt
-    (venv)$ python manage.py migrate
-    (venv)$ python manage.py loaddata ../fixtures/auth.json
-    (venv)$ python manage.py loaddata ../fixtures/sites.json
-    (venv)$ python manage.py loaddata ../fixtures/articles.json
-    (venv)$ # The **comp** example project needs quotes.json too:
-    (venv)$ python manage.py loaddata ../fixtures/quotes.json
-    (venv)$ python manage.py runserver
+    git clone git://github.com/danirus/django-comments-xtd.git
+    cd django-comments-xtd/
+    python setup.py install
+    npm install
+    node_modules/webpack/bin/webpack.js -p
+    cd django_comments_xtd
+    django-admin compilemessages -l fi
+    django-admin compilemessages -l fr
+    django-admin compilemessages -l es
+    cd ../example/[simple|custom|comp]
+    pip install -r requirements.txt
+    python manage.py migrate
+    python manage.py loaddata ../fixtures/auth.json
+    python manage.py loaddata ../fixtures/sites.json
+    python manage.py loaddata ../fixtures/articles.json
+    # The **comp** example project needs quotes.json too:
+    python manage.py loaddata ../fixtures/quotes.json
+    python manage.py runserver
 
 Example projects make use of the package `django-markdown2
 <https://github.com/svetlyak40wt/django-markdown2>`_, which in turn depends on

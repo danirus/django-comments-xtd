@@ -17,7 +17,7 @@ This page details the list of templates provided by django-comments-xtd. They ar
 
 ``email_confirmation_request``
 ------------------------------
-   
+
 As ``.html`` and ``.txt``, this template represents the confirmation message sent to the user when the **Send** button is clicked to post a comment. Both templates are sent in a multipart message, or only in text format if the :setting:`COMMENTS_XTD_SEND_HTML_EMAIL` setting is set to ``False``.
 
 In the context of the template the following objects are expected:
@@ -40,13 +40,13 @@ In the context of the template the following objects are expected:
 
  * A list of dictionaries called ``comments`` in which each element is a dictionary like:
 
-   .. code-block:: python
+.. code-block:: python
 
-       {
-           'comment': xtdcomment_object,
-           'children': [ list_of_child_xtdcomment_dicts ]
-       }
-   
+    {
+        'comment': xtdcomment_object,
+        'children': [ list_of_child_xtdcomment_dicts ]
+    }
+
 Optionally the following objects can be present in the template:
 
  * A boolean ``allow_flagging`` to indicate whether the user will have the capacity to suggest comment removal.
@@ -56,7 +56,7 @@ Optionally the following objects can be present in the template:
 .. index::
    single: comment_tree
    pair: template; comment_tree
-   
+
 ``user_feedback.html``
 ----------------------
 
@@ -93,7 +93,7 @@ The context of the template expects:
 --------------
 
 This template is rendered when the user click on the submit button of the form presented in the ``like.html`` template. The template is meant to thank the user for the feedback. The context for the template doesn't expect any specific object.
-   
+
 
 .. index::
    single: liked

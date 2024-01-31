@@ -2,7 +2,7 @@ import django from 'django';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Remarkable } from 'remarkable';
 
-import { getCookie } from './lib.js';
+import { getCookie, django_gettext } from './lib.js';
 import { InitContext, StateContext } from './context.js';
 import { CommentForm } from './commentform.jsx';
 
@@ -22,7 +22,7 @@ export function UserPart({
 
   const moderator = useMemo(() => {
     if (userModerator) {
-      const label = django.gettext("moderator");
+      const label = django_gettext("moderator");
       return (
         <span>&nbsp;
           <span className="badge text-bg-secondary">{label}</span>
@@ -74,7 +74,7 @@ export function TopRightPart({
 
     let inapp_msg = "";
     if (userRequestedRemoval) {
-      inapp_msg = django.gettext("I flagged it as inappropriate");
+      inapp_msg = django_gettext("I flagged it as inappropriate");
       return (
         <>
           {flagging_count}&nbsp;
@@ -85,7 +85,7 @@ export function TopRightPart({
       const url = (isAuthenticated)
         ? flagUrl.replace('0', commentId)
         : loginUrl + "?next=" + flagUrl.replace('0', commentId);
-      inapp_msg = django.gettext("flag comment as inappropriate");
+      inapp_msg = django_gettext("flag comment as inappropriate");
       return (
         <>
           {flagging_count}&nbsp;
@@ -99,7 +99,7 @@ export function TopRightPart({
 
   const moderate_html = useMemo(() => {
     if (isAuthenticated && canModerate) {
-      const remove_msg = django.gettext("remove comment");
+      const remove_msg = django_gettext("remove comment");
       const url = deleteUrl.replace('0', commentId);
       return (
         <a className="text-decoration-none" href={url}>
@@ -156,8 +156,8 @@ export function FeedbackPart({
     icon += userids.has(cur_user_id) ? '-fill' : '';
     const class_icon = "bi bi-"+icon;
     const title = (dir == 'like')
-      ? django.gettext('I like it')
-      : django.gettext('I dislike it');
+      ? django_gettext('I like it')
+      : django_gettext('I dislike it');
 
 
     return (
@@ -209,7 +209,7 @@ export function ReplyFormPart({
   replyUrl,
 }) {
   const url = replyUrl.replace('0', commentId);
-  const label = django.gettext("Reply");
+  const label = django_gettext("Reply");
 
   if (level >= maxThreadLevel)
     return <></>;
@@ -461,7 +461,7 @@ export function Comment(props) {
             &nbsp;&nbsp;
             <a
               className="permalink text-decoration-none"
-              title={django.gettext("comment permalink")}
+              title={django_gettext("comment permalink")}
               href={data.permalink}
             >¶</a>
           </div>

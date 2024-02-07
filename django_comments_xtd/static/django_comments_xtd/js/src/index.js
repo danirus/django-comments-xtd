@@ -13,11 +13,11 @@ function execute_xtd() {
     comments.forEach(async (item) => {
       if (item.getAttribute('data-comments-added') == null) {
         item.setAttribute('data-comments-added', true);
-        const root = ReactDOM.createRoot(item);
         var _props = props;
         if (item.querySelector('.comments-props') != null) {
           _props = JSON.parse(item.querySelector('.comments-props').getAttribute('data-comments'));
         }
+        const root = ReactDOM.createRoot(item);
         root.render(
           React.createElement(App, _props)
         )

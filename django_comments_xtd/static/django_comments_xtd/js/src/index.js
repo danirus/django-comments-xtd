@@ -14,9 +14,9 @@ function execute_xtd() {
       if (item.getAttribute('data-comments-added') == null) {
         item.setAttribute('data-comments-added', true);
         var _props = props;
-        if (item.querySelector('.comments-props') != null) {
-          _props = JSON.parse(item.querySelector('.comments-props').getAttribute('data-comments'));
-        }
+        if (item.parentNode.querySelector('.comments-props') != null) {
+                _props = JSON.parse(item.parentNode.querySelector('.comments-props').getAttribute('data-comments'));
+         }
         const root = ReactDOM.createRoot(item);
         root.render(
           React.createElement(App, _props)

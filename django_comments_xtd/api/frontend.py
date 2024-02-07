@@ -143,6 +143,10 @@ class CommentBoxDriver(object):
             d['like_url'] = reverse("comments-xtd-like", args=(0,))
             d['dislike_url'] = reverse("comments-xtd-dislike", args=(0,))
 
+        defaults_per_model = settings.COMMENTS_XTD_APP_MODEL_OPTIONS[str(ctype).replace(' | ', '.')]
+        for i in defaults_per_model:
+            d[i] = defaults_per_model[i]
+
         return d
 
 

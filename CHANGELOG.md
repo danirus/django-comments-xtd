@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.10.0] - 2024-05-01
+## [2.10.0] - 2024-05-02
 
  * Add ordering filter to the CommentList API class.
  * Include django-rest-framework v3.15 in tests and example sites.

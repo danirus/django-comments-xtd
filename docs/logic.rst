@@ -6,47 +6,62 @@ Control logic
 
 Following is the application control logic described in 4 actions:
 
-1. The user visits a page that accepts comments. Your app or a 3rd. party app handles the request:
+#. The user visits a page that accepts comments. Your app or a 3rd. party app
+   handles the request:
 
- a. Your template shows content that accepts comments. It loads the ``comments`` templatetag and using tags as ``render_comment_list`` and ``render_comment_form`` the template shows the current list of comments and the *post your comment* form.
+   * Your template shows content that accepts comments. It loads the
+     ``comments`` templatetag and using tags as ``render_comment_list`` and
+     ``render_comment_form`` the template shows the current list of comments
+     and the *post your comment* form.
 
-2. The user **clicks on preview**. Django Comments Framework ``post_comment`` view handles the request:
+#. The user **clicks on preview**. Django Comments Framework ``post_comment``
+   view handles the request:
 
- a. Renders ``comments/preview.html`` either with the comment preview or with form errors if any.
+   * Renders ``comments/preview.html`` either with the comment preview or with
+     form errors if any.
 
-3. The user **clicks on post**. Django Comments Framework ``post_comment`` view handles the request:
+#. The user **clicks on post**. Django Comments Framework ``post_comment`` view
+   handles the request:
 
- a. If there were form errors it does the same as in point 2.
+   * If there were form errors it does the same as in point 2.
+   * Otherwise creates an instance of ``TmpXtdComment`` model: an in-memory
+     representation of the comment.
+   * Send signal ``comment_will_be_posted`` and ``comment_was_posted``. The
+     *django-comments-xtd* receiver ``on_comment_was_posted`` receives the
+     second signal with the ``TmpXtdComment`` instance and does as follows:
 
- b. Otherwise creates an instance of ``TmpXtdComment`` model: an in-memory representation of the comment.
+     #. If the user is authenticated or confirmation by email is not required
+        (see :doc:`settings`):
 
- c. Send signal ``comment_will_be_posted`` and ``comment_was_posted``. The *django-comments-xtd* receiver ``on_comment_was_posted`` receives the second signal with the ``TmpXtdComment`` instance and does as follows:
+        * An instance of ``XtdComment`` hits the database.
+        * An email notification is sent to previous comments followers telling
+          them about the new comment following up theirs. Comment followers are
+          those who ticked the box *Notify me about follow up comments via
+          email*.
+        * Otherwise a confirmation email is sent to the user with a link to
+          confirm the comment. The link contains a secured token with the
+          ``TmpXtdComment``. See below :ref:`the-secure-token-label`.
 
-  * If the user is authenticated or confirmation by email is not required (see :doc:`settings`):
+   * Pass control to the ``next`` parameter handler if any, or render the ``comments/posted.html`` template:
 
-   * An instance of ``XtdComment`` hits the database.
+     #. If the instance of ``XtdComment`` has already been created, redirect to
+        the the comments's absolute URL.
+     #. Otherwise the template content should inform the user about the confirmation request sent by email.
 
-   * An email notification is sent to previous comments followers telling them about the new comment following up theirs. Comment followers are those who ticked the box *Notify me about follow up comments via email*.
+#. The user **clicks on the confirmation link**, in the email message.
+   *Django-comments-xtd* ``confirm`` view handles the request:
 
-   * Otherwise a confirmation email is sent to the user with a link to confirm the comment. The link contains a secured token with the ``TmpXtdComment``. See below :ref:`the-secure-token-label`.
-
- d. Pass control to the ``next`` parameter handler if any, or render the ``comments/posted.html`` template:
-
-  * If the instance of ``XtdComment`` has already been created, redirect to the the comments's absolute URL.
-
-  * Otherwise the template content should inform the user about the confirmation request sent by email.
-
-4. The user **clicks on the confirmation link**, in the email message. *Django-comments-xtd* ``confirm`` view handles the request:
-
- a. Checks the secured token in the URL. If it's wrong returns a 404 code.
-
- b. Otherwise checks whether the comment was already confirmed, in such a case returns a 404 code.
-
- c. Otherwise sends a ``confirmation_received`` signal. You can register a receiver to this signal to do some extra process before approving the comment. See :ref:`signal-and-receiver-label`. If any receiver returns False the comment will be rejected and the template ``django_comments_xtd/discarded.html`` will be rendered.
-
- d. Otherwise an instance of ``XtdComment`` finally hits the database, and
-
- e. An email notification is sent to previous comments followers telling them about the new comment following up theirs.
+   * Checks the secured token in the URL. If it's wrong returns a 404 code.
+   * Otherwise checks whether the comment was already confirmed, in such a case
+     returns a 404 code.
+   * Otherwise sends a ``confirmation_received`` signal. You can register a
+     receiver to this signal to do some extra process before approving the
+     comment. See :ref:`signal-and-receiver-label`. If any receiver returns
+     False the comment will be rejected and the template
+     ``django_comments_xtd/discarded.html`` will be rendered.
+   * Otherwise an instance of ``XtdComment`` finally hits the database, and
+   * An email notification is sent to previous comments followers telling them
+     about the new comment following up theirs.
 
 
 .. _the-secure-token-label:
@@ -75,9 +90,9 @@ A brief example::
     BadSignature: Signature failed: QLtjWHYe7udYuZeQyLlafPqAx1E-modified
 
 
-There are two components in dump's output ``UydoZWxsbycKcDAKLg.QLtjWHYe7udYuZeQyLlafPqAx1E``, separatad by a '.'. The first component is a URLsafe base64 encoded pickle of the object passed to dumps(). The second component is a base64 encoded hmac/SHA1 hash of "$first_component.$secret".
+There are two components in dump's output ``UydoZWxsbycKcDAKLg.QLtjWHYe7udYuZeQyLlafPqAx1E``, separatad by a '``.``'. The first component is a URLsafe base64 encoded pickle of the object passed to dumps(). The second component is a base64 encoded hmac/SHA1 hash of "``$first_component.$secret``".
 
-Calling signed.loads(s) checks the signature BEFORE unpickling the object -this protects against malformed pickle attacks. If the signature fails, a ValueError subclass is raised (actually a BadSignature).
+Calling signed.loads(s) checks the signature BEFORE unpickling the object -this protects against malformed pickle attacks. If the signature fails, a ``ValueError`` subclass is raised (actually a ``BadSignature``).
 
 
 .. index::
@@ -90,18 +105,16 @@ Signal and receiver
 
 In addition to the `signals sent by the Django Comments Framework <https://docs.djangoproject.com/en/1.3/ref/contrib/comments/signals/>`_, django-comments-xtd sends the following signal:
 
- * **confirmation_received**: Sent when the user clicks on the confirmation
-   link and before the ``XtdComment`` instance is created in the database.
-
- * **comment_thread_muted**: Sent when the user clicks on the mute link, in a
-   follow-up notification.
-
- * **should_request_be_authorized**: Sent before the data in the form in a web
-   API post comment request is validated. A receiver returning `True` will
-   suffice to automatically add valid values to the CommentSecurityForm_ fields
-   `timestamp` and `security_hash`. The intention is to combine a receiver with
-   a django-rest-framework authentication class, and return `True` when the
-   `request.auth` is not `None`.
+* **confirmation_received**: Sent when the user clicks on the confirmation
+  link and before the ``XtdComment`` instance is created in the database.
+* **comment_thread_muted**: Sent when the user clicks on the mute link, in a
+  follow-up notification.
+* **should_request_be_authorized**: Sent before the data in the form in a web
+  API post comment request is validated. A receiver returning `True` will
+  suffice to automatically add valid values to the CommentSecurityForm_ fields
+  `timestamp` and `security_hash`. The intention is to combine a receiver with
+  a django-rest-framework authentication class, and return `True` when the
+  `request.auth` is not `None`.
 
 .. _CommentSecurityForm: https://django-contrib-comments.readthedocs.io/en/latest/forms.html?highlight=commentsecurityform#django_comments.forms.CommentSecurityForm
 
@@ -158,8 +171,8 @@ Maximum Thread Level
 
 Nested comments are disabled by default, to enable them use the following settings:
 
- * ``COMMENTS_XTD_MAX_THREAD_LEVEL``: an integer value
- * ``COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL``: a dictionary
+* ``COMMENTS_XTD_MAX_THREAD_LEVEL``: an integer value
+* ``COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL``: a dictionary
 
 Django-comments-xtd inherits the flexibility of `django-contrib-comments framework <https://docs.djangoproject.com/en/1.4/ref/contrib/comments/>`_, so that developers can plug it to support comments on as many models as they want in their projects. It is as suitable for one model based project, like comments posted to stories in a simple blog, as for a project with multiple applications and models.
 

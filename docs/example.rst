@@ -101,7 +101,6 @@ Simple project
 ==============
 
 The simple example project features:
-
  #. An Articles App, with a model ``Article`` whose instances accept comments.
  #. Confirmation by mail is required before the comment hit the database,
     unless ``COMMENTS_XTD_CONFIRM_EMAIL`` is set to False. Authenticated users
@@ -136,9 +135,9 @@ Custom project
 The **custom** example project extends the **simple** project functionality
 featuring:
 
- * Thread support up to level 2
- * A new comment class that inherits from **XtdComment** with a new **Title**
-   field and a new form class.
+* Thread support up to level 2
+* A new comment class that inherits from **XtdComment** with a new **Title**
+  field and a new form class.
 
 .. image:: images/extend-comments-app.png
 
@@ -155,19 +154,20 @@ Comp project
 The Comp Demo implements two apps, each of which contains a model whose
 instances can received comments:
 
- * App **articles** with the model **Article**
- * App **quotes** with the model **Quote**
+* App **articles** with the model **Article**
+* App **quotes** with the model **Quote**
 
 Features:
- #. Comments can be nested, and the maximum thread level is established to 2.
- #. Comment confirmation via mail when the users are not authenticated.
- #. Comments hit the database only after they have been confirmed.
- #. Follow up notifications via mail.
- #. Mute links to allow cancellation of follow-up notifications.
- #. Registered users can like/dislike comments and can suggest comments removal.
- #. Registered users can see the list of users that liked/disliked comments.
- #. The homepage presents the last 5 comments posted either to the `articles
-    .Article` or the `quotes.Quote` model.
+
+#. Comments can be nested, and the maximum thread level is established to 2.
+#. Comment confirmation via mail when the users are not authenticated.
+#. Comments hit the database only after they have been confirmed.
+#. Follow up notifications via mail.
+#. Mute links to allow cancellation of follow-up notifications.
+#. Registered users can like/dislike comments and can suggest comments removal.
+#. Registered users can see the list of users that liked/disliked comments.
+#. The homepage presents the last 5 comments posted either to the
+    `articles.Article` or the `quotes.Quote` model.
 
 
 Threaded comments

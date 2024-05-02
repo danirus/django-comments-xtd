@@ -11,12 +11,11 @@
 {% block content %}
 <div class="container">
   <div class="row justify-content-center my-4">
-    <div class="col-8 text-center">
+    <div class="text-center">
       <h3>{% trans "Flag this comment?" %}</h3>
     </div>
   </div>
     <div class="row justify-content-center">
-    <div class="col-8">
       <p class="text-center">{% trans "Click on the flag button to mark the following comment as inappropriate." %}</p>
       <div class="card mb-4">
         <div class="card-body">
@@ -46,7 +45,7 @@
   </div>
 </div>
 <div class="row justify-content-center">
-  <div class="col-10">
+  <div class="my-5">
     <form action="." method="post">{% csrf_token %}
       <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
       <div class="form-group">

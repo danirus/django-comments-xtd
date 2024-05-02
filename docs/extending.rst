@@ -6,9 +6,9 @@ Customizing django-comments-xtd
 
 django-comments-xtd can be extended in the same way as django-contrib-comments. There are three points to observe:
 
- 1. The setting ``COMMENTS_APP`` must be ``'django_comments_xtd'``.
- 2. The setting ``COMMENTS_XTD_MODEL`` must be your model class name, i.e.: ``'mycomments.models.MyComment'``.
- 3. The setting ``COMMENTS_XTD_FORM_CLASS`` must be your form class name, i.e.: ``'mycomments.forms.MyCommentForm'``.
+1. The setting ``COMMENTS_APP`` must be ``'django_comments_xtd'``.
+2. The setting ``COMMENTS_XTD_MODEL`` must be your model class name, i.e.: ``'mycomments.models.MyComment'``.
+3. The setting ``COMMENTS_XTD_FORM_CLASS`` must be your form class name, i.e.: ``'mycomments.forms.MyCommentForm'``.
 
 
 In addition to that, write an ``admin.py`` module to see the new comment class in the admin interface. Inherit from ``django_commensts_xtd.admin.XtdCommentsAdmin``. You might want to add your new comment fields to the comment list view, by rewriting the ``list_display`` attribute of your admin class. Or change the details view customizing the ``fieldsets`` attribute.
@@ -74,7 +74,7 @@ The forms module extends ``XtdCommentForm`` and rewrites the method ``get_commen
           data.update({'title': self.cleaned_data['title']})
           return data
 
-          
+
 ``admin`` Module
 ----------------
 
@@ -94,7 +94,7 @@ The admin module provides a new class MyCommentAdmin that inherits from XtdComme
       list_display_links = ('cid', 'title')
       fieldsets = (
           (None,          {'fields': ('content_type', 'object_pk', 'site')}),
-          (_('Content'),  {'fields': ('title', 'user', 'user_name', 'user_email', 
+          (_('Content'),  {'fields': ('title', 'user', 'user_name', 'user_email',
                                     'user_url', 'comment', 'followup')}),
           (_('Metadata'), {'fields': ('submit_date', 'ip_address',
                                       'is_public', 'is_removed')}),
@@ -108,11 +108,11 @@ Templates
 
 You will need to customize the following templates:
 
-    * ``comments/form.html`` to include new fields.
-    * ``comments/preview.html`` to preview new fields.
-    * ``django_comments_xtd/email_confirmation_request.{txt|html}`` to add the new fields to the confirmation request, if it was necessary. This demo overrides them to include the ``title`` field in the mail.
-    * ``django_comments_xtd/comments_tree.html`` to show the new field when displaying the comments. If your project doesn't allow nested comments you can use either this template or `comments/list.html``.
-    * ``django_comments_xtd/reply.html`` to show the new field when displaying the comment the user is replying to.
+* ``comments/form.html`` to include new fields.
+* ``comments/preview.html`` to preview new fields.
+* ``django_comments_xtd/email_confirmation_request.{txt|html}`` to add the new fields to the confirmation request, if it was necessary. This demo overrides them to include the ``title`` field in the mail.
+* ``django_comments_xtd/comments_tree.html`` to show the new field when displaying the comments. If your project doesn't allow nested comments you can use either this template or `comments/list.html``.
+* ``django_comments_xtd/reply.html`` to show the new field when displaying the comment the user is replying to.
 
 
 Modifying comments with code
@@ -122,7 +122,7 @@ Here's an example of how to access the underlying model storing your comments::
 
     from django_comments_xtd.models import XtdComment
     from django.contrib.contenttypes.models import ContentType
-    
+
     def unbsubscribe_everyone(model_instance):
         content_type = ContentType.objects.get_for_model(model_instance)
 

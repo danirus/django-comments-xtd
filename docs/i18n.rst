@@ -6,16 +6,15 @@ Internationalization
 
 django-comments-xtd is i18n ready. Please, consider extending support for your language if it's not listed below. At the moment it's available only in:
 
- * Dutch, **nl**
- * English, **en** (default language)
- * Finnish, **fi**
- * French, **fr**
- * German, **de**
- * Italian, **it**
- * Norwegian, **no**
- * Russian, **ru**
- * Spanish, **es**
-
+* Dutch, **nl**
+* English, **en** (default language)
+* Finnish, **fi**
+* French, **fr**
+* German, **de**
+* Italian, **it**
+* Norwegian, **no**
+* Russian, **ru**
+* Spanish, **es**
 
 
 Contributions

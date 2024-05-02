@@ -11,7 +11,7 @@
 {% block content %}
 <div class="container">
   <div class="row justify-content-center my-4">
-    <div class="col-8 text-center">
+    <div class="text-center">
       <h3>
         {% if already_disliked_it %}
         {% trans "You didn't like this comment, do you want to change it?" %}
@@ -22,24 +22,22 @@
     </div>
   </div>
   <div class="row justify-content-center">
-    <div class="col-8">
-      <p class="text-center">{% trans "Please, confirm your opinion about the comment." %}</p>
-      <div class="card mb-4">
-        <div class="card-body">
-        <div class="comment d-flex">
-          <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
-               alt="{{ comment.user_email }}"
-               width="48" height="48" class="me-3">
-          <div class="d-flex flex-column">
-            <span style="font-size: 0.8rem">
-              {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-              {% if comment.user_url %}
-              <a href="{{ comment.user_url }}" target="_new"
-              class="text-decoration-none">{{ comment.user_name }}</a>
-              {% else %}{{ comment.user_name }}{% endif %}
-            </span>
-            <div class="py-2">{{ comment.comment }}</div>
-          </div>
+    <p class="text-center">{% trans "Please, confirm your opinion about the comment." %}</p>
+    <div class="card mb-4">
+      <div class="card-body">
+      <div class="comment d-flex">
+        <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
+              alt="{{ comment.user_email }}"
+              width="48" height="48" class="me-3">
+        <div class="d-flex flex-column">
+          <span style="font-size: 0.8rem">
+            {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
+            {% if comment.user_url %}
+            <a href="{{ comment.user_url }}" target="_new"
+            class="text-decoration-none">{{ comment.user_name }}</a>
+            {% else %}{{ comment.user_name }}{% endif %}
+          </span>
+          <div class="py-2">{{ comment.comment }}</div>
         </div>
       </div>
     </div>
@@ -53,12 +51,12 @@
   </div>
 </div>
 <div class="row justify-content-center">
-  <div class="col-10">
-    {% if already_disliked_it %}
-    <div class="alert alert-warning text-center">
-      {% trans 'Click on the "withdraw" button if you want to withdraw your negative opinion on this comment.' %}
-    </div>
-    {% endif %}
+  {% if already_disliked_it %}
+  <div class="alert alert-warning text-center">
+    {% trans 'Click on the "withdraw" button if you want to withdraw your negative opinion on this comment.' %}
+  </div>
+  {% endif %}
+  <div class="my-5">
     <form action="." method="post" class="form-horizontal">{% csrf_token %}
       <input type="hidden" name="next" value="{{ comment.get_absolute_url }}">
       <div class="form-group">

@@ -20,7 +20,7 @@ const plugins = [
 ];
 
 module.exports = {
-  input: path.resolve(SOURCE_DIR, 'index.js'),
+  input: path.resolve(SOURCE_DIR, 'index.jsx'),
   output: {
     format: 'iife',
     generatedCode: 'es2015',

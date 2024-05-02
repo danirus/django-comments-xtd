@@ -10,11 +10,11 @@ django-comments-xtd uses django-rest-framework_ to expose a Web API that provide
 
 There are 5 methods available to perform the following actions:
 
- #. Post a new comment.
- #. Retrieve the list of comments posted to a given content type and object ID.
- #. Retrieve the number of comments posted to a given content type and object ID.
- #. Post user's like/dislike feedback.
- #. Post user's removal suggestions.
+#. Post a new comment.
+#. Retrieve the list of comments posted to a given content type and object ID.
+#. Retrieve the number of comments posted to a given content type and object ID.
+#. Post user's like/dislike feedback.
+#. Post user's removal suggestions.
 
 Finally there is the ability to generate a view action in ``django_comments_xtd.api.frontend`` to return the commentbox props as used by the :doc:`javascript` for use with an existing `django-rest-framework <http://www.django-rest-framework.org/>`_ project.
 
@@ -26,11 +26,11 @@ Finally there is the ability to generate a view action in ``django_comments_xtd.
 Post a new comment
 ==================
 
- | URL name: **comments-xtd-api-create**
- | Mount point: **<comments-mount-point>/api/comment/**
- | HTTP Methods: POST
- | HTTP Responses: 201, 202, 204, 403
- | Serializer: ``django_comments_xtd.api.serializers.WriteCommentSerializer``
+:URL name: **comments-xtd-api-create**
+:Mount point: **<comments-mount-point>/api/comment/**
+:HTTP Methods: POST
+:HTTP Responses: 201, 202, 204, 403
+:Serializer: ``django_comments_xtd.api.serializers.WriteCommentSerializer``
 
 This method expects the same fields submitted in a regular django-comments-xtd
 form. The serializer uses the function ``django_comments.get_form`` to verify
@@ -38,10 +38,10 @@ data validity.
 
 Meaning of the HTTP Response codes:
 
- * **201**: Comment created.
- * **202**: Comment in moderation.
- * **204**: Comment confirmation has been sent by mail.
- * **403**: Comment rejected, as in :ref:`disallow`.
+* **201**: Comment created.
+* **202**: Comment in moderation.
+* **204**: Comment confirmation has been sent by mail.
+* **403**: Comment rejected, as in :ref:`disallow`.
 
 .. note::
 
@@ -68,12 +68,12 @@ Example of authorization
 
 In this section we go through the changes that will enable posting comments via the web API in the :ref:`example-simple`. We have to:
 
- 1. Modify the settings module.
- 2. Modify the urls module to allow login and logout via DRF's api-auth.
- 3. Create a new authentication class, in this case it will be an authentication scheme based on DRF's `Custom authentication <https://www.django-rest-framework.org/api-guide/authentication/#custom-authentication>`_, but you could use any other one.
- 4. Create a new receiver function for the signal ``should_request_be_authorized``.
- 5. Post a test comment as a visitor.
- 6. Post a test comment as a signed in user.
+#. Modify the settings module.
+#. Modify the urls module to allow login and logout via DRF's api-auth.
+#. Create a new authentication class, in this case it will be an authentication scheme based on DRF's `Custom authentication <https://www.django-rest-framework.org/api-guide/authentication/#custom-authentication>`_, but you could use any other one.
+#. Create a new receiver function for the signal ``should_request_be_authorized``.
+#. Post a test comment as a visitor.
+#. Post a test comment as a signed in user.
 
 Modify the settings module
 **************************
@@ -192,13 +192,13 @@ Now with the previous changes in place launch the Django development server and 
 
 These are the fields that have to be sent:
 
- * **content_type**: A string with the content_type ie: ``content_type="articles.article"``.
- * **object_pk**: The object ID we are posting the comment to.
- * **name**: The name of the person posting the comment.
- * **email**: The email address of the person posting the comment. It's required when the comment has to be confirmed via email.
- * **followup**: Boolean to indicate whether the user wants to receive follow-up notification via email.
- * **reply_to**: When threading is enabled, reply_to is the comment ID being responded with the comment being sent. If comments are not threaded the reply_to must be 0.
- * **comment**: The content of the comment.
+* **content_type**: A string with the content_type ie: ``content_type="articles.article"``.
+* **object_pk**: The object ID we are posting the comment to.
+* **name**: The name of the person posting the comment.
+* **email**: The email address of the person posting the comment. It's required when the comment has to be confirmed via email.
+* **followup**: Boolean to indicate whether the user wants to receive follow-up notification via email.
+* **reply_to**: When threading is enabled, reply_to is the comment ID being responded with the comment being sent. If comments are not threaded the reply_to must be 0.
+* **comment**: The content of the comment.
 
 I will use the excellent `HTTPie <https://httpie.org/docs>`_ command line client:
 
@@ -315,13 +315,13 @@ The comment must be already listed in the page, sent as the user ``admin``.
 Retrieve comment list
 =====================
 
- | URL name: **comments-xtd-api-list**
- | Mount point: **<comments-mount-point>/api/<content-type>/<object-pk>/**
- |        <content-type> is a hyphen separated lowecase pair app_label-model
- |        <object-pk> is an integer representing the object ID.
- | HTTP Methods: GET
- | HTTP Responses: 200
- | Serializer: ``django_comments_xtd.api.serializers.ReadCommentSerializer``
+:URL name: **comments-xtd-api-list**
+:Mount point: **<comments-mount-point>/api/<content-type>/<object-pk>/**
+:<content-type>: is a hyphen separated lowecase pair app_label-model
+:<object-pk>: is an integer representing the object ID.
+:HTTP Methods: GET
+:HTTP Responses: 200
+:Serializer: ``django_comments_xtd.api.serializers.ReadCommentSerializer``
 
 This method retrieves the list of comments posted to a given content type and object ID:
 
@@ -395,13 +395,13 @@ Use Django's `date formatting characters <https://docs.djangoproject.com/en/5.0/
 Retrieve comments count
 =======================
 
- | URL name: **comments-xtd-api-count**
- | Mount point: **<comments-mount-point>/api/<content-type>/<object-pk>/count/**
- |        <content-type> is a hyphen separated lowecase pair app_label-model
- |        <object-pk> is an integer representing the object ID.
- | HTTP Methods: GET
- | HTTP Responses: 200
- | Serializer: ``django_comments_xtd.api.serializers.ReadCommentSerializer``
+:URL name: **comments-xtd-api-count**
+:Mount point: **<comments-mount-point>/api/<content-type>/<object-pk>/count/**
+:<content-type>: is a hyphen separated lowecase pair app_label-model
+:<object-pk>: is an integer representing the object ID.
+:HTTP Methods: GET
+:HTTP Responses: 200
+:Serializer: ``django_comments_xtd.api.serializers.ReadCommentSerializer``
 
 This method retrieves the number of comments posted to a given content type and object ID:
 
@@ -430,11 +430,11 @@ That returns:
 Post like/dislike feedback
 ==========================
 
- | URL name: **comments-xtd-api-feedback**
- | Mount point: **<comments-mount-point>/api/feedback/**
- | HTTP Methods: POST
- | HTTP Responses: 201, 204, 403
- | Serializer: ``django_comments_xtd.api.serializers.FlagSerializer``
+:URL name: **comments-xtd-api-feedback**
+:Mount point: **<comments-mount-point>/api/feedback/**
+:HTTP Methods: POST
+:HTTP Responses: 201, 204, 403
+:Serializer: ``django_comments_xtd.api.serializers.FlagSerializer``
 
 This method toggles flags like/dislike for a comment. Successive calls set/unset the like/dislike flag:
 
@@ -505,11 +505,11 @@ Resulting in:
 Post removal suggestions
 ========================
 
- | URL name: **comments-xtd-api-flag**
- | Mount point: **<comments-mount-point>/api/flag/**
- | HTTP Methods: POST
- | HTTP Responses: 201, 403
- | Serializer: ``django_comments_xtd.api.serializers.FlagSerializer``
+:URL name: **comments-xtd-api-flag**
+:Mount point: **<comments-mount-point>/api/flag/**
+:HTTP Methods: POST
+:HTTP Responses: 201, 403
+:Serializer: ``django_comments_xtd.api.serializers.FlagSerializer``
 
 This method sets the *removal suggestion* flag on a comment. Once created for a given user successive calls return 201 but the flag object is not created again.
 

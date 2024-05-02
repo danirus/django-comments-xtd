@@ -116,6 +116,7 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
@@ -136,6 +137,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
     'debug_toolbar',
     'django_extensions',
     'rosetta',
@@ -199,4 +201,8 @@ LOGIN_REDIRECT_URL = LOGIN_URL
 
 DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.sql.SQLPanel',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://cdnjs.cloudflare.com",
 ]

@@ -1,8 +1,17 @@
 # Change Log
 
-## [2.9.14] -
+## [2.10.0] - 2024-05-02
 
- * Adds ordering filter to the CommentList API class.
+ * Add ordering filter to the CommentList API class.
+ * Include django-rest-framework v3.15 in tests and example sites.
+ * Update tutorial in the documentation.
+ * Following templates have changed:
+   - `comments/flag.html`
+   - `comments/form.html`
+   - `django_comments_xtd/comment_tree.html`
+   - `django_comments_xtd/dislike.html`
+   - `django_comments_xtd/like.html`
+   - `django_comments_xtd/reply.html`
 
 ## [2.9.13] - 2023-12-22
 

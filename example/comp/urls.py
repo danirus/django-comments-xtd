@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path, re_path
 from django.views.i18n import JavaScriptCatalog
-from django_comments import LatestCommentFeed
+from django_comments.feeds import LatestCommentFeed
 
 from django_comments_xtd.views import XtdCommentListView
 

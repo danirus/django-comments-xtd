@@ -22,9 +22,9 @@ As ``.html`` and ``.txt``, this template represents the confirmation message sen
 
 In the context of the template the following objects are expected:
 
- * The ``site`` object (django-contrib-comments, and in turn django-comments-xtd, use the `Django Sites Framework <https://docs.djangoproject.com/en/1.11/ref/contrib/sites/>`_).
- * The ``comment`` object.
- * The ``confirmation_url`` the user has to click on to confirm the comment.
+* The ``site`` object (django-contrib-comments, and in turn django-comments-xtd, use the `Django Sites Framework <https://docs.djangoproject.com/en/1.11/ref/contrib/sites/>`_).
+* The ``comment`` object.
+* The ``confirmation_url`` the user has to click on to confirm the comment.
 
 
 .. index::
@@ -38,7 +38,7 @@ This template is rendered by the :ref:`render-xtdcomment-tree` to represent the 
 
 In the context of the template the following objects are expected:
 
- * A list of dictionaries called ``comments`` in which each element is a dictionary like:
+* A list of dictionaries called ``comments`` in which each element is a dictionary like:
 
 .. code-block:: python
 
@@ -49,8 +49,11 @@ In the context of the template the following objects are expected:
 
 Optionally the following objects can be present in the template:
 
- * A boolean ``allow_flagging`` to indicate whether the user will have the capacity to suggest comment removal.
- * A boolean ``allow_feedback`` to indicate whether the user will have the capacity to like/dislike comments. When ``True`` the special template ``user_feedback.html`` will be rendered.
+* A boolean ``allow_flagging`` to indicate whether the user will have the
+  capacity to suggest comment removal.
+* A boolean ``allow_feedback`` to indicate whether the user will have the
+  capacity to like/dislike comments. When ``True`` the special template
+  ``user_feedback.html`` will be rendered.
 
 
 .. index::
@@ -64,8 +67,11 @@ This template is expected to be in the directory ``includes/django_comments_xtd/
 
 In the context of the template is expected:
 
- * The boolean variable ``show_feedback``, which will be set to ``True`` when passing the argument ``show_feedback`` to the :ref:`render-xtdcomment-tree`. If ``True`` the template will show the list of users who liked the comment and the list of those who disliked it.
- * A comment ``item``.
+* The boolean variable ``show_feedback``, which will be set to ``True`` when
+  passing the argument ``show_feedback`` to the :ref:`render-xtdcomment-tree`.
+  If ``True`` the template will show the list of users who liked the comment
+  and the list of those who disliked it.
+* A comment ``item``.
 
 Look at the section :ref:`show-the-list-of-users` to read on this particular topic.
 
@@ -81,8 +87,10 @@ This template is rendered when the user clicks on the **like** button of a comme
 
 The context of the template expects:
 
- * A boolean ``already_liked_it`` that indicates whether the user already clicked on the like button of this comment. In such a case, if the user submits the form a second time the liked-it flag is withdrawn.
- * The ``comment`` subject to be liked.
+* A boolean ``already_liked_it`` that indicates whether the user already
+  clicked on the like button of this comment. In such a case, if the user
+  submits the form a second time the liked-it flag is withdrawn.
+* The ``comment`` subject to be liked.
 
 
 .. index::
@@ -106,8 +114,10 @@ This template is rendered when the user clicks on the **dislike** button of a co
 
 The context of the template expects:
 
- * A boolean ``already_disliked_it`` that indicates whether the user already clicked on the dislike button for this comment. In such a case, if the user submits the form a second time the disliked-it flag is withdrawn.
- * The ``comment`` subject to be liked.
+* A boolean ``already_disliked_it`` that indicates whether the user already
+  clicked on the dislike button for this comment. In such a case, if the user
+  submits the form a second time the disliked-it flag is withdrawn.
+* The ``comment`` subject to be liked.
 
 
 .. index::
@@ -141,9 +151,10 @@ As ``.html`` and ``.txt``, this template represents the mail message sent to not
 
 The template expects the following objects in the context:
 
- * The ``site`` object.
- * The ``comment`` object about which users are being informed.
- * The ``mute_url`` to offer the notified user the chance to stop receiving notifications on new comments.
+* The ``site`` object.
+* The ``comment`` object about which users are being informed.
+* The ``mute_url`` to offer the notified user the chance to stop receiving
+  notifications on new comments.
 
 
 .. index::
@@ -155,8 +166,9 @@ The template expects the following objects in the context:
 
 This template is rendered under any of the following circumstances:
 
- * When using the :ref:`render-last-xtdcomments`.
- * When a logged in user sends a comment via Ajax. The comment gets rendered immediately. JavaScript client side code still has toe handle the response.
+* When using the :ref:`render-last-xtdcomments`.
+* When a logged in user sends a comment via Ajax. The comment gets rendered
+  immediately. JavaScript client side code still has toe handle the response.
 
 
 .. index::

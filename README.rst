@@ -1,5 +1,5 @@
-django-comments-xtd |gha-tests-badge|_
-===================
+django-comments-xtd |gha-tests-badge|
+=====================================
 
 .. |gha-tests-badge| image:: https://github.com/danirus/django-comments-xtd/workflows/tests/badge.svg
 .. _gha-tests-badge: https://github.com/danirus/django-comments-xtd/actions/workflows/ci-pipeline.yml
@@ -28,8 +28,8 @@ Example sites and tests work under officially Django `supported versions <https:
 
 Additional Dependencies:
 
-* django-contrib-comments >=1.8
-* djangorestframework >=3.12,<3.15
+* django-contrib-comments >=2.2
+* djangorestframework >=3.12,<3.16
 
 Checkout the Docker image `danirus/django-comments-xtd-demo <https://hub.docker.com/r/danirus/django-comments-xtd-demo/>`_.
 

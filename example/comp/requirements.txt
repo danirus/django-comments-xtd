@@ -1,3 +1,4 @@
+django-cors-headers
 django-debug-toolbar
 django-extensions
 django-markdown2

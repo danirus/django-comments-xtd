@@ -39,18 +39,18 @@ Tag syntax:
 
 Renders the threaded structure of comments posted to the given object using the first template found from the list:
 
- * ``django_comments_xtd/<app>/<model>/comment_tree.html``
- * ``django_comments_xtd/<app>/comment_tree.html``
- * ``django_comments_xtd/comment_tree.html`` (provided with the app)
+* ``django_comments_xtd/<app>/<model>/comment_tree.html``
+* ``django_comments_xtd/<app>/comment_tree.html``
+* ``django_comments_xtd/comment_tree.html`` (provided with the app)
 
 It expects either an object specified with the ``for <object>`` argument, or a variable named ``comments``, which might be present in the context or received as ``comments=<comments-object>``. When the ``for <object>`` argument is specified, it retrieves all the comments posted to the given object, ordered by the ``thread_id`` and ``order`` within the thread, as stated by the setting :setting:`COMMENTS_XTD_LIST_ORDER`.
 
 It supports 4 optional arguments:
 
- * ``allow_flagging``, enables the comment removal suggestion flag. Clicking on the removal suggestion flag redirects to the login view whenever the user is not authenticated.
- * ``allow_feedback``, enables the like and dislike flags. Clicking on any of them redirects to the login view whenever the user is not authenticated.
- * ``show_feedback``, shows two list of users, of those who like the comment and of those who don't like it. By overriding ``includes/django_comments_xtd/user_feedback.html`` you could show the lists only to authenticated users.
- * ``using <template_path>``, makes the templatetag use a different template, instead of the default one, ``django_comments_xtd/comment_tree.html``
+* ``allow_flagging``, enables the comment removal suggestion flag. Clicking on the removal suggestion flag redirects to the login view whenever the user is not authenticated.
+* ``allow_feedback``, enables the like and dislike flags. Clicking on any of them redirects to the login view whenever the user is not authenticated.
+* ``show_feedback``, shows two list of users, of those who like the comment and of those who don't like it. By overriding ``includes/django_comments_xtd/user_feedback.html`` you could show the lists only to authenticated users.
+* ``using <template_path>``, makes the templatetag use a different template, instead of the default one, ``django_comments_xtd/comment_tree.html``
 
 Example usage
 -------------
@@ -128,9 +128,9 @@ Tag syntax::
 
 Renders the list of the last N comments for the given pairs ``<app>.<model>`` using the following search list for templates:
 
- * ``django_comments_xtd/<app>/<model>/comment.html``
- * ``django_comments_xtd/<app>/comment.html``
- * ``django_comments_xtd/comment.html``
+* ``django_comments_xtd/<app>/<model>/comment.html``
+* ``django_comments_xtd/<app>/comment.html``
+* ``django_comments_xtd/comment.html``
 
 Example usage
 -------------
@@ -270,9 +270,9 @@ Would be rendered as a markdown text, producing the output:
 
 Available markup languages are:
 
- * `Markdown <http://daringfireball.net/projects/markdown/syntax>`_, when starting the comment with ``#!markdown``.
- * `reStructuredText <http://docutils.sourceforge.net/docs/user/rst/quickref.html>`_, when starting the comment with ``#!restructuredtext``.
- * Linebreaks, when starting the comment with ``#!linebreaks``.
+* `Markdown <http://daringfireball.net/projects/markdown/syntax>`_, when starting the comment with ``#!markdown``.
+* `reStructuredText <http://docutils.sourceforge.net/docs/user/rst/quickref.html>`_, when starting the comment with ``#!restructuredtext``.
+* Linebreaks, when starting the comment with ``#!linebreaks``.
 
 
 .. index::

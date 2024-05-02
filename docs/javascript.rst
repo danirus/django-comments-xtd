@@ -13,16 +13,16 @@ Frontend Stack
 
 The JavaScript Plugin is based on:
 
- * Bootstrap
- * ReactJS
- * Remarkable (for Markdown markup support)
+* Bootstrap
+* ReactJS
+* Remarkable (for Markdown markup support)
 
 They are all external dependencies that have to be included as `<script>` elements in your templates (see demo sites' `base.html` template).
 
 The build process uses:
 
- * `rollup.js`_ to create the JavaScript plugin file.
- * `terser`_ to minimize the JavaScript plugin.
+* `rollup.js`_ to create the JavaScript plugin file.
+* `terser`_ to minimize the JavaScript plugin.
 
 Build process
 =============
@@ -100,7 +100,7 @@ Django will fetch it from there when rendering the article's detail page:
 
     {% block extra-js %}
     [...]
-    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.9.13.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.10.0.js' %}"></script>
     {% endblock extra-js %}
 
 Code structure

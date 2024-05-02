@@ -246,16 +246,16 @@ Defaults to ``True``.
 **Optional**. Allow enabling/disabling commenting options on per
 **app_label.model** basis. The options available are the following:
 
- * ``allow_flagging``: Allow registered users to flag comments as inappropriate.
- * ``allow_feedback``: Allow registered users to like/dislike comments.
- * ``show_feedback``: Allow django-comments-xtd to report the list of users who
-   liked/disliked the comment. The representation of each user in the list
-   depends on the next setting :setting::`COMMENTS_XTD_API_USER_REPR`.
- * ``who_can_post``: Can be either 'all' or 'users'. When it is 'all', all
-   users can post, whether registered users or mere visitors. When it is
-   'users', only registered users can post. Read the use case
-   :ref:`ref-recipe-only-signed-in-can-comment`, for details on how to set it
-   up.
+* ``allow_flagging``: Allow registered users to flag comments as inappropriate.
+* ``allow_feedback``: Allow registered users to like/dislike comments.
+* ``show_feedback``: Allow django-comments-xtd to report the list of users who
+  liked/disliked the comment. The representation of each user in the list
+  depends on the next setting :setting::`COMMENTS_XTD_API_USER_REPR`.
+* ``who_can_post``: Can be either 'all' or 'users'. When it is 'all', all
+  users can post, whether registered users or mere visitors. When it is
+  'users', only registered users can post. Read the use case
+  :ref:`ref-recipe-only-signed-in-can-comment`, for details on how to set it
+  up.
 
 An example use:
 

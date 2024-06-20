@@ -34,8 +34,13 @@ export function PreviewComment({avatar, name, url, comment, replyTo}) {
   }
 
   const raw_markup = () => {
-    const md = new Remarkable();
-    const _raw_markup = md.render(comment);
+    const _raw_markup = import('remarkable').then(Remarkable => {
+      const md = new Remarkable();
+      return md.render(comment);
+    }).catch(err => { return '' });
+    if (typeof _raw_markup === 'object' && typeof _raw_markup.then === 'function') {
+      return { __html: comment };
+    }
     return { __html: _raw_markup };
   }
 

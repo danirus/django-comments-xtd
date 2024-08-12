@@ -240,8 +240,8 @@ man_pages = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('http://docs.python.org/', None),
-    'django': ('http://docs.djangoproject.com/en/stable',
-               'http://docs.djangoproject.com/en/stable/_objects'),
+    'django': ('https://docs.djangoproject.com/en/dev/',
+               'https://docs.djangoproject.com/en/dev/_objects/'),
     'comments': ('https://django-contrib-comments.readthedocs.io/en/latest/',
                  None)
 }

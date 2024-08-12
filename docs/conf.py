@@ -111,9 +111,10 @@ pygments_dark_style = "dracula"
 # documentation.
 html_theme_options = {
     "style": "green",
+    # "documentation_font": "Open Sans",
+    "documentation_font_size": "1.1rem",
     "monospace_font": "Ubuntu Mono",
     "monospace_font_size": "1.1rem",
-    "documentation_font_size": "1.1rem",
     "repository_url": "https://github.com/danirus/django-comments-xtd",
     "repository_name": "django-comments-xtd"
 }
@@ -240,8 +241,8 @@ man_pages = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('http://docs.python.org/', None),
-    'django': ('http://docs.djangoproject.com/en/stable',
-               'http://docs.djangoproject.com/en/stable/_objects'),
+    'django': ('https://docs.djangoproject.com/en/dev/',
+               'https://docs.djangoproject.com/en/dev/_objects/'),
     'comments': ('https://django-contrib-comments.readthedocs.io/en/latest/',
                  None)
 }

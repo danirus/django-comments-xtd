@@ -100,7 +100,7 @@ Django will fetch it from there when rendering the article's detail page:
 
     {% block extra-js %}
     [...]
-    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.10.0.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.10.1.js' %}"></script>
     {% endblock extra-js %}
 
 Code structure
@@ -130,8 +130,8 @@ Which results in:
     │   ├── commentform.test.jsx
     │   ├── reducer.test.jsx
     │   └── lib.test.js
-    ├── django-comments-xtd-2.10.0.js
-    └── django-comments-xtd-2.10.0.min.js
+    ├── django-comments-xtd-2.10.1.js
+    └── django-comments-xtd-2.10.1.min.js
 
 The application entry point is located inside the ``index.js`` file. The
 ``props`` passed to the **CommentBox** object are those declared in the

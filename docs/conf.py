@@ -97,8 +97,7 @@ exclude_patterns = ['_build']
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "pastie"
-pygments_dark_style = "dracula"
+#pygments_style = "pastie"
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -111,11 +110,13 @@ pygments_dark_style = "dracula"
 # documentation.
 html_theme_options = {
     "style": "green",
+    "pygments_light_style": "pastie",
+    "pygments_dark_style": "dracula",
     "monospace_font": "Ubuntu Mono",
     "monospace_font_size": "1.1rem",
     "documentation_font_size": "1.1rem",
     "repository_url": "https://github.com/danirus/django-comments-xtd",
-    "repository_name": "django-comments-xtd"
+    "repository_name": "django-comments-xtd",
 }
 
 # html_style = ["custom.css"]
@@ -142,7 +143,7 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = []
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.

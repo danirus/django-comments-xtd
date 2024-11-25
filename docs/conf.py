@@ -135,30 +135,30 @@ html_theme_options = {
         for item in releases
     ],
 
-    "header_links": [
-        {
-            "text" : "Tutorial",
-            "link": "/tutorial.html",
-        },
-        {
-            "text": "Use cases",
-            "match": "^/usecases/*",
-            "dropdown": (
-                {
-                    "text": "Change user image or avatar",
-                    "link": "/usecases/change-user-image-or-avatar.html"
-                },
-                {
-                    "text": "Only signed-in users can comment",
-                    "link": "/usecases/only-signed-in-can-comment.html"
-                },
-            )
-        },
-        {
-            "text": "Release Notes",
-            "link": "/release-notes.html"
-        }
-    ],
+    # "header_links": [
+    #     {
+    #         "text" : "Tutorial",
+    #         "link": "tutorial.html",
+    #     },
+    #     {
+    #         "text": "Use cases",
+    #         "match": "^/usecases/*",
+    #         "dropdown": (
+    #             {
+    #                 "text": "Change user image or avatar",
+    #                 "link": "usecases/change-user-image-or-avatar.html"
+    #             },
+    #             {
+    #                 "text": "Only signed-in users can comment",
+    #                 "link": "usecases/only-signed-in-can-comment.html"
+    #             },
+    #         )
+    #     },
+    #     {
+    #         "text": "Release Notes",
+    #         "link": "release-notes.html"
+    #     }
+    # ],
 }
 
 # html_style = ["custom.css"]

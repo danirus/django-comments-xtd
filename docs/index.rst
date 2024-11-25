@@ -95,6 +95,12 @@ specific features, or check out the use cases to see how others customize it.
 Change Log
 ==========
 
+[2.10.1] - 2024-11-25
+---------------------
+
+* Updated French translation.
+* Updated battery of tests to check compatibility with Django 5.1.
+
 [2.10.0] - 2024-05-02
 ---------------------
 

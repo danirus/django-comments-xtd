@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.10.1] - 2024-11-25
+
+* Updated French translation.
+* Updated battery of tests to check compatibility with Django 5.1.
+
 ## [2.10.0] - 2024-05-02
 
  * Add ordering filter to the CommentList API class.

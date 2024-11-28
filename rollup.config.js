@@ -12,11 +12,12 @@ const STATIC_DIR = path.resolve(
 const SOURCE_DIR = path.resolve(STATIC_DIR, 'src');
 
 const plugins = [
+  nodeResolve(),
   babel({
+    presets: ['@babel/preset-react'],
     exclude: 'node_modules/**',
     babelHelpers: 'bundled',
   }),
-  nodeResolve()
 ];
 
 module.exports = {
@@ -24,6 +25,7 @@ module.exports = {
   output: {
     format: 'iife',
     generatedCode: 'es2015',
+    // inlineDynamicImports: true,
     file: path.resolve(STATIC_DIR, `django-comments-xtd-${pkg.version}.js`),
     globals: {
       'django': 'django',

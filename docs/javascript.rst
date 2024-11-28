@@ -6,7 +6,10 @@ JavaScript plugin
 
 django-comments-xtd comes with a JavaScript plugin. When using the plugin comments are loaded and sent in the background, as well as like/dislike feedback. The plugin checks whether there are new incoming comments, and shows an update button that allows the user to refresh the comment tree. When the refresh takes place new comments are highlighted with a green label.
 
-.. image:: images/update-comment-tree.png
+.. cs_image:: images/update-comment-tree.png
+    :width: 95%
+    :align: center
+    :class: border-radius-1
 
 Frontend Stack
 ==============

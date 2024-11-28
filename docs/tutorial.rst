@@ -43,7 +43,7 @@ Before we install any package we will set up a virtualenv:
 
     mkdir ~/django-comments-xtd-tutorial
     cd ~/django-comments-xtd-tutorial
-    python3.12 -m venv venv
+    python3.13 -m venv venv
     source venv/bin/activate
 
 And we will install everything we need in it:
@@ -144,11 +144,12 @@ installed with django_comments_xtd include django_comments' urls too:
     ]
 
 
-Now let Django create the tables for the two new applications:
+Now let Django create the tables for the two new applications, and run the development server again:
 
 .. code-block:: bash
 
     python manage.py migrate
+    python manage.py runserver
 
 
 Log in the admin site,
@@ -241,7 +242,7 @@ Django will look for the template ``list.html`` in the following directories:
 
 Both, django-contrib-comments and django-comments-xtd, provide the last template
 of the list, ``comments/list.html``. The one provided within
-django-comments-xtd comes with styling based on twitter-bootstrap_.
+django-comments-xtd comes with styling based on bootstrap_.
 
 Django will use the first template found depending on the order in which
 applications are listed in :setting:`INSTALLED_APPS`. In this tutorial
@@ -317,7 +318,10 @@ up to send mail messages to the console, so look in the console after you post
 the comment and find the first long URL in the message. To confirm the comment
 copy the link and paste it in the location bar of the browser.
 
-.. image:: images/comments-enabled.png
+.. cs_image:: images/comments-enabled.png
+    :width: 90%
+    :align: center
+    :class: border-radius-1
 
 The setting :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` is ``0`` by default, which
 means comments can not be nested. Later in the threads section we will enable
@@ -668,7 +672,10 @@ post a new comment. It will appear nested inside the parent comment.
 
 The new comment will not show a **Reply** link because :setting:`COMMENTS_XTD_MAX_THREAD_LEVEL` has been set to 1. Raise it to 2 and reload the page to offer the chance to nest comments inside one level deeper.
 
-.. image:: images/reply-link.png
+.. cs_image:: images/reply-link.png
+    :width: 90%
+    :align: center
+    :class: border-radius-1
 
 
 Different max thread levels
@@ -795,7 +802,10 @@ labelled counter near the flag button in each flagged comment, representing
 how many times comments have been flagged. Also notice that when a user flags
 a comment for removal the icon turns red for that user.
 
-.. image:: images/flag-counter.png
+.. cs_image:: images/flag-counter.png
+    :width: 95%
+    :align: center
+    :class: border-radius-1
 
 Administrators/moderators can find flagged comment entries in the admin_
 interface, under the **Comment flags** model, within the Django Comments
@@ -885,7 +895,10 @@ module and enable the ``allow_feedback`` option for the ``blog.post``
 The blog post detail template is ready to show the like/dislike buttons,
 refresh your browser.
 
-.. image:: images/feedback-buttons.png
+.. cs_image:: images/feedback-buttons.png
+    :width: 95%
+    :align: center
+    :class: border-radius-1
 
 Having the new like/dislike links in place, if we click on any of them we will
 end up in either the ``django_comments_xtd/like.html`` or the
@@ -937,14 +950,17 @@ Also change the settings and enable the ``show_feedback`` option for
         }
     }
 
-We load twitter-bootstrap_ libraries from their respective default
+We load bootstrap_ libraries from their respective default
 CDNs as the code above uses bootstrap's tooltip functionality to show the list
 of users when the mouse hovers the numbers near the buttons, as the following
 image shows:
 
-.. _twitter-bootstrap: http://getbootstrap.com
+.. _bootstrap: http://getbootstrap.com
 
-.. image:: images/feedback-users.png
+.. cs_image:: images/feedback-users.png
+    :width: 95%
+    :align: center
+    :class: border-radius-1
 
 Put the mouse over the counters near the like/dislike buttons to display the
 list of users.
@@ -983,7 +999,10 @@ Send a comment formatted in Markdown:
 
 It should look like this:
 
-.. image:: images/markdown-input.png
+.. cs_image:: images/markdown-input.png
+    :width: 95%
+    :align: center
+    :class: border-radius-1
 
 Now we will install `django-markdown2
 <https://pypi.python.org/pypi/django-markdown2>`_, and create the template
@@ -1006,8 +1025,10 @@ the following template code to the file ``comment_content.html`` we just created
 Now our project is ready to show comments posted in Markdown. After reloading,
 the comment's page will look like this:
 
-.. image:: images/markdown-comment.png
-
+.. cs_image:: images/markdown-comment.png
+    :width: 95%
+    :align: center
+    :class: border-radius-1
 
 
 JavaScript plugin
@@ -1018,8 +1039,7 @@ version 2.0 it includes a JavaScript plugin that helps moving part of the logic
 to the browser. By making use of the JavaScript plugin users don't have to leave the blog post page to preview, submit or reply comments, or to like/dislike them. But it comes at the cost of using:
 
 * ReactJS
-* jQuery (to handle Ajax calls).
-* Twitter-Bootstrap (for the UI).
+* Bootstrap (for the UI).
 * Remarkable (for Markdown support).
 
 To know more about the client side of the application and the build process
@@ -1097,12 +1117,12 @@ Edit ``tutorial/urls.py`` and add the following url:
         path(r'jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     ]
 
-In the next section we will use the new URL to load the i18n JavaScript catalog.
+In a following section we will use the new URL to load the i18n JavaScript catalog. But before that, let us configure CORS.
 
 Configure CORS
 --------------
 
-We are going to load Bootstrap JS library, ReactJS and Remarkable from a CDN. Web browsers will not trust those file by default, we need to send CORS headers to let browsers know that our Django backend trusts those origins.
+We are going to load Bootstrap JS library, ReactJS and Remarkable from a CDN. Web browsers will not trust those files by default, our Django project has to send CORS headers to let browsers know that the backend trusts those origins.
 
 The easiest way to do so is by using the `django-cors-headers <https://pypi.org/project/django-cors-headers/>`_ app:
 
@@ -1137,7 +1157,9 @@ Edit the ``tutorial/settings.py`` file to add ``corsheaders`` to the ``INSTALLED
 Load the plugin
 ---------------
 
-Now let's edit ``blog/post_detail.html``. We are going to remove the blocks related with the comments and leave only a `<div id="comments"/>` that is used as the hook to load the JavaScript ReactJS plugin.
+Now let's edit ``blog/post_detail.html``.
+
+Remove the blocks related to the comments and leave only a ``<div id="comments"/>``, as that is used as the hook to load the JavaScript ReactJS plugin.
 
 Be sure your ``blog/post_detail.html`` looks like the following:
 
@@ -1167,30 +1189,30 @@ Be sure your ``blog/post_detail.html`` looks like the following:
     {% endblock %}
 
     {% block extra-js %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" integrity="sha512-QVs8Lo43F9lSuBykadDb0oSXDL/BbZ588urWVCRwSIoewQv/Ewg1f84mK3U790bZ0FfhFa1YSQUmIhG+pIRKeg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" integrity="sha512-6a1107rTlA4gYpgHAqbwLAtxmWipBdJFcq8y5S/aTge3Bp+VAklABm2LO+Kg51vOWR9JMZq1Ovjl5tpluNpTeQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/2.0.1/remarkable.min.js" integrity="sha512-skYYbQHAuOTpeJTthhUH3flZohep8blA+qjZOY0VqmfXMDiYcWxu29F5UbxU4LxaIpGkRBk+3Qf8qaXfd9jngg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/remarkable@2.0.1/dist/remarkable.min.js"></script>
     <script>
-      window.comments_props = {% get_commentbox_props for object %};
-      window.comments_props_override = {
-          allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
-          allow_feedback: true,
-          show_feedback: true,
-          allow_flagging: true,
-          polling_interval: 5000  // In milliseconds.
-      };
+    window.comments_props = {% get_commentbox_props for object %};
+    window.comments_props_override = {
+        allow_comments: {%if object.allow_comments%}true{%else%}false{%endif%},
+        allow_feedback: true,
+        show_feedback: true,
+        allow_flagging: true,
+        polling_interval: 5000  // In milliseconds.
+    };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script
-      type="text/javascript"
-      src="{% url 'javascript-catalog' %}"></script>
+    type="text/javascript"
+    src="{% url 'javascript-catalog' %}"></script>
     <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.10.1.js' %}"></script>
     <script>
-      window.addEventListener('DOMContentLoaded', (_) => {
+    window.addEventListener('DOMContentLoaded', (_) => {
         const tooltipQs = '[data-bs-toggle="tooltip"]';
         const tooltipList = document.querySelectorAll(tooltipQs);
         [...tooltipList].map(el => new bootstrap.Tooltip(el, {html: true}));
-      });
+    });
     </script>
     {% endblock %}
 
@@ -1208,7 +1230,10 @@ plugin, including the following features:
     image below).
 #. Immediate like/dislike actions.
 
-.. image:: images/update-comment-tree.png
+.. cs_image:: images/update-comment-tree.png
+    :width: 95%
+    :align: center
+    :class: border-radius-1
 
 
 Final notes

@@ -14,14 +14,14 @@ It's an only-backend project, meant as a test case of the basic features
 
 The **custom project** provides threaded comment support to articles using a
 new comment class that inherits from django-comments-xtd's. The new comment
-model adds a **title** field to the **XtdComment** class. Find more details
+model adds a ``title`` field to the ``XtdComment`` class. Find more details
 in :ref:`ref-extending`.
 
-The **comp project** provides comments to an Article model and a Quote model.
-Comments for Quotes show how to use django-comments-xtd as a pure Django
-backend application. However comments for Articles illustrate how to use the
-app in combination with the provided JavaScript plugin. The project allows
-nested comments and defines the maximum thread level on per app.model basis.
+The **comp project** provides comments to an ``Article`` model and a ``Quote```
+model. Comments for Quotes show how to use django-comments-xtd as a pure Django
+backend application. On the other hand, comments for Articles illustrates how
+to use the app in combination with the JavaScript plugin. The project allows
+nested comments and defines the maximum thread level on per ``app.model`` basis.
 It uses moderation, removal suggestion flag, like/dislike flags, and list of
 users who liked/disliked comments.
 
@@ -41,29 +41,30 @@ quick look.
 Setup
 =====
 
-The recommended way to run a demo site is within its own `virtualenv
-<http://www.virtualenv.org/en/latest/>`_:
-
-.. code-block:: bash
-
-    virtualenv venv
-    source venv/bin/activate
-
-Once in a new virtualenv, clone the
-code and cd into any of the 3 demo sites. Then run the migrate command and
-load the data in the fixtures directory:
+Let's prepare the environment. Clone the source code, create the virtual environment and install the Python package and its dependencies:
 
 .. code-block:: bash
 
     git clone git://github.com/danirus/django-comments-xtd.git
     cd django-comments-xtd/
-    python setup.py install
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -e .
+
+Then prepare the NodeJS environment required to build the plugin. I recommend using `nvm <https://github.com/nvm-sh/nvm>`_ to set it up. Once you have ``nvm`` installed, use the stable version:
+
+.. code-block:: bash
+
+    nvm use stable
     npm install
-    node_modules/webpack/bin/webpack.js -p
-    cd django_comments_xtd
-    django-admin compilemessages -l fi
-    django-admin compilemessages -l fr
-    django-admin compilemessages -l es
+    npm run compile
+    npm run minify
+
+
+Then, cd into the example project your prefer, load the data and run the development server:
+
+.. code-block:: bash
+
     cd ../example/[simple|custom|comp]
     pip install -r requirements.txt
     python manage.py migrate

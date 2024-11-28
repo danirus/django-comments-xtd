@@ -1,9 +1,17 @@
 # Change Log
 
-## [2.10.1] - 2024-11-25
+## [2.10.1] - Unreleased
 
 * Updated French translation.
 * Updated battery of tests to check compatibility with Django 5.1.
+* GHA: Remove secret from PyPI, as it is now a trusted repository.
+* Add support for light/dark color scheme in tutorial.
+* Updated example projects: add support for light/dark color schemes.
+* Updated dependencies in package.json.
+* Updated templates `comments/posted.html`, `comments/preview.html`, and `django_comments_xtd/moderated.html`.
+* Docs: Use Bootstrap icon `chat-text-fill.svg` as project's icon.
+* Docs: Updated Tutorial. Fixes script example.
+* Docs: Use sphinx-nefertiti v0.5 and sphinx-colorschemed-images.
 
 ## [2.10.0] - 2024-05-02
 

@@ -1,0 +1,24 @@
+{% extends "django_comments_xtd/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center my-4">
+    <div class="text-center">
+      <h3>{% trans "Comment confirmation requested." %}</h3>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <p class="text-center">
+        {% blocktrans %}A confirmation message has been sent to your
+        email address. Please, click on the link in the message to confirm
+        your comment.{% endblocktrans %}
+      </p>
+      <p class="pt-5 text-center">
+        {% trans 'Go back to' %}: <a href="{{ target.get_absolute_url }}">{{ target }}</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

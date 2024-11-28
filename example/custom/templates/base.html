@@ -1,14 +1,14 @@
 {% load static %}
 <!DOCTYPE html>
-<html dir="ltr" lang="en" class="h-100">
+<html dir="ltr" lang="en" class="h-100" data-bs-theme="light">
   <head>
     <meta charset="utf-8" />
     <title>{% block title %}django-comments-xtd - simple demo{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
         <style>
       html, body {
         font-family: "Open Sans", Tahoma, sans-serif;
@@ -57,6 +57,45 @@
         </div>
       </div>
     </footer>
+
+    <script>
+      function runWhenDOMContentLoaded(cb) {
+        if (document.readyState != 'loading') {
+          cb();
+        } else if (document.addEventListener) {
+          document.addEventListener('DOMContentLoaded', cb);
+        } else {
+          document.attachEvent('onreadystatechange', function() {
+            if (document.readyState == 'complete') cb();
+          });
+        }
+      }
+
+      function switchColorScheme(scheme) {
+        document.documentElement.dataset.bsTheme = scheme;
+      }
+
+      function setColorSchemeHandler() {
+        const schemes = ['light', 'dark'];
+        for (const scheme of schemes) {
+          const q = window.matchMedia(`(prefers-color-scheme: ${scheme})`);
+          if (q.matches) {
+            switchColorScheme(scheme);
+          }
+          q.addEventListener('change', e => {
+            if (e.matches) {
+              switchColorScheme(scheme);
+            }
+          });
+        }
+      }
+
+      function loadCompSampleCode() {
+        setColorSchemeHandler();
+      }
+
+      runWhenDOMContentLoaded(loadCompSampleCode);
+    </script>
   </body>
 </html>
 

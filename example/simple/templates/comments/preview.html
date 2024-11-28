@@ -1,0 +1,51 @@
+{% extends "django_comments_xtd/base.html" %}
+{% load i18n %}
+{% load comments_xtd %}
+
+{% block title %}{% trans "Preview your comment" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center my-4">
+    <div class="text-center">
+      <h3>
+        {% trans "Preview of your comment for:" %}<br/>
+        <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+      </h3>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <hr/>
+      {% if not comment %}
+      <em>{% trans "Empty comment." %}</em>
+      {% else %}
+      <div class="d-flex">
+        <div class="me-3">
+          {{ form.cleaned_data.email|xtd_comment_gravatar }}
+        </div>
+        <div class="d-flex flex-column pb-3">
+          <span style="font-size: 0.8rem">
+            {% now "N j, Y, P" %}&nbsp;-&nbsp;
+            {% if form.cleaned_data.url %}
+            <a href="{{ form.cleaned_data.url }}" target="_new">
+              {{ form.cleaned_data.name }}
+            </a>
+            {% else %}
+              {{ form.cleaned_data.name }}
+            {% endif %}
+          </span>
+          <div class="py-2">{{ comment }}</div>
+        </div>
+      </div>
+      {% endif %}
+      <div class="card mt-4 mb-5">
+        <div class="card-body">
+          <h4 class="card-title text-center pb-3">{% trans "Post your comment" %}</h4>
+          {% include "comments/form.html" %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

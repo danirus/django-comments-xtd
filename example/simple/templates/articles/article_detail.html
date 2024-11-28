@@ -34,17 +34,21 @@
       <div id="comments">
         {% get_comment_count for object as comment_count %}
         {% if comment_count %}
-        <H5 class="text-center">
+        <H6 class="text-center mt-1 mb-5">
           {% blocktrans count comment_count=comment_count %}
           There is {{ comment_count }} comment below.
           {% plural %}
           There are {{ comment_count }} comments below.
           {% endblocktrans %}
-        </H5>
+        </H6>
+        {% endif %}
+
+        {% if comment_count %}
+        {% render_comment_list for object %}
         {% endif %}
 
         {% if object.allow_comments %}
-        <div class="card card-block mt-4 mb-5">
+        <div class="card card-block my-4">
           <div class="card-body">
             <h4 class="card-title text-center pb-3">Post your comment</h4>
             {% render_comment_form for object %}
@@ -52,10 +56,6 @@
         </div>
         {% else %}
         <h4 class="mt-4 mb-5 text-center text-secondary">Comments are disabled for this quote.</h4>
-        {% endif %}
-
-        {% if comment_count %}
-        {% render_comment_list for object %}
         {% endif %}
       </div>
     </div>

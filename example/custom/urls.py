@@ -8,7 +8,7 @@ if django.VERSION[:2] < (2, 0):
 else:
     from django.urls import include, path, re_path
 
-from django_comments import LatestCommentFeed
+from django_comments.feeds import LatestCommentFeed
 
 import views
 

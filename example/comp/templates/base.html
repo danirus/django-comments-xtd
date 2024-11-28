@@ -4,15 +4,15 @@
 {% get_available_languages as LANGUAGES %}
 {% get_current_language as current_language %}
 <!DOCTYPE html>
-<html dir="ltr" lang="en" class="h-100">
+<html dir="ltr" lang="en" class="h-100" data-bs-theme="light">
   <head>
     <meta charset="utf-8" />
     <title>{% block title %}django-comments-xtd comp demo{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" />
     <style>
       html, body {
         font-family: "Open Sans", Tahoma, sans-serif;
@@ -98,7 +98,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
     <script>
-      function set_language(event) {
+      function setLanguage(event) {
         event.preventDefault();
         const formEl = document.getElementById('langform');
         const inputEl = document.querySelector('input[name=language]');
@@ -109,18 +109,48 @@
         _promise.then(() => window.location.reload());
       }
 
-      window.addEventListener('DOMContentLoaded', () => {
+      function runWhenDOMContentLoaded(cb) {
+        if (document.readyState != 'loading') {
+          cb();
+        } else if (document.addEventListener) {
+          document.addEventListener('DOMContentLoaded', cb);
+        } else {
+          document.attachEvent('onreadystatechange', function() {
+            if (document.readyState == 'complete') cb();
+          });
+        }
+      }
+
+      function switchColorScheme(scheme) {
+        document.documentElement.dataset.bsTheme = scheme;
+      }
+
+      function setColorSchemeHandler() {
+        const schemes = ['light', 'dark'];
+        for (const scheme of schemes) {
+          const q = window.matchMedia(`(prefers-color-scheme: ${scheme})`);
+          if (q.matches) {
+            switchColorScheme(scheme);
+          }
+          q.addEventListener('change', e => {
+            if (e.matches) {
+              switchColorScheme(scheme);
+            }
+          });
+        }
+      }
+
+      function loadCompSampleCode() {
         const qs_lang_anchors = "[data-dcx-language-code]";
         for (const item of document.querySelectorAll(qs_lang_anchors)) {
-          item.addEventListener("click", set_language);
+          item.addEventListener("click", setLanguage);
         }
-      });
-     /*
-     $(function() {
-       $('.dropdown-toggle').dropdown();
-       $("#selectlanguage A[data-name=language]").click(set_language);
-     });
-     */
+
+        // Handle color-scheme changes.
+        setColorSchemeHandler();
+      }
+
+      runWhenDOMContentLoaded(loadCompSampleCode);
     </script>
     {% block extra_js %}
     {% endblock %}

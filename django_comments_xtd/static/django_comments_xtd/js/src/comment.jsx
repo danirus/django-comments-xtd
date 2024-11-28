@@ -168,6 +168,7 @@ export function FeedbackPart({
             data-bs-html="true"
             data-bs-toggle="tooltip"
             data-bs-title={usernames.join("<br/>")}
+            role="button"
           >{user_list.length}</a>
         )}
         <a href="#" onClick={click_hdl}>

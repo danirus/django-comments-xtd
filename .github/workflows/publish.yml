@@ -12,12 +12,10 @@ jobs:
       - name: Python setup
         uses: actions/setup-python@v2
         with:
-          python-version: '3.11'
+          python-version: '3.13'
       - name: Install build, wheel and twine
         run: pip install build wheel twine
       - name: Build source tarball and binary
         run: python -m build --sdist --wheel --outdir dist/
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+        uses: pypa/gh-action-pypi-publish@release/v1.8

@@ -20,7 +20,7 @@ The JavaScript Plugin is based on:
 * ReactJS
 * Remarkable (for Markdown markup support)
 
-They are all external dependencies that have to be included as `<script>` elements in your templates (see demo sites' `base.html` template).
+They are all external dependencies that have to be included as ``<script>`` elements in your templates (see demo sites' ``base.html`` template).
 
 The build process uses:
 
@@ -31,24 +31,22 @@ Build process
 =============
 
 In order to further develop the current plugin, fix potential bugs or install
-the the plugin from the sources, you have to use `NodeJS
+the plugin from the sources, you have to use `NodeJS
 <https://nodejs.org/en/>`_ and `NPM <https://www.npmjs.com/>`_.
 
 Set up the backend
 ------------------
 
-Before installing the frontend dependencies we will prepare a Python virtualenv
-in which we will have all the backend dependencies installed. Let's start by
-creating the virtualenv and fetching the sources:
+Before installing the frontend dependencies prepare the backend development environment:
 
 .. code-block:: shell
 
-    virtualenv ~/venv/django-comments-xtd
-    source ~/venv/django-comments-xtd/bin/activate
-    cd ~/src/  # or cd into your sources dir of choice.
     git clone https://github.com/danirus/django-comments-xtd.git
     cd django-comments-xtd
+    python3 -m venv venv
+    source venv/bin/activate
     pip install -e .
+    pip install -r requirements_tests.pip
 
 Check whether the app passes the battery of tests:
 

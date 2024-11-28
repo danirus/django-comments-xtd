@@ -23,8 +23,8 @@ It extends the once official `django-contrib-comments <https://pypi.python.org/p
 
 Example sites and tests work under officially Django `supported versions <https://www.djangoproject.com/download/#supported-versions>`_:
 
-* Django 5.1, 5.0, 4.2, 4.1, 4.0, 3.2
-* Python 3.12, 3.11, 3.10, 3.9, 3.8
+* Django 5.1, 5.0, 4.2, 4.1
+* Python 3.13, 3.12, 3.11, 3.10
 
 Additional Dependencies:
 

@@ -15,26 +15,6 @@ the once official `Django Comments Framework
 <https://pypi.python.org/pypi/django-contrib-comments>`_.
 
 
-.. note::
-
-    This documentation represents the current version, v2.10.0, of
-    django-comments-xtd. For old versions of the documentation:
-
-    * v2.9.13: https://django-comments-xtd.readthedocs.io/2.9.13/
-    * v2.8.5: https://django-comments-xtd.readthedocs.io/2.8.5/
-    * v2.7.2: https://django-comments-xtd.readthedocs.io/2.7.2/
-    * v2.6.2: https://django-comments-xtd.readthedocs.io/2.6.2/
-    * v2.5.1: https://django-comments-xtd.readthedocs.io/2.5.1/
-    * v2.4.3: https://django-comments-xtd.readthedocs.io/2.4.3/
-    * v2.3.1: https://django-comments-xtd.readthedocs.io/2.3.1/
-    * v2.2.1: https://django-comments-xtd.readthedocs.io/2.2.1/
-    * v2.1.0: https://django-comments-xtd.readthedocs.io/2.1.0/
-    * v2.0.10: https://django-comments-xtd.readthedocs.io/2.0.10/
-    * v1.7.1: https://django-comments-xtd.readthedocs.io/1.7.1/
-    * v1.6.7: https://django-comments-xtd.readthedocs.io/1.6.7/
-    * v1.5.1: https://django-comments-xtd.readthedocs.io/1.5.1/
-
-
 Features
 ========
 

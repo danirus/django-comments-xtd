@@ -70,6 +70,7 @@ version = '2.10'
 release = '2.10.1'
 
 releases = [
+    "latest",
     release,
     "2.9.13",
     "2.8.5",
@@ -135,7 +136,8 @@ html_theme_options = {
     "monospace_font": "Ubuntu Mono",
     "monospace_font_size": "1.1rem",
 
-    "style": "red",
+    "style": "green",
+    "style_header_neutral": True,
     "pygments_light_style": "pastie",
     "pygments_dark_style": "dracula",
 

@@ -151,7 +151,7 @@ html_theme_options = {
 
     "current_version": release,
     "versions": [
-        ("v%s" % item, docs_url.format(release=item)) for item in releases
+        (item, docs_url.format(release=item)) for item in releases
     ],
 
     "header_links": [

@@ -1,3 +1,7 @@
+html.light .project-logo {
+  filter: invert(83%) sepia(100%) saturate(0%) hue-rotate(291deg) brightness(107%) contrast(101%);
+}
+
 .nftt-content li {
   margin-bottom: 4px;
 }

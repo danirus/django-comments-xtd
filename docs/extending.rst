@@ -111,7 +111,7 @@ You will need to customize the following templates:
 * ``comments/form.html`` to include new fields.
 * ``comments/preview.html`` to preview new fields.
 * ``django_comments_xtd/email_confirmation_request.{txt|html}`` to add the new fields to the confirmation request, if it was necessary. This demo overrides them to include the ``title`` field in the mail.
-* ``django_comments_xtd/comments_tree.html`` to show the new field when displaying the comments. If your project doesn't allow nested comments you can use either this template or `comments/list.html``.
+* ``django_comments_xtd/comment_tree.html`` to show the new field when displaying the comments. If your project doesn't allow nested comments you can use either this template or `comments/list.html``.
 * ``django_comments_xtd/reply.html`` to show the new field when displaying the comment the user is replying to.
 
 

@@ -395,7 +395,7 @@ class GetXtdCommentTreeNode(Node):
 def render_xtdcomment_tree(parser, token):
     """
     Render the nested comment tree structure posted to the given object.
-    By default uses the template ``django_comments_xtd/comments_tree.html``.
+    By default uses the template ``django_comments_xtd/comment_tree.html``.
 
     Syntax::
 

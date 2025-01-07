@@ -1315,4 +1315,4 @@
   ReactDOM.createRoot(rootElement).render(/*#__PURE__*/React.createElement(React.StrictMode, null, /*#__PURE__*/React.createElement(App, _objectSpread2(_objectSpread2({}, window.comments_props), window.comments_props_override))));
 
 })(React, ReactDOM, django, remarkable);
-//# sourceMappingURL=django-comments-xtd-2.10.1.js.map
+//# sourceMappingURL=django-comments-xtd-2.10.2.js.map

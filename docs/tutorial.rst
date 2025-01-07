@@ -1206,7 +1206,7 @@ Be sure your ``blog/post_detail.html`` looks like the following:
     <script
     type="text/javascript"
     src="{% url 'javascript-catalog' %}"></script>
-    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.10.1.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.10.2.js' %}"></script>
     <script>
     window.addEventListener('DOMContentLoaded', (_) => {
         const tooltipQs = '[data-bs-toggle="tooltip"]';

@@ -10,6 +10,19 @@ This page details the list of templates provided by django-comments-xtd. They ar
    :depth: 1
    :local:
 
+.. _template-loading-order:
+
+Template loading order
+----------------------
+
+As a reminder explaining :external+django:doc:`how to override templates <howto/overriding-templates>`, the order in which templates are loaded in Django follows the next sequence:
+
+Load the template:
+
+#. From the ``DIRS`` directory (see `DIRS <https://docs.djangoproject.com/en/dev/ref/settings/#std-setting-TEMPLATES-DIRS>`_ in Django docs), or
+#. From the ``APPS_DIR`` directory (see `APP_DIRS <https://docs.djangoproject.com/en/dev/ref/settings/#std-setting-TEMPLATES-APP_DIRS>`_ in Django docs), or
+#. When two apps provide the same template, load it from the app listed first in ``INSTALLED_APPS``.
+
 
 .. index::
    single: email_confirmation_request

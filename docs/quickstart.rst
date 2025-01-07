@@ -14,7 +14,7 @@ To get started using django-comments-xtd follow these steps:
 
 #. :ref:`Enable the "sites" framework <enabling-the-sites-framework>` by adding ``'django.contrib.sites'`` to :setting:`INSTALLED_APPS` and defining :setting:`SITE_ID`. Visit the admin site and be sure that the domain field of the ``Site`` instance points to the correct domain (``localhost:8000`` when running the default development server), as it will be used to create comment verification URLs, follow-up cancellations, etc.
 
-#. Add ``'django_comments_xtd'`` and ``'django_comments'``, in that order, to :setting:`INSTALLED_APPS`.
+#. Add ``'django_comments_xtd'`` and ``'django_comments'``, in that order [1]_, to :setting:`INSTALLED_APPS`.
 
 #. Set the :setting:`COMMENTS_APP` setting to ``'django_comments_xtd'``.
 
@@ -59,7 +59,7 @@ The thread level can also be established on a per ``<app>.<model>`` basis by usi
     EMAIL_HOST_PASSWORD = "yourpassword"
     DEFAULT_FROM_EMAIL = "Helpdesk <helpdesk@yourdomain>"
 
-#. To allow a quick start django-comments-xtd makes use of `twitter-bootstrap`_. From django-comments-xtd v2.3 on it uses Twitter-Bootstrap v4. From django-comments-xtd v1.7.1 to v2.2 it uses Twitter-Bootstrap v3. If you want to build your own templates, use the `comments <https://django-contrib-comments.readthedocs.io/en/latest/quickstart.html#comment-template-tags>`_ templatetag module, provided by the `django-comments <https://django-contrib-comments.readthedocs.io/en/latest/index.html>`_ app. Create a ``comments`` directory in your templates directory and copy the templates you want to customise from the Django Comments Framework. The following are the most important:
+#. To allow a quick start django-comments-xtd makes use of `bootstrap`_. From django-comments-xtd v2.9.10 on, it uses Bootstrap v5.3. If you want to build your own templates, use the `comments <https://django-contrib-comments.readthedocs.io/en/latest/quickstart.html#comment-template-tags>`_ templatetag module, provided by the `django-comments <https://django-contrib-comments.readthedocs.io/en/latest/index.html>`_ app. Create a ``comments/`` directory in your templates directory and copy the templates you want to customise from the Django Comments Framework. The following are the most important:
 
    * ``comments/list.html``, used by the ``render_comments_list`` templatetag.
 
@@ -75,6 +75,7 @@ The thread level can also be established on a per ``<app>.<model>`` basis by usi
 These are the steps to quickly start using django-comments-xtd. Follow to the next page, the :ref:`ref-tutorial`, to read a detailed guide that takes everything into account. In addition to the tutorial, the :ref:`ref-example` implement several commenting applications.
 
 
-.. _twitter-bootstrap: https://getbootstrap.com
+.. _bootstrap: https://getbootstrap.com
 .. _reStructuredText: http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
 
+.. [1] To mind the :ref:`template-loading-order`.

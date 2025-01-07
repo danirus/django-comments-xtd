@@ -232,7 +232,7 @@ while the latter put the comment list in a variable in the context of the
 template.
 
 When using the first, :ttag:`render_comment_list`, with a ``blog.post`` object,
-Django will look for the template ``list.html`` in the following directories:
+Django will look for the template ``list.html`` in the following directories (see [1]_):
 
 .. code-block:: shell
 
@@ -1263,3 +1263,4 @@ If you want to help, please, report any bug or enhancement directly to
 the github_ page of the project. Your contributions are welcome.
 
 .. _github: https://github.com/danirus/django-comments-xtd
+.. [1] Mind the :ref:`template-loading-order`.

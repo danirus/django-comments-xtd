@@ -1,6 +1,13 @@
 # Change Log
 
-## [2.10.1] - Unreleased
+## [2.10.2] -
+
+* (todo) Add reminder about template loading order to the documentation.
+* Fix template name `comment_tree.html` in doc strings and the documentation.
+* Fix variable template name in `form.html`, in custom example site.
+* Remove duplicated code.
+
+## [2.10.1] - 2024-11-28
 
 * Updated French translation.
 * Updated battery of tests to check compatibility with Django 5.1.

@@ -269,12 +269,6 @@ def notify_comment_followers(comment):
     except NotSupportedError:
         feed_followers(previous_comments)
 
-    for instance in previous_comments:
-        followers[instance.user_email] = (
-            instance.user_name,
-            signed.dumps(instance, compress=True,
-                         extra_key=settings.COMMENTS_XTD_SALT))
-
     subject = _("new comment posted")
     text_message_template = loader.get_template(
         "django_comments_xtd/email_followup_comment.txt")

@@ -1,4 +1,4 @@
-import django from 'django';
+import { django_gettext, django_ngettext, django_interpolate } from './lib.js';
 import React, { useContext, useEffect, useMemo } from 'react';
 
 import { InitContext, StateContext } from './context';
@@ -8,8 +8,8 @@ import { CommentForm } from './commentform.jsx';
 
 function CommentCounter({counter}) {
   const text = useMemo(() => {
-    const fmts = django.ngettext("%s comment.", "%s comments.", counter);
-    return django.interpolate(fmts, [counter]);
+    const fmts = django_ngettext("%s comment.", "%s comments.", counter);
+    return django_interpolate(fmts, [counter]);
   }, [counter]);
 
   return (counter > 0)
@@ -42,14 +42,14 @@ function CommentFormWrapper({replyTo, onCommentCreated}) {
       ? <div dangerouslySetInnerHTML={{__html: elem.innerHTML}} />
       : (
         <h5 className="mt-4 mb-5 text-center text-info">
-          {django.gettext("Only registered users can post comments.")}
+          {django_gettext("Only registered users can post comments.")}
         </h5>
       );
   }
 
   return (
     <h4 className="mt-4 mb-5 text-center text-secondary">
-      {django.gettext("Comments are disabled for this article.")}
+      {django_gettext("Comments are disabled for this article.")}
     </h4>
   );
 }
@@ -59,9 +59,9 @@ function UpdateAlert({counter, cids, onClick }) {
   const diff = counter - cids.size;
 
   if (diff > 0) {
-    const fmts = django.ngettext(
+    const fmts = django_ngettext(
       "There is %s new comment.", "There are %s new comments.", diff);
-    const message = django.interpolate(fmts, [diff]);
+    const message = django_interpolate(fmts, [diff]);
 
     return (
       <div

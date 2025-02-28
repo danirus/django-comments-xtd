@@ -16,7 +16,7 @@ import { InitContext, init_context_default } from '../src/context.js';
 describe("Test <FieldIsRequired />", () => {
   it("Renders a <span> with 'This field is required.' text", () => {
     const { container } = render(
-      <FieldIsRequired replyTo={0} />
+      <FieldIsRequired replyTo={0} message={"This field is required."} />
     );
 
     const span_elem = container.querySelector("span");
@@ -30,7 +30,7 @@ describe("Test <FieldIsRequired />", () => {
 
   it("Renders a <span> with a explicit style attribute", () => {
     const { container } = render(
-      <FieldIsRequired replyTo={1} />  // If replyTo > 0.
+      <FieldIsRequired replyTo={1} message={"This field is required."} />
     );
 
     const span_elem = container.querySelector("span");
@@ -191,6 +191,7 @@ describe("Test <CommentForm />", () => {
     };
     props = {
       ...init_context_default,
+      comment_max_length: 140,
       default_form
     };
   });
@@ -291,6 +292,49 @@ describe("Test <CommentForm />", () => {
     const field_is_required = comment_field.nextSibling;
     expect(field_is_required.nodeName).toEqual("SPAN");
     expect(field_is_required.textContent).toEqual("This field is required.");
+  });
+
+  it("Submits with comment field too long displays error", async () => {
+    global.fetch = jest.fn();
+    const { container } = render(
+      <InitContext.Provider value={props}>
+        <CommentForm
+          replyTo={0}
+          onCommentCreated={() => commentCreatedHandler()}
+        />
+      </InitContext.Provider>
+    );
+
+    const long_comment = (
+      "Cras faucibus vitae nisi sit amet semper. Aenean varius, neque sit"
+      + " amet porta malesuada, odio est laoreet tellus, non fermentum nunc"
+      + " ex et est. Sed consequat sit amet turpis ut congue. Aenean"
+      + " convallis quis ex a porta."
+    );
+
+    const comment_error_msg = (
+      `Ensure this value has at most 140 character`
+      + ` (it has ${long_comment.length}).`
+    );
+
+    const comment_field = container.querySelector("[name=comment]");
+    fireEvent.change(comment_field, {target: {value: long_comment}});
+    const name_field = container.querySelector("[name=name]");
+    fireEvent.change(name_field, {target: {value: "Fulanito de Tal"}});
+    const email_field = container.querySelector("[name=email]");
+    fireEvent.change(email_field, {target: {value: "fulanito@example.com"}});
+
+    const post_button = container.querySelector("[name=post]");
+    expect(post_button).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(post_button);
+    });
+
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(comment_field).toBeInTheDocument();
+    const field_is_required = comment_field.nextSibling;
+    expect(field_is_required.nodeName).toEqual("SPAN");
+    expect(field_is_required.textContent).toEqual(comment_error_msg);
   });
 
   it("Submits with name field empty does not call fetch", async () => {

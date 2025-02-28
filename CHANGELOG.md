@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.10.3] - 2025-02-28
+
+* Fixes [issue 451](https://github.com/danirus/django-comments-xtd/issues/451): Exceeding the `COMMENT_MAX_LENGTH` does not reflect in the UI, either when using django templates or when using the JavaScript plugin.
+
 ## [2.10.2] - 2025-01-07
 
 * Add reminder about template loading order to the documentation.

@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth.models import AnonymousUser, User
 from django.test import RequestFactory, TestCase
 
-from django_comments_xtd.api.frontend import commentbox_props_response
+from django_comments_xtd.api.frontend import commentbox_props_response, settings
 from django_comments_xtd.models import XtdComment
 from django_comments_xtd.tests.models import Diary, UUIDDiary
 
@@ -28,6 +28,7 @@ class CommentBoxTestCase(TestCase):
         self.assertEqual(d['count_url'], '/comments/api/tests-diary/1/count/')
         self.assertEqual(d['list_url'], '/comments/api/tests-diary/1/')
         self.assertEqual(d['current_user'], "1:bob")
+        self.assertEqual(d['comment_max_length'], settings.COMMENT_MAX_LENGTH)
 
     def test_comment_box_props_response_anonymous(self):
         request_factory = RequestFactory()

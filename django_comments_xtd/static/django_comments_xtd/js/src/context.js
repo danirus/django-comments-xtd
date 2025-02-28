@@ -42,7 +42,8 @@ export const init_context_default = {
   },
   default_followup: false,
   html_ud_suffix: "",
-  max_thread_level: -1
+  max_thread_level: -1,
+  comment_max_length: 3000,
 }
 
 export const InitContext = React.createContext(init_context_default);

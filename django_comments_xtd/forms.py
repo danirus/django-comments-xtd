@@ -66,3 +66,15 @@ class XtdCommentForm(CommentForm):
                      'followup': self.cleaned_data['followup'],
                      'content_object': target})
         return data
+
+    def clean(self):
+        cleaned_data = super().clean()
+        for field_name in self.errors.keys():
+            if 'class' not in self.fields[field_name].widget.attrs.keys():
+                continue
+            widget_classes = self.fields[field_name].widget.attrs['class']
+            widget_classes = widget_classes.split(" ")
+            widget_classes.append("is-invalid")
+            widget_classes = " ".join(widget_classes)
+            self.fields[field_name].widget.attrs['class'] = widget_classes
+        return cleaned_data

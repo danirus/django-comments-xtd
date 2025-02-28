@@ -124,6 +124,7 @@ class CommentBoxDriver(object):
             "default_followup": settings.COMMENTS_XTD_DEFAULT_FOLLOWUP,
             "html_id_suffix": get_html_id_suffix(obj),
             "max_thread_level": max_thread_level_for_content_type(ctype),
+            "comment_max_length": settings.COMMENT_MAX_LENGTH,
         }
         try:
             user_is_authenticated = user.is_authenticated()

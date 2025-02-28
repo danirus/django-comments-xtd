@@ -6,13 +6,13 @@ import { getCookie } from './lib.js';
 import { InitContext } from './context';
 
 
-export function FieldIsRequired({replyTo}) {
+export function FieldIsRequired({replyTo, message}) {
   return (
     <span
       className="form-text small invalid-feedback"
       {...((replyTo > 0) && {style: {"fontSize": "0.71rem"}})}
     >
-      {django.gettext("This field is required.")}
+      {django.gettext(message)}
     </span>
   );
 }
@@ -67,6 +67,7 @@ export function PreviewComment({avatar, name, url, comment, replyTo}) {
 
 export function CommentForm({ replyTo, onCommentCreated }) {
   const {
+    comment_max_length,
     default_followup,
     default_form,
     is_authenticated,
@@ -82,19 +83,37 @@ export function CommentForm({ replyTo, onCommentCreated }) {
     avatar: undefined, name: "", email: "", url: "", comment: "",
     followup: default_followup,
     errors: { name: false, email: false, comment: false },
-    alert: { message: "", cssc: "" }
+    alert: { message: "", cssc: "" },
+    comment_field_error: "",
   });
+
+  const default_error = "This field is required.";
+
+  const get_comment_length_error_msg = () => {
+    return (
+      `Ensure this value has at most ${comment_max_length} `
+      + `character (it has ${lstate.comment.length}).`
+    );
+  }
 
   const handle_input_change = (event) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const iname = target.name;
 
-    setLstate({ ...lstate, [iname]: value });
+    let comment_field_error = "";
+    if (lstate.comment_field_error.length > 0) {
+      comment_field_error = get_comment_length_error_msg();
+    }
+    setLstate({
+      ...lstate,
+      [iname]: value,
+      comment_field_error: comment_field_error
+    });
   }
 
   const is_valid_data = () => {
-    let is_valid_name = true, is_valid_email = true;
+    let is_valid_name = true, is_valid_email = true, comment_field_error = "";
 
     if (!is_authenticated || request_name)
       is_valid_name = (/^\s*$/.test(lstate.name)) ? false : true;
@@ -102,7 +121,11 @@ export function CommentForm({ replyTo, onCommentCreated }) {
     if (!is_authenticated || request_email_address)
       is_valid_email = (/\S+@\S+\.\S+/.test(lstate.email)) ? true : false;
 
-    const is_valid_comment = (/^\s*$/.test(lstate.comment)) ? false : true;
+    let is_valid_comment = (/^\s*$/.test(lstate.comment)) ? false : true;
+    if (lstate.comment.length >= comment_max_length) {
+      is_valid_comment = false;
+      comment_field_error = get_comment_length_error_msg();
+    }
 
     setLstate({
       ...lstate,
@@ -110,8 +133,9 @@ export function CommentForm({ replyTo, onCommentCreated }) {
         ...lstate.errors,
         name: !is_valid_name,
         email: !is_valid_email,
-        comment: !is_valid_comment
-      }
+        comment: !is_valid_comment,
+      },
+      comment_field_error: comment_field_error
     });
 
     return is_valid_name && is_valid_email && is_valid_comment;
@@ -253,12 +277,17 @@ export function CommentForm({ replyTo, onCommentCreated }) {
         <div className={(replyTo > 0) ? "col-12" : "col-10"}>
           <textarea
             required name="comment" id="id_comment"
-            value={lstate.comment} maxLength={3000}
+            value={lstate.comment}
             placeholder={django.gettext("Your comment")}
             className={get_input_css_classes("comment")}
             onChange={handle_input_change}
           />
-          {lstate.errors.comment && <FieldIsRequired replyTo={replyTo} />}
+          {lstate.errors.comment && (
+            <FieldIsRequired
+              replyTo={replyTo}
+              message={lstate.comment_field_error || default_error}
+            />
+          )}
         </div>
       </div>
     );
@@ -285,7 +314,12 @@ export function CommentForm({ replyTo, onCommentCreated }) {
             onChange={handle_input_change}
             className={get_input_css_classes("name")}
           />
-          {lstate.errors.name && <FieldIsRequired replyTo={replyTo} />}
+          {lstate.errors.name && (
+            <FieldIsRequired
+              replyTo={replyTo}
+              message="This field is required."
+            />
+          )}
         </div>
       </div>
     );

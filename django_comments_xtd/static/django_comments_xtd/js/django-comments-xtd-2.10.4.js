@@ -203,7 +203,8 @@
     },
     default_followup: false,
     html_ud_suffix: "",
-    max_thread_level: -1
+    max_thread_level: -1,
+    comment_max_length: 3000
   };
   var InitContext = /*#__PURE__*/React.createContext(init_context_default);
 
@@ -321,14 +322,15 @@
   }
 
   function FieldIsRequired(_ref) {
-    var replyTo = _ref.replyTo;
+    var replyTo = _ref.replyTo,
+      message = _ref.message;
     return /*#__PURE__*/React.createElement("span", _extends({
       className: "form-text small invalid-feedback"
     }, replyTo > 0 && {
       style: {
         "fontSize": "0.71rem"
       }
-    }), django.gettext("This field is required."));
+    }), django.gettext(message));
   }
   function PreviewComment(_ref2) {
     var avatar = _ref2.avatar,
@@ -378,6 +380,7 @@
     var replyTo = _ref3.replyTo,
       onCommentCreated = _ref3.onCommentCreated;
     var _useContext2 = React.useContext(InitContext),
+      comment_max_length = _useContext2.comment_max_length,
       default_followup = _useContext2.default_followup,
       default_form = _useContext2.default_form,
       is_authenticated = _useContext2.is_authenticated,
@@ -402,29 +405,44 @@
         alert: {
           message: "",
           cssc: ""
-        }
+        },
+        comment_field_error: ""
       }),
       _useState2 = _slicedToArray(_useState, 2),
       lstate = _useState2[0],
       setLstate = _useState2[1];
+    var default_error = "This field is required.";
+    var get_comment_length_error_msg = function get_comment_length_error_msg() {
+      return "Ensure this value has at most ".concat(comment_max_length, " ") + "character (it has ".concat(lstate.comment.length, ").");
+    };
     var handle_input_change = function handle_input_change(event) {
       var target = event.target;
       var value = target.type === 'checkbox' ? target.checked : target.value;
       var iname = target.name;
-      setLstate(_objectSpread2(_objectSpread2({}, lstate), {}, _defineProperty({}, iname, value)));
+      var comment_field_error = "";
+      if (lstate.comment_field_error.length > 0) {
+        comment_field_error = get_comment_length_error_msg();
+      }
+      setLstate(_objectSpread2(_objectSpread2({}, lstate), {}, _defineProperty(_defineProperty({}, iname, value), "comment_field_error", comment_field_error)));
     };
     var is_valid_data = function is_valid_data() {
       var is_valid_name = true,
-        is_valid_email = true;
+        is_valid_email = true,
+        comment_field_error = "";
       if (!is_authenticated || request_name) is_valid_name = /^\s*$/.test(lstate.name) ? false : true;
       if (!is_authenticated || request_email_address) is_valid_email = /\S+@\S+\.\S+/.test(lstate.email) ? true : false;
       var is_valid_comment = /^\s*$/.test(lstate.comment) ? false : true;
+      if (lstate.comment.length >= comment_max_length) {
+        is_valid_comment = false;
+        comment_field_error = get_comment_length_error_msg();
+      }
       setLstate(_objectSpread2(_objectSpread2({}, lstate), {}, {
         errors: _objectSpread2(_objectSpread2({}, lstate.errors), {}, {
           name: !is_valid_name,
           email: !is_valid_email,
           comment: !is_valid_comment
-        })
+        }),
+        comment_field_error: comment_field_error
       }));
       return is_valid_name && is_valid_email && is_valid_comment;
     };
@@ -538,12 +556,12 @@
         name: "comment",
         id: "id_comment",
         value: lstate.comment,
-        maxLength: 3000,
         placeholder: django.gettext("Your comment"),
         className: get_input_css_classes("comment"),
         onChange: handle_input_change
       }), lstate.errors.comment && /*#__PURE__*/React.createElement(FieldIsRequired, {
-        replyTo: replyTo
+        replyTo: replyTo,
+        message: lstate.comment_field_error || default_error
       })));
     };
     var render_name_field = function render_name_field() {
@@ -567,7 +585,8 @@
         onChange: handle_input_change,
         className: get_input_css_classes("name")
       }), lstate.errors.name && /*#__PURE__*/React.createElement(FieldIsRequired, {
-        replyTo: replyTo
+        replyTo: replyTo,
+        message: "This field is required."
       })));
     };
     var render_email_field = function render_email_field() {
@@ -1315,4 +1334,4 @@
   ReactDOM.createRoot(rootElement).render(/*#__PURE__*/React.createElement(React.StrictMode, null, /*#__PURE__*/React.createElement(App, _objectSpread2(_objectSpread2({}, window.comments_props), window.comments_props_override))));
 
 })(React, ReactDOM, django, remarkable);
-//# sourceMappingURL=django-comments-xtd-2.10.2.js.map
+//# sourceMappingURL=django-comments-xtd-2.10.4.js.map

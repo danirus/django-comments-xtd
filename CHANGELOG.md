@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.10.4] - 2025-03-01
+
+* Updates the version number of the JavaScript plugin to the version of the Python package.
+
 ## [2.10.3] - 2025-02-28
 
 * Fixes [issue 451](https://github.com/danirus/django-comments-xtd/issues/451): Exceeding the `COMMENT_MAX_LENGTH` does not reflect in the UI, either when using django templates or when using the JavaScript plugin.

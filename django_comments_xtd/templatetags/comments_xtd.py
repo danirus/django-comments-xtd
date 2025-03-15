@@ -535,7 +535,10 @@ def get_commentbox_props(parser, token):
     except ValueError:
         raise TemplateSyntaxError("%s tag requires arguments" %
                                   token.contents.split()[0])
-    match = re.search(r'for (\w+)', args)
+    if '.' in args:
+        match = re.search(r'for (\w+[.]\w+)', args)
+    else:
+        match = re.search(r'for (\w+)', args)
     if not match:
         raise TemplateSyntaxError("%s tag had invalid arguments" % tag_name)
     obj = match.groups()[0]

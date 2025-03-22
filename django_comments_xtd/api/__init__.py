@@ -1,11 +1,17 @@
 from django_comments_xtd.api.views import (
-    CommentCreate, CommentList, CommentCount,
-    ToggleFeedbackFlag, CreateReportFlag,
-    preview_user_avatar
+    CommentCount,
+    CommentCreate,
+    CommentList,
+    CreateReportFlag,
+    ToggleFeedbackFlag,
+    preview_user_avatar,
 )
 
 __all__ = (
-    CommentCreate, CommentList, CommentCount,
-    ToggleFeedbackFlag, CreateReportFlag,
-    preview_user_avatar
+    "CommentCount",
+    "CommentCreate",
+    "CommentList",
+    "CreateReportFlag",
+    "ToggleFeedbackFlag",
+    "preview_user_avatar",
 )

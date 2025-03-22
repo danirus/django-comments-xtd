@@ -1,6 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
 from django.utils.module_loading import import_string
-
 from django_comments.forms import CommentSecurityForm
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -9,18 +8,20 @@ from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import max_thread_level_for_content_type
 from django_comments_xtd.utils import (
-    get_current_site_id, get_app_model_options, get_html_id_suffix
+    get_app_model_options,
+    get_current_site_id,
+    get_html_id_suffix,
 )
-
 
 XtdComment = get_comment_model()
 
 
-class CommentBoxDriver(object):
+class CommentBoxDriver:
     """
     Class that allows overriding methods like get_queryset()
     for CommentBox props function.
     """
+
     @classmethod
     def get_queryset(cls, ctype, obj, request):
         return XtdComment.objects.filter(
@@ -87,8 +88,8 @@ class CommentBoxDriver(object):
         default_form = CommentSecurityForm(obj)
         ctype = ContentType.objects.get_for_model(obj)
         queryset = cls.get_queryset(ctype, obj, request)
-        ctype_slug = "%s-%s" % (ctype.app_label, ctype.model)
-        ctype_key = "%s.%s" % (ctype.app_label, ctype.model)
+        ctype_slug = f"{ctype.app_label}-{ctype.model}"
+        ctype_key = f"{ctype.app_label}.{ctype.model}"
         options = get_app_model_options(content_type=ctype_key)
         d = {
             "comment_count": queryset.count(),
@@ -97,7 +98,7 @@ class CommentBoxDriver(object):
             "request_name": False,
             "request_email_address": False,
             "is_authenticated": False,
-            "who_can_post": options['who_can_post'],
+            "who_can_post": options["who_can_post"],
             "allow_flagging": False,
             "allow_feedback": False,
             "show_feedback": False,
@@ -105,21 +106,23 @@ class CommentBoxDriver(object):
             "polling_interval": 2000,
             "feedback_url": cls._reverse("comments-xtd-api-feedback"),
             "delete_url": cls._reverse("comments-delete", args=(0,)),
-            "reply_url": cls._reverse("comments-xtd-reply", kwargs={'cid': 0}),
+            "reply_url": cls._reverse("comments-xtd-reply", kwargs={"cid": 0}),
             "flag_url": cls._reverse("comments-flag", args=(0,)),
-            "list_url": cls._reverse('comments-xtd-api-list',
-                                     kwargs={'content_type': ctype_slug,
-                                             'object_pk': obj.pk}),
-            "count_url": cls._reverse('comments-xtd-api-count',
-                                      kwargs={'content_type': ctype_slug,
-                                              'object_pk': obj.pk}),
+            "list_url": cls._reverse(
+                "comments-xtd-api-list",
+                kwargs={"content_type": ctype_slug, "object_pk": obj.pk},
+            ),
+            "count_url": cls._reverse(
+                "comments-xtd-api-count",
+                kwargs={"content_type": ctype_slug, "object_pk": obj.pk},
+            ),
             "send_url": cls._reverse("comments-xtd-api-create"),
             "preview_url": cls._reverse("comments-xtd-api-preview"),
             "default_form": {
-                "content_type": default_form['content_type'].value(),
-                "object_pk": default_form['object_pk'].value(),
-                "timestamp": default_form['timestamp'].value(),
-                "security_hash": default_form['security_hash'].value()
+                "content_type": default_form["content_type"].value(),
+                "object_pk": default_form["object_pk"].value(),
+                "timestamp": default_form["timestamp"].value(),
+                "security_hash": default_form["security_hash"].value(),
             },
             "default_followup": settings.COMMENTS_XTD_DEFAULT_FOLLOWUP,
             "html_id_suffix": get_html_id_suffix(obj),
@@ -131,18 +134,17 @@ class CommentBoxDriver(object):
         except TypeError:  # Django >= 1.11
             user_is_authenticated = user.is_authenticated
         if user and user_is_authenticated:
-            d['current_user'] = "%d:%s" % (
-                user.pk, settings.COMMENTS_XTD_API_USER_REPR(user))
-            d['is_authenticated'] = True
-            d['can_moderate'] = user.has_perm("django_comments.can_moderate")
-            d['request_name'] = (
-                True if not len(user.get_full_name()) else False
-            )
-            d['request_email_address'] = True if not user.email else False
+            d[
+                "current_user"
+            ] = f"{user.pk}:{settings.COMMENTS_XTD_API_USER_REPR(user)}"
+            d["is_authenticated"] = True
+            d["can_moderate"] = user.has_perm("django_comments.can_moderate")
+            d["request_name"] = not bool(len(user.get_full_name()))
+            d["request_email_address"] = not bool(user.email)
         else:
-            d['login_url'] = settings.LOGIN_URL
-            d['like_url'] = reverse("comments-xtd-like", args=(0,))
-            d['dislike_url'] = reverse("comments-xtd-dislike", args=(0,))
+            d["login_url"] = settings.LOGIN_URL
+            d["like_url"] = reverse("comments-xtd-like", args=(0,))
+            d["dislike_url"] = reverse("comments-xtd-dislike", args=(0,))
 
         return d
 

@@ -1051,15 +1051,7 @@ JavaScript plugin.
 Enable Web API
 --------------
 
-The JavaScript plugin uses the Web API provided within the app. In order to
-enable it install the `django-rest-framework
-<http://www.django-rest-framework.org/>`_:
-
-.. code-block:: bash
-
-  pip install djangorestframework
-
-Once installed, add it to our tutorial :setting:`INSTALLED_APPS` setting:
+The JavaScript plugin uses the Web API provided within the app, implemented with `django-rest-framework <http://www.django-rest-framework.org/>`_. To use it, add it to our tutorial :setting:`INSTALLED_APPS` setting:
 
 .. code-block:: python
 
@@ -1097,16 +1089,11 @@ The i18n JavaScript Catalog
 Internationalization support (see :ref:`i18n`) has been included within the
 plugin by making use of the `Django's JavaScript i18n catalog
 <https://docs.djangoproject.com/en/1.11/topics/i18n/translation/
-#using-the-javascript-translation-catalog>`_. If your project doesn't need
-i18n you can easily remove every mention to these functions (namespaced
-under the `django` object) from the source and change the
-``webpack.config.js`` file to build the plugin without it.
+#using-the-javascript-translation-catalog>`_.
 
-Our tutorial doesn't have i18n enabled (the `comp example project
+The tutorial doesn't have i18n enabled (the `comp example project
 <https://github.com/danirus/django-comments-xtd/tree/master/example/comp>`_
-has it), but we will not remove its support from the plugin, we will simply
-enable the JavaScript Catalog URL, so that the plugin can access its functions.
-Edit ``tutorial/urls.py`` and add the following url:
+has it). To enable the JavaScript Catalog URL, edit ``tutorial/urls.py`` and add the following url:
 
 .. code-block:: python
 
@@ -1180,7 +1167,6 @@ Be sure your ``blog/post_detail.html`` looks like the following:
     <div>
       {{ object.body|linebreaks }}
     </div>
-    {% get_comment_count for object as comment_count %}
     <div class="py-4 text-center">
       <a href="{% url 'blog:post-list' %}">Back to the post list</a>
     </div>
@@ -1206,7 +1192,7 @@ Be sure your ``blog/post_detail.html`` looks like the following:
     <script
     type="text/javascript"
     src="{% url 'javascript-catalog' %}"></script>
-    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.10.4.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.10.5.js' %}"></script>
     <script>
     window.addEventListener('DOMContentLoaded', (_) => {
         const tooltipQs = '[data-bs-toggle="tooltip"]';

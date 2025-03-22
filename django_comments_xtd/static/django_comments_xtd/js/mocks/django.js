@@ -21,4 +21,3 @@ function _django() {
 const django = _django();
 
 export default django;
-

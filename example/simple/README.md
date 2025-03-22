@@ -1,7 +1,7 @@
 ## Simple example project ##
 
 The Simple Demo features:
-  
+
  1. An Articles App, with a model `Article` whose instances accept comments.
  1. Confirmation by mail is required before the comment hit the database, unless `COMMENTS_XTD_CONFIRM_EMAIL` is set to False. Authenticated users don't have to confirm comments.
  1. Follow up notifications via mail.

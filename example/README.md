@@ -8,9 +8,9 @@ Contains three example projects:
 
 ### Simple ###
 
-The Simple demo site is a project with an 'articles' application and an 'Article' model whose instances accept comments. It features: 
+The Simple demo site is a project with an 'articles' application and an 'Article' model whose instances accept comments. It features:
 
- * Comments have to be confirmed by mail before they hit the database, unless users are authenticated or `COMMENTS_XTD_CONFIRM_EMAIL` is set to False. 
+ * Comments have to be confirmed by mail before they hit the database, unless users are authenticated or `COMMENTS_XTD_CONFIRM_EMAIL` is set to False.
  * Commenters may request follow up notifications.
  * Mute links to allow cancellation of follow-up notifications.
 
@@ -29,7 +29,7 @@ The Comp demo implements two apps, each of which contains a model whose instance
 
  1. App `articles` with the model `Article`
  1. App `quotes` with the model `Quote`
-    
+
 It features:
 
  1. Comments can be nested, and the maximum thread level is established to 2.

@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
         ),
 
         migrations.CreateModel(
-            name="Diary", 
+            name="Diary",
             fields=[
                 ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('body', models.TextField(verbose_name='body')),
@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
             options={
                 'db_table': 'demo_diary',
                 'ordering': ('-publish',),
-            },            
+            },
         ),
 
         migrations.CreateModel(

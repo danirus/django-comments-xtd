@@ -29,3 +29,4 @@ example/env
 .python-version
 docs/fonts/
 django_comments_xtd/static/django_comments_xtd/js/coverage/
+django_comments_xtd/static/django_comments_xtd/js/django-comments-xtd-*

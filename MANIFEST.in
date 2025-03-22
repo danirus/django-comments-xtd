@@ -1,12 +1,24 @@
 include AUTHORS
 include LICENSE
 include CHANGELOG.md
-include tox.ini
-include package.json
-include webpack.config.js
-include requirements.pip
-include requirements_tests.pip
-recursive-include docs *
+
+exclude .coverage
+exclude .gitignore
+exclude jest.config.js
+exclude package.json
+exclude rollup.config.js
+exclude tox.ini
+
 recursive-include django_comments_xtd/locale *
 recursive-include django_comments_xtd/templates *
 recursive-include django_comments_xtd/static *
+
+exclude django_comments_xtd/static/django_comments_xtd/js/setup-jest.js
+
+recursive-exclude django_comments_xtd/static/django_comments_xtd/js/mocks *
+recursive-exclude django_comments_xtd/static/django_comments_xtd/js/src *
+recursive-exclude django_comments_xtd/static/django_comments_xtd/js/tests *
+recursive-exclude django_comments_xtd/tests *
+recursive-exclude docs *
+recursive-exclude example *
+recursive-exclude node_modules *

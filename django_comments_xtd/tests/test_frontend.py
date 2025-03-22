@@ -13,51 +13,43 @@ class CommentBoxTestCase(TestCase):
         request_factory = RequestFactory()
         request = request_factory.get("/")
         user = User.objects.create_user("bob", "bob@example.com", "pwd")
-        diary = Diary.objects.create(
-            body='Lorem ipsum',
-            allow_comments=True
-        )
+        diary = Diary.objects.create(body="Lorem ipsum", allow_comments=True)
         XtdComment.objects.create(
             content_object=diary,
             site_id=1,
         )
         response = commentbox_props_response(diary, user, request)
         d = response.data
-        self.assertEqual(d['comment_count'], 1)
-        self.assertEqual(d['default_form']['object_pk'], str(diary.id))
-        self.assertEqual(d['count_url'], '/comments/api/tests-diary/1/count/')
-        self.assertEqual(d['list_url'], '/comments/api/tests-diary/1/')
-        self.assertEqual(d['current_user'], "1:bob")
-        self.assertEqual(d['comment_max_length'], settings.COMMENT_MAX_LENGTH)
+        self.assertEqual(d["comment_count"], 1)
+        self.assertEqual(d["default_form"]["object_pk"], str(diary.id))
+        self.assertEqual(d["count_url"], "/comments/api/tests-diary/1/count/")
+        self.assertEqual(d["list_url"], "/comments/api/tests-diary/1/")
+        self.assertEqual(d["current_user"], "1:bob")
+        self.assertEqual(d["comment_max_length"], settings.COMMENT_MAX_LENGTH)
 
     def test_comment_box_props_response_anonymous(self):
         request_factory = RequestFactory()
         request = request_factory.get("/")
         user = AnonymousUser()
-        diary = Diary.objects.create(
-            body='Lorem ipsum',
-            allow_comments=True
-        )
+        diary = Diary.objects.create(body="Lorem ipsum", allow_comments=True)
         XtdComment.objects.create(
             content_object=diary,
             site_id=1,
         )
         response = commentbox_props_response(diary, user, request)
         d = response.data
-        self.assertEqual(d['comment_count'], 1)
-        self.assertEqual(d['default_form']['object_pk'], str(diary.id))
-        self.assertEqual(d['count_url'], '/comments/api/tests-diary/1/count/')
-        self.assertEqual(d['list_url'], '/comments/api/tests-diary/1/')
-        self.assertEqual(d['current_user'], "0:Anonymous")
+        self.assertEqual(d["comment_count"], 1)
+        self.assertEqual(d["default_form"]["object_pk"], str(diary.id))
+        self.assertEqual(d["count_url"], "/comments/api/tests-diary/1/count/")
+        self.assertEqual(d["list_url"], "/comments/api/tests-diary/1/")
+        self.assertEqual(d["current_user"], "0:Anonymous")
 
     def test_comment_box_props_response_uuid(self):
         request_factory = RequestFactory()
         request = request_factory.get("/")
         user = AnonymousUser()
         diary = UUIDDiary.objects.create(
-            uuid=uuid.uuid4(),
-            body='Lorem ipsum',
-            allow_comments=True
+            uuid=uuid.uuid4(), body="Lorem ipsum", allow_comments=True
         )
         XtdComment.objects.create(
             content_object=diary,
@@ -65,13 +57,11 @@ class CommentBoxTestCase(TestCase):
         )
         response = commentbox_props_response(diary, user, request)
         d = response.data
-        self.assertEqual(d['comment_count'], 1)
-        self.assertEqual(d['default_form']['object_pk'], str(diary.uuid))
+        self.assertEqual(d["comment_count"], 1)
+        self.assertEqual(d["default_form"]["object_pk"], str(diary.uuid))
         self.assertEqual(
-            d['count_url'],
-            f'/comments/api/tests-uuiddiary/{diary.uuid}/count/'
+            d["count_url"], f"/comments/api/tests-uuiddiary/{diary.uuid}/count/"
         )
         self.assertEqual(
-            d['list_url'],
-            f'/comments/api/tests-uuiddiary/{diary.uuid}/'
+            d["list_url"], f"/comments/api/tests-uuiddiary/{diary.uuid}/"
         )

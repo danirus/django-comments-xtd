@@ -1,0 +1,29 @@
+---
+exclude: 'dist/'
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.4
+    hooks:
+      - id: ruff
+        args:
+          - "--fix"
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: js-lint
+        name: local-js-lint
+        entry: npm run lint --
+        language: node
+        types: [javascript]

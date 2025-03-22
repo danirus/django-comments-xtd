@@ -67,7 +67,7 @@ copyright = u'2024, Daniela Rus Morales'
 # The short X.Y version.
 version = '2.10'
 # The full version, including alpha/beta/rc tags.
-release = '2.10.4'
+release = '2.10.5'
 
 releases = [
     "latest",

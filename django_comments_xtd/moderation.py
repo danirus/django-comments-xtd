@@ -1,13 +1,9 @@
 from django.contrib.sites.shortcuts import get_current_site
-
 from django.template import loader
-
 from django_comments import get_model
-from django_comments.signals import (comment_will_be_posted,
-                                     comment_was_flagged)
 from django_comments.models import CommentFlag
-from django_comments.moderation import Moderator, CommentModerator
-
+from django_comments.moderation import CommentModerator, Moderator
+from django_comments.signals import comment_was_flagged, comment_will_be_posted
 
 from django_comments_xtd.conf import settings
 from django_comments_xtd.models import BlackListedDomain, TmpXtdComment
@@ -43,24 +39,36 @@ class XtdCommentModerator(CommentModerator):
     ``moderate``.
 
     """
+
     removal_suggestion_notification = None
 
     def notify_removal_suggestion(self, comment, content_object, request):
         if not self.removal_suggestion_notification:
             return
-        recipient_list = [manager_tuple[1]
-                          for manager_tuple in settings.MANAGERS]
-        t = loader.get_template('django_comments_xtd/'
-                                'removal_notification_email.txt')
-        c = {'comment': comment,
-             'content_object': content_object,
-             'current_site': get_current_site(request),
-             'request': request}
-        subject = ('[%s] Comment removal suggestion on "%s"' %
-                   (c['current_site'].name, content_object))
+        recipient_list = [
+            manager_tuple[1] for manager_tuple in settings.MANAGERS
+        ]
+        t = loader.get_template(
+            "django_comments_xtd/removal_notification_email.txt"
+        )
+        c = {
+            "comment": comment,
+            "content_object": content_object,
+            "current_site": get_current_site(request),
+            "request": request,
+        }
+        subject = (
+            f'[{c["current_site"].name}] Comment removal '
+            f'suggestion on "{content_object}"'
+        )
         message = t.render(c)
-        send_mail(subject, message, settings.COMMENTS_XTD_FROM_EMAIL,
-                  recipient_list, fail_silently=True)
+        send_mail(
+            subject,
+            message,
+            settings.COMMENTS_XTD_FROM_EMAIL,
+            recipient_list,
+            fail_silently=True,
+        )
 
 
 class SpamModerator(XtdCommentModerator):
@@ -85,37 +93,40 @@ class SpamModerator(XtdCommentModerator):
     Remember to update the content regularly through an external Spam
     filtering service.
     """
+
     def allow(self, comment, content_object, request):
         try:
-            domain = comment.user_email.split('@', 1)[1]
+            domain = comment.user_email.split("@", 1)[1]
         except IndexError:
             return False
         else:
             if BlackListedDomain.objects.filter(domain=domain).count():
                 return False
-            return super(SpamModerator, self).allow(comment, content_object,
-                                                    request)
+            return super().allow(comment, content_object, request)
 
 
 class XtdModerator(Moderator):
     def connect(self):
-        comment_will_be_posted.connect(self.pre_save_moderation,
-                                       sender=TmpXtdComment)
-        confirmation_received.connect(self.post_save_moderation,
-                                      sender=TmpXtdComment)
-        comment_was_flagged.connect(self.comment_flagged,
-                                    sender=get_model())
+        comment_will_be_posted.connect(
+            self.pre_save_moderation, sender=TmpXtdComment
+        )
+        confirmation_received.connect(
+            self.post_save_moderation, sender=TmpXtdComment
+        )
+        comment_was_flagged.connect(self.comment_flagged, sender=get_model())
 
-    def comment_flagged(self, sender, comment, flag, created, request,
-                        **kwargs):
+    # ruff: noqa: PLR0913
+    def comment_flagged(
+        self, sender, comment, flag, created, request, **kwargs
+    ):
         model = comment.content_type.model_class()
         if model not in self._registry:
             return
         if flag.flag != CommentFlag.SUGGEST_REMOVAL:
             return
-        self._registry[model].notify_removal_suggestion(comment,
-                                                        comment.content_object,
-                                                        request)
+        self._registry[model].notify_removal_suggestion(
+            comment, comment.content_object, request
+        )
 
 
 moderator = XtdModerator()

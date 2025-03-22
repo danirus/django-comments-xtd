@@ -1,5 +1,15 @@
 # Change Log
 
+## [2.10.5] - 2025-03-20
+
+* Removes external dependencies from `django_comments_xtd/__init__.py`.
+* Opens up the range of supported Django versions to "Django>=4,<6".
+* Uses `pyproject.toml` to replace `setup.py`.
+* Updates `tox.ini`.
+* Build JavaScript plugin during CI.
+* Replace flake8 with ruff, and adopt pre-commit rules.
+* Many stylistic changes after applying ruff.
+
 ## [2.10.4] - 2025-03-01
 
 * Updates the version number of the JavaScript plugin to the version of the Python package.

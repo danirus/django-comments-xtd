@@ -1,7 +1,6 @@
 from django import forms
 from django.apps import apps
 from django.utils.translation import gettext_lazy as _
-
 from django_comments.forms import CommentForm
 
 from django_comments_xtd.conf import settings
@@ -9,10 +8,12 @@ from django_comments_xtd.models import TmpXtdComment
 
 
 class XtdCommentForm(CommentForm):
-    followup = forms.BooleanField(required=False,
-                                  label=_("Notify me about follow-up comments"))
-    reply_to = forms.IntegerField(required=True, initial=0,
-                                  widget=forms.HiddenInput())
+    followup = forms.BooleanField(
+        required=False, label=_("Notify me about follow-up comments")
+    )
+    reply_to = forms.IntegerField(
+        required=True, initial=0, widget=forms.HiddenInput()
+    )
 
     def __init__(self, *args, **kwargs):
         comment = kwargs.pop("comment", None)
@@ -20,61 +21,74 @@ class XtdCommentForm(CommentForm):
             initial = kwargs.pop("initial", {})
             initial.update({"reply_to": comment.pk})
             kwargs["initial"] = initial
-            followup_suffix = ('_%d' % comment.pk)
+            followup_suffix = f"_{comment.pk}"
         else:
-            followup_suffix = ''
+            followup_suffix = ""
 
         super(CommentForm, self).__init__(*args, **kwargs)
 
-        self.fields['name'].label = _("Name")
-        self.fields['name'].widget = forms.TextInput(
-            attrs={'placeholder': _('name'), 'class': 'form-control'})
+        self.fields["name"].label = _("Name")
+        self.fields["name"].widget = forms.TextInput(
+            attrs={"placeholder": _("name"), "class": "form-control"}
+        )
 
-        self.fields['email'].label = _("Mail")
-        self.fields['email'].help_text = _("Required for comment verification")
-        self.fields['email'].widget = forms.TextInput(
-            attrs={'placeholder': _('mail address'), 'class': 'form-control'})
+        self.fields["email"].label = _("Mail")
+        self.fields["email"].help_text = _("Required for comment verification")
+        self.fields["email"].widget = forms.TextInput(
+            attrs={"placeholder": _("mail address"), "class": "form-control"}
+        )
 
-        self.fields['url'].label = _("Link")
-        self.fields['url'].required = False
-        self.fields['url'].widget = forms.TextInput(attrs={
-                'placeholder': _('url your name links to (optional)'),
-                'class': 'form-control'})
+        self.fields["url"].label = _("Link")
+        self.fields["url"].required = False
+        self.fields["url"].widget = forms.TextInput(
+            attrs={
+                "placeholder": _("url your name links to (optional)"),
+                "class": "form-control",
+            }
+        )
 
-        self.fields['comment'].widget = forms.Textarea(
-            attrs={'placeholder': _('Your comment'), 'class': 'form-control'})
-        self.fields['comment'].max_length = settings.COMMENT_MAX_LENGTH
-        self.fields['comment'].widget.attrs.pop('cols')
-        self.fields['comment'].widget.attrs.pop('rows')
+        self.fields["comment"].widget = forms.Textarea(
+            attrs={"placeholder": _("Your comment"), "class": "form-control"}
+        )
+        self.fields["comment"].max_length = settings.COMMENT_MAX_LENGTH
+        self.fields["comment"].widget.attrs.pop("cols")
+        self.fields["comment"].widget.attrs.pop("rows")
 
-        self.fields['followup'].widget.attrs['id'] = (
-            'id_followup%s' % followup_suffix)
-        self.fields['followup'].widget.attrs['class'] = "form-check-input"
-        self.fields['followup'].initial = settings.COMMENTS_XTD_DEFAULT_FOLLOWUP
+        self.fields["followup"].widget.attrs[
+            "id"
+        ] = f"id_followup{followup_suffix}"
+        self.fields["followup"].widget.attrs["class"] = "form-check-input"
+        self.fields["followup"].initial = settings.COMMENTS_XTD_DEFAULT_FOLLOWUP
 
     def get_comment_model(self):
         return TmpXtdComment
 
     def get_comment_create_data(self, site_id=None):
         data = super(CommentForm, self).get_comment_create_data(site_id=site_id)
-        ctype = data.get('content_type')
-        object_pk = data.get('object_pk')
+        ctype = data.get("content_type")
+        object_pk = data.get("object_pk")
         model = apps.get_model(ctype.app_label, ctype.model)
         target = model._default_manager.get(pk=object_pk)
-        data.update({'thread_id': 0, 'level': 0, 'order': 1,
-                     'parent_id': self.cleaned_data['reply_to'],
-                     'followup': self.cleaned_data['followup'],
-                     'content_object': target})
+        data.update(
+            {
+                "thread_id": 0,
+                "level": 0,
+                "order": 1,
+                "parent_id": self.cleaned_data["reply_to"],
+                "followup": self.cleaned_data["followup"],
+                "content_object": target,
+            }
+        )
         return data
 
     def clean(self):
         cleaned_data = super().clean()
-        for field_name in self.errors.keys():
-            if 'class' not in self.fields[field_name].widget.attrs.keys():
+        for field_name in self.errors:
+            if "class" not in self.fields[field_name].widget.attrs:
                 continue
-            widget_classes = self.fields[field_name].widget.attrs['class']
+            widget_classes = self.fields[field_name].widget.attrs["class"]
             widget_classes = widget_classes.split(" ")
             widget_classes.append("is-invalid")
             widget_classes = " ".join(widget_classes)
-            self.fields[field_name].widget.attrs['class'] = widget_classes
+            self.fields[field_name].widget.attrs["class"] = widget_classes
         return cleaned_data

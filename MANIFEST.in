@@ -3,9 +3,12 @@ include LICENSE
 include CHANGELOG.md
 include tox.ini
 include package.json
-include webpack.config.js
-include requirements.pip
-include requirements_tests.pip
+include jest.config.js
+include rollup.config.js
+
+exclude .coverage
+exclude .gitignore
+
 recursive-include docs *
 recursive-include django_comments_xtd/locale *
 recursive-include django_comments_xtd/templates *

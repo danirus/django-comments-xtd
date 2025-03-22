@@ -77,6 +77,7 @@ exclude = [
     "venv/",
     "django_comments_xtd/migrations/",
     "django_comments_xtd/tests/migrations/",
+    "example/**/migrations/",
 ]
 line-length = 80
 

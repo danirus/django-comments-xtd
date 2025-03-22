@@ -1,31 +1,24 @@
-#-*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
+from pathlib import Path
 
+BASE_DIR = Path(__file__).parents[3]
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-PROJECT_DIR = os.path.abspath(os.path.curdir)
+PROJECT_DIR = Path(__file__).parent.resolve()
 
 DEBUG = True
 
-INTERNAL_IPS = [
-    '127.0.0.1'
-]
+INTERNAL_IPS = ["127.0.0.1"]
 
-ADMINS = (
-    ('Alice Bloggs', 'alice@example.com'),
-)
+ADMINS = (("Alice Bloggs", "alice@example.com"),)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 MANAGERS = ADMINS
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'comp', 'db.sqlite3'),
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": PROJECT_DIR / "db.sqlite3",
     }
 }
 
@@ -34,28 +27,28 @@ DATABASES = {
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Berlin'
+TIME_ZONE = "Europe/Berlin"
 USE_TZ = True
 USE_L10N = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = "en"
 
 LANGUAGES = (
-    ('nl', 'Dutch'),
-    ('en', 'English'),
-    ('fi', 'Finnish'),
-    ('fr', 'French'),
-    ('de', 'German'),
-    ('it', 'Italian'),
-    ('no', 'Norwegian'),
-    ('ru', 'Russian'),
-    ('es', 'Spanish'),
-    ('zh-hans', 'Simplified Chinese'),
+    ("nl", "Dutch"),
+    ("en", "English"),
+    ("fi", "Finnish"),
+    ("fr", "French"),
+    ("de", "German"),
+    ("it", "Italian"),
+    ("no", "Norwegian"),
+    ("ru", "Russian"),
+    ("es", "Spanish"),
+    ("zh-hans", "Simplified Chinese"),
 )
 
-SITE_ID = os.environ.get('SITE_ID', 1)
+SITE_ID = os.environ.get("SITE_ID", 1)
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -75,9 +68,9 @@ USE_I18N = True
 # Examples: "http://foo.com/media/", "/media/".
 # ADMIN_MEDIA_PREFIX = '/media/'
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+STATIC_ROOT = PROJECT_DIR / "static"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -89,69 +82,69 @@ STATICFILES_DIRS = (
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
 
-SECRET_KEY = 'v2824l&2-n+4zznbsk9c-ap5i)b3e8b+%*a=dxqlahm^%)68jn'
+SECRET_KEY = "v2824l&2-n+4zznbsk9c-ap5i)b3e8b+%*a=dxqlahm^%)68jn"
 
-TEMPLATES = [{
-    'BACKEND': 'django.template.backends.django.DjangoTemplates',
-	'DIRS': [
-	    os.path.join(os.path.dirname(__file__), "templates"),
-	],
-    'APP_DIRS': True,
-	'OPTIONS': {
-	    'context_processors': [
-            'django.template.context_processors.debug',
-            'django.template.context_processors.request',
-            'django.contrib.auth.context_processors.auth',
-            'django.contrib.messages.context_processors.messages',
-            'comp.context_processors.settings',
-	    ],
-	},
-}]
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            PROJECT_DIR / "templates",
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "comp.context_processors.settings",
+            ],
+        },
+    }
+]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.sites.middleware.CurrentSiteMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.sites.middleware.CurrentSiteMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
 
-ROOT_URLCONF = 'comp.urls'
+ROOT_URLCONF = "comp.urls"
 
 
 INSTALLED_APPS = (
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'corsheaders',
-    'debug_toolbar',
-    'django_extensions',
-    'rosetta',
-    'rest_framework',
-    'django_markdown2',
-    'django_comments_xtd',
-    'django_comments',
-
-    'comp',
-    'comp.articles',
-    'comp.extra.quotes',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.sites",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "corsheaders",
+    "debug_toolbar",
+    "django_extensions",
+    "rosetta",
+    "rest_framework",
+    "django_markdown2",
+    "django_comments_xtd",
+    "django_comments",
+    "comp",
+    "comp.articles",
+    "comp.extra.quotes",
 )
 
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+TEST_RUNNER = "django.test.runner.DiscoverRunner"
 
 # EMAIL_HOST          = "smtp.gmail.com"
 # EMAIL_PORT          = "587"
@@ -163,36 +156,36 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Fill in actual EMAIL settings above, and comment out the
 # following line to let this django demo sending emails
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 COMMENTS_APP = "django_comments_xtd"
-COMMENTS_XTD_CONFIRM_EMAIL = True   # Set to False to disable confirmation
+COMMENTS_XTD_CONFIRM_EMAIL = True  # Set to False to disable confirmation
 COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
-COMMENTS_XTD_FROM_EMAIL = 'noreply@example.com'
-COMMENTS_XTD_CONTACT_EMAIL = 'helpdesk@example.com'
-COMMENTS_XTD_THREADED_EMAILS = False # default to True, use False to allow
-                                     # other backend (say Celery based) send
-                                     # your emails.
+COMMENTS_XTD_FROM_EMAIL = "noreply@example.com"
+COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
+COMMENTS_XTD_THREADED_EMAILS = False  # default to True, use False to allow
+# other backend (say Celery based) send
+# your emails.
 
 # Quotes can have 1-level depth nested comments.
 COMMENTS_XTD_MAX_THREAD_LEVEL = 1
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
-    'articles.article': 2,
+    "articles.article": 2,
 }
-COMMENTS_XTD_LIST_ORDER = ('-thread_id', 'order')
+COMMENTS_XTD_LIST_ORDER = ("-thread_id", "order")
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
-    'articles.article': {
-        'who_can_post': 'all',
-        'allow_flagging': True,
-        'allow_feedback': True,
-        'show_feedback': True,
+    "articles.article": {
+        "who_can_post": "all",
+        "allow_flagging": True,
+        "allow_feedback": True,
+        "show_feedback": True,
     },
-    'quotes.quote': {
-        'who_can_post': 'all',
-        'allow_flagging': True,
-        'allow_feedback': True,
-        'show_feedback': True,
-    }
+    "quotes.quote": {
+        "who_can_post": "all",
+        "allow_flagging": True,
+        "allow_feedback": True,
+        "show_feedback": True,
+    },
 }
 # COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
 
@@ -200,7 +193,7 @@ LOGIN_URL = "/admin/login/"
 LOGIN_REDIRECT_URL = LOGIN_URL
 
 DEBUG_TOOLBAR_PANELS = [
-    'debug_toolbar.panels.sql.SQLPanel',
+    "debug_toolbar.panels.sql.SQLPanel",
 ]
 
 CORS_ALLOWED_ORIGINS = [

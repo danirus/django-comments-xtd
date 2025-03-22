@@ -9,7 +9,7 @@ class LazySettings(LazyObject):
         self._wrapped = Settings(app_settings, django_settings)
 
 
-class Settings(object):
+class Settings:
     def __init__(self, *args):
         for item in args:
             for attr in dir(item):

@@ -1,5 +1,0 @@
-sphinx>=8,<9
-myst-parser>=4.0.0,<4.1
-sphinx-colorschemed-images>=0.2.2
-sphinx-copybutton>=0.5.2,<1.0.0
-sphinx-nefertiti>=0.7.3

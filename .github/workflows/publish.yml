@@ -3,24 +3,32 @@ on:
   release:
     types: [published]
 
+env:
+  FORCE_COLOR: true
+  NODE: 22.14
+  PYTHON: 3.13
+
 jobs:
   publish:
-    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
     steps:
-      - uses: actions/checkout@v2
-      - name: Python setup
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          python-version: '3.13'
-      - name: Install build, wheel and twine
-        run: pip install build wheel twine
-      - name: Build source tarball and binary
-        run: python -m build --sdist --wheel --outdir dist/
+          node-version: "${{ env.NODE }}"
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "${{ env.PYTHON }}"
+          cache: pip
+
+      - run: pip install build
+      - run: npm install
+      - run: make build
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1.8
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}

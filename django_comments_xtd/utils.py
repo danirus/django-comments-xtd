@@ -1,32 +1,35 @@
 # Idea borrowed from Selwin Ong post:
 # http://ui.co.id/blog/asynchronous-send_mail-in-django
 
-from copy import copy
 import hashlib
+from copy import copy
+
 try:
-    import Queue as queue  # python2
+    import Queue as queue  # python2  # noqa: N813
 except ImportError:
-    import queue as queue  # python3
+    import queue as queue  # python3  # noqa: PLC0414
 import threading
+
 try:
     from urllib.parse import urlencode
 except ImportError:
     from urllib import urlencode
 
-from django.core.mail import EmailMultiAlternatives
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMultiAlternatives
 from django.utils.crypto import salted_hmac
 
 from django_comments_xtd.conf import settings
 
-
 mail_sent_queue = queue.Queue()
 
 
+# ruff:noqa: PLR0913
 class EmailThread(threading.Thread):
-    def __init__(self, subject, body, from_email, recipient_list,
-                 fail_silently, html):
+    def __init__(
+        self, subject, body, from_email, recipient_list, fail_silently, html
+    ):
         self.subject = subject
         self.body = body
         self.recipient_list = recipient_list
@@ -36,27 +39,37 @@ class EmailThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        _send_mail(self.subject, self.body, self.from_email,
-                   self.recipient_list, self.fail_silently, self.html)
+        _send_mail(
+            self.subject,
+            self.body,
+            self.from_email,
+            self.recipient_list,
+            self.fail_silently,
+            self.html,
+        )
         mail_sent_queue.put(True)
 
 
-def _send_mail(subject, body, from_email, recipient_list,
-               fail_silently=False, html=None):
+def _send_mail(
+    subject, body, from_email, recipient_list, fail_silently=False, html=None
+):
     msg = EmailMultiAlternatives(subject, body, from_email, recipient_list)
     if html:
         msg.attach_alternative(html, "text/html")
     msg.send(fail_silently)
 
 
-def send_mail(subject, body, from_email, recipient_list,
-              fail_silently=False, html=None):
+def send_mail(
+    subject, body, from_email, recipient_list, fail_silently=False, html=None
+):
     if settings.COMMENTS_XTD_THREADED_EMAILS:
-        EmailThread(subject, body, from_email, recipient_list,
-                    fail_silently, html).start()
+        EmailThread(
+            subject, body, from_email, recipient_list, fail_silently, html
+        ).start()
     else:
-        _send_mail(subject, body, from_email, recipient_list,
-                   fail_silently, html)
+        _send_mail(
+            subject, body, from_email, recipient_list, fail_silently, html
+        )
 
 
 def get_app_model_options(comment=None, content_type=None):
@@ -70,24 +83,24 @@ def get_app_model_options(comment=None, content_type=None):
     'allow_flagging': False, 'allow_feedback': False, 'show_feedback': False }.
     """
     default = {
-        'who_can_post': 'all',  # Valid values: "users", "all"
-        'allow_flagging': False,
-        'allow_feedback': False,
-        'show_feedback': False,
+        "who_can_post": "all",  # Valid values: "users", "all"
+        "allow_flagging": False,
+        "allow_feedback": False,
+        "show_feedback": False,
     }
-    if 'default' in settings.COMMENTS_XTD_APP_MODEL_OPTIONS:
+    if "default" in settings.COMMENTS_XTD_APP_MODEL_OPTIONS:
         # The developer overwrite the default settings. Check whether
         # the developer added all the expected keys in the dictionary.
         has_missing_key = False
-        for k in default.keys():
-            if k not in settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default']:
+        for k in default:
+            if k not in settings.COMMENTS_XTD_APP_MODEL_OPTIONS["default"]:
                 has_missing_key = True
         if not has_missing_key:
-            default = copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS['default'])
+            default = copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS["default"])
 
     if comment:
         content_type = ContentType.objects.get_for_model(comment.content_object)
-        key = "%s.%s" % (content_type.app_label, content_type.model)
+        key = f"{content_type.app_label}.{content_type.model}"
     elif content_type:
         key = content_type
     else:
@@ -100,17 +113,17 @@ def get_app_model_options(comment=None, content_type=None):
 
 
 def get_current_site_id(request=None):
-    """ it's a shortcut """
-    return getattr(get_current_site(request), 'pk', 1)  # fallback value
+    """it's a shortcut"""
+    return getattr(get_current_site(request), "pk", 1)  # fallback value
 
 
 def get_html_id_suffix(obj):
-    value = "%s" % obj.__hash__()
+    value = f"{obj.__hash__()}"
     suffix = salted_hmac(settings.COMMENTS_XTD_SALT, value).hexdigest()
     return suffix
 
 
 def get_user_avatar(comment):
-    path = hashlib.md5(comment.user_email.lower().encode('utf-8')).hexdigest()
-    param = urlencode({'s': 48})
-    return "//www.gravatar.com/avatar/%s?%s&d=identicon" % (path, param)
+    path = hashlib.md5(comment.user_email.lower().encode("utf-8")).hexdigest()
+    param = urlencode({"s": 48})
+    return f"//www.gravatar.com/avatar/{path}?{param}&d=identicon"

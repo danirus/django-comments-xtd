@@ -1,10 +1,11 @@
 {
   "name": "django-comments-xtd-plugins",
-  "version": "2.10.4",
+  "version": "2.10.5",
   "description": "Provides django-comments-xtd reactjs plugin",
   "main": "app.js",
   "scripts": {
     "lint": "eslint --cache --cache-location .cache/.eslintcache --report-unused-disable-directives --ext .jsx django_comments_xtd/static/django_comments_xtd/js/src/",
+    "lint-fix": "eslint --cache --cache-location .cache/.eslintcache --fix --ext .jsx django_comments_xtd/static/django_comments_xtd/js/src/",
     "compile": "rollup --config rollup.config.js --sourcemap",
     "minify": "terser --compress passes=2 --mangle --comments \"/^!/\"  --output django_comments_xtd/static/django_comments_xtd/js/django-comments-xtd-${npm_package_version}.min.js django_comments_xtd/static/django_comments_xtd/js/django-comments-xtd-${npm_package_version}.js",
     "test": "NODE_ENV=test jest",

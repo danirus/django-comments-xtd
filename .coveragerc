@@ -1,3 +1,0 @@
-[run]
-source = django_comments_xtd
-plugins = django_coverage_plugin

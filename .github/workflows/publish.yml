@@ -2,6 +2,7 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   FORCE_COLOR: true
@@ -31,4 +32,4 @@ jobs:
       - run: make build
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1.8
+        uses: pypa/gh-action-pypi-publish@release/v1.12

@@ -64,13 +64,12 @@ omit = [
     "django_comments_xtd/tests/*",
 ]
 
-[tool.setuptools]
-packages = [
-    "django_comments_xtd",
-    "django_comments_xtd.api",
-    "django_comments_xtd.conf",
-    "django_comments_xtd.management",
-    "django_comments_xtd.templatetags",
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = [
+    "docs",
+    "example",
+    "node_modules",
 ]
 
 [tool.setuptools.dynamic]

@@ -2,7 +2,7 @@
 
 A Django pluggable application that adds comments to your project.
 
-<p align="center"><img align="center" src="https://github.com/danirus/django-comments-xtd/blob/master/docs/images/cover.png"></p>
+<p align="center"><img align="center" src="https://github.com/danirus/django-comments-xtd/blob/master/docs/images/cover.light.png"></p>
 
 It extends the original [Django Comments Framework](https://pypi.python.org/pypi/django-contrib-comments) with the following features:
 

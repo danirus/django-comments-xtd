@@ -16,7 +16,7 @@ DISLIKEDIT_FLAG = "I disliked it"
 
 
 def max_thread_level_for_content_type(content_type):
-    app_model = "{content_type.app_label}.{content_type.model}"
+    app_model = f"{content_type.app_label}.{content_type.model}"
     if app_model in settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL:
         return settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL[app_model]
     else:

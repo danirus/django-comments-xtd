@@ -2,7 +2,7 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
-  workflow_dispatch:
+  # workflow_dispatch:
 
 env:
   FORCE_COLOR: true

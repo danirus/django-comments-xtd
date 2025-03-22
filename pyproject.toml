@@ -10,7 +10,6 @@ classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
@@ -28,7 +27,7 @@ dependencies = [
 ]
 description = "Commenting Django app with threads, follow up notifications and email confirmation."
 dynamic = ["version"]
-license = {file = "LICENSE"}
+license = "BSD-2-Clause"
 name = "django-comments-xtd"
 readme = "README.md"
 
@@ -66,7 +65,13 @@ omit = [
 ]
 
 [tool.setuptools]
-packages = ['django_comments_xtd']
+packages = [
+    "django_comments_xtd",
+    "django_comments_xtd.api",
+    "django_comments_xtd.conf",
+    "django_comments_xtd.management",
+    "django_comments_xtd.templatetags",
+]
 
 [tool.setuptools.dynamic]
 version = {attr = "django_comments_xtd.get_version"}

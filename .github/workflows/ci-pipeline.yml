@@ -36,18 +36,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        python: ["3.10", "3.13"]
         django: ["4.1", "4.2", "5.0", "5.1"]
     steps:
       - uses: actions/checkout@v4
       - name: Python setup
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: "${{ env.PYTHON }}"
           cache: pip
       - name: Install tox and django
         run: pip install tox "django==${{ matrix.django }}"
       - name: Run unit tests
-        run: tox -e py3.13-django${{ matrix.django }}
+        run: tox -e py${{ matrix.python }}-django${{ matrix.django }}
 
   javascript:
     runs-on: ubuntu-latest

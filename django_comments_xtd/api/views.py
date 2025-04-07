@@ -155,7 +155,7 @@ class ToggleFeedbackFlag(
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_create(self, serializer):
-        f = getattr(views, f"perform_{self.request.data["flag"]}")
+        f = getattr(views, f"perform_{self.request.data['flag']}")
         self.created = f(self.request, serializer.validated_data["comment"])
 
 

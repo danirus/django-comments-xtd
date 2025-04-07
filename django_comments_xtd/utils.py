@@ -2,7 +2,6 @@
 # http://ui.co.id/blog/asynchronous-send_mail-in-django
 
 import hashlib
-from copy import copy
 
 try:
     import Queue as queue  # python2  # noqa: N813
@@ -21,6 +20,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.crypto import salted_hmac
 
 from django_comments_xtd.conf import settings
+from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_OPTIONS
 
 mail_sent_queue = queue.Queue()
 
@@ -74,42 +74,41 @@ def send_mail(
 
 def get_app_model_options(comment=None, content_type=None):
     """
-    Get the app_model_option from COMMENTS_XTD_APP_MODEL_OPTIONS.
+    Get the app_model_option from `COMMENTS_XTD_APP_MODEL_OPTIONS`.
 
     If a comment is given, the content_type is extracted from it. Otherwise,
-    the content_type kwarg has to be provided. The funcion checks whether there
-    is a matching dictionary for the app_label.model of the content_type, and
-    returns it. It returns the default otherwise: { 'who_can_post': 'all',
-    'allow_flagging': False, 'allow_feedback': False, 'show_feedback': False }.
+    the `content_type` kwarg has to be provided. The funcion checks whether
+    there is a matching comments option's dictionary for the `app_label.model`
+    for the `content_type` and returns it. Otherwise it returns the default
+    from:
+
+        `django_comments_xtd.conf.defaults.COMMENTS_XTD_APP_MODEL_OPTIONS`
     """
-    default = {
-        "who_can_post": "all",  # Valid values: "users", "all"
-        "allow_flagging": False,
-        "allow_feedback": False,
-        "show_feedback": False,
-    }
-    if "default" in settings.COMMENTS_XTD_APP_MODEL_OPTIONS:
-        # The developer overwrite the default settings. Check whether
-        # the developer added all the expected keys in the dictionary.
-        has_missing_key = False
-        for k in default:
-            if k not in settings.COMMENTS_XTD_APP_MODEL_OPTIONS["default"]:
-                has_missing_key = True
-        if not has_missing_key:
-            default = copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS["default"])
+    defaults_options = dict.copy(COMMENTS_XTD_APP_MODEL_OPTIONS)
+    settings_options = dict.copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS)
+    if defaults_options != settings_options and "default" in settings_options:
+        defaults_options["default"].update(settings_options.pop("default"))
+
+    model_app_options = {}
+    for app_model in settings_options:
+        for k in defaults_options["default"]:
+            if k not in settings_options[app_model]:
+                model_app_options[k] = defaults_options["default"][k]
+            else:
+                model_app_options[k] = settings_options[app_model][k]
 
     if comment:
         content_type = ContentType.objects.get_for_model(comment.content_object)
         key = f"{content_type.app_label}.{content_type.model}"
     elif content_type:
-        key = content_type
+        key = f"{content_type.app_label}.{content_type.model}"
     else:
-        return default
+        return defaults_options["default"]
     try:
-        default.update(settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key])
-        return default
+        model_app_options.update(settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key])
+        return model_app_options
     except Exception:
-        return default
+        return model_app_options
 
 
 def get_current_site_id(request=None):

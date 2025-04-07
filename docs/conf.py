@@ -132,9 +132,7 @@ csi_add_script_to_html_output = False
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    "documentation_font": "Open Sans",
-    "monospace_font": "Ubuntu Mono",
-    "monospace_font_size": "1.1rem",
+    "monospace_font_size": ".90rem",
 
     "style": "green",
     "style_header_neutral": True,

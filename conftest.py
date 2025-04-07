@@ -2,6 +2,10 @@ import os
 import sys
 from pathlib import Path
 
+plugins = [
+    "django_comments_xtd.tests.pytest_fixtures",
+]
+
 
 def pytest_configure(config):
     try:
@@ -14,3 +18,9 @@ def pytest_configure(config):
     import django
 
     django.setup()
+
+    # -------------------------------------
+    # Load fixtures listed in 'my_plugins'.
+
+    for plugin_module in plugins:
+        config.pluginmanager.import_plugin(plugin_module)

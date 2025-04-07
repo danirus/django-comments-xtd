@@ -32,7 +32,7 @@ jobs:
       - name: Check syntax compliance
         run: pre-commit run --all-files --show-diff-on-failure
 
-  django:
+  python310:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -42,7 +42,24 @@ jobs:
       - name: Python setup
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: "3.10"
+          cache: pip
+      - name: Install tox and django
+        run: pip install tox "django==${{ matrix.django }}"
+      - name: Run unit tests
+        run: tox -e py3.10-django${{ matrix.django }}
+
+  python313:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        django: ["4.1", "4.2", "5.0", "5.1"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
           cache: pip
       - name: Install tox and django
         run: pip install tox "django==${{ matrix.django }}"

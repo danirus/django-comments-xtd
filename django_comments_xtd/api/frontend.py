@@ -89,8 +89,7 @@ class CommentBoxDriver:
         ctype = ContentType.objects.get_for_model(obj)
         queryset = cls.get_queryset(ctype, obj, request)
         ctype_slug = f"{ctype.app_label}-{ctype.model}"
-        ctype_key = f"{ctype.app_label}.{ctype.model}"
-        options = get_app_model_options(content_type=ctype_key)
+        options = get_app_model_options(content_type=ctype)
         d = {
             "comment_count": queryset.count(),
             "allow_comments": True,

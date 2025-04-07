@@ -96,28 +96,29 @@ class WriteCommentSerializer(serializers.Serializer):
         return value
 
     def validate(self, data):
-        ctype = data.get("content_type")
+        ctype_str = data.get("content_type")
         object_pk = data.get("object_pk")
-        if ctype is None or object_pk is None:
+        if ctype_str is None or object_pk is None:
             return serializers.ValidationError(
                 "Missing content_type or object_pk field."
             )
         try:
-            model = apps.get_model(*ctype.split(".", 1))
+            model = apps.get_model(*ctype_str.split(".", 1))
+            ctype = ContentType.objects.get_for_model(model)
             target = model._default_manager.get(pk=object_pk)
             whocan = get_app_model_options(content_type=ctype)["who_can_post"]
         except (AttributeError, TypeError, LookupError, ValueError):
             raise serializers.ValidationError(
-                f"Invalid content_type value: {escape(ctype)}"
+                f"Invalid content_type value: {escape(ctype_str)}"
             ) from None
         except model.DoesNotExist:
             raise serializers.ValidationError(
-                f"No object matching content-type {escape(ctype)} "
+                f"No object matching content-type {escape(ctype_str)} "
                 f"and object PK {escape(object_pk)}exists."
             ) from None
         except serializers.ValidationError as e:
             raise serializers.ValidationError(
-                f"Attempting to get content-type {escape(ctype)} "
+                f"Attempting to get content-type {escape(ctype_str)} "
                 f"and object PK {escape(object_pk)} exists "
                 f"raised {e.__class__.__name__}"
             ) from e
@@ -241,11 +242,11 @@ class FlagSerializer(serializers.ModelSerializer):
             option = "allow_flagging"
         comment = data["comment"]
         ctype = ContentType.objects.get_for_model(comment.content_object)
-        key = f"{ctype.app_label}.{ctype.model}"
-        if not get_app_model_options(content_type=key)[option]:
+        if not get_app_model_options(content_type=ctype)[option]:
             raise serializers.ValidationError(
-                f"Comments posted to instances of '{key}' are not explicitly "
-                f"allowed to receive '{data["flag"]}' flags. Check the "
+                "Comments posted to instances of "
+                f"'{ctype.app_label}.{ctype.model}' are not explicitly "
+                f"allowed to receive '{data['flag']}' flags. Check the "
                 "COMMENTS_XTD_APP_MODEL_OPTIONS setting."
             )
         data["flag"] = self.flag_choices[data["flag"]]

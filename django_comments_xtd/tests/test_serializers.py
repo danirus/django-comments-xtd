@@ -3,6 +3,7 @@ from datetime import datetime
 from unittest.mock import patch
 
 import django_comments
+import pytest
 import pytz
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
@@ -11,7 +12,10 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from django_comments_xtd.api.serializers import ReadCommentSerializer
+from django_comments_xtd.api.serializers import (
+    FlagSerializer,
+    ReadCommentSerializer,
+)
 from django_comments_xtd.models import XtdComment
 from django_comments_xtd.signals import should_request_be_authorized
 from django_comments_xtd.tests.models import Article, authorize_api_post_comment
@@ -289,3 +293,21 @@ class RenderSubmitDateTestCase(TestCase):
         self.assertEqual(
             ser.data[0]["submit_date"], "2021-jan-10 11:15:00 +0100"
         )
+
+
+# ---------------------------------------------------------------------
+# Tests for FlagSerializer. Using pytest instead of unittest.
+
+
+@pytest.mark.django_db
+def test_flag_serializer_is_valid(an_articles_comment):
+    data = {"comment": an_articles_comment.pk, "flag": "report"}
+    ser = FlagSerializer(data=data)
+    assert ser.is_valid()
+
+
+@pytest.mark.django_db
+def test_flag_serializer_is_not_valid(an_articles_comment):
+    data = {"comment": an_articles_comment.pk, "flag": "non-supported-flag"}
+    ser = FlagSerializer(data=data)
+    assert not ser.is_valid()

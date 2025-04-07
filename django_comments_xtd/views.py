@@ -125,9 +125,7 @@ def on_comment_will_be_posted(sender, comment, request, **kwargs):
     else:
         user_is_authenticated = False
 
-    ct = comment.get("content_type")
-    ct_str = f"{ct.app_label}.{ct.model}"
-    options = get_app_model_options(content_type=ct_str)
+    options = get_app_model_options(comment=comment)
 
     return not (  # Return False to reject comment.
         options["who_can_post"] == "users" and not user_is_authenticated
@@ -325,8 +323,7 @@ def reply(request, cid):
     except XtdComment.DoesNotExist as exc:
         raise Http404(exc) from exc
 
-    ct_str = f"{comment.content_type.app_label}.{comment.content_type.model}"
-    options = get_app_model_options(content_type=ct_str)
+    options = get_app_model_options(comment)
 
     if not request.user.is_authenticated and options["who_can_post"] == "users":
         path = request.build_absolute_uri()

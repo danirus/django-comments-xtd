@@ -2,7 +2,7 @@
 
 ## [2.10.6] - 2025-04-07
 
-* Fixes two f-string that were uncompatible with Python < 3.12.
+* Fixes [issue 458](https://github.com/danirus/django-comments-xtd/issues/458) two f-string that were uncompatible with Python < 3.12.
 * Rewrites function `get_app_model_options`.
 * New tests to cover latest changes.
 * Tox now runs tests in both, Python 3.10 and Python 3.13.

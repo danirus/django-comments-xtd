@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.10.6] - 2025-04-07
+
+* Fixes two f-string that were uncompatible with Python < 3.12.
+* Rewrites function `get_app_model_options`.
+* New tests to cover latest changes.
+* Tox now runs tests in both, Python 3.10 and Python 3.13.
+
 ## [2.10.5] - 2025-03-22
 
 * Removes external dependencies from `django_comments_xtd/__init__.py`.

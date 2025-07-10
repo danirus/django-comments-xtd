@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.10.7] - 2025-07-10
+
+* Fixes [issue-462](https://github.com/danirus/django-comments-xtd/issues/462): function `get_app_model_options` did not work as expected when passing commenting options only through the `"default"` key.
+
 ## [2.10.6] - 2025-04-07
 
 * Fixes [issue 458](https://github.com/danirus/django-comments-xtd/issues/458) two f-string that were uncompatible with Python < 3.12.

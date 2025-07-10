@@ -23,7 +23,7 @@ from django_comments_xtd.models import (
     TmpXtdComment,
     XtdComment,
 )
-from django_comments_xtd.tests.models import Article, Diary
+from django_comments_xtd.tests.models import Article, Diary, Quote
 from django_comments_xtd.views import (
     on_comment_was_posted,
     on_comment_will_be_posted,
@@ -41,6 +41,28 @@ def post_article_comment(data, article, auth_user=None):
                 "month": article.publish.month,
                 "day": article.publish.day,
                 "slug": article.slug,
+            },
+        ),
+        data=data,
+        follow=True,
+    )
+    if auth_user:
+        request.user = auth_user
+    else:
+        request.user = AnonymousUser()
+    request._dont_enforce_csrf_checks = True
+    return comments.post_comment(request)
+
+
+def post_quote_comment(data, quote, auth_user=None):
+    request = request_factory.post(
+        reverse(
+            "quote-detail",
+            kwargs={
+                "year": quote.publish.year,
+                "month": quote.publish.month,
+                "day": quote.publish.day,
+                "slug": quote.slug,
             },
         ),
         data=data,
@@ -81,9 +103,6 @@ def confirm_comment_url(key, follow=True):
     )
     request.user = AnonymousUser()
     return views.confirm(request, key)
-
-
-app_model_options_mock = {"tests.article": {"who_can_post": "users"}}
 
 
 class ViewUtilitiesTest(TestCase):
@@ -456,15 +475,22 @@ class XtdCommentListViewTestCase(TestCase):
 
 class OnCommentWasPostedTestCase(TestCase):
     def setUp(self):
-        patcher = patch("django_comments_xtd.views.send_mail")
-        self.mock_mailer = patcher.start()
+        self.patcher = patch("django_comments_xtd.views.send_mail")
+        self.mock_mailer = self.patcher.start()
         self.article = Article.objects.create(
             title="October", slug="october", body="What I did on October..."
         )
-        self.form = django_comments.get_form()(self.article)
+        self.quote = Quote.objects.create(
+            title="October", slug="october", quote="Mas vale pájaro en mano..."
+        )
+        self.cm_form_to_article = django_comments.get_form()(self.article)
+        self.cm_form_to_quote = django_comments.get_form()(self.quote)
         self.user = AnonymousUser()
 
-    def post_valid_data(self, auth_user=None, response_code=302):
+    def tearDown(self):
+        self.patcher.stop()
+
+    def post_valid_data_to_article(self, auth_user=None, response_code=302):
         data = {
             "name": "Bob",
             "email": "bob@example.com",
@@ -474,8 +500,24 @@ class OnCommentWasPostedTestCase(TestCase):
             "order": 1,
             "comment": "Es war einmal eine kleine...",
         }
-        data.update(self.form.initial)
+        data.update(self.cm_form_to_article.initial)
         response = post_article_comment(data, self.article, auth_user)
+        self.assertEqual(response.status_code, response_code)
+        if response.status_code == 302:
+            self.assertTrue(response.url.startswith("/comments/posted/?c="))
+
+    def post_valid_data_to_quote(self, auth_user=None, response_code=302):
+        data = {
+            "name": "Bob",
+            "email": "bob@example.com",
+            "followup": True,
+            "reply_to": 0,
+            "level": 1,
+            "order": 1,
+            "comment": "Es war einmal eine kleine...",
+        }
+        data.update(self.cm_form_to_quote.initial)
+        response = post_quote_comment(data, self.quote, auth_user)
         self.assertEqual(response.status_code, response_code)
         if response.status_code == 302:
             self.assertTrue(response.url.startswith("/comments/posted/?c="))
@@ -483,29 +525,26 @@ class OnCommentWasPostedTestCase(TestCase):
     def test_post_as_authenticated_user(self):
         self.user = User.objects.create_user("bob", "bob@example.com", "pwd")
         self.assertTrue(self.mock_mailer.call_count == 0)
-        self.post_valid_data(auth_user=self.user)
+        self.post_valid_data_to_article(auth_user=self.user)
         # no confirmation email sent as user is authenticated
         self.assertTrue(self.mock_mailer.call_count == 0)
 
     def test_confirmation_email_is_sent(self):
         self.assertTrue(self.mock_mailer.call_count == 0)
-        self.post_valid_data()
+        self.post_valid_data_to_article()
         self.assertTrue(self.mock_mailer.call_count == 1)
 
-    @patch.multiple(
-        "django_comments_xtd.conf.settings",
-        COMMENTS_XTD_APP_MODEL_OPTIONS=app_model_options_mock,
-    )
     def test_post_as_visitor_when_only_users_can_post(self):
         self.assertTrue(self.mock_mailer.call_count == 0)
-        self.post_valid_data(response_code=400)
+        self.post_valid_data_to_quote(response_code=400)
         self.assertTrue(self.mock_mailer.call_count == 0)
 
 
+# This one fails
 class ConfirmCommentTestCase(TestCase):
     def setUp(self):
-        patcher = patch("django_comments_xtd.views.send_mail")
-        self.mock_mailer = patcher.start()
+        self.patcher = patch("django_comments_xtd.views.send_mail")
+        self.mock_mailer = self.patcher.start()
         # Create random string so that it's harder for zlib to compress
         content = "".join(random.choice(string.printable) for _ in range(6096))
         self.article = Article.objects.create(
@@ -524,6 +563,7 @@ class ConfirmCommentTestCase(TestCase):
             "comment": "Es war einmal eine kleine...",
         }
         data.update(self.form.initial)
+        self.assertTrue(self.mock_mailer.call_count == 0)
         post_article_comment(data, self.article)
         self.assertTrue(self.mock_mailer.call_count == 1)
         self.key = str(
@@ -532,7 +572,9 @@ class ConfirmCommentTestCase(TestCase):
                 self.mock_mailer.call_args[0][1],
             ).group("key")
         )
-        self.addCleanup(patcher.stop)
+
+    def tearDown(self):
+        self.patcher.stop()
 
     def test_confirm_url_is_short_enough(self):
         # Tests that the length of the confirm url's length isn't
@@ -727,7 +769,7 @@ class ReplyNoCommentTestCase(TestCase):
         self.assertContains(response, "404", status_code=404)
 
 
-class ReplyCommentTestCase(TestCase):
+class ReplyCommentToArticleTestCase(TestCase):
     def setUp(self):
         article = Article.objects.create(
             title="September",
@@ -778,10 +820,27 @@ class ReplyCommentTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 403)
 
-    @patch.multiple(
-        "django_comments_xtd.conf.settings",
-        COMMENTS_XTD_APP_MODEL_OPTIONS=app_model_options_mock,
-    )
+
+class ReplyCommentToQuoteTestCase(TestCase):
+    def setUp(self):
+        quote = Quote.objects.create(
+            title="September",
+            slug="september",
+            quote="No por mucho madrugar...",
+        )
+        quote_ct = ContentType.objects.get(app_label="tests", model="quote")
+        site = Site.objects.get(pk=1)
+
+        # post Comment 1 to quote, level 0
+        XtdComment.objects.create(
+            content_type=quote_ct,
+            object_pk=quote.id,
+            content_object=quote,
+            site=site,
+            comment="comment 1 to quote",
+            submit_date=datetime.now(),
+        )
+
     def test_reply_as_visitor_when_only_users_can_post(self):
         response = self.client.get(
             reverse("comments-xtd-reply", kwargs={"cid": 1})
@@ -796,8 +855,8 @@ class MuteFollowUpTestCase(TestCase):
         # follow-up notifications. First comment doesn't have to send any
         #  notification.
         # Second comment has to send one notification (to Bob).
-        patcher = patch("django_comments_xtd.views.send_mail")
-        self.mock_mailer = patcher.start()
+        self.patcher = patch("django_comments_xtd.views.send_mail")
+        self.mock_mailer = self.patcher.start()
         self.article = Article.objects.create(
             title="September", slug="september", body="John's September"
         )
@@ -857,7 +916,9 @@ class MuteFollowUpTestCase(TestCase):
                 self.mock_mailer.call_args[0][1],
             ).group("key")
         )
-        self.addCleanup(patcher.stop)
+
+    def tearDown(self):
+        self.patcher.stop()
 
     def get_mute_followup_url(self, key):
         request = request_factory.get(
@@ -910,8 +971,8 @@ class HTMLDisabledMailTestCase(TestCase):
     def setUp(self):
         # Create an article and send a comment. Test method will check headers
         # to see whether messages have multiparts or not.
-        patcher = patch("django_comments_xtd.views.send_mail")
-        self.mock_mailer = patcher.start()
+        self.patcher = patch("django_comments_xtd.views.send_mail")
+        self.mock_mailer = self.patcher.start()
         self.article = Article.objects.create(
             title="September", slug="september", body="John's September"
         )
@@ -928,6 +989,9 @@ class HTMLDisabledMailTestCase(TestCase):
             "comment": "Nice September you had...",
         }
         self.data.update(self.form.initial)
+
+    def tearDown(self):
+        self.patcher.stop()
 
     @patch.multiple(
         "django_comments_xtd.conf.settings", COMMENTS_XTD_SEND_HTML_EMAIL=False

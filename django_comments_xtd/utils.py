@@ -84,18 +84,12 @@ def get_app_model_options(comment=None, content_type=None):
 
         `django_comments_xtd.conf.defaults.COMMENTS_XTD_APP_MODEL_OPTIONS`
     """
-    defaults_options = dict.copy(COMMENTS_XTD_APP_MODEL_OPTIONS)
-    settings_options = dict.copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS)
-    if defaults_options != settings_options and "default" in settings_options:
-        defaults_options["default"].update(settings_options.pop("default"))
-
-    model_app_options = {}
-    for app_model in settings_options:
-        for k in defaults_options["default"]:
-            if k not in settings_options[app_model]:
-                model_app_options[k] = defaults_options["default"][k]
-            else:
-                model_app_options[k] = settings_options[app_model][k]
+    init_opts = dict.copy(COMMENTS_XTD_APP_MODEL_OPTIONS)
+    custom_opts = dict.copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS)
+    if init_opts != custom_opts and "default" in custom_opts:
+        default_opts = dict.copy(init_opts['default'])
+        default_opts.update(custom_opts['default'])
+        init_opts["default"] = default_opts
 
     if comment:
         content_type = ContentType.objects.get_for_model(comment.content_object)
@@ -103,12 +97,14 @@ def get_app_model_options(comment=None, content_type=None):
     elif content_type:
         key = f"{content_type.app_label}.{content_type.model}"
     else:
-        return defaults_options["default"]
+        return init_opts["default"]
+
     try:
-        model_app_options.update(settings.COMMENTS_XTD_APP_MODEL_OPTIONS[key])
-        return model_app_options
+        model_app_opts = dict(init_opts["default"])
+        model_app_opts.update(custom_opts[key])
+        return model_app_opts
     except Exception:
-        return model_app_options
+        return init_opts["default"]
 
 
 def get_current_site_id(request=None):

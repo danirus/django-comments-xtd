@@ -67,7 +67,7 @@ copyright = u'2024, Daniela Rus Morales'
 # The short X.Y version.
 version = '2.10'
 # The full version, including alpha/beta/rc tags.
-release = '2.10.6'
+release = '2.10.7'
 
 releases = [
     "latest",
@@ -133,9 +133,9 @@ csi_add_script_to_html_output = False
 # documentation.
 html_theme_options = {
     "monospace_font_size": ".90rem",
+    "doc_headers_font": "Nunito",
 
     "style": "green",
-    "style_header_neutral": True,
     "pygments_light_style": "pastie",
     "pygments_dark_style": "dracula",
 

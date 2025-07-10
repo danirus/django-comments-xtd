@@ -39,7 +39,12 @@ def test_send_mail_uses__send_amil(monkeypatch):
 @pytest.mark.django_db
 def test_get_app_model_options_without_args():
     options = utils.get_app_model_options()
-    assert options == COMMENTS_XTD_APP_MODEL_OPTIONS["default"]
+    assert options == {
+        'who_can_post': 'all',
+        'allow_flagging': True,
+        'allow_feedback': False,
+        'show_feedback': False
+    }
 
 
 mock_options_settings = {

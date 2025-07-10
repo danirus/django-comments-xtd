@@ -14,6 +14,12 @@ urlpatterns = [
         name="article-detail",
     ),
     re_path(
+        r"^quotes/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/"
+        r"(?P<slug>[-\w]+)/$",
+        views.dummy_view,
+        name="quote-detail",
+    ),
+    re_path(
         r"^diary/(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/",
         views.dummy_view,
         name="diary-detail",

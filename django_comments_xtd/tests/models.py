@@ -42,6 +42,33 @@ class Article(models.Model):
         )
 
 
+class Quote(models.Model):
+    """Quote, that accepts comments."""
+
+    title = models.CharField("title", max_length=200)
+    slug = models.SlugField("slug", unique_for_date="publish")
+    quote = models.TextField("quote")
+    allow_comments = models.BooleanField("allow comments", default=True)
+    publish = models.DateTimeField("publish", default=datetime.now)
+
+    objects = PublicManager()
+
+    class Meta:
+        db_table = "demo_quotes"
+        ordering = ("-publish",)
+
+    def get_absolute_url(self):
+        return reverse(
+            "quote-detail",
+            kwargs={
+                "year": self.publish.year,
+                "month": int(self.publish.strftime("%m").lower()),
+                "day": self.publish.day,
+                "slug": self.slug,
+            },
+        )
+
+
 class Diary(models.Model):
     """Diary, that accepts comments."""
 

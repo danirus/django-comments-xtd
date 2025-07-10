@@ -110,11 +110,18 @@ COMMENTS_XTD_MAX_THREAD_LEVEL = 3
 COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {"tests.diary": 0}
 
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
+    "default": {
+        "who_can_post": "all",  # Valid values: "users", "all"
+        "allow_flagging": True,
+    },
     "tests.diary": {
         "allow_flagging": True,
         "allow_feedback": True,
         "show_feedback": True,
-    }
+    },
+    "tests.quote": {
+        "who_can_post": "users",
+    },
 }
 
 MY_DRF_AUTH_TOKEN = "08d9fd42468aebbb8087b604b526ff0821ce4525"

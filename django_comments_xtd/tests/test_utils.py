@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 import pytest
 
 from django_comments_xtd import utils
-from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_OPTIONS
 
 
 @pytest.mark.django_db
@@ -40,10 +39,10 @@ def test_send_mail_uses__send_amil(monkeypatch):
 def test_get_app_model_options_without_args():
     options = utils.get_app_model_options()
     assert options == {
-        'who_can_post': 'all',
-        'allow_flagging': True,
-        'allow_feedback': False,
-        'show_feedback': False
+        "who_can_post": "all",
+        "allow_flagging": True,
+        "allow_feedback": False,
+        "show_feedback": False,
     }
 
 

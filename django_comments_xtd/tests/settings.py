@@ -121,7 +121,7 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
     },
     "tests.quote": {
         "who_can_post": "users",
-    }
+    },
 }
 
 MY_DRF_AUTH_TOKEN = "08d9fd42468aebbb8087b604b526ff0821ce4525"

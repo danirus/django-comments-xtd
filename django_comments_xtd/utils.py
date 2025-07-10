@@ -87,8 +87,8 @@ def get_app_model_options(comment=None, content_type=None):
     init_opts = dict.copy(COMMENTS_XTD_APP_MODEL_OPTIONS)
     custom_opts = dict.copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS)
     if init_opts != custom_opts and "default" in custom_opts:
-        default_opts = dict.copy(init_opts['default'])
-        default_opts.update(custom_opts['default'])
+        default_opts = dict.copy(init_opts["default"])
+        default_opts.update(custom_opts["default"])
         init_opts["default"] = default_opts
 
     if comment:

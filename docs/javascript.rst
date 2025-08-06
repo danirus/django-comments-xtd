@@ -131,8 +131,8 @@ Which results in:
     │   ├── commentform.test.jsx
     │   ├── reducer.test.jsx
     │   └── lib.test.js
-    ├── django-comments-xtd-2.10.7.js
-    └── django-comments-xtd-2.10.7.min.js
+    ├── django-comments-xtd-2.10.8.js
+    └── django-comments-xtd-2.10.8.min.js
 
 The application entry point is located inside the ``index.js`` file. The
 ``props`` passed to the **CommentBox** object are those declared in the

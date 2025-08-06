@@ -3,19 +3,28 @@ from datetime import datetime
 from unittest.mock import patch
 
 import django_comments
+import pytest
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.test import TestCase
+from django.urls import reverse
+from django.utils.module_loading import import_string
+from rest_framework import status
+from rest_framework.test import APIRequestFactory
 
 from django_comments_xtd import get_model
+from django_comments_xtd.api import views as api_views
 from django_comments_xtd.conf import settings
+from django_comments_xtd.models import TmpXtdComment
 from django_comments_xtd.tests.models import Article
 from django_comments_xtd.tests.utils import post_comment
 
 app_model_options_mock = {"tests.article": {"who_can_post": "users"}}
 
 XtdComment = get_model()
+
+factory = APIRequestFactory()
 
 
 class CommentCreateTestCase(TestCase):
@@ -139,3 +148,18 @@ class CommentCreateTestCase(TestCase):
         response = post_comment(data)
         self.assertEqual(XtdComment.objects.count(), 1)  # Comment not added.
         self.assertEqual(response.status_code, 400)
+
+
+@pytest.mark.django_db
+def test_PreviewUserAvatar_returns_avatar_url():
+    req_data = {"email": "joe.bloggs@example.com"}
+    request = factory.post(reverse("comments-xtd-api-preview"), req_data)
+    view = api_views.PreviewUserAvatar.as_view()
+    response = view(request)
+    assert response.status_code == status.HTTP_200_OK
+    resp_data = json.loads(response.rendered_content)
+    temp_comment = TmpXtdComment(
+        {"user": None, "user_email": "joe.bloggs@example.com"}
+    )
+    get_user_avatar = import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)
+    assert resp_data["url"] == get_user_avatar(temp_comment)

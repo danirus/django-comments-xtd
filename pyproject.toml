@@ -105,6 +105,7 @@ extend-select = [
     "UP",  # pyupgrade
     "T20", # flake8-print
 ]
+ignore = ["N802"]
 
 [tool.pytest]
 addopts = "--create-db"

@@ -174,6 +174,27 @@ class CreateReportFlag(DefaultsMixin, generics.CreateAPIView):
         perform_flag(self.request, serializer.validated_data["comment"])
 
 
+class PreviewUserAvatar(DefaultsMixin, generics.GenericAPIView):
+    serializer_class = serializers.ReadCommentSerializer
+
+    def post(self, request, *args, **kwargs):
+        temp_comment = TmpXtdComment(
+            {"user": None, "user_email": request.data["email"]}
+        )
+        if self.request.user.is_authenticated:
+            temp_comment["user"] = self.request.user
+        get_user_avatar = import_string(
+            settings.COMMENTS_XTD_API_GET_USER_AVATAR
+        )
+        return Response({"url": get_user_avatar(temp_comment)})
+
+
+# ----------------------------------------------------------------
+# This function is left here for backwards compatibility purpose.
+# `preview_user_avatar` has been replaced by the code above,
+# the class `PreviewUserAvatar`, to guarantee that it includes
+# the`DefaultsMixin` as the rest of the API views.
+#
 @api_view(["POST"])
 def preview_user_avatar(request, *args, **kwargs):
     """Fetch the image associated with the user previewing the comment."""

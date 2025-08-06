@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.10.8] - 2025-08-06
+
+* Fixes [issue-465](https://github.com/danirus/django-comments-xtd/issues/465): Convert view `preview_user_avatar` in a Class-based-view that inherits from `DefaultsMixin`, so that it returns a JSON response.
+
 ## [2.10.7] - 2025-07-10
 
 * Fixes [issue-462](https://github.com/danirus/django-comments-xtd/issues/462): function `get_app_model_options` did not work as expected when passing commenting options only through the `"default"` key.

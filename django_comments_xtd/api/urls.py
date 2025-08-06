@@ -5,13 +5,15 @@ from django_comments_xtd.api.views import (
     CommentCreate,
     CommentList,
     CreateReportFlag,
+    PreviewUserAvatar,
     ToggleFeedbackFlag,
-    preview_user_avatar,
 )
 
 urlpatterns = [
     path("comment/", CommentCreate.as_view(), name="comments-xtd-api-create"),
-    path("preview/", preview_user_avatar, name="comments-xtd-api-preview"),
+    path(
+        "preview/", PreviewUserAvatar.as_view(), name="comments-xtd-api-preview"
+    ),
     re_path(
         r"^(?P<content_type>\w+-\w+)/(?P<object_pk>[-\w]+)/$",
         CommentList.as_view(),

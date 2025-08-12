@@ -57,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'django-comments-xtd'
-copyright = u'2024, Daniela Rus Morales'
+copyright = u'2025, Daniela Rus Morales'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -67,7 +67,7 @@ copyright = u'2024, Daniela Rus Morales'
 # The short X.Y version.
 version = '2.10'
 # The full version, including alpha/beta/rc tags.
-release = '2.10.8'
+release = '2.10.9'
 
 releases = [
     "latest",

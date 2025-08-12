@@ -21,7 +21,7 @@ classifiers = [
 dependencies = [
     "Django >=4, <6",
     'django-contrib-comments >=2.2, <2.3',
-    'djangorestframework >=3.12, <3.16',
+    'djangorestframework >=3.12, <3.17',
     'docutils',
     'pytz',
     'six',

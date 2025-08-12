@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.10.9] - 2025-08-12
+
+* Opens up the range of supported djangorestframework versions to "Django>=3.12,<3.17".
+
 ## [2.10.8] - 2025-08-06
 
 * Fixes [issue-465](https://github.com/danirus/django-comments-xtd/issues/465): Convert view `preview_user_avatar` in a Class-based-view that inherits from `DefaultsMixin`, so that it returns a JSON response.

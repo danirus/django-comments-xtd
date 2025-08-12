@@ -25,6 +25,6 @@ Example sites and tests run under officially Django [supported versions](https:/
 Additional Dependencies:
 
 * django-contrib-comments >=2.2
-* djangorestframework >=3.12,<3.16
+* djangorestframework >=3.12,<3.17
 
 Check out the tutorial and examples in the [documentation](http://readthedocs.org/docs/django-comments-xtd/).

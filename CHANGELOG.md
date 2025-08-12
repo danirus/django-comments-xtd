@@ -2,7 +2,7 @@
 
 ## [2.10.9] - 2025-08-12
 
-* Opens up the range of supported djangorestframework versions to "Django>=3.12,<3.17".
+* Opens up the range of supported djangorestframework versions to `>=3.12, <3.17`.
 
 ## [2.10.8] - 2025-08-06
 

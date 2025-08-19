@@ -1,6 +1,5 @@
 import django from 'django';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Remarkable } from 'remarkable';
 
 import { getCookie } from './lib.js';
 import { InitContext, StateContext } from './context.js';
@@ -254,8 +253,13 @@ export function ReplyFormPart({
 
 export function CommentBodyPart({ allowFeedback, comment, isRemoved }) {
   const rawMarkup = useMemo(() => {
-    const md = new Remarkable();
-    const _markup = md.render(comment);
+    const _markup = import('remarkable').then(Remarkable => {
+      const md = new Remarkable();
+      return md.render(comment);
+    }).catch(err => { return '' });
+    if (typeof _markup === 'object' && typeof _markup.then === 'function') {
+      return { __html: comment };
+    }
     return { __html: _markup };
   }, [comment]);
 

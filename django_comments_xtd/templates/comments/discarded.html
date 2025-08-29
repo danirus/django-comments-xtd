@@ -1,0 +1,28 @@
+{% extends "comments/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Comment discarded" %}{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <h1>{% trans "Comment automatically discarded" %}</h1>
+    <p>{% trans "Sorry, your comment has been automatically discarded" %}.</p>
+  </div>
+  <div class="central-column">
+    <div class="djcx">
+      <div class="comment-box">
+        <div class="comment">
+          <div class="header">
+            <div>{{ comment.name }}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span></div>
+          </div>
+          <div class="body body-bordered">
+            {{ comment.comment|linebreaks|escape }}
+          </div>
+          <div class="feedback feedback-bordered"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

@@ -250,7 +250,7 @@ Defaults to ``True``.
 * ``allow_feedback``: Allow registered users to like/dislike comments.
 * ``show_feedback``: Allow django-comments-xtd to report the list of users who
   liked/disliked the comment. The representation of each user in the list
-  depends on the next setting :setting::`COMMENTS_XTD_API_USER_REPR`.
+  depends on the next setting :setting::`COMMENTS_XTD_FN_USER_REPR`.
 * ``who_can_post``: Can be either 'all' or 'users'. When it is 'all', all
   users can post, whether registered users or mere visitors. When it is
   'users', only registered users can post. Read the use case
@@ -284,10 +284,10 @@ Defaults to:
     }
 
 
-.. setting:: COMMENTS_XTD_API_USER_REPR
+.. setting:: COMMENTS_XTD_FN_USER_REPR
 
-``COMMENTS_XTD_API_USER_REPR``
-==============================
+``COMMENTS_XTD_FN_USER_REPR``
+=============================
 
 **Optional**. Function that receives a user object and returns its string
 representation. It's used to produced the list of users who liked/disliked
@@ -296,13 +296,13 @@ full name:
 
 .. code-block:: python
 
-    COMMENTS_XTD_API_USER_REPR = lambda u: u.get_full_name()
+    COMMENTS_XTD_FN_USER_REPR = lambda u: u.get_full_name()
 
 Defaults to:
 
 .. code-block:: python
 
-    COMMENTS_XTD_API_USER_REPR = lambda u: u.username
+    COMMENTS_XTD_FN_USER_REPR = lambda u: u.username
 
 
 .. setting:: COMMENTS_XTD_API_DATETIME_FORMAT
@@ -320,7 +320,7 @@ Defaults to:
 
 .. code-block:: python
 
-    COMMENTS_XTD_API_USER_REPR = settings.DATETIME_FORMAT
+    COMMENTS_XTD_API_DATETIME_FORMAT = settings.DATETIME_FORMAT
 
 
 .. setting:: COMMENTS_XTD_API_GET_USER_AVATAR

@@ -1,0 +1,20 @@
+{% load i18n %}
+{% load comments_xtd %}
+
+{% spaceless %}
+{% get_user_reactions for comment as user_reactions %}
+{% with creactions=comment.get_reactions %}
+  {% if creactions.counter > 0 %}
+    <div class="active-reactions" data-djcx-user-reactions="{{ user_reactions|join:',' }}">
+      {% for reaction in creactions.list %}
+        {% if reaction.counter > 0 %}
+          <div class="reaction" data-reaction="{{ reaction.value }}">
+            {% if reaction.counter > max_users_in_tooltip %}<a href="{% url 'comments-xtd-list-reacted' comment.id reaction.value %}" class="smaller">{{ reaction.counter }}</a>{% else %}<span class="smaller">{{ reaction.counter }}</span>{% endif %}<span class="emoji">{{ reaction.icon }}</span>
+            <div class="tooltip">{% if reaction.counter > reaction.authors|length %}{% blocktrans with authors=reaction.authors|join:", " label=reaction.label %}{{ authors }} and more reacted with {{ label }}{% endblocktrans %}{% elif reaction.counter == reaction.authors|length %}{% blocktrans with authors=reaction.authors|join:", " label=reaction.label %}{{ authors }} reacted with {{ label }}{% endblocktrans %}{% endif %}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+{% endspaceless %}

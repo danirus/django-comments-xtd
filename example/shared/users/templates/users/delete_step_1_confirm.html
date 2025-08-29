@@ -1,0 +1,20 @@
+{% extends "users/account_base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block nav-delete-account %}<span class="small">{% trans "Delete account" %}</span>{% endblock %}
+
+{% block sub_content %}
+<div class="container mt32">
+  <div class="row">
+    <div class="column">
+      <h3>{% trans "Delete account" %}</h3>
+      <p>
+        {% blocktrans with email=user.email %}A confirmation message has been sent to <strong><code>{{ email }}</code></strong>.{% endblocktrans %}
+      </p>
+      <h6>{% trans "Click on the confirmation link in the email to complete the deletion of your user account." %}</h6>
+    </div>
+  </div>
+</div>
+{% endblock %}

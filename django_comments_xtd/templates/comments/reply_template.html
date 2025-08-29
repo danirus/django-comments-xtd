@@ -1,0 +1,13 @@
+{% load i18n %}
+{% load comments %}
+
+
+<div style="display: none">
+  <section class="reply-form" data-djcx="reply-form-template">
+    {% include "comments/reply_form.html" %}
+
+    <div class="reply-form" data-djcx="reply-textarea">
+      <textarea rows="1" placeholder="{% translate 'Your reply' %}"></textarea>
+    </div>
+  </section>
+</div>

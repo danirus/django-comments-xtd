@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load comments %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;quotes{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/comments.css' %}">
+{% endblock %}
+
+{% block nav-quotes-class %}active{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">List of quotes</h2>
+    <div class="inline-centered">
+      {% if object_list %}
+        <ul>
+          {% for quote in object_list %}
+            {% get_comment_count for quote as comment_count %}
+            <li>
+              <h6 class="inline flex flex-align-center">
+                <a href="{{ quote.get_absolute_url }}">{{ quote.title }}</a>&nbsp;-&nbsp;<span class="small">{{ quote.published_time|date:"d-F-Y" }}</span>
+                {% if comment_count %}
+                  &nbsp;
+                  <span class="emoji">&#128172;</span>
+                  <span class="small">{{ comment_count }}</span>
+                  &nbsp;
+                {% endif %}
+              </h6>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <h5>There are no published quotes yet.</h5>
+      {% endif %}
+    </div>
+  </article>
+</main>
+{% endblock %}

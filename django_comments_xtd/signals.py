@@ -16,3 +16,9 @@ comment_thread_muted = Signal()
 # intention is to combine a receiver with a django-rest-framework
 # authentication class, and return True when the request.auth is not None.
 should_request_be_authorized = Signal()
+
+# Sent after a comment got a reaction.
+comment_got_a_reaction = Signal()
+
+# Sent after a comment got a vote.
+comment_got_a_vote = Signal()

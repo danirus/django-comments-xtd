@@ -1,60 +1,92 @@
-{% extends "django_comments_xtd/base.html" %}
+{% extends "comments/base.html" %}
 {% load i18n %}
+{% load comments %}
 {% load comments_xtd %}
 
 {% block title %}{% trans "Flag comment" %}{% endblock %}
 
-{% block header %}
-<a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
-{% endblock %}
-
 {% block content %}
-<div class="container">
-  <div class="row justify-content-center my-4">
-    <div class="text-center">
-      <h3>{% trans "Flag this comment?" %}</h3>
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">
+        {% if user_flagged %}{% trans "You already flagged this comment." %}
+        {% else %}{% trans "Flag this comment?" %}{% endif %}
+      </h2>
+      <h6 class="text-center pb24">
+        {% trans "Comment sent to:" %}<br/>
+        <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+      </h6>
     </div>
-  </div>
-    <div class="row justify-content-center">
-      <p class="text-center">{% trans "Click on the flag button to mark the following comment as inappropriate." %}</p>
-      <div class="card mb-4">
-        <div class="card-body">
-          <div class="comment d-flex">
-            <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
-                alt="{{ comment.user_email }}"
-                width="48" height="48" class="me-3">
-            <div class="d-flex flex-column">
-              <span style="font-size: 0.8rem">
-                {{ comment.submit_date|date:"N j, Y, P" }}&nbsp;-&nbsp;
-                {% if comment.user_url %}
-                <a href="{{ comment.user_url }}" target="_new" class="text-decoration-none">{{ comment.user_name }}</a>
-                {% else %}{{ comment.user_name }}{% endif %}
-              </span>
-              <div class="py-2">{{ comment.comment }}</div>
+    <div class="central-column">
+      <div class="djcx pb32">
+        <div id="c{{ comment.id }}" class="comment-box l0">
+          <div class="comment">
+            <div class="header">
+              <div>
+                {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}
+                  <div class="inline-block" id="cm-votes-{{ comment.id }}">
+                    {% include "comments/comment_votes.html" %}
+                  </div>
+                  &sdot;
+                {% endif %}
+                {% if comment.url and not comment.is_removed %}
+                  <a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>
+                {% else %}
+                  {{ comment.name }}
+                {% endif %}
+                &sdot;
+                <span class="muted">{{ comment.submit_date }}</span>
+                <a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
+              </div>
+              {% if not comment.is_removed and comments_flagging_enabled and comments_input_allowed %}
+                {% with cflags=comment.get_flags %}
+                  {% if user in cflags.users %}<div class="tip-container"><span>&#9873;</span><div class="tooltip">{% trans "You have flagged this comment as inappropriate" %}</div></div>{% endif %}
+                {% endwith %}
+              {% endif %}
             </div>
+            <div class="body body-bordered{% if comments_reacting_enabled %} body-bordered--no-bottom{% endif %}">
+              {{ comment.comment|linebreaks|escape }}
+            </div>
+            {% if comments_reacting_enabled %}
+            <div  id="cm-feedback-{{ comment.id }}" class="feedback feedback-bordered">
+              {% if not comment.is_removed and comments_reacting_enabled %}
+                {% include "comments/comment_reactions.html" %}
+                {% if comments_input_allowed %}
+                  <div class="inline-block sepseq">
+                    <a data-djcx="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}#{{ anchor }}" {% if not user.is_authenticated %}data-login-next="{% get_comment_permalink comment %}"{% endif %}>{% trans "React" %}</a>
+                  </div>
+                {% endif %}
+              {% endif %}
+              {% if comment.nested_count and not comment.is_removed %}
+                <div class="inline-block">
+                  <span id="comment-{{ comment.id}}-replies" data-djcx="nreplies" data-comment="{{ comment.id }}" class="small">{% blocktrans count replies=comment.nested_count %}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
+                </div>
+              {% endif %}
+            </div>
+            {% endif %}
           </div>
         </div>
+
+        <section>
+          <h6 class="text-center">{% if user_flagged %}{% trans "Click on the remove button to no longer mark the comment as inappropriate." %}{% else %}{% trans "Click on the flag button to mark the following comment as inappropriate." %}{% endif %}</h6>
+          <form action="." method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
+            <input type="hidden" name="{{ comments_page_qs_param }}" value="{{ comments_page }}" />
+            <input type="hidden" name="{{ comments_folded_qs_param }}" value="{{ comments_folded }}" />
+            <div class="inline-centered text-center">
+              <button type="submit" class="primary" name="submit" value="flag">
+                {% if user_flagged %}{% trans "Remove flag" %}{% else %}{% trans "Flag" %}{% endif %}
+              </button>&nbsp;
+              <a class="btn secondary" href="{% get_comment_permalink comment %}">
+                {% trans "cancel" %}
+              </a>
+            </div>
+          </form>
+        </section>
       </div>
-    {% with object_absolute_url=comment.content_object.get_absolute_url %}
-    {% if object_absolute_url %}
-    <p class="text-center">
-      {% trans "Posted to "%}&nbsp;<a href="{{ object_absolute_url }}">{{ comment.content_object }}</a>
-    </p>
-    {% endif %}
-    {% endwith %}
-  </div>
-</div>
-<div class="row justify-content-center">
-  <div class="my-5">
-    <form action="." method="post">{% csrf_token %}
-      <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
-      <div class="form-group">
-        <div class="text-center">
-          <input type="submit" name="submit" class="btn btn-danger" value="{% trans "Flag" %}"/>
-          <a class="btn btn-secondary" href="{{ comment.get_absolute_url }}">{% trans "cancel" %}</a>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
+    </div>
+  </article>
+</main>
 {% endblock %}

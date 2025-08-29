@@ -1,0 +1,67 @@
+{% load i18n %}
+{% load static %}
+
+<!doctype html>
+<html lang="en" {% block color_scheme %}{% if comments_cscheme %}class="{{ comments_cscheme }}"{% elif request.session.cscheme %}class="{{ request.session.cscheme }}"{% endif %}{% endblock %}>
+  <head>
+    <meta name="charset" content="UTF-8">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" />
+    <title>{% block title %}djcx-demo - templates{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/comme/stylesheet.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/red-hat-mono/stylesheet.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/djcx-styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/example-styles.css' %}">
+
+    <style>
+    :root {
+      --font-family-monospace: "Red Hat Mono", SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --font-size-monospace: .95rem;
+      --font-weight-monospace: 400;
+    }
+    </style>
+    {% block extra_head %}
+    {% endblock extra_head %}
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="title">
+          <h1><a href="{% url 'homepage' %}">templates</a></h1>
+          <h4>django-comments-xtd</h4>
+        </div>
+        <nav class="menu">
+          {% if user.is_authenticated %}
+            {% if user.is_staff %}
+              <a href="{% url 'admin:index' %}">Admin</a>
+            {% endif %}
+            <a class="{% block nav-account-class %}{% endblock %}" href="{% url 'account' %}">Account</a>
+          {% else %}
+            <a class="{% block nav-login-class %}{% endblock %}" href="{% url 'login' %}">Login</a>
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+
+    {% block content %}
+    {% endblock %}
+
+    <footer>
+      <div class="container">
+        <p>
+          <a href="http://readthedocs.org/docs/django-comments-xtd/">{% translate "documentation" %}</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd">source code</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd/issues">issues</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd/discussions">discussions</a>
+        </p>
+        <p>django-comments-xtd</p>
+      </div>
+    </footer>
+    {% block extra_html %}{% endblock %}
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

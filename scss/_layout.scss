@@ -1,0 +1,1074 @@
+.djcx {
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  max-width: var(--djcx-max-width);
+  color: var(--djcx-color);
+  font-family: var(--djcx-font-family);
+  font-weight: var(--djcx-font-weight);
+
+  .reactions-panel {
+    display: none;
+    opacity: 0;
+    position: absolute;
+    z-index: 1;
+    min-width: 150px;
+    margin-bottom: 0.5rem;
+
+    /* Space for arrow. */
+    background-color: var(--djcx-reactions-panel-background-color);
+    border: 1px solid var(--djcx-border-color-subtle);
+    box-shadow: var(--djcx-panel-box-shadow);
+    border-radius: var(--djcx-border-radius);
+    left: 20px;
+  }
+
+  .reactions-panel > h3 {
+    padding: .5rem .75rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: var(--djcx-reactions-panel-font-size);
+    background-color: var(--djcx-reactions-panel-background-color);
+    border-bottom: var(--djcx-reactions-panel-border-bottom);
+    border-top-left-radius: calc(.3rem - 1px);
+    border-top-right-radius: calc(.3rem - 1px);
+  }
+
+  .reactions-panel > p {
+    margin: 0;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .comment-form {
+    margin: 16px;
+    background-color: var(--djcx-background-color);
+    border: 8px solid var(--djcx-border-color-subtle);
+    border-radius: .5rem;
+    display: flex;
+    flex-direction: column;
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 3fr;
+      grid-gap: 1rem;
+      padding: 1.5rem 2.5rem;
+    }
+
+    > p {  /* For the <p>'s in the comment's textarea. */
+      margin: 1.5rem 2.2rem .5rem;
+    }
+
+    > p + p {  /* For the <p>'s in the comment's textarea. */
+      margin-top: 0;
+    }
+
+    .col1 {
+      grid-column: 1/2;
+    }
+
+    .col2 {
+      grid-column: 2/3;
+      padding-right: 2.5rem;
+    }
+
+    .col1-2 {
+      grid-column: 1/3
+    }
+  }
+
+  .reply-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-radius: var(--djcx-border-radius);
+
+    &.active {
+      border: 1px solid var(--djcx-border-color-subtle);
+      padding: 1rem;
+    }
+
+    & > h5 {
+      margin-top: 0;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 3fr;
+      grid-gap: 1rem;
+    }
+  }
+
+  .comment-list {
+    > .level-1,
+    > .level-2,
+    > .level-3 {
+      margin-top: 0;
+    }
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .user-avatar {
+    display: flex;
+    justify-content: center;
+  }
+
+  // .user-avatar img {
+  //   border-radius: var(--djcx-user-avatar-border-radius);
+  // }
+
+  .in-preview-header {
+    border-bottom: 2px solid var(--djcx-border-color-subtle);
+  }
+
+  /* ---------------------------------------------------------------- */
+
+  /* narrow-comment-box is used to show a shorter comment, with a
+   * small user-avatar, the comment header (including the link to the
+   * comment, the name of the person who posted the comment, and the
+   * datetime), the comment body, and no comment footer.
+   *
+   * The .narrow-comment-box has the following layout:
+   *  |----------------------------------------------------------------|
+   *  | .header (flex, direction: row)                                 |
+   *  | |------------------------------------------------------------| |
+   *  | | .user-avatar  |  name, datetime, permalink                 | |
+   *  | |------------------------------------------------------------| |
+   *  | .body (comment content)                                        |
+   *  |----------------------------------------------------------------|
+   */
+  .narrow-comment-box {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--djcx-border-color-subtle);
+    border-radius: var(--djcx-comment-box-border-radius);
+    padding: .5rem;
+
+    .header {
+      display: flex;
+      flex-direction: row;
+      font-size: .7rem;
+    }
+
+    .user-avatar {
+      padding-right: 1rem;
+    }
+
+    .body {
+      font-size: .8rem;
+
+      & > p {
+        margin: .5rem;
+      }
+
+      & > p + p {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .comment-list > .narrow-comment-box { margin-top: .5rem; }
+
+  /* ----------------------------------------------------------------- */
+
+  /* comment-box is used to show the complete comment, with a user-avatar,
+   * a comment header (with name, post datetime, and permalink), the comment
+   * content, and a comment footer with the feedback block (comment reaction
+   * buttons, and possible reply link when nested comments are allowed).
+   *
+   * The .comment-box has the following layout:
+   *  |----------------------------------------------------------------|
+   *  | .user-avatar   |  .comment (flex, direction: column)           |
+   *  |                | |-------------------------------------------| |
+   *  |                | | .header (name, datetime, permalink)       | |
+   *  |                | |-------------------------------------------| |
+   *  |                | | .body                                     | |
+   *  |                | |-------------------------------------------| |
+   *  |                | | .feedback (reaction-buttons, reply-link)  | |
+   *  |                | |-------------------------------------------| |
+   *  |----------------------------------------------------------------|
+   */
+  .comment-box,
+  .comment-box-img {
+    position: relative;
+    display: flex;
+    padding: 8px 0;
+    margin-left: 0;
+  }
+
+  .comment-box-img {
+    margin-left: 16px;
+  }
+
+  .comment-box .level-1,
+  .comment-box .level-2,
+  .comment-box .level-3 {
+    display: block;
+    width: 24px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  .comment-box-img .level-1,
+  .comment-box-img .level-2,
+  .comment-box-img .level-3 {
+    display: block;
+    width: 52px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  /* Begin experimental */
+  .cthread {
+    &.cthread-l0.cthread-reply::after,
+    &.cthread-l1.cthread-reply::after,
+    &.cthread-l2.cthread-reply::after {
+      bottom: calc(50% - .5px);
+    }
+
+    &.cthread-l0 {
+      display: block;
+      min-width: 24px;
+
+      &.cthread-ini {
+        &::before {
+          position: absolute;
+          content: "";
+          top: 7px;
+          left: -5px;
+          width: 12px;
+          height: 12px;
+          border-radius: 6px;
+          border: 2px solid var(--djcx-color-level-0);
+          background-color: var(--djcx-background-color);
+        }
+
+        &::after {
+          top: 18px;
+        }
+      }
+
+      &::after {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+        width: 2px;
+        content: "";
+        background-color: var(--djcx-color-level-0);
+      }
+
+      &.active::after {
+        left: -3px;
+        background-color: var(--djcx-button-level-0-background-color-hover);
+        width: 8px;
+      }
+
+      &.folded {
+        &::after {
+          left: -2px;
+          width: 6px;
+        }
+
+        &.active::after {
+          left: -3px;
+          background-color: var(--djcx-button-level-0-background-color-hover);
+          width: 8px;
+        }
+      }
+    }
+
+    &.cthread-l1 {
+      display: block;
+      min-width: 24px;
+
+      &.cthread-ini {
+        &::before {
+          position: absolute;
+          content: "";
+          top: 7px;
+          left: 19px;
+          width: 12px;
+          height: 12px;
+          border-radius: 6px;
+          border: 2px solid var(--djcx-color-level-1);
+          background-color: var(--djcx-background-color);
+        }
+
+        &::after {
+          top: 18px;
+        }
+      }
+
+      &::after {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 24px;
+        display: block;
+        width: 2px;
+        content: "";
+        background-color: var(--djcx-color-level-1);
+      }
+
+      &.active::after {
+        left: 21px; // (-3px).
+        background-color: var(--djcx-button-level-1-background-color-hover);
+        width: 8px;
+      }
+
+      &.folded {
+        &::after {
+          left: 22px;  // (-2px).
+          width: 6px;
+        }
+
+        &.active::after {
+          left: 21px; // (-3px).
+          background-color: var(--djcx-button-level-1-background-color-hover);
+          width: 8px;
+        }
+      }
+    }
+
+    &.cthread-l2 {
+      display: block;
+      min-width: 24px;
+
+      &.cthread-ini {
+        &::before {
+          position: absolute;
+          content: "";
+          top: 7px;
+          left: 43px;
+          width: 12px;
+          height: 12px;
+          border-radius: 6px;
+          border: 2px solid var(--djcx-color-level-2);
+          background-color: var(--djcx-background-color);
+        }
+
+        &::after {
+          top: 18px;
+        }
+      }
+
+      &::after {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 48px;
+        display: block;
+        width: 2px;
+        content: "";
+        background-color: var(--djcx-color-level-2);
+      }
+
+      &.active::after {
+        left: 45px; // (-3px).
+        background-color: var(--djcx-button-level-2-background-color-hover);
+        width: 8px;
+      }
+
+      &.folded {
+        &::after {
+          left: 46px; // (-2px).
+          width: 6px;
+        }
+
+        &.active::after {
+          left: 45px; // (-3px).
+          background-color: var(--djcx-button-level-2-background-color-hover);
+          width: 8px;
+        }
+      }
+    }
+  }
+
+  .cthread-end {
+      display: block;
+      min-width: 24px;
+  }
+
+  /* End experimental */
+
+  .comment-box.l0-ini::after {
+    position: absolute;
+    content: "";
+    top: 7px;
+    left: -5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 6px;
+    border: 2px solid var(--djcx-color-level-0);
+    background-color: var(--djcx-background-color);
+  }
+
+  .comment-box.l1-ini::after {
+    position: absolute;
+    content: "";
+    top: 7px;
+    left: 19px;
+    width: 12px;
+    height: 12px;
+    border-radius: 6px;
+    border: 2px solid var(--djcx-color-level-1);
+    background-color: var(--djcx-background-color);
+  }
+
+  .comment-box.l0-ini::before,
+  .comment-box-img.l0-ini::before,
+  .comment-box.l0-mid::before,
+  .comment-box-img.l0-mid::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      display: block;
+      width: 2px;
+      content: "";
+      background-color: var(--djcx-color-level-0);
+  }
+
+  .comment-box.l0-ini::before,
+  .comment-box-img.l0-ini::before {
+      top: 16px
+  }
+
+  .comment-box.l1-ini .level-1::after {
+    position: absolute;
+    content: "";
+    top: 7px;
+    left: 19px;
+    width: 12px;
+    height: 12px;
+    border-radius: 6px;
+    border: 2px solid var(--djcx-color-level-1);
+    background-color: var(--djcx-background-color);
+  }
+
+  .comment-box.l1-ini .level-1::before,
+  .comment-box-img.l1-ini .level-1::before,
+  .comment-box.l1-mid .level-1::before,
+  .comment-box-img.l1-mid .level-1::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 24px;
+    display: block;
+    width: 2px;
+    content: "";
+    background-color: var(--djcx-color-level-1);
+  }
+
+  .comment-box-img.l1-ini .level-1::before,
+  .comment-box-img.l1-mid .level-1::before {
+    left: 52px;
+  }
+
+  .comment-box.l1-ini .level-1::before,
+  .comment-box-img.l1-ini .level-1::before {
+    top: 16px;
+  }
+
+  .comment-box.l2-ini .level-2::after {
+    position: absolute;
+    content: "";
+    top: 7px;
+    left: 43px;
+    width: 12px;
+    height: 12px;
+    border-radius: 6px;
+    border: 2px solid var(--djcx-color-level-2);
+    background-color: var(--djcx-background-color);
+  }
+
+  .comment-box.l2-ini .level-2::before,
+  .comment-box-img.l2-ini .level-2::before,
+  .comment-box.l2-mid .level-2::before,
+  .comment-box-img.l2-mid .level-2::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 48px;
+    display: block;
+    width: 2px;
+    content: "";
+    background-color: var(--djcx-color-level-2);
+  }
+
+  .comment-box-img.l2-ini .level-2::before,
+  .comment-box-img.l2-mid .level-2::before {
+    left: 104px;
+  }
+
+  .comment-box.l2-ini .level-2::before,
+  .comment-box-img.l2-ini .level-2::before {
+    top: 8px;
+  }
+
+  .reply-box,
+  .reply-box-img {
+    position: relative;
+    display: flex;
+    padding: 0;
+  }
+
+  .reply-box .content,
+  .reply-box-img .content {
+    display: flex;
+    justify-content: left;
+    padding: .6rem 0;
+
+    &.fix {
+      position: relative;
+      margin-left: 16px;
+      padding-right: 16px;
+      width: 100%;
+    }
+
+  }
+
+  .reply-box .level-1,
+  .reply-box .level-2,
+  .reply-box .level-3,
+  .reply-box-img .level-1,
+  .reply-box-img .level-2,
+  .reply-box-img .level-3 {
+      display: block;
+      width: 24px;
+      flex-grow: 0;
+      flex-shrink: 0;
+  }
+
+  .reply-box-img .level-1,
+  .reply-box-img .level-2 {
+    width: 52px;
+  }
+
+  .reply-box.l0 {
+    margin-left: 0;
+  }
+
+  .reply-box-img.l0 {
+    margin-left: 16px;
+  }
+
+  .reply-box.l0     .content,
+  .reply-box-img.l0 .content {
+    position: relative;
+    margin-left: 41px;
+    padding-right: 16px;
+    width: 100%;
+  }
+
+  .reply-box-img.l0 .content {
+    margin-left: 87px;
+  }
+
+  .reply-box.l0 button {
+    background-color: var(--djcx-button-level-0-background-color);
+    border-color: var(--djcx-button-level-0-border-color);
+    color: var(--djcx-button-level-0-color);
+
+    &:hover {
+      background-color: var(--djcx-button-level-0-background-color-hover);
+      border-color: var(--djcx-button-level-0-border-color-hover);
+      color: var(--djcx-button-level-0-color-hover);
+    }
+  }
+
+  .reply-box.l0.l1 button {
+    background-color: var(--djcx-button-level-1-background-color);
+    border-color: var(--djcx-button-level-1-border-color);
+    color: var(--djcx-button-level-1-color);
+
+    &:hover {
+      background-color: var(--djcx-button-level-1-background-color-hover);
+      border-color: var(--djcx-button-level-1-border-color-hover);
+      color: var(--djcx-button-level-1-color-hover);
+    }
+  }
+
+    .reply-box.l0.l1.l2 button {
+    background-color: var(--djcx-button-level-2-background-color);
+    border-color: var(--djcx-button-level-2-border-color);
+    color: var(--djcx-button-level-2-color);
+
+    &:hover {
+      background-color: var(--djcx-button-level-2-background-color-hover);
+      border-color: var(--djcx-button-level-2-border-color-hover);
+      color: var(--djcx-button-level-2-color-hover);
+    }
+  }
+
+  .reply-box.l0.l1::before,
+  .reply-box.l0.l1 .level-1::before,
+  .reply-box-img.l0.l1::before,
+  .reply-box-img.l0.l1 .level-1::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 2px;
+    content: "";
+    background-color: hsl(207deg 90% 34%);
+  }
+
+  .reply-box.l0::before,
+  .reply-box.l0.l1 .level-1::before,
+  .reply-box.l0.l1.l2 .level-2::before,
+  .reply-box-img.l0::before,
+  .reply-box-img.l0.l1 .level-1::before,
+  .reply-box-img.l0.l1.l2 .level-2::before {
+    position: absolute;
+    top: 0;
+    bottom: 50%;
+    left: 0;
+    display: block;
+    width: 2px;
+    content: "";
+    background-color: hsl(207deg 90% 34%);
+  }
+
+  .reply-box.l0.l1 .level-1::before {
+    left: 24px;
+    background-color: hsl(207deg 90% 54%);
+  }
+
+  .reply-box-img.l0.l1 .level-1::before {
+    left: 52px;
+    background-color: hsl(207deg 90% 54%);
+  }
+
+  .reply-box.l0.l1.l2 .level-1::before {
+    left: 24px;
+    bottom: 0;
+    background-color: hsl(207deg 90% 54%);
+  }
+
+  .reply-box-img.l0.l1.l2 .level-1::before {
+    left: 52px;
+    bottom: 0;
+    background-color: hsl(207deg 90% 54%);
+  }
+
+  .reply-box.l0.l1.l2 .level-2::before {
+      left: 48px;
+      background-color: hsl(207deg 90% 74%);
+  }
+
+  .reply-box-img.l0.l1.l2 .level-2::before {
+    left: 104px;
+      background-color: hsl(207deg 90% 74%);
+  }
+
+  .reply-box .line-0,
+  .reply-box .line-1,
+  .reply-box .line-2,
+  .reply-box-img .line-0,
+  .reply-box-img .line-1,
+  .reply-box-img .line-2 {
+    position: absolute;
+    top: 50%;
+    left: 1px;
+    border-top-width: 2px;
+    border-top-style: solid;
+    transform: translateY(-50%);
+    display: block;
+    width: 40px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  .reply-box-img .line-0,
+  .reply-box-img .line-1,
+  .reply-box-img .line-2 {
+    width: 87px
+  }
+
+  .reply-box .line-0,
+  .reply-box-img .line-0 {
+    left: 0;
+    border-color: hsl(207deg 90% 34%);
+  }
+
+  .reply-box .line-1 {
+    left: 25px;
+    border-color: hsl(207deg 90% 54%);
+  }
+
+  .reply-box-img .line-1 {
+    left: 53px;
+    border-color: hsl(207deg 90% 54%);
+  }
+
+  .reply-box .line-2 {
+    left: 49px;
+    border-color: hsl(207deg 90% 74%);
+  }
+
+  .reply-box-img .line-2 {
+    left: 105px;
+    border-color: hsl(207deg 90% 74%);
+  }
+
+  .not-reply-box.l0::before,
+  .not-reply-box.l0.l1::before,
+  .not-reply-box.l0.l1.l2::before,
+  .not-reply-box-img.l0::before,
+  .not-reply-box-img.l0.l1::before,
+  .not-reply-box-img.l0.l1.l2::before {
+    position: absolute;
+    content: "";
+    margin-left: -5px;
+    margin-top: -4px;
+    width: 12px;
+    height: 2px;
+    border: 2px solid hsl(207deg 90% 34%);
+  }
+
+  .not-reply-box-img.l0::before {
+    margin-left: 11px;
+  }
+
+  .not-reply-box.l0.l1::before,
+  .not-reply-box-img.l0.l1::before {
+      margin-left: 19px;
+      border: 2px solid hsl(207deg 90% 54%);
+  }
+
+  .not-reply-box-img.l0.l1::before {
+      margin-left: 63px;
+  }
+
+  .not-reply-box.l0.l1.l2::before,
+  .not-reply-box-img.l0.l1.l2::before {
+      margin-left: 43px;
+      border: 2px solid hsl(207deg 90% 74%);
+      background-color: #fff;
+  }
+
+  .not-reply-box-img.l0.l1.l2::before {
+      margin-left: 115px;
+  }
+
+  .comment-box a.permalink,
+  .comment-box-img a.permalink,
+  .narrow-comment-box a.permalink {
+    display: none;
+  }
+
+  .comment-box:hover a.permalink,
+  .comment-box-img:hover a.permalink,
+  .narrow-comment-box:hover a.permalink {
+    display: inline;
+  }
+
+  .comment-box .thread-space {
+    position: relative;
+    z-index: 1;
+    padding-right: 16px;
+  }
+
+  .comment-box-img .user-avatar {
+    position: relative;
+    z-index: 1;
+    margin-left: -17px;
+    padding-right: 16px;
+  }
+
+  .user-avatar > img {
+    border: var(--djcx-user-avatar-border);
+    border-radius: 50%;
+    max-width: inherit;
+    height: fit-content;
+  }
+
+  .comment-box .comment,
+  .comment-box-img .comment {
+      flex-grow: 1;
+  }
+
+  .comment-box .comment {
+      padding-left: 16px;
+      padding-right: 16px;
+
+      &.fix {
+        margin-left: -8px;
+        padding-left: 0;
+        padding-right: 0;
+      }
+  }
+
+  .comment-box .header,
+  .comment-box-img .header {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 8px 4px;
+    font-size: 0.8rem;
+    gap: 16px;
+
+    & > div:last-child {
+      display: flex;
+    }
+  }
+
+  .comment-box .body,
+  .comment-box-img .body {
+      font-size: 0.9rem;
+
+      & > p {
+        margin: .6rem;
+        line-height: 1.4;
+        font-size: 0.9rem;
+      }
+
+      & > p + p {
+        margin-top: 0;
+      }
+  }
+
+  .body-bordered {
+    padding: 4px;
+    border: 1px solid var(--djcx-border-color-subtle);
+    border-bottom: 0;
+    border-color: var(--djcx-border-color-subtle);
+    border-style: solid;
+    border-top-left-radius: var(--djcx-border-radius);
+    border-top-right-radius: var(--djcx-border-radius);
+  }
+
+  .feedback-bordered {
+    padding: 0 .8rem 4px;
+    border: 1px solid var(--djcx-border-color-subtle);
+    border-top: 0;
+    border-bottom-left-radius: 0.3rem;
+    border-bottom-right-radius: 0.3rem;
+  }
+
+  .comment-box .feedback,
+  .comment-box-img .feedback {
+    font-size: 0.8rem;
+  }
+
+  .comment-box .feedback > div::after,
+  .comment-box-img .feedback > div::after {
+    content: "·";
+    padding: 0 6px 0 2px;
+    font-weight: 700;
+  }
+
+  .comment-box .feedback > div:last-child::after,
+  .comment-box-img .feedback > div:last-child::after {
+    content: "";
+  }
+
+  .comment-preview {
+    margin-bottom: 1rem;
+  }
+
+  /* ---------------------------------------- */
+  .tip-container,
+  .flag,
+  .reaction,
+  .vote {
+    position: relative;
+    display: inline-flex;
+    padding-left: 2px;
+    padding-right: 2px;
+    cursor: pointer;
+    align-items: center;
+
+    .tooltip {
+      visibility: hidden;
+      width: 180px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+
+      /* Position the tooltip text */
+      position: absolute;
+      z-index: 2;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -90px;
+
+      /* Fade in tooltip */
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip::after {
+      /* Tooltip arrow. */
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent;
+    }
+
+    &:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  /* ---------------------------------------- */
+  .reactions,
+  .active-reactions {
+    display: inline-block;
+  }
+
+  .reaction .emoji {
+    padding: 0 0 0 2px;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", emoji;
+  }
+
+  button.emoji {
+    margin: 1px;
+    padding: 2px 10px;
+    border: 0;
+    outline: none;
+    background: var(--djcx-button-emoji-background-color);
+    font-size: var(--djcx-button-emoji-font-size);
+    border-style: none;
+    font-family: var(--djcx-font-family-emoji);
+  }
+
+  button.emoji:hover, button.emoji:focus {
+    margin-top: 0;
+    border-bottom-width: 0;
+    background: var(--djcx-button-emoji-background-color-hover);
+    outline: none;
+  }
+
+  button.emoji.active {
+    margin-top: 0;
+    border-bottom-width: 0;
+    background: var(--djcx-button-emoji-background-color-active);
+    outline: none;
+
+    &:hover {
+      background: var(--djcx-button-emoji-background-color-hover);
+    }
+  }
+
+
+  .reactions-panel .arrow {
+    position: absolute;
+    display: block;
+    width: 1rem;
+    height: 0.5rem;
+    margin: 0 0 0 -0.5rem;
+    bottom: calc((0.5rem + 1px) * -1);
+    box-shadow: var(--djcx-panel-box-shadow);
+  }
+
+  .reactions-panel .arrow::before, .reactions-panel .arrow::after {
+    position: absolute;
+    display: block;
+    content: "";
+    border-color: transparent;
+    border-style: solid;
+  }
+
+  .reactions-panel .arrow::before {
+    bottom: 0;
+    border-width: 0.5rem 0.5rem 0;
+    border-top-color: var(--djcx-reactions-panel-arrow-color);
+  }
+
+  .reactions-panel .arrow::after {
+    bottom: 1px;
+    border-width: 0.5rem 0.5rem 0;
+    border-top-color: var(--djcx-reactions-panel-background-color);
+  }
+
+  .vote.fix-pos-mt {
+   /* This is to fix the margin top position of the vote down symbol,
+    * when displayed in flex-direction column (themes feedback-in-header,
+    * and avatar-in-header). Maybe there is a better solution, but I
+    * don't know.
+    */
+    margin-top: -1.2px;
+  }
+
+  /* ----------------------------------------------------- */
+  .reactions-list {
+    display: flex;
+    justify-content: center;
+  }
+
+  .reaction-form div.buttons-row,
+  .vote-form div.buttons-row {
+      display: flex;
+      justify-content: center;
+      text-align: center;
+
+      button {
+        margin: 2px;
+      }
+  }
+
+  .reaction-form .emoji,
+  .vote-form .emoji {
+    font-size: 1rem;
+    font-family: var(--djcx-font-family-emoji);
+  }
+
+  .vote-block {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .vote-up::after {
+    width: 13px;
+    content: "\0025b3";
+    display: inline-block;
+    text-align: center;
+  }
+
+  .vote-down::after {
+    width: 13px;
+    content: "\0025bd";
+    display: inline-block;
+    text-align: center;
+  }
+
+  a.vote-up:hover::after,
+  .vote-up.active::after {
+    width: 13px;
+    content: "\0025b2";
+    color: var(--djcx-link-color-hover);
+    text-align: center;
+  }
+
+  a.vote-down:hover::after,
+  .vote-down.active::after {
+    width: 13px;
+    content: "\0025bc";
+    color: var(--djcx-link-color-hover);
+    text-align: center;
+  }
+
+  .vote-score {
+    padding: 0 6px;
+    font-size: 1em;
+    font-weight: bold;
+    color: white;
+    background-color: #f66;
+    border-radius: 4px;
+  }
+}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+{% load mytags %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;articles{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">{{ object.title }}</h2>
+    <h6 class="text-center small">{{ object.published_time }}</h6>
+    <div class="central-column">
+      <div class="pb-3">
+        {{ object.body|render_markdown }}
+      </div>
+
+      {% get_comment_count for object as comment_count %}
+      {% if comment_count %}
+      <h6 class="text-center">
+        {% blocktrans count comment_count=comment_count %}
+        There is {{ comment_count }} comment
+        {% plural %}
+        There are {{ comment_count }} comments
+        {% endblocktrans %}
+      </h6>
+      {% endif %}
+
+      <div class="djcx" data-comments-theme={{ comments_theme }}>
+        {% render_xtdcomment_list for object with comments_theme=comments_theme %}
+      </div>
+
+      {% if comments_input_allowed %}
+      <div class="djcx" data-djcx="comment-form">
+        <section class="comment-form">
+          <h5 class="mb-0 text-center">{% translate "Post your comment" %}</h5>
+          {% render_xtdcomment_form for object %}
+        </section>
+        {% else %}
+        <h4 class="text-center">{% trans "New comments are not allowed." %}</h4>
+      </div>
+      {% endif %}
+    </div>
+  </article>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  globalThis.addEventListener("DOMContentLoaded", (_) => {
+    const cfg = document.querySelector("[data-djcx=config]");
+    if (!cfg)
+      return;
+    cfg.addEventListener("DjcxLoaded", (_) => {
+      var cf = document.querySelector(".djcx form");
+      cf.elements['comment'].value = (
+        "This comment form is sent in preview directly in the template "
+        + "`form_js_test.html`, and rendered with the JS plugin."
+      );
+      cf.elements['name'].value = "Joe Bloggs";
+      cf.elements['email'].value = "joe@example.com";
+      globalThis.djcx.comment_form.post("preview");
+    });
+  });
+</script>
+<script src="{% static 'django_comments_xtd/js/djcx.min.js' %}"></script>
+{% endblock %}

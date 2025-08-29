@@ -1,0 +1,39 @@
+{% extends "base_light.html" %}
+{% load i18n %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;{{ title }}{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/djcx-styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">Comment form</h2>
+    <div class="theme">default theme</div>
+    <h6 class="text-center small">{% now "F j, Y" %}</h6>
+    <div class="central-column">
+      <div style="margin-bottom: 32px">
+        <ol>
+          <li>This page contains some CSS declarations in a <code>&lt;style&gt;</code> element, in the <code>base.html</code> template.</li>
+          <li>It is minimally styled to show how the comment box will look like when including only django-comments-xtd styles.</li>
+          <li>The <code>extra_css</code> block in the template only includes the css file corresponding to  <code>django-comments-xtd/css/comments.css</code>. So only the <code>div.comments</code> is styled.</li>
+        </ol>
+      </div>
+
+      <div class="djcx light">
+        <section class="comment-form">
+          <h5 class="mb-0 text-center">{% translate "Post your comment" %}</h5>
+          {% render_xtdcomment_form for object %}
+        </section>
+      </div>
+
+    </div>
+  </article>
+</main>
+{% endblock content %}

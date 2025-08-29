@@ -1,0 +1,46 @@
+/* Variable font: Ubuntu Sans Mono.
+ * Fallback to static font files in case the
+ * browser doesn't support variable fonts.
+ */
+
+ @supports (font-variation-settings: normal) {
+  @font-face {
+    font-family: 'Ubuntu Sans Mono';
+    src: url('UbuntuSansMono-VariableFont_wght.ttf') format("woff2-variations"),
+         url('UbuntuSansMono-VariableFont_wght.ttf') format("woff2");
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Ubuntu Sans Mono';
+    src: url('UbuntuSansMono-Italic-VariableFont_wght.ttf') format("woff2-variations"),
+         url('UbuntuSansMono-Italic-VariableFont_wght.ttf') format("woff2");
+    font-style: italic;
+  }
+}
+
+@supports not (font-variation-settings: normal) {
+  @font-face {
+    font-family: 'Ubuntu Sans Mono';
+    src: url('UbuntuSansMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Ubuntu Sans Mono';
+    src: url('UbuntuSansMono-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Ubuntu Sans Mono';
+    src: url('UbuntuSansMono-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Ubuntu Sans Mono';
+    src: url('UbuntuSansMono-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }
+}

@@ -1,0 +1,305 @@
+{% extends "base_light.html" %}
+{% load i18n %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;{{ title }}{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/djcx-styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">Comments level 0-3, feedback off</h2>
+    <div class="text-center monospace">experimental</div>
+    <h6 class="text-center small">{% now "F j, Y" %}</h6>
+    <div class="central-column">
+      <div style="margin-bottom: 48px">
+        <ol>
+          <li>This page contains some CSS declarations in a <code>&lt;style&gt;</code> element, in the <code>base.html</code> template.</li>
+          <li>It is minimally styled to show how the comment box will look like when including only django-comments-xtd styles.</li>
+          <li>The <code>extra_css</code> block in the template only includes the css file corresponding to  <code>django-comments-xtd/css/comments.css</code>. So only the <code>div.comments</code> is styled.</li>
+        </ol>
+      </div>
+
+      <h3 class="text-center">There are 6 comments</h3>
+
+      <div class="djcx">
+        <div class="comment-list">
+
+          <!-- Start comment-40 (level 0) -->
+          <div id="comment-40" class="comment-box">
+            <a class="cthread cthread-l0 cthread-ini" data-djcx-cthread-id="40"></a>
+            <div class="comment fix">
+              <div class="header flex-align-center">
+                <div>
+                  Isabel Azul<br>
+                  <span class="muted smaller">Jan. 8, 2025, 1:15 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/4/#comment-40">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-40">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="3" href="/comments/flag/40/?#comment-40">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Nunc sodales facilisis blandit. Aliquam fermentum eu lorem in egestas. Nunc porttitor dignissim mi et cursus. Etiam nec metus cursus, luctus nisl id, elementum lectus.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-40 (level 0) -->
+
+          <!-- Start comment-50 (level 1) -->
+          <div id="comment-50" class="comment-box">
+            <a class="cthread cthread-l0" data-djcx-cthread-id="40"></a>
+            <a class="cthread cthread-l1 cthread-ini" data-djcx-cthread-id="50"></a>
+            <div class="comment fix">
+              <div class="header flex-align-center">
+                <div>
+                  Amalia Ocean<br>
+                  <span class="muted smaller">Jan. 8, 2025, 3:33 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/5/#comment-50">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-50">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="5" href="/comments/flag/50/?#comment-50">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Morbi tempus sem a dapibus fringilla.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-50 (level 1) -->
+
+          <!-- End comment-80 (level 2) -->
+          <div id="comment-80" class="comment-box">
+            <a class="cthread cthread-l0" data-djcx-cthread-id="40"></a>
+            <a class="cthread cthread-l1" data-djcx-cthread-id="50"></a>
+            <a class="cthread cthread-l2 cthread-ini" data-djcx-cthread-id="80"></a>
+            <div class="comment fix">
+              <div class="header flex-align-center">
+                <div>
+                  Isabel Azul<br>
+                  <span class="muted smaller">May 14, 2025, 9:04 a.m.</span>
+                  <a class="permalink" title="comment permalink" href="/comments/cr/19/1/80/#comment-80">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-80">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="80" href="/comments/flag/80/#comment-80">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Ut lacinia porta diam, at elementum dolor gravida at. Proin at eros non purus viverra fringilla a nec augue. Etiam sed lectus ipsum. Nulla facilisi.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End Comment-80 (level 2) -->
+
+          <!-- End comment-90 (level 3) -->
+          <div id="comment-90" class="comment-box">
+            <a class="cthread cthread-l0" data-djcx-cthread-id="40"></a>
+            <a class="cthread cthread-l1" data-djcx-cthread-id="50"></a>
+            <a class="cthread cthread-l2" data-djcx-cthread-id="80"></a>
+            <span class="cthread-end"></span>
+            <div class="comment fix">
+              <div class="header flex-align-center">
+                <div>
+                  Amalia Ocean<br>
+                  <span class="muted smaller">May 14, 2025, 10:15 a.m.</span>
+                  <a class="permalink" title="comment permalink" href="/comments/cr/19/1/90/#comment-90">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-90">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="90" href="/comments/flag/90/#comment-90">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Cras id ex placerat, tempor leo id, pulvinar nisi. Vivamus ante enim, scelerisque non pulvinar et, molestie sed elit. </p>
+              </div>
+            </div>
+          </div>
+          <!-- End Comment-90 (level 3) -->
+
+          <!-- Start Reply-to-80 -->
+          <div id="reply-to-80" class="reply-box">
+            <a class="cthread cthread-l0" data-djcx-cthread-id="40"></a>
+            <a class="cthread cthread-l1" data-djcx-cthread-id="50"></a>
+            <a class="cthread cthread-l2 cthread-reply" data-djcx-cthread-id="80"></a>
+            <div class="line-2"></div>
+            <div class="content fix">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-80" action="/comments/reply/8/">
+                  <input type="hidden" name="reply_to" value="80">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-2 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-80 -->
+
+          <!-- Start Reply-to-50 -->
+          <div id="reply-to-50" class="reply-box">
+            <a class="cthread cthread-l0" data-djcx-cthread-id="40"></a>
+            <a class="cthread cthread-l1 cthread-reply" data-djcx-cthread-id="50"></a>
+            <div class="line-1"></div>
+            <div class="content fix">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-50" action="/comments/reply/50/">
+                  <input type="hidden" name="reply_to" value="50">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-1 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-50 -->
+
+          <!-- Start comment-60 (level 1) -->
+          <div id="comment-60" class="comment-box">
+            <a class="cthread cthread-l0" data-djcx-cthread-id="40"></a>
+            <a class="cthread cthread-l1 cthread-ini" data-djcx-cthread-id="60"></a>
+            <div class="comment fix">
+              <div class="header flex-align-center">
+                <div>
+                  David Fields<br>
+                  <span class="muted smaller">Jan. 8, 2025, 3:59 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/6/#comment-6">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-6">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="6" href="/comments/flag/6/?#comment-6">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Cras eleifend in libero at aliquam. Proin viverra pellentesque quam, non condimentum nulla viverra eget.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-60 (level 1) -->
+
+          <!-- Start Reply-to-60 -->
+          <div id="reply-to-60" class="reply-box">
+            <a class="cthread cthread-l0" data-djcx-cthread-id="40"></a>
+            <a class="cthread cthread-l1 cthread-reply" data-djcx-cthread-id="60"></a>
+            <div class="line-1"></div>
+            <div class="content fix">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-60" action="/comments/reply/60/">
+                  <input type="hidden" name="reply_to" value="60">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-1 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-60 -->
+
+          <!-- Start comment-70 (level 1) -->
+          <div id="comment-70" class="comment-box">
+            <a class="cthread cthread-l0" data-djcx-cthread-id="40"></a>
+            <a class="cthread cthread-l1 cthread-ini" data-djcx-cthread-id="70"></a>
+            <div class="comment fix">
+              <div class="header flex-align-center">
+                <div>
+                  Demi-Leigh Turnbull<br>
+                  <span class="muted smaller">Jan. 8, 2025, 4:27 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/70/#comment-70">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-70">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="70" href="/comments/flag/70/?#comment-70">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Fusce non urna convallis, ultricies lectus id, ultricies arcu. Pellentesque suscipit porttitor elit. Suspendisse potenti. Sed vehicula ornare nibh, nec malesuada ligula pharetra consectetur.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-70 (level 1) -->
+
+          <!-- Start Reply-to-70 -->
+          <div id="reply-to-70" class="reply-box">
+            <a class="cthread cthread-l0" data-djcx-cthread-id="40"></a>
+            <a class="cthread cthread-l1 cthread-reply" data-djcx-cthread-id="70"></a>
+            <div class="line-1"></div>
+            <div class="content fix">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-70" action="/comments/reply/70/">
+                  <input type="hidden" name="reply_to" value="70">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-1 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-70 -->
+
+          <!-- Start Reply-to-40 -->
+          <div id="reply-to-40" class="reply-box">
+            <a class="cthread cthread-l0 cthread-reply" data-djcx-cthread-id="40"></a>
+            <div class="line-0"></div>
+            <div class="content fix">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-40" action="/comments/reply/40/">
+                  <input type="hidden" name="reply_to" value="40">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-0 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-40 -->
+
+        </div>
+      </div>
+
+      <div class="djcx">
+        <section class="comment-form">
+          <h5 class="mb-0 text-center">{% translate "Post your comment" %}</h5>
+          {% render_xtdcomment_form for object %}
+        </section>
+      </div>
+
+    </div>
+  </article>
+</main>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'django_comments_xtd/js/djcx.min.js' %}"></script>
+{% endblock %}

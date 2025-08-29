@@ -1,0 +1,27 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% if display_preview %}
+  <section class="comment-preview mb32" data-djcx="preview">
+    <div class="comment-box-img l0-ini">
+      {{ 0|indent_divs }}
+      <div class="comment">
+        <div class="header">
+          <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
+          <div class="small text-info">{% translate "comment in preview" %}</div>
+        </div>
+        <div class="body">
+          {{ form.cleaned_data.comment|linebreaks|escape }}
+        </div>
+        <div class="feedback"></div>
+      </div>
+    </div>
+    <div class="not-reply-box-img l0"></div>
+  </section>
+{% endif %}
+
+<section class="comment-form">
+  <h5 class="text-center">{% translate "Post your comment" %}</h5>
+  {% include "comments/form.html" %}
+</section>

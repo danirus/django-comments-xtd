@@ -2,11 +2,7 @@
 # http://ui.co.id/blog/asynchronous-send_mail-in-django
 
 import hashlib
-
-try:
-    import Queue as queue  # python2  # noqa: N813
-except ImportError:
-    import queue as queue  # python3  # noqa: PLC0414
+import queue
 import threading
 
 try:
@@ -17,7 +13,10 @@ except ImportError:
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
+from django.http.response import HttpResponseRedirect
 from django.utils.crypto import salted_hmac
+from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 
 from django_comments_xtd.conf import settings
 from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_OPTIONS
@@ -72,6 +71,16 @@ def send_mail(
         )
 
 
+# --------------------------------------------------------------------
+def get_max_thread_level(content_type):
+    """Get the max_thread_level for a given content_type."""
+    app_model = f"{content_type.app_label}.{content_type.model}"
+    return settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL.get(
+        app_model, settings.COMMENTS_XTD_MAX_THREAD_LEVEL
+    )
+
+
+# --------------------------------------------------------------------
 def get_app_model_options(comment=None, content_type=None):
     """
     Get the app_model_option from `COMMENTS_XTD_APP_MODEL_OPTIONS`.
@@ -92,7 +101,10 @@ def get_app_model_options(comment=None, content_type=None):
         init_opts["default"] = default_opts
 
     if comment:
-        content_type = ContentType.objects.get_for_model(comment.content_object)
+        content_type = ContentType.objects.get_for_model(
+            comment.content_object,
+            for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL
+        )
         key = f"{content_type.app_label}.{content_type.model}"
     elif content_type:
         key = f"{content_type.app_label}.{content_type.model}"
@@ -107,6 +119,61 @@ def get_app_model_options(comment=None, content_type=None):
         return init_opts["default"]
 
 
+OPTION_MSGS = {
+    "comments_flagging_enabled": {
+        "PROD": "Comments not allowed to be flagged.",
+        "DEBUG": (
+            "Check the COMMENTS_XTD_APP_MODEL_OPTIONS setting. "
+            "Option 'comments_flagging_enabled' is False."
+        ),
+    },
+    "comments_voting_enabled": {
+        "PROD": "Comments not allowed to receive votes.",
+        "DEBUG": (
+            "Check the COMMENTS_XTD_APP_MODEL_OPTIONS setting. "
+            "Option 'comments_voting_enabled' is False."
+        ),
+    },
+    "comments_reacting_enabled": {
+        "PROD": "Comments not allowed to receive reactions.",
+        "DEBUG": (
+            "Check the COMMENTS_XTD_APP_MODEL_OPTIONS setting. "
+            "Option 'comments_reacting_enabled' is False."
+        ),
+    },
+}
+
+def check_option(option, comment=None, content_type=None, options=None):
+    retrieved_option = False
+
+    if options is not None:
+        retrieved_option = options[option]
+    else:
+        retrieved_option = get_app_model_options(
+            comment=comment, content_type=content_type
+        )[option]
+
+    if retrieved_option is False:
+        env = "DEBUG" if settings.DEBUG else "PROD"
+        raise PermissionDenied(
+            detail=OPTION_MSGS[option][env],
+            code=status.HTTP_403_FORBIDDEN
+        )
+
+
+def check_input_allowed(object):
+    """
+    This is a generic function called with the object being commented.
+    It's defined as the default in 'COMMENTS_XTD_APP_MODEL_OPTIONS'.
+
+    If you want to disallow comments input to your 'app.model' instances under
+    a given conditions, rewrite this function in your code and modify the
+    'COMMENTS_XTD_APP_MODEL_OPTIONS' in your settings.
+    """
+    return True
+
+
+# --------------------------------------------------------------------
 def get_current_site_id(request=None):
     """it's a shortcut"""
     return getattr(get_current_site(request), "pk", 1)  # fallback value
@@ -118,7 +185,11 @@ def get_html_id_suffix(obj):
     return suffix
 
 
-def get_user_avatar(comment):
+def get_user_gravatar(comment):
     path = hashlib.md5(comment.user_email.lower().encode("utf-8")).hexdigest()
     param = urlencode({"s": 48})
     return f"//www.gravatar.com/avatar/{path}?{param}&d=identicon"
+
+
+def redirect_to(comment):
+    return HttpResponseRedirect(comment.get_absolute_url())

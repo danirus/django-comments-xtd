@@ -1,0 +1,11 @@
+{% load i18n %}
+{% load comments %}
+
+<div class="col1-2 lh-15">
+  <div class="alert alert-success text-center">
+    {% translate "Comment published" %}
+  </div>
+  <p>
+    {% blocktranslate %}Thank you for taking the time to participate! Your comment has been already published. Follow <a href="{{ comment_url }}">this link</a> to see it.{% endblocktranslate %}
+  </p>
+</div>

@@ -2,34 +2,61 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<div id="comments">
+<div
+  class="comment-list"
+  data-djcx="config"
+  {% if user.is_authenticated %}
+  data-djcx-react-url="{% url 'comments-xtd-react' 0 %}"
+  data-djcx-vote-url="{% url 'comments-xtd-vote' 0 %}"
+  data-djcx-flag-url="{% url 'comments-flag' 0 %}"
+  {% else %}
+  data-djcx-login-url="{% url 'login' %}"
+  {% endif %}
+  data-djcx-is-guest-user="{% if user.is_authenticated %}0{% else %}1{% endif %}"
+  data-djcx-is-input-allowed="{% if comments_input_allowed %}1{% else %}0{% endif %}"
+  data-djcx-flagging-enabled="{% if comments_flagging_enabled %}1{% else %}0{% endif %}"
+  data-djcx-reacting-enabled="{% if comments_reacting_enabled %}1{% else %}0{% endif %}"
+  data-djcx-voting-enabled="{% if comments_voting_enabled %}1{% else %}0{% endif %}"
+>
   {% for comment in comment_list %}
-  <div id="c{{ comment.id }}" class="comment d-flex py-1">
-    <img src="{{ comment.user_email|xtd_comment_gravatar_url }}"
-        class="me-3" alt="{{ comment.user_email }}"
-        height="48" width="48" />
-    <div class="d-flex flex-column flex-grow-1">
-      <h6 class="comment-header mb-1 d-flex justify-content-between" style="font-size: 0.8rem">
-        <div class="d-inline flex-grow-1">
-          <span>{{ comment.submit_date }}&nbsp;-&nbsp;{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new" class="text-decoration-none">{% endif %}{{ comment.name }}{% if comment.url %}</a>{% endif %}</span>
-          <span>{% if comment.user and comment.user|has_permission:"django_comments.can_moderate" %}&nbsp;<span class="badge text-bg-secondary">{% trans "moderator" %}</span>{% endif %}&nbsp;&nbsp;<a class="permalink text-decoration-none" title="{% trans 'comment permalink' %}" href="{% get_comment_permalink comment %}">¶</a>
-        </div>
-        <div class="d-inline">
-          {% if not comment.is_removed and perms.comments.can_moderate %}
-          <a class="text-decoration-none" href="{% url 'comments-delete' comment.pk %}"><i class="bi bi-trash" title="{% trans 'remove comment' %}"></i></a>
+    {% comment %}
+      # Before rendering the comment, check the reply_stack to find out
+      # whether a reply-box has to be rendered.
+    {% endcomment %}
+    {% if reply_stack %}
+      {% with top_comment=reply_stack|get_top_comment reply_stack_copy=reply_stack|copy_reply_stack %}
+        {% if comment.level <= top_comment.level %}
+          {% for object in reply_stack|pop_comments_gte:comment.level %}
+            {% if object.allow_thread %}
+              {% include "comments/reply_button.html" with comment=object %}
+            {% endif %}
+          {% endfor %}
+          {% push_comment comment %}
+        {% elif comment.level > top_comment.level and comment.level < max_thread_level %}
+          {% push_comment comment %}
+        {% endif %}
+      {% endwith %}
+    {% else %}
+      {% push_comment comment %}
+    {% endif %}
+
+    {% block comment %}
+      {% include "comments/comment.html" %}
+    {% endblock %}
+
+    {% if forloop.last %}
+      {% comment %}
+        # After rendering the last comment, render the reply form for the
+        # rest of comments still queued in the reply_stack.
+      {% endcomment %}
+      {% with reply_stack_copy=reply_stack|copy_reply_stack %}
+        {% for object in reply_stack|pop_comments_gte %}
+          {% if object.allow_thread %}
+            {% include "comments/reply_button.html" with comment=object %}
           {% endif %}
-        </div>
-      </h6>
-      {% if comment.is_removed %}
-      <p class="text-muted pb-3">
-        <em>{% trans "This comment has been removed." %}</em>
-      </p>
-      {% else %}
-      <div class="content pt-1 pb-3">
-        {% include "includes/django_comments_xtd/comment_content.html" with content=comment.comment %}
-      </div>
-      {% endif %}
-    </div>
-  </div>
+        {% endfor %}
+      {% endwith %}
+    {% endif %}
+
   {% endfor %}
 </div>

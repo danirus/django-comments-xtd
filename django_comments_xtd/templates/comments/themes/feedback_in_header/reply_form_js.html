@@ -1,0 +1,29 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+<section class="reply-form active" data-djcx="reply-form-{{ form.reply_to.value }}">
+  {% if display_preview %}
+    <section class="comment-preview mb32" data-djcx="preview">
+      <div class="comment-box">
+        {{ 0|indent_divs }}
+        <div class="comment-preview">
+          <div class="header">
+            <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
+            <div class="small text-info">{% translate "comment in preview" %}</div>
+          </div>
+          <div class="body">
+            {{ form.cleaned_data.comment|linebreaks|escape }}
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+
+  {% include "comments/reply_form.html" %}
+
+  <div class="reply-form" data-djcx="reply-textarea">
+    <textarea rows="1" placeholder="{% translate 'Your reply' %}"></textarea>
+  </div>
+</section>

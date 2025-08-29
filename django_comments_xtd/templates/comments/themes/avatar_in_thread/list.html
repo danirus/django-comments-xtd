@@ -1,0 +1,60 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+<div
+  id="comments"
+  class="comment-list"
+  data-dccx="config"
+  {% if user.is_authenticated %}
+    data-djcx-react-url="{% url 'comments-xtd-react' 0 %}"
+    data-djcx-vote-url="{% url 'comments-xtd-vote' 0 %}"
+    data-djcx-flag-url="{% url 'comments-flag' 0 %}"
+  {% else %}
+    data-djcx-login-url="{% url 'login' %}"
+  {% endif %}
+  data-djcx-is-guest-user="{% if user.is_authenticated %}0{% else %}1{% endif %}"
+  data-djcx-is-input-allowed="{% if is_input_allowed %}1{% else %}0{% endif %}"
+>
+  {% for comment in comment_list %}
+    {% comment %}
+      # Before rendering the comment, check the reply_stack to find out
+      # whether a reply-box has to be rendered.
+    {% endcomment %}
+    {% if reply_stack %}
+      {% with top_comment=reply_stack|get_top_comment %}
+        {% if comment.level <= top_comment.level %}
+          {% for object in reply_stack|pop_comments_gte:comment.level %}
+            {% if object.allow_thread %}
+              {% include "comments/themes/avatar_in_thread/reply_button.html" with comment=object %}
+            {% endif %}
+          {% endfor %}
+          {% push_comment comment %}
+        {% elif comment.level > top_comment.level and comment.level < max_thread_level %}
+          {% push_comment comment %}
+        {% endif %}
+      {% endwith %}
+    {% else %}
+      {% push_comment comment %}
+    {% endif %}
+
+    {% block comment %}
+      {% with page_number=page_obj.number %}
+        {% include "comments/themes/avatar_in_thread/comment.html" %}
+      {% endwith %}
+    {% endblock %}
+
+    {% if forloop.last %}
+      {% comment %}
+        # After rendering the last comment, render the reply form for the
+        # rest of comments still queued in the reply_stack.
+      {% endcomment %}
+      {% for object in reply_stack|pop_comments_gte %}
+        {% if object.allow_thread %}
+          {% include "comments/themes/avatar_in_thread/reply_button.html" with comment=object %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+  {% endfor %}
+</div>

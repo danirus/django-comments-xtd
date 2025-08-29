@@ -21,7 +21,7 @@ classifiers = [
 dependencies = [
     "Django >=4, <6",
     'django-contrib-comments >=2.2, <2.3',
-    'djangorestframework >=3.12, <3.17',
+    'djangorestframework >=3.12, <3.16',
     'docutils',
     'pytz',
     'six',
@@ -38,8 +38,10 @@ Documentation = "https://django-comments.xtd.readthedocs.io"
 
 [project.optional-dependencies]
 dev = [
+    "build >= 1.3, <1.4",
     "coverage >=7.6, <7.7",
     "django-coverage-plugin >=3.1, <3.2",
+    "markdown >=3.8, <3.9",
     "pre-commit >=4.0.1",
     "pytest >=8.3, <8.4",
     "pytest-cov >=6.0, <6.1",
@@ -52,7 +54,7 @@ docs = [
     "myst-parser >=4.0.0, <4.1",
     "sphinx-colorschemed-images >=0.2.2",
     "sphinx-copybutton >=0.5.2, <1.0.0",
-    "sphinx-nefertiti >=0.8.5",
+    "sphinx-nefertiti >=0.8.2",
 ]
 
 [tool.coverage.run]
@@ -105,7 +107,6 @@ extend-select = [
     "UP",  # pyupgrade
     "T20", # flake8-print
 ]
-ignore = ["N802"]
 
 [tool.pytest]
 addopts = "--create-db"

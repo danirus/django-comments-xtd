@@ -1,0 +1,60 @@
+{% extends "comments/base.html" %}
+
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{% trans "Comment reply" %}{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% trans "Reply to comment" %}</h2>
+      <h6 class="text-center pb24">
+        {% trans "Comment sent to:" %}<br/>
+        <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
+      </h6>
+    </div>
+    <div class="central-column">
+      <div class="djcx pb32">
+        <div id="c{{ comment.id }}" class="comment-box l0-ini">
+          <div class="comment">
+            <div class="header flex-align-center">
+              {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}
+                <div class="flex-align-center pl-2" id="cm-votes-{{ comment.id }}">
+                  {% include "comments/themes/feedback_in_header/comment_votes.html" %}
+                </div>
+              {% endif %}
+              <div class="flex-grow py-0 pr-16">
+                {% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}<br/>
+                <span class="muted">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
+              </div>
+              <div id="cm-feedback-{{ comment.id }}" class="feedback">
+                {% if not comment.is_removed and comments_reacting_enabled %}
+                  {% include "comments/themes/feedback_in_header/comment_reactions.html" %}
+                {% endif %}
+                {% if not comment.is_removed and comments_flagging_enabled and comments_input_allowed %}
+                  <div id="cm-flags-{{ comment.id }}">{% include "comments/comment_flags.html" %}</div>
+                {% endif %}
+              </div>
+            </div>
+            <div class="body">
+              {{ comment.comment|linebreaks|escape }}
+            </div>
+          </div>
+        </div>
+
+        <div class="reply-box l0">
+          <div class="line-0"></div>
+          <div class="content">
+            <section class="reply-form active">
+              {% include "comments/form.html" %}
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</main>
+{% endblock %}

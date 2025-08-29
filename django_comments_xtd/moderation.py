@@ -115,7 +115,6 @@ class XtdModerator(Moderator):
         )
         comment_was_flagged.connect(self.comment_flagged, sender=get_model())
 
-    # ruff: noqa: PLR0913
     def comment_flagged(
         self, sender, comment, flag, created, request, **kwargs
     ):

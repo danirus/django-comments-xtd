@@ -1,51 +1,90 @@
-{% extends "django_comments_xtd/base.html" %}
+{% extends "comments/base.html" %}
+
 {% load i18n %}
+{% load comments %}
 {% load comments_xtd %}
 
-{% block title %}{% trans "Preview your comment" %}{% endblock %}
+{% block title %}{% trans "Comment preview" %}{% endblock %}
 
 {% block content %}
-<div class="container">
-  <div class="row justify-content-center my-4">
-    <div class="text-center">
-      <h3>
-        {% trans "Preview of your comment for:" %}<br/>
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% trans "Preview your comment" %}</h2>
+      <h6 class="text-center">
+        {% trans "Comment sent to:" %}<br/>
         <a href="{{ form.target_object.get_absolute_url }}">{{ form.target_object }}</a>
-      </h3>
+      </h6>
     </div>
-  </div>
-  <div class="row justify-content-center">
-    <div>
-      <hr/>
-      {% if not comment %}
-      <em>{% trans "Empty comment." %}</em>
-      {% else %}
-      <div class="d-flex">
-        <div class="me-3">
-          {{ form.cleaned_data.email|xtd_comment_gravatar }}
+    <div class="central-column">
+      <div class="djcx">
+        <div class="comment-list">
+          {% if form.reply_to.value == "0" %}
+            <div class="comment-box">
+              <div class="comment">
+                <div class="header">
+                  <div>
+                    {% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}
+                  </div>
+                  <div class="small text-info">{% trans "comment in preview" %}</div>
+                </div><!-- header -->
+                <div class="body body-bordered">
+                  {{ form.cleaned_data.comment|linebreaks|escape }}
+                </div>
+                <div class="feedback feedback-bordered"></div>
+              </div>
+            </div>
+          {% else %}
+            {% with parent=form.reply_to.value|get_comment %}
+              <div class="comment-box">
+                <a class="cthread cthread-l0 cthread-ini"></a>
+                <div class="comment fix">
+                  <div class="header">
+                    <div>{% if parent.url %}<a href="{{ parent.url }}" target="_new">{{ parent.name }}</a>{% else %}{{ parent.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ parent.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink parent page_number %}">¶</a></div>
+                  </div>
+                  <div class="body body-bordered">
+                    {{ parent.comment|linebreaks|escape }}
+                  </div>
+                  <div class="feedback feedback-bordered"></div>
+                </div>
+              </div>
+            {% endwith %}
+
+            <div class="comment-box">
+              <a class="cthread cthread-l0"></a>
+              <a class="cthread-end"></a>
+              <div class="comment fix">
+                <div class="header">
+                  <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
+                  <div class="small text-info">{% trans "comment in preview" %}</div>
+                </div>
+                <div class="body body-bordered">
+                  {{ form.cleaned_data.comment|linebreaks|escape }}
+                </div>
+                <div class="feedback feedback-bordered"></div>
+              </div>
+            </div>
+
+            <div class="reply-box">
+              <a class="cthread cthread-l0 cthread-reply"></a>
+              <div class="line-0"></div>
+              <div class="content fix">
+                <section class="reply-form active">
+                  {% include "comments/form.html" %}
+                </section>
+              </div>
+            </div>
+          {% endif %}
         </div>
-        <div class="d-flex flex-column pb-3">
-          <span style="font-size: 0.8rem">
-            {% now "N j, Y, P" %}&nbsp;-&nbsp;
-            {% if form.cleaned_data.url %}
-            <a href="{{ form.cleaned_data.url }}" target="_new">
-              {{ form.cleaned_data.name }}
-            </a>
-            {% else %}
-              {{ form.cleaned_data.name }}
-            {% endif %}
-          </span>
-          <div class="py-2">{{ comment }}</div>
-        </div>
-      </div>
-      {% endif %}
-      <div class="card mt-4 mb-5">
-        <div class="card-body">
-          <h4 class="card-title text-center pb-3">{% trans "Post your comment" %}</h4>
-          {% include "comments/form.html" %}
-        </div>
+
+        {% if form.reply_to.value == "0" %}
+          <section class="comment-form">
+            <h5 class="mb-0 text-center">{% trans "Post your comment" %}</h5>
+            {% include "comments/form.html" %}
+          </section>
+        {% endif %}
       </div>
     </div>
-  </div>
-</div>
+  </article>
+</main>
 {% endblock %}

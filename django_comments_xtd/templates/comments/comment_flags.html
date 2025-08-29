@@ -1,0 +1,17 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% with cflags=comment.get_flags %}
+{% if perms.comments.can_moderate and cflags.counter > 0 %}
+  <div class="tip-container">
+    <div class="badge badge-red">{{ cflags.counter }}</div><div class="tooltip">{% blocktrans count counter=cflags.counter %}A user has flagged this comment as inappropriate.{% plural %}{{ counter }} users have flagged this comment as inappropriate.{% endblocktrans %}</div>
+  </div>
+{% endif %}
+<div class="tip-container">{% if user in cflags.users %}
+  <a data-djcx-action="flag" data-comment="{{ comment.id }}" {% if not user.is_authenticated %}data-login-next="{% get_comment_permalink comment %}"{% endif %} href="{% url 'comments-flag' comment.id %}#{{ anchor }}">&#9873;</a>
+  <div class="tooltip">{% trans "You have flagged this comment as inappropriate" %}</div>{% else %}
+  <a data-djcx-action="flag" data-comment="{{ comment.id }}" {% if not user.is_authenticated %}data-login-next="{% get_comment_permalink comment %}"{% endif %} href="{% url 'comments-flag' comment.id %}#{{ anchor }}">&#9872;</a>
+  <div class="tooltip">{% trans "Flag this comment as inappropriate" %}</div>{% endif %}
+</div>
+{% endwith %}

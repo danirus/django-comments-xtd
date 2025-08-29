@@ -1,5 +1,21 @@
 # Change Log
 
+## [3.0.0] -
+
+* A new model class `CommentThread` implements the data referred to the thread that each comment belongs to. It serves also the purpose of storing the score for each comment at level 0, when comment voting is enabled.
+* A new model class `CommentVote` allows to vote for comments. Voting is only allowed for comments at thread level 0 (no nested comments).
+* A new model class `CommentReaction` allows to send reactions to a comment. Reactions are customizable. See `example/mockups_project/enums.py` for an example. By default reactions are like (thumb up) and dislike (thumb down).
+* The model `XtdComment`:
+  - Does not provide the `tree_from_queryset` method anymore, so a tree representation is no longer available.
+  - Provides a new method `get_reactions`, that returns a dictionary with the number of reactions and the list of every reaction sent to a comment.
+  - The `get_flags` method now provides only the django-comments' `CommentFlag.SUGGEST_REMOVAL` flags sent to a comment. `LIKEDIT_FLAG` and `DISLIKEDIT_FLAG` no longer exist.
+* Functions `models.publish_or_unpublish_nested_comments` and `models.publish_or_unpublish_on_pre_save` have been renamed to `models.publish_or_withhold_nested_comments` and `models.publish_or_withhold_on_pre_save` respectively.
+* A new `models.on_comment_deleted` function is provided, associated with the signal `post_delete` in association with the model `XtdComment`, that deletes the nested comments and the comment reactions of a comment when its deletion is requested.
+* The ReactJS plugin provided with v2.x has been removed. A new vanilla JS plugin is provided.
+* Template directory `django_comments_xtd` has been removed in favor of the `comments` template directory.
+* It provides a `scss/` directory with SCSS styling. It no longer uses the CSS Bootstrap framework (in the past AKA as twitter-bootstrap). All Bootstrap CSS classes referenced in the code have been removed.
+* To do: rewrite REST API.
+
 ## [2.10.9] - 2025-08-12
 
 * Opens up the range of supported djangorestframework versions to `>=3.12, <3.17`.

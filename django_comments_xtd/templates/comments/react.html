@@ -1,0 +1,74 @@
+{% extends "comments/base.html" %}
+
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{% trans "React to comment" %}{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% trans "Share your reaction to this comment" %}</h2>
+      <h6 class="text-center pb24">
+        {% trans "Comment sent to:" %}<br/>
+        <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
+      </h6>
+    </div>
+    <div class="central-column">
+      <div class="djcx pb32">
+        <div id="c{{ comment.id }}" class="comment-box">
+          <div class="comment">
+            <div class="header">
+              <div>
+                {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}
+                  <div class="inline-block" id="cm-votes-{{ comment.id }}">
+                    {% include "comments/comment_votes.html" %}
+                  </div>
+                  &sdot;
+                {% endif %}
+                {% if comment.url and not comment.is_removed %}
+                  <a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>
+                {% else %}
+                  {{ comment.name }}
+                {% endif %}
+                &sdot;
+                <span class="muted">{{ comment.submit_date }}</span>
+                <a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
+              </div>
+              {% if not comment.is_removed and comments_flagging_enabled and comments_input_allowed %}
+                <div id="cm-flags-{{ comment.id }}">
+                  {% include "comments/comment_flags.html" %}
+                </div>
+              {% endif %}
+            </div>
+            <div class="body body-bordered{% if comments_reacting_enabled %} body-bordered--no-bottom{% endif %}">
+              {{ comment.comment|linebreaks|escape }}
+            </div>
+            <div id="cm-feedback-{{ comment.id }}" class="feedback feedback-bordered">
+              {% include "comments/comment_reactions.html" %}
+            </div>
+          </div>
+        </div>
+
+        <section class="reaction-form">
+          <h5 class="text-center">Reaction choices</h5>
+          {% if user_reactions %}
+            <p class="text-center">{% trans "Pressed buttons correspond to your active reactions to this comment." %}</p>
+          {% endif %}
+          <form method="POST" autocomplete="off" action="{% comment_reaction_form_target comment %}">
+            {% csrf_token %}
+            {% render_comment_reactions_buttons user_reactions %}
+            {% if user_reactions %}
+              <h6 class="text-center">{% trans "Click on a button to select or deselect your reaction." %}</h6>
+            {% else %}
+              <h6 class="text-center">{% trans "Click on a button to select your reaction." %}</h6>
+            {% endif %}
+          </form>
+        </section>
+      </div>
+    </div>
+  </article>
+</main>
+{% endblock %}

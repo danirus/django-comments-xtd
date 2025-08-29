@@ -1,0 +1,28 @@
+{
+  "extends": "stylelint-config-standard-scss",
+  "customSyntax": "postcss-scss",
+  "ignoreFiles": ["**.*.min.css*"],
+  "rules": {
+    "selector-max-type": [2, {"ignore": ["descendant"]}]
+  },
+  "overrides": [
+    {
+      "files": "scss/*.scss",
+      "rules": {
+        "color-named": [
+          "always-where-possible", { "ignoreProperties": "/./" }
+        ],
+        "custom-property-empty-line-before": null,
+        "declaration-no-important": null,
+        "comment-empty-line-before": null,
+        "color-function-notation": null,
+        "scss/at-function-named-arguments": [
+          "never", { "ignoreFunctions": ["color.scale"] }
+        ],
+        "selector-class-pattern": null,
+        "selector-max-type": 3,
+        "selector-not-notation": null
+      }
+    }
+  ]
+}

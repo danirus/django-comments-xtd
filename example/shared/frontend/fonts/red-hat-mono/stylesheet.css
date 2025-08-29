@@ -1,0 +1,45 @@
+/* Variable font: Red Hat Mono.
+ * Fallback to static font files in case the
+ * browser doesn't support variable fonts.
+ */
+
+ @supports (font-variation-settings: normal) {
+  @font-face {
+    font-family: 'Red Hat Mono';
+    src: url('RedHatMono-VariableFont_wght.ttf') format("woff2-variations"),
+         url('RedHatMono-VariableFont_wght.ttf') format("woff2");
+  }
+}
+
+@supports not (font-variation-settings: normal) {
+  @font-face {
+    font-family: 'Red Hat Mono';
+    src: url('RedHatMono-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Red Hat Mono';
+    src: url('RedHatMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Red Hat Mono';
+    src: url('RedHatMono-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Red Hat Mono';
+    src: url('RedHatMono-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Red Hat Mono';
+    src: url('RedHatMono-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }
+}

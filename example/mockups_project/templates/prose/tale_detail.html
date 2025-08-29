@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+{% load mytags %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;tales{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">{{ object.title }}</h2>
+    <h6 class="text-center small">{{ object.published_time }}</h6>
+    <div class="central-column">
+      <div class="pb-3">
+        {{ object.body|render_markdown }}
+      </div>
+
+      {% get_xtdcomment_count for object as comment_count %}
+      {% if comment_count %}
+      <h6 class="text-center">
+        {% blocktrans count comment_count=comment_count %}
+        There is {{ comment_count }} comment
+        {% plural %}
+        There are {{ comment_count }} comments
+        {% endblocktrans %}
+      </h6>
+
+      <div class="djcx">
+        {% render_xtdcomment_list for object with comments_theme=comments_theme %}
+      </div>
+      {% endif %}
+
+      {% if comments_input_allowed %}
+      <div class="djcx">
+        <section class="comment-form">
+          <h5 class="mb-0 text-center">{% translate "Post your comment" %}</h5>
+          {% render_xtdcomment_form for object %}
+        </section>
+        {% else %}
+        <h4 class="text-center">{% trans "New comments are not allowed." %}</h4>
+      </div>
+      {% endif %}
+    </div>
+  </article>
+</main>
+{% endblock %}
+
+{% block extra_html %}
+<div class="djcx">
+  {% render_comment_reply_template for object %}
+  {% render_comment_reactions_panel_template %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'django_comments_xtd/js/djcx.min.js' %}"></script>
+{% endblock %}

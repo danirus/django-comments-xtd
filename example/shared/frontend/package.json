@@ -1,0 +1,28 @@
+{
+  "name": "django-comments-xtd-example",
+  "version": "3.0.0",
+  "description": "frontend assets for django-comments-xtd example projects",
+  "main": "to-be-determined",
+  "sass": "scss/",
+  "scripts": {
+    "css": "npm-run-all css-compile css-minify",
+    "css-clean": "del css/example-styles.*",
+    "css-compile": "sass --style expanded --source-map --embed-sources --no-error-css scss/:css/",
+    "css-lint": "npm-run-all --aggregate-output --continue-on-error --parallel css-lint-vars \"css-lint-stylelint scss/\"",
+    "css-lint-stylelint": "stylelint --cache --cache-location .cache/.stylelintcache --rd",
+    "css-lint-vars": "fusv scss/",
+    "css-minify": "cleancss -O1 --batch --batch-suffix '.min' --format breakWith=lf --with-rebase --source-map --output css css/djcx-styles.css",
+    "css-watch": "nodemon --watch scss/ --ext scss --exec \"npm-run-all css-lint css-compile\""
+  },
+  "keywords": [],
+  "author": "Daniela Rus Morales",
+  "license": "MIT",
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "del-cli": "^6.0.0",
+    "npm-run-all2": "^8.0.1",
+    "sass": "1.87.0",
+    "stylelint": "^16.19.1",
+    "stylelint-config-standard-scss": "^14.0.0"
+  }
+}

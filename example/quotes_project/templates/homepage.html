@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="intro big fw300">
+      The <strong>quotes project</strong> uses only the backend side of django-comments-xtd. Users can send comments, can reply to comments, can send reactions to comments and to quotes, and can vote comments up and down.
+    </div>
+  </div>
+  <div class="container">
+    <div class="flex-row">
+      <section class="column">
+        <h6 class="subtitle text-success">Threaded comments</h6>
+        <p>
+          Comments can be nested. The maximum thread level is customizable.
+        </p>
+      </section>
+      <section class="column">
+        <h6 class="subtitle text-success">Notifications and mute-links</h6>
+        <p>
+          Receive follow-up notifications of your comments, and mute them later.
+        </p>
+      </section>
+    </div>
+  </div>
+  <div class="container">
+    <div class="flex-row">
+      <section class="column">
+        <h6 class="subtitle text-success">Comment confirmation</h6>
+        <p>
+          Comment confirmation via email when the user is not authenticated.
+        </p>
+      </section>
+      <section class="column">
+        <h6 class="subtitle text-success">Comment reactions</h6>
+        <p>
+          The set of reactions is customizable, to allow more reactions other than like and dislike.
+        </p>
+      </section>
+    </div>
+  </div>
+</main>
+{% endblock %}

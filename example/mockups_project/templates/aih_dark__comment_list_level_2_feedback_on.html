@@ -1,0 +1,498 @@
+{% extends "base_dark.html" %}
+{% load i18n %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;{{ title }}{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/djcx-styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">Comments level 0-2, feedback on</h2>
+    <div class="theme">avatar_in_header</div>
+    <h6 class="text-center small">{% now "F j, Y" %}</h6>
+    <div class="central-column">
+      <div style="margin-bottom: 48px">
+        <ol>
+          <li>This page contains some CSS declarations in a <code>&lt;style&gt;</code> element, in the <code>base.html</code> template.</li>
+          <li>It is minimally styled to show how the comment box will look like when including only django-comments-xtd styles.</li>
+          <li>The <code>extra_css</code> block in the template only includes the css file corresponding to  <code>django-comments-xtd/css/comments.css</code>. So only the <code>div.comments</code> is styled.</li>
+        </ol>
+      </div>
+
+      <h3 class="text-center">There are 8 comments</h3>
+
+      <div class="djcx dark">
+        <div class="comment-list">
+          <!-- Start comment-1 (level 0) -->
+          <div id="comment-1" class="comment-box l0-ini">
+            <div class="comment">
+              <div class="header flex-align-center">
+                <div class="user-avatar">
+                  {% get_user_gravatar "lena.rosenthal@example.com" "36,identicon" %}
+                </div>
+                <div class="flex-grow">
+                  Lena Rosenthal<br>
+                  <span class="muted smaller">Jan. 7, 2025, 1:04 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/1/#comment-1">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-1" class="sep">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="1" href="/comments/flag/1/?#comment-1">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                  <div id="cm-feedback-1"  class="sep">
+                    <div id="cm-reactions-1" class="reactions">
+                      <div class="active-reactions">
+                        <div class="reaction" data-reaction="+">
+                          <a href="/comments/list-reacted/1/+/">13</a><span class="emoji">👍</span>
+                          <div class="tooltip">Eva Rizzi, Isabel Azul, Mengano Gómez, Daniela Rushmore, Amalia Ocean, David Fields, Saarah Hodges, Romilly Tanner, Zayan Blackmore, Celeste Duke and more reacted with +1</div>
+                        </div>
+                        <div class="reaction" data-reaction="-">
+                          <span>2</span><span class="emoji">👎</span>
+                          <div class="tooltip">Shazia Barrow, Gabrielius Gale reacted with -1</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inline-block sep">
+                    <a data-dci="reactions-panel" data-comment="1" class="small" data-user-auth="False" href="/comments/react/1/?#comment-1" data-login-next="/comments/cr/19/1/1/#comment-1">React</a>
+                  </div>
+                  <div class="inline-block">
+                    <span id="comment-1-replies" data-dci="nreplies" data-comment="1" class="small">One reply</span>
+                    <a href="?cfold=1#comment-1" class="rotate180">&#9661;</a>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent at viverra turpis. Quisque a dui ut felis varius semper eget non nunc. Vivamus fermentum pellentesque turpis, vel lacinia mi ullamcorper nec.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-1 -->
+
+          <!-- Start comment-2 (level 1) -->
+          <div id="comment-2" class="comment-box l0-mid l1-ini">
+            <div class="level-1"></div>
+            <div class="comment">
+              <div class="header flex-align-center">
+                <div class="user-avatar">
+                  {% get_user_gravatar "isabel.azul@example.com" "36,identicon" %}
+                </div>
+                <div class="flex-grow">
+                  Isabel Azul<br>
+                  <span class="muted smaller">Jan. 7, 2022, 5:20 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/2/#comment-2">¶</a>
+                </div>
+
+                <div class="feedback">
+                  <div id="cm-flags-2" class="sep">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="2" href="/comments/flag/2/?#comment-2">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                  <div id="cm-feedback-2" class="sep">
+                    <div id="cm-reactions-2" class="reactions">
+                      <div class="active-reactions">
+                        <div class="reaction" data-reaction="+">
+                          <a href="/comments/list-reacted/1/+/">1</a><span class="emoji">👍</span>
+                          <div class="tooltip">Lena Rosenthal reacted with +1</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inline-block">
+                    <a data-dci="reactions-panel" data-comment="2" class="small" data-user-auth="False" href="/comments/react/2/?#comment-2" data-login-next="/comments/cr/19/1/2/#comment-2">React</a>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Pellentesque eu porttitor metus. Curabitur ullamcorper eu erat quis condimentum. Curabitur ut dapibus turpis, eget bibendum leo.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-2 (level 1) -->
+
+          <!-- Start Reply-to-2 -->
+          <div id="reply-to-2" class="reply-box l0 l1">
+            <div class="level-1"></div>
+            <div class="line-1"></div>
+            <div class="content">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-2" action="/comments/reply/2/">
+                  <input type="hidden" name="reply_to" value="2">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-1 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-2 -->
+
+          <!-- Start Reply-to-1 -->
+          <div id="reply-to-1" class="reply-box l0">
+            <div class="line-0"></div>
+            <div class="content">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-12" action="/comments/reply/1/">
+                  <input type="hidden" name="reply_to" value="1">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-0 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-1 -->
+
+          <!-- Start comment-3 (level 0) -->
+          <div id="comment-3" class="comment-box l0-ini">
+            <div class="comment">
+              <div class="header flex-align-center">
+                <div class="user-avatar">
+                  {% get_user_gravatar "amalia.ocean@example.com" "36,identicon" %}
+                </div>
+                <div class="flex-grow">
+                  Amalia Ocean<br>
+                  <span class="muted smaller">Jan. 7, 2025, 5:20 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/3/#comment-3">¶</a>
+                </div>
+
+                <div class="feedback">
+                  <div id="cm-flags-3" class="sep">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="3" href="/comments/flag/3/?#comment-3">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                  <div id="cm-feedback-3" class="sep">
+                    <div id="cm-reactions-3" class="reactions">
+                      <div class="active-reactions">
+                        <div class="reaction" data-reaction="+">
+                          <span>4</span><span class="emoji">👍</span>
+                          <div class="tooltip">Eva Rizzi, Isabel Azul, Mengano Gómez, Saarah Hodges reacted with +1</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inline-block">
+                    <a data-dci="reactions-panel" data-comment="3" class="small" data-user-auth="False" href="/comments/react/3/?#comment-3" data-login-next="/comments/cr/19/1/3/#comment-3">React</a>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Donec non ipsum eu ipsum pulvinar condimentum. Curabitur vulputate dolor eget leo cursus tempor. Nullam iaculis est non nulla ornare pharetra. In molestie leo quis leo venenatis, eget aliquet nisi sollicitudin. Fusce turpis sem, porttitor ut nunc ac, facilisis facilisis leo.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-3 (level 0) -->
+
+          <!-- Start Reply-to-3 -->
+          <div id="reply-to-3" class="reply-box l0">
+            <div class="line-0"></div>
+            <div class="content">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-3" action="/comments/reply/3/">
+                  <input type="hidden" name="reply_to" value="3">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-0 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-3 -->
+
+          <!-- Start comment-4 (level 0) -->
+          <div id="comment-4" class="comment-box l0-ini">
+            <div class="comment">
+              <div class="header flex-align-center">
+                <div class="user-avatar">
+                  {% get_user_gravatar "isabel.azul@example.com" "36,identicon" %}
+                </div>
+                <div class="flex-grow">
+                  Isabel Azul<br>
+                  <span class="muted smaller">Jan. 8, 2025, 1:15 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/4/#comment-4">¶</a>
+                </div>
+
+                <div class="feedback">
+                  <div id="cm-flags-4" class="sep">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="3" href="/comments/flag/4/?#comment-4">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                  <div id="cm-feedback-4" class="sep">
+                    <div id="cm-reactions-4" class="reactions">
+                      <div class="active-reactions">
+                        <div class="reaction" data-reaction="+">
+                          <a href="/comments/list-reacted/4/+/">13</a><span class="emoji">👍</span>
+                          <div class="tooltip">Eva Rizzi, Isabel Azul, Mengano Gómez, Daniela Rushmore, Amalia Ocean, David Fields, Saarah Hodges, Romilly Tanner, Zayan Blackmore, Celeste Duke and more reacted with +1</div>
+                        </div>
+                        <div class="reaction" data-reaction="-">
+                          <span>2</span><span class="emoji">👎</span>
+                          <div class="tooltip">Shazia Barrow, Gabrielius Gale reacted with -1</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inline-block sep">
+                    <a data-dci="reactions-panel" data-comment="4" class="small" data-user-auth="False" href="/comments/react/4/?#comment-4" data-login-next="/comments/cr/19/1/1/#comment-4">React</a>
+                  </div>
+                  <div class="inline-block">
+                    <span id="comment-4-replies" data-dci="nreplies" data-comment="4" class="small">4 replies</span>
+                    <a href="?cfold=4#comment-4" class="rotate180">&#9661;</a>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Nunc sodales facilisis blandit. Aliquam fermentum eu lorem in egestas. Nunc porttitor dignissim mi et cursus. Etiam nec metus cursus, luctus nisl id, elementum lectus.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-4 (level 0) -->
+
+          <!-- Start comment-5 (level 1) -->
+          <div id="comment-5" class="comment-box l0-mid l1-ini">
+            <div class="level-1"></div>
+            <div class="comment">
+              <div class="header flex-align-center">
+                <div class="user-avatar">
+                  {% get_user_gravatar "amalia.ocean@example.com" "36,identicon" %}
+                </div>
+                <div class="flex-grow">
+                  Amalia Ocean<br>
+                  <span class="muted smaller">Jan. 8, 2025, 3:33 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/5/#comment-5">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-5" class="sep">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="5" href="/comments/flag/5/?#comment-5">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                  <div id="cm-feedback-5">
+                    <div id="cm-reactions-5" class="reactions">
+                    </div>
+                  </div>
+                  <div class="inline-block sep">
+                    <a data-dci="reactions-panel" data-comment="5" class="small" data-user-auth="False" href="/comments/react/5/?#comment-5" data-login-next="/comments/cr/19/1/5/#comment-5">React</a>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Morbi tempus sem a dapibus fringilla.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-5 (level 1) -->
+
+          <!-- End comment-8 (level 2) -->
+          <div id="comment-8" class="comment-box l0-mid l1-mid l2">
+            <div class="level-1"></div><div class="level-2"></div>
+            <div class="comment">
+              <div class="header flex-align-center">
+                <div class="user-avatar">
+                  {% get_user_gravatar "isabel.azul@example.com" "36,identicon" %}
+                </div>
+                <div class="flex-grow">
+                  Isabel Azul<br>
+                  <span class="muted smaller">May 14, 2025, 9:04 a.m.</span>
+                  <a class="permalink" title="comment permalink" href="/comments/cr/19/1/8/#comment-8">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-8" class="sep">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="8" href="/comments/flag/8/?cpage=2#comment-8">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                  <div id="cm-feedback-8" class="sep">
+                    <div id="cm-reactions-8" class="reactions">
+                      <div class="active-reactions">
+                        <div class="reaction" data-reaction="+">
+                          <a href="/comments/list-reacted/8/+/">1</a><span class="emoji">👍</span>
+                          <div class="tooltip">Amalia Ocean reacted with +1</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="inline-block">
+                    <a data-dci="reactions-panel" data-comment="8" class="small" data-user-auth="False" href="/comments/react/8/?#comment-8" data-login-next="/comments/cr/19/1/8/#comment-8">React</a>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Ut lacinia porta diam, at elementum dolor gravida at. Proin at eros non purus viverra fringilla a nec augue. Etiam sed lectus ipsum. Nulla facilisi.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End Comment-8 (level 2) -->
+
+          <!-- Start Reply-to-5 -->
+          <div id="reply-to-5" class="reply-box l0 l1">
+            <div class="level-1"></div>
+            <div class="line-1"></div>
+            <div class="content">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-5" action="/comments/reply/5/">
+                  <input type="hidden" name="reply_to" value="5">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-1 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-5 -->
+
+          <!-- Start comment-6 (level 1) -->
+          <div id="comment-6" class="comment-box l0-mid l1-ini">
+            <div class="level-1"></div>
+            <div class="comment">
+              <div class="header flex-align-center">
+                <div class="user-avatar">
+                  {% get_user_gravatar "david.fields@example.com" "36,identicon" %}
+                </div>
+                <div class="flex-grow">
+                  David Fields<br>
+                  <span class="muted smaller">Jan. 8, 2025, 3:59 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/6/#comment-6">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-6" class="sep">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="6" href="/comments/flag/6/?#comment-6">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                  <div id="cm-feedback-6">
+                    <div id="cm-reactions-6" class="reactions">
+                    </div>
+                  </div>
+                  <div class="inline-block">
+                    <a data-dci="reactions-panel" data-comment="6" class="small" data-user-auth="False" href="/comments/react/6/?#comment-6" data-login-next="/comments/cr/19/1/6/#comment-6">React</a>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Cras eleifend in libero at aliquam. Proin viverra pellentesque quam, non condimentum nulla viverra eget.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-6 (level 1) -->
+
+          <!-- Start Reply-to-6 -->
+          <div id="reply-to-6" class="reply-box l0 l1">
+            <div class="level-1"></div>
+            <div class="line-1"></div>
+            <div class="content">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-6" action="/comments/reply/6/">
+                  <input type="hidden" name="reply_to" value="6">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-1 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-6 -->
+
+          <!-- Start comment-7 (level 1) -->
+          <div id="comment-7" class="comment-box l0-mid l1-ini">
+            <div class="level-1"></div>
+            <div class="comment">
+              <div class="header flex-align-center">
+                <div class="user-avatar">
+                  {% get_user_gravatar "demi-leigh.turnbull@example.com" "36,identicon" %}
+                </div>
+                <div class="flex-grow">
+                  Demi-Leigh Turnbull<br>
+                  <span class="muted smaller">Jan. 8, 2025, 4:27 p.m.</span> <a class="permalink" title="comment permalink" href="/comments/cr/19/1/7/#comment-7">¶</a>
+                </div>
+                <div class="feedback">
+                  <div id="cm-flags-7" class="sep">
+                    <div class="tip-container">
+                      <a data-dci-action="flag" data-comment="6" href="/comments/flag/7/?#comment-7">&#9872;</a><div class="tooltip">Flag this comment as inappropriate</div>
+                    </div>
+                  </div>
+                  <div id="cm-feedback-7" class="sep">
+                    <div id="cm-reactions-7" class="reactions">
+                        <div class="reaction" data-reaction="+">
+                          <a href="/comments/list-reacted/7/+/">1</a><span class="emoji">👍</span>
+                          <div class="tooltip">Amalia Ocean reacted with +1</div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="inline-block">
+                    <a data-dci="reactions-panel" data-comment="7" class="small" data-user-auth="False" href="/comments/react/7/?#comment-7" data-login-next="/comments/cr/19/1/7/#comment-7">React</a>
+                  </div>
+                </div>
+              </div>
+              <div class="body">
+                <p>Fusce non urna convallis, ultricies lectus id, ultricies arcu. Pellentesque suscipit porttitor elit. Suspendisse potenti. Sed vehicula ornare nibh, nec malesuada ligula pharetra consectetur.</p>
+              </div>
+            </div>
+          </div>
+          <!-- End comment-7 (level 1) -->
+
+          <!-- Start Reply-to-7 -->
+          <div id="reply-to-7" class="reply-box l0 l1">
+            <div class="level-1"></div>
+            <div class="line-1"></div>
+            <div class="content">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-7" action="/comments/reply/7/">
+                  <input type="hidden" name="reply_to" value="7">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-1 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-7 -->
+
+          <!-- Start Reply-to-4 -->
+          <div id="reply-to-4" class="reply-box l0">
+            <div class="line-0"></div>
+            <div class="content">
+              <section class="reply-form" data-dci="reply-form">
+                <form id="reply-form-4" action="/comments/reply/4/">
+                  <input type="hidden" name="reply_to" value="4">
+                  <div class="col1-2">
+                    <div class="inline-left">
+                      <button type="submit" class="btn-level-0 small" data-dci="reply-button">reply</button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+          <!-- End Reply-to-4 -->
+        </div>
+      </div>
+
+      <div class="djcx dark">
+        <section class="comment-form-container">
+          <h5 class="mb-0 text-center">{% translate "Post your comment" %}</h5>
+          {% render_xtdcomment_form for object %}
+        </section>
+      </div>
+
+    </div>
+  </article>
+</main>
+{% endblock content %}

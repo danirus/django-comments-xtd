@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{{ block.super }}&nbsp;&bull;&nbsp;quotes{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/djcx-styles.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'django_comments_xtd/css/reactions.css' %}">
+{% endblock %}
+
+{% block nav-quotes-class %}active{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">{{ object.title }}</h2>
+    <h6 class="text-center small">{{ object.published_time }}</h6>
+    <div class="central-column">
+      <div class="pb-3">
+        <blockquote class="quote">
+          {{ object.quote|linebreaks }}
+        </blockquote>
+        <p class="text-right">
+          <em>{% if object.url_source %}<a href="{{ object.url_source }}">{{ object.author }}</a>{% else %}{{ object.author }}{% endif %}</em>
+        </p>
+      </div>
+
+      {% get_comment_count for object as comment_count %}
+      {% if comment_count %}
+      <h6 class="text-center">
+        {% blocktrans count comment_count=comment_count %}
+        There is {{ comment_count }} comment
+        {% plural %}
+        There are {{ comment_count }} comments
+        {% endblocktrans %}
+      </h6>
+
+      <div class="djcx pb-4">
+        {% render_xtdcomment_list for object %}
+      </div>
+      {% endif %}
+
+      {% if is_comment_input_allowed %}
+      <div class="djcx">
+        <section class="comment-form-container">
+          <h5 class="mb-0 text-center">{% translate "Post your comment" %}</h5>
+          {% render_xtdcomment_form for object %}
+        </section>
+        {% else %}
+        <h4 class="text-center">{% trans "New comments are not allowed." %}</h4>
+      </div>
+      {% endif %}
+    </div>
+  </article>
+</main>
+{% endblock %}

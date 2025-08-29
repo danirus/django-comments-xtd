@@ -1,5 +1,8 @@
 from django import forms
 from django.apps import apps
+from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
+from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from django_comments.forms import CommentForm
 
@@ -29,13 +32,13 @@ class XtdCommentForm(CommentForm):
 
         self.fields["name"].label = _("Name")
         self.fields["name"].widget = forms.TextInput(
-            attrs={"placeholder": _("name"), "class": "form-control"}
+            attrs={"placeholder": _("name")}
         )
 
         self.fields["email"].label = _("Mail")
         self.fields["email"].help_text = _("Required for comment verification")
         self.fields["email"].widget = forms.TextInput(
-            attrs={"placeholder": _("mail address"), "class": "form-control"}
+            attrs={"placeholder": _("mail address")}
         )
 
         self.fields["url"].label = _("Link")
@@ -43,12 +46,11 @@ class XtdCommentForm(CommentForm):
         self.fields["url"].widget = forms.TextInput(
             attrs={
                 "placeholder": _("url your name links to (optional)"),
-                "class": "form-control",
             }
         )
 
         self.fields["comment"].widget = forms.Textarea(
-            attrs={"placeholder": _("Your comment"), "class": "form-control"}
+            attrs={"placeholder": _("Your comment"),}
         )
         self.fields["comment"].max_length = settings.COMMENT_MAX_LENGTH
         self.fields["comment"].widget.attrs.pop("cols")
@@ -57,21 +59,33 @@ class XtdCommentForm(CommentForm):
         self.fields["followup"].widget.attrs[
             "id"
         ] = f"id_followup{followup_suffix}"
-        self.fields["followup"].widget.attrs["class"] = "form-check-input"
         self.fields["followup"].initial = settings.COMMENTS_XTD_DEFAULT_FOLLOWUP
 
     def get_comment_model(self):
         return TmpXtdComment
 
     def get_comment_create_data(self, site_id=None):
-        data = super(CommentForm, self).get_comment_create_data(site_id=site_id)
+        data = {
+            "content_type": ContentType.objects.get_for_model(
+                self.target_object,
+                for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL
+            ),
+            "object_pk": force_str(self.target_object._get_pk_val()),
+            "user_name": self.cleaned_data["name"],
+            "user_email": self.cleaned_data["email"],
+            "user_url": self.cleaned_data["url"],
+            "comment": self.cleaned_data["comment"],
+            "submit_date": timezone.now(),
+            "site_id": site_id or getattr(settings, "SITE_ID", None),
+            "is_public": True,
+            "is_removed": False,
+        }
         ctype = data.get("content_type")
         object_pk = data.get("object_pk")
         model = apps.get_model(ctype.app_label, ctype.model)
         target = model._default_manager.get(pk=object_pk)
         data.update(
             {
-                "thread_id": 0,
                 "level": 0,
                 "order": 1,
                 "parent_id": self.cleaned_data["reply_to"],
@@ -80,15 +94,3 @@ class XtdCommentForm(CommentForm):
             }
         )
         return data
-
-    def clean(self):
-        cleaned_data = super().clean()
-        for field_name in self.errors:
-            if "class" not in self.fields[field_name].widget.attrs:
-                continue
-            widget_classes = self.fields[field_name].widget.attrs["class"]
-            widget_classes = widget_classes.split(" ")
-            widget_classes.append("is-invalid")
-            widget_classes = " ".join(widget_classes)
-            self.fields[field_name].widget.attrs["class"] = widget_classes
-        return cleaned_data

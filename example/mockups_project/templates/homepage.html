@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block extra_head %}
+  {{ block.super }}
+  <style>
+    :root {
+      --font-size-monospace: 1.2rem;
+      --font-weight-monospace: 650;
+    }
+
+    h5 {
+      padding: .1rem;
+    }
+    @media (prefers-color-scheme: light) {
+      h5 { background-color: #f4f4f4; }
+    }
+    @media (prefers-color-scheme: dark) {
+      h5 { background-color: #212121; }
+    }
+
+    .mockups-grid {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr;
+      font-family: "Red Hat Mono", monospace;
+      font-size: .9rem;
+
+      > span {
+        padding: 0 .5rem;
+      }
+    }
+  </style>
+{% endblock extra_head %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="intro big fw300">
+      The <strong>templates project</strong> helps with the development of CSS stylesheets.
+    </div>
+  </div>
+  <div class="container">
+    <div>
+      <section class="column">
+        <h5>-- default theme mockups:</h5>
+        <div class="mockups-grid">
+          {% for mockup in default_theme_mockups %}
+          <span class="">{{ mockup.title }}</span>
+          <span>{% if mockup.url1 %}<a href="{% url mockup.url1 %}">light</a>{% else %}-----{% endif %}</span>
+          <span>{% if mockup.url2 %}<a href="{% url mockup.url2 %}">dark</a>{% else %}----{% endif %}</span>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="column">
+        <h5>-- <code>avatar_in_thread</code> mockups:</h5>
+        <div class="mockups-grid">
+          {% for mockup in avatar_in_thread_theme_mockups %}
+          <span class="">{{ mockup.title }}</span>
+          <span>{% if mockup.url1 %}<a href="{% url mockup.url1 %}">light</a>{% else %}-----{% endif %}</span>
+          <span>{% if mockup.url2 %}<a href="{% url mockup.url2 %}">dark</a>{% else %}----{% endif %}</span>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="column">
+        <h5>-- <code>feedback_in_header</code> mockups:</h5>
+        <div class="mockups-grid">
+          {% for mockup in feedback_in_header_theme_mockups %}
+          <span class="">{{ mockup.title }}</span>
+          <span>{% if mockup.url1 %}<a href="{% url mockup.url1 %}">light</a>{% else %}-----{% endif %}</span>
+          <span>{% if mockup.url2 %}<a href="{% url mockup.url2 %}">dark</a>{% else %}----{% endif %}</span>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="column">
+        <h5>-- <code>avatar_in_header</code> mockups:</h5>
+        <div class="mockups-grid">
+          {% for mockup in avatar_in_header_theme_mockups %}
+          <span class="">{{ mockup.title }}</span>
+          <span>{% if mockup.url1 %}<a href="{% url mockup.url1 %}">light</a>{% else %}-----{% endif %}</span>
+          <span>{% if mockup.url2 %}<a href="{% url mockup.url2 %}">dark</a>{% else %}----{% endif %}</span>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="column">
+        <h5>-- <code>Pure HTML</code> mockups:</h5>
+        <div class="mockups-grid">
+          {% for mockup in fixed %}
+          <span class="">{{ mockup.title }}</span>
+          <span>{% if mockup.url1 %}<a href="{% url mockup.url1 %}">light</a>{% else %}-----{% endif %}</span>
+          <span>{% if mockup.url2 %}<a href="{% url mockup.url2 %}">dark</a>{% else %}----{% endif %}</span>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+{% endblock %}

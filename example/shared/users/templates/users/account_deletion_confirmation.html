@@ -1,0 +1,18 @@
+{% load i18n %}
+
+<p>{% blocktrans %}Hi {{ name }}{% endblocktrans %}</p>
+
+<p>{% blocktrans %}You or someone in behalf of you has requested to delete your account from {{ site.domain }}. If you did not request it, please ignore this message or report an incident to {{ contact|safe }}. Otherwise, please take a moment and follow the link below to delete your user account:{% endblocktrans %}</p>
+
+<p><a href="{{ scheme }}://{{ site.domain }}{{ confirmation_url }}">{{ scheme }}://{{ site.domain }}{{ confirmation_url|slice:":40" }}...</a></p>
+
+<p>{% trans "If clicking does no work, you can also copy and paste the address into your browser's address window." %}</p>
+
+<p>{% trans "Thank you for your contributions." %}</p>
+
+<p>
+  {% blocktrans %}--<br/>
+  Kind regards,<br/>
+  {{ site }}
+  {% endblocktrans %}
+</p>

@@ -1,0 +1,288 @@
+[
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 1,
+    "fields": {
+        "title": "Article One with Comments-L0",
+        "slug": "article-one-comments-l0",
+        "body": "The **templates** project has an application called `prose` with 12 models, all with the same fields. \r\n\r\nThis is an instance of `ArticleWithMTL0Comments`: Articles whose comments have a MTL of 0 (MTL: Maximum Thread Level). In other words, comments posted to this article can not be nested.",
+        "allow_comments": true,
+        "published_time": "2025-07-04T13:35:20Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 2,
+    "fields": {
+        "title": "Comment Form",
+        "slug": "comment-form",
+        "body": "Sed est sapien, viverra nec vulputate vitae, ultricies sit amet lectus. Sed elit neque, scelerisque et lorem non, tincidunt elementum urna. Curabitur tincidunt in leo et eleifend. Etiam ac odio malesuada, consequat lorem et, semper nibh. Nunc lobortis mollis sapien vitae imperdiet. Donec non finibus dui. Pellentesque non pulvinar leo. Etiam eget nulla nec ante euismod maximus.",
+        "allow_comments": true,
+        "published_time": "2025-07-11T13:32:11Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 3,
+    "fields": {
+        "title": "Comments not allowed",
+        "slug": "comments-not-allowed",
+        "body": "Nullam tortor orci, placerat in est id, tempus fringilla ante. Phasellus vitae diam sed sem ornare porta. Nulla ac odio eu orci porttitor volutpat. Etiam et porttitor arcu. Cras est erat, volutpat vitae pharetra eget, pellentesque et risus. Ut id nibh consectetur, convallis est luctus, blandit metus. Cras interdum porttitor venenatis. Nunc scelerisque enim vitae augue elementum suscipit. Nam sagittis metus et orci consequat bibendum. Nullam iaculis lacinia lobortis. Aenean lobortis eros sed velit gravida, ac iaculis massa tincidunt.",
+        "allow_comments": false,
+        "published_time": "2025-07-11T13:50:37Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 4,
+    "fields": {
+        "title": "Force bad_form.html",
+        "slug": "force-bad-form",
+        "body": "This page:\r\n\r\n* Renders the `comment/bad_form.html` template, which is returned when the comment form contains errors (security errors) and is submitted via AJAX.\r\n* The view that generates this page is `views.bad_form_v`.\r\n* The template that renders this page is `bad_form_test.html`.",
+        "allow_comments": true,
+        "published_time": "2025-07-12T14:22:27Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 5,
+    "fields": {
+        "title": "Force form_js.html",
+        "slug": "force-form-js",
+        "body": "This page:\r\n\r\n* Requires you to be logged out (does logout for you).  \r\n* Renders the `comment/form_js.html` template, which is returned when the comment form is submitted via AJAX, and the form is not valid or it has been requested in preview. In this case it has been sent with `comment_form.post(\"preview\")`.\r\n* The view that generates this page is `views.form_js_v`.\r\n* The template that renders this page is `form_js_test.html`.",
+        "allow_comments": true,
+        "published_time": "2025-07-15T13:12:51Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 6,
+    "fields": {
+        "title": "Force moderated_js.html",
+        "slug": "force-moderated-js",
+        "body": "This page:\r\n\r\n* Renders the `comment/moderated_js.html` template, which is returned when the comment form is submitted via AJAX, and the comment receives the `is_public` attribute as `False`.\r\n* The view that generates this page is `views.moderated_js_v`.\r\n* The template that renders this page is `moderated_js_test.html`.",
+        "allow_comments": true,
+        "published_time": "2025-07-15T15:57:03Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 7,
+    "fields": {
+        "title": "Force posted_js.html",
+        "slug": "force-posted-js",
+        "body": "This page:\r\n\r\n* Requires you to be logged out (does logout for you).  \r\n* Renders the `comment/posted_js.html` template, which is returned when the comment form is submitted via AJAX. The form has been sent with `comment_form.post(\"post\")`.\r\n* The view that generates this page is `views.posted_js_v`.\r\n* The template that renders this page is `posted_js_test.html`.",
+        "allow_comments": true,
+        "published_time": "2025-07-17T09:49:12Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 8,
+    "fields": {
+        "title": "Force published_js.html",
+        "slug": "force-published-js",
+        "body": "This page:\r\n\r\n* Renders the `comment/published_js.html` template, which is returned when the comment form is submitted via AJAX and the user does not need to confirm the comment. The form has been sent with `comment_form.post(\"post\")`.\r\n* The view that generates this page is `views.published_js_v`.\r\n* The template that renders this page is `posted_js_test.html`.",
+        "allow_comments": true,
+        "published_time": "2025-07-17T13:36:45Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 9,
+    "fields": {
+        "title": "One comment, level 0, options off",
+        "slug": "one-comment-options-off",
+        "body": "This page displays an article that received a single comment.\r\n\r\nThe article is an instance of `ArticleWithCommentsLevel0`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 0. That way comment threads are disabled.\r\n\r\nThe class `ArticleWithCommentsLevel0` has comment options disabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, so the comment does not display flagging options, reacting options, nor voting options.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T15:51:36Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl0",
+    "pk": 10,
+    "fields": {
+        "title": "N comments, level 0, options off",
+        "slug": "n-comments-options-off",
+        "body": "This page displays an article that received multiple comments.\r\n\r\nThe article is an instance of `ArticleWithCommentsLevel0`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 0. That way comment threads are disabled.\r\n\r\nThe class `ArticleWithCommentsLevel0` has comment options disabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, so the comment does not display flagging options, reacting options, nor voting options.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T16:15:47Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl1",
+    "pk": 1,
+    "fields": {
+        "title": "Article One with Comments-MTL1",
+        "slug": "article-one-comments-mtl1",
+        "body": "The **templates** project has an application called `prose` with 12 models, all with the same fields. \r\n\r\nThis is an instance of `ArticleWithMTL0Comments`: Articles whose comments have a MTL of 0 (MTL: Maximum Thread Level). In other words, comments posted to this article can not be nested.",
+        "allow_comments": true,
+        "published_time": "2025-07-04T13:35:20Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl1",
+    "pk": 2,
+    "fields": {
+        "title": "N comments, levels 0-1, options off",
+        "slug": "n-comments-options-off",
+        "body": "This page displays an article that received multiple comments.\r\n\r\nThe article is an instance of `ArticleCommentsL1`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 1. That way comment threads are disabled.\r\n\r\nThe class `ArticleCommentsL1` has comment options disabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, so the comment does not display flagging options, reacting options, nor voting options.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T16:15:47Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl1",
+    "pk": 3,
+    "fields": {
+        "title": "Reply To Comment",
+        "slug": "reply-to-comment",
+        "body": "This `ArticleCommentsL1` instance exist merely to test the `reply.html` template, which is about sending a comment to another comment.",
+        "allow_comments": true,
+        "published_time": "2025-07-21T14:00:16Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl2",
+    "pk": 1,
+    "fields": {
+        "title": "N comments, levels 0-2, options off",
+        "slug": "n-comments-options-off",
+        "body": "This page displays an article that received multiple comments.\r\n\r\nThe article is an instance of `ArticleCommentsL2`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 2. That way comment threads are disabled.\r\n\r\nThe class `ArticleCommentsL2` has comment options disabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, so the comment does not display flagging options, reacting options, nor voting options.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T16:15:47Z"
+    }
+},
+{
+    "model": "prose.articlecommentsl3",
+    "pk": 1,
+    "fields": {
+        "title": "N comments, levels 0-3, options off",
+        "slug": "n-comments-options-off",
+        "body": "This page displays an article that received multiple comments.\r\n\r\nThe article is an instance of `ArticleCommentsL3`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 3. That way comment threads are disabled.\r\n\r\nThe class `ArticleCommentsL3` has comment options disabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, so the comment does not display flagging options, reacting options, nor voting options.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T16:15:47Z"
+    }
+},
+{
+    "model": "prose.storycommentsl0",
+    "pk": 1,
+    "fields": {
+        "title": "One comment, level 0, options on",
+        "slug": "one-comment-options-on",
+        "body": "This page displays a story with a single comment.\r\n\r\nThe story is an instance of `StoryCommentsL0`, which has a `max_thread_level` of 0. So comment threads are disabled.\r\n\r\nModel `StoryCommentsL0` has all comment options enabled.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T15:54:14Z"
+    }
+},
+{
+    "model": "prose.storycommentsl0",
+    "pk": 2,
+    "fields": {
+        "title": "N comments, level 0, options on",
+        "slug": "n-comments-options-on",
+        "body": "This page displays an story that received a single comment.\r\n\r\nThe story is an instance of `StoryWithMtl0Comments`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 0. That way comment threads are disabled.\r\n\r\nThe class `StoryWithMtl0Comments` is a `proxy` to model `Story`, which has all comment options enabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, so comment flags, reactions and votes are allowed.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T16:16:53Z"
+    }
+},
+{
+    "model": "prose.storycommentsl1",
+    "pk": 1,
+    "fields": {
+        "title": "Story One with Comments-L1",
+        "slug": "story-one-comments-l1",
+        "body": "The **templates** project has an application called `prose` with 12 models that have all the same fields. This is an instance of `ArticleWithMTL1Comments`, or article with MTL-1 comments (MTL: Maximum Thread Level). So comments posted to this article can be nested one level.",
+        "allow_comments": true,
+        "published_time": "2025-07-04T13:35:20Z"
+    }
+},
+{
+    "model": "prose.storycommentsl1",
+    "pk": 2,
+    "fields": {
+        "title": "N comments, levels 0-1, options on",
+        "slug": "n-comments-options-on",
+        "body": "This page displays an story that received a single comment.\r\n\r\nThe story is an instance of `StoryCommentsL1`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 1. That way comment threads are disabled.\r\n\r\nThe class `StoryCommentsL1` is a `proxy` to model `Story`, which has all comment options enabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, so comment flags, reactions and votes are allowed.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T16:16:53Z"
+    }
+},
+{
+    "model": "prose.storycommentsl1",
+    "pk": 3,
+    "fields": {
+        "title": "Reply To Comment",
+        "slug": "reply-to-comment",
+        "body": "This `StoryCommentsL1` instance exist merely to test the `reply.html` template, which is about sending a comment to another comment. It is a `Story` because it allows all the options.",
+        "allow_comments": true,
+        "published_time": "2025-07-24T14:01:45Z"
+    }
+},
+{
+    "model": "prose.storycommentsl2",
+    "pk": 1,
+    "fields": {
+        "title": "N comments, levels 0-2, options on",
+        "slug": "n-comments-options-on",
+        "body": "This page displays an story that received a single comment.\r\n\r\nThe story is an instance of `StoryCommentsL2`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 2. That way comment threads are disabled.\r\n\r\nThe class `StoryCommentsL2` is a `proxy` to model `Story`, which has all comment options enabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, so comment flags, reactions and votes are allowed.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T16:16:53Z"
+    }
+},
+{
+    "model": "prose.storycommentsl3",
+    "pk": 1,
+    "fields": {
+        "title": "N comments, levels 0-3, options on",
+        "slug": "n-comments-options-on",
+        "body": "This page displays an story that received a single comment.\r\n\r\nThe story is an instance of `StoryCommentsL3`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 3. That way comment threads are disabled.\r\n\r\nThe class `StoryCommentsL3` is a `proxy` to model `Story`, which has all comment options enabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, so comment flags, reactions and votes are allowed.",
+        "allow_comments": true,
+        "published_time": "2025-07-18T16:16:53Z"
+    }
+},
+{
+    "model": "prose.talecommentsl0",
+    "pk": 1,
+    "fields": {
+        "title": "One comment, level 0, options on, JS",
+        "slug": "one-comment-options-on-js",
+        "body": "This page displays a tale that received a single comment.\r\n\r\nThe tale is an instance of `TaleWithMtl0Comments`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 0. That way comment threads are disabled.\r\n\r\nThe class `TaleWithMTL0Comments` has all comment options disabled, as provided by the setting `COMMENTS_XTD_APP_MODEL_OPTIONS`, but in the template, `prose/tale_detail.html`, the tag `render_xtdcomment_list`, receives the options `allow_flagging`, `allow_reacting` and `allow_voting`. Therefore users can flag comments, express reactions to comments, and vote for comments.",
+        "allow_comments": true,
+        "published_time": "2025-08-05T13:45:51Z"
+    }
+},
+{
+    "model": "prose.talecommentsl0",
+    "pk": 2,
+    "fields": {
+        "title": "N comments, level 0, options on, JS",
+        "slug": "n-comments-options-on-js",
+        "body": "This page displays a tale that received multiple comments.\r\n\r\nThe tale is an instance of `TaleWithMtl0Comments`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 0. That way comment threads are disabled.\r\n\r\nThe class `TaleWithMtl0Comments` is setup to enable comment flags, reactions and votes. The `prose/tale_detail.html` includes django-comments-xtd JavaScript plugin. This way user interactions take place via JavaScript.",
+        "allow_comments": true,
+        "published_time": "2025-08-08T06:59:19Z"
+    }
+},
+{
+    "model": "prose.talecommentsl1",
+    "pk": 1,
+    "fields": {
+        "title": "N comments, levels 0-1, options on, JS",
+        "slug": "n-comments-options-on-js",
+        "body": "This page displays a tale that received multiple comments.\r\n\r\nThe tale is an instance of `TaleCommentsL1`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 1.\r\n\r\nThe class `TaleCommentsL1` is setup to enable comment flags, reactions and votes. The `prose/tale_detail.html` includes django-comments-xtd JavaScript plugin. This way user interactions take place via JavaScript.",
+        "allow_comments": true,
+        "published_time": "2025-08-24T09:01:41Z"
+    }
+},
+{
+    "model": "prose.talecommentsl2",
+    "pk": 1,
+    "fields": {
+        "title": "N comments, levels 0-2, options on, JS",
+        "slug": "n-comments-options-on-js",
+        "body": "This page displays a tale that received multiple comments.\r\n\r\nThe tale is an instance of `TaleCommentsL2`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 2.\r\n\r\nThe class `TaleWithMtl0Comments` is setup to enable comment flags, reactions and votes. The `prose/tale_detail.html` includes django-comments-xtd JavaScript plugin. This way user interactions take place via JavaScript.",
+        "allow_comments": true,
+        "published_time": "2025-08-29T06:57:15Z"
+    }
+}
+]

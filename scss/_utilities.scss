@@ -1,0 +1,119 @@
+.djcx {
+  a.cfold {
+    text-decoration: none;
+
+    & .rotate180 {
+      display: inline-block;
+      transition: 0.25s;
+      margin-right: -4px;
+      text-decoration: none;
+    }
+
+    &.active,
+    &:hover {
+      color: var(--djcx-link-color-hover);
+
+      & .rotate180 {
+        transform: rotate(180deg);
+        transition: 0.25s;
+        text-decoration: none;
+      }
+
+      & span {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  a.cfold.folded {
+    & .rotate180 {
+      display: inline-block;
+      transform: rotate(180deg);
+      transition: 0.25s;
+      margin-right: -4px;
+      text-decoration: none;
+    }
+
+    &.active,
+    &:hover {
+      & .rotate180 {
+        transform: none;
+        transition: 0.25s;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .badge {
+    display: inline-block;
+    padding: var(--djcx-badge-padding);
+    font-size: var(--djcx-badge-font-size);
+    font-weight: var(--djcx-badge-font-weight);
+    line-height: 1;
+    color: var(--djcx-color);
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: var(--djcx-badge-radius);
+
+    &.badge-red {
+      color: var(--djcx-badge-red-color);
+      background-color: var(--djcx-badge-red-background-color);
+    }
+  }
+
+  .helper-text {
+    margin-top: -.7rem;
+    font-size: var(--djcx-helper-text-font-size);
+
+    &.error {
+      color: var(--djcx-helper-text-error-color);
+    }
+  }
+
+  /* flex-utilities */
+  .flex-align-start { align-items: start; }
+  .flex-align-center { align-items: center; }
+  .flex-align-end { align-items: end; }
+  .flex-grow { flex-grow: 1; }
+
+  .flex-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flex-row-right {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .inline-block {
+    display: inline-block;
+  }
+
+  .inline-left {
+    display: flex;
+    justify-content: left;
+  }
+
+  .hide { display: none }
+  .text-center { text-align: center }
+  .mb-0 { margin-bottom: 0; }
+  .muted { color: var(--djcx-color-muted); }
+  .small { font-size: .75rem; }
+  .smaller { font-size: .65rem; }
+  .lh-15 { line-height: 1.5 }
+  .pl-2 { padding-left: 2px }
+  .pr-16 { padding-right: 16px }
+  .pr-24 { padding-right: 24px }
+
+  .px-16 {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .py-0 {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

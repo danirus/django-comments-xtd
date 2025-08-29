@@ -1,0 +1,64 @@
+{% extends "comments/base.html" %}
+
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{% blocktrans %}Who reacted with {{ reaction }}{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% blocktrans with reaction_icon=reaction.icon %}List of users that reacted with <span class="emoji">&{{ reaction_icon }};</span><br/>to the comment:{% endblocktrans %}</h2>
+    </div>
+    <div class="central-column">
+      <div class="djcx pb32">
+        <div id="c{{ comment.id }}" class="comment-box">
+          <div class="comment">
+            <div class="header">
+              <div>{% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ comment.submit_date }}</span></div>
+            </div>
+            <div class="body body-bordered">
+              {{ comment.comment|linebreaks|escape }}
+            </div>
+            <div class="feedback feedback-bordered"></div>
+          </div>
+        </div>
+
+        <div id="users" class="users-grid mt32 py16">
+          {% for user in object_list %}
+            <div>{{ user.name }}</div>
+          {% endfor %}
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+          <div class="inline-centered pagination">
+            <span class="step-links">
+              {% if page_obj.has_previous %}
+                <a href="?page=1#users">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}#users">previous</a>
+              {% endif %}
+
+              <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+              </span>
+
+              {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}#users">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}#users">last &raquo;</a>
+              {% endif %}
+            </span>
+          </div>
+        {% endif %}
+
+        <p class="text-center">
+          <a href="{% get_comment_permalink comment %}">
+            go back to comment's page
+          </a>
+        </p>
+      </div>
+    </div>
+  </article>
+</main>
+{% endblock %}

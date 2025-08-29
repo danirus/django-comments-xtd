@@ -1,0 +1,6 @@
+{% load i18n %}
+<div class="reactions-panel" data-djcx="reactions-panel-template">
+  <div class="arrow"></div>
+  <h3 class="title">{% trans "Pick your reaction" %}</h3>
+  <p>{% for value, label, icon in enums_details %}<button data-title="{{ label }}" data-code="{{ value }}" class="emoji">{{ icon }}</button>{% if forloop.counter == break_every %}<br/>{% endif %}{% endfor %}</p>
+</div>

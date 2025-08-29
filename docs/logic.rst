@@ -121,7 +121,7 @@ In addition to the `signals sent by the Django Comments Framework <https://docs.
 Sample use of the ``confirmation_received`` signal
 --------------------------------------------------
 
-You might want to register a receiver for ``confirmation_received``. An example function receiver could check the time stamp in which a user submitted a comment and the time stamp in which the confirmation URL has been clicked. If the difference between them is over 7 days we will discard the message with a graceful `"sorry, it's a too old comment"` template.
+You might want to register a receiver for ``confirmation_received``. An example function receiver could check the time stamp in which a user submitted a comment and the time stamp in which the confirmation URL has been clicked. If the difference between them is over 7 days we will discard the message with a graceful `"sorry, it's too old a comment"` template.
 
 Extending the demo site with the following code will do the job:
 
@@ -135,8 +135,7 @@ Extending the demo site with the following code will do the job:
 
     def check_submit_date_is_within_last_7days(sender, data, request, **kwargs):
         plus7days = timedelta(days=7)
-      if data["submit_date"] + plus7days < datetime.now():
-          return False
+        return data["submit_date"] + plus7days < datetime.now()
 
     signals.confirmation_received.connect(check_submit_date_is_within_last_7days)
 
@@ -157,7 +156,7 @@ Extending the demo site with the following code will do the job:
         return data
 
 
-Try the simple demo site again and see that the `django_comments_xtd/discarded.html` template is rendered after clicking on the confirmation URL.
+Try the simple demo site again and see that the ``django_comments_xtd/discarded.html`` template is rendered after clicking on the confirmation URL.
 
 
 .. index::

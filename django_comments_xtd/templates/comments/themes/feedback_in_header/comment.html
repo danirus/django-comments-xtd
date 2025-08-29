@@ -1,0 +1,62 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% with anchor=comment|get_anchor %}
+<div id="comment-{{ comment.id }}" class="comment-box {% comment_css_thread_range comment %}">
+  {{ comment.level|indent_divs }}
+  <div class="comment">
+    <div class="header flex-align-center">
+      {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}
+        <div class="flex-align-center" id="cm-votes-{{ comment.id }}">
+          {% include "comments/themes/feedback_in_header/comment_votes.html" %}
+        </div>
+      {% endif %}
+      <div class="flex-grow py-0 pr-16">
+        {% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}<br/>
+        <span class="muted smaller">{{ comment.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
+      </div>
+      <div id="cm-feedback-{{ comment.id }}" class="feedback">
+        {% if not comment.is_removed and comments_flagging_enabled and comments_input_allowed %}
+          <div id="cm-flags-{{ comment.id }}" class="sep">
+            {% include "comments/comment_flags.html" %}
+          </div>
+        {% endif %}
+
+        {% if not comment.is_removed and comments_reacting_enabled %}
+          {% include "comments/themes/feedback_in_header/comment_reactions.html" %}
+          {% if comments_input_allowed %}
+            <div class="inline-block">
+              <a data-djcx="reactions-panel" data-comment="{{ comment.id }}" class="smaller" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}" {% if not user.is_authenticated %}data-login-next="{% get_comment_permalink comment %}"{% endif %}>{% trans "React" %}</a>
+            </div>
+          {% endif %}
+        {% endif %}
+
+        {% if comment.nested_count and not comment.is_removed %}
+          <div class="flex-row-right">
+            {% if comment.level == 0 %}
+              <div class="sepseq">
+                <span id="comment-{{ comment.id}}-replies" data-djcx="nreplies" data-comment="{{ comment.id }}" class="smaller">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
+              </div>
+            {% elif comment.level != 0 %}
+              <div class="sepseq">
+                <span id="comment-{{ comment.id}}-replies" data-djcx="nreplies" data-comment="{{ comment.id }}" class="smaller">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
+                <a href="#" id="fold-{{ comment.id}}" data-djcx-action="fold" data-djcx-replies="{{ comment.nested_count }}" class="rotate180 hide">&mapstodown;</a><a href="#" id="unfold-{{ comment.id}}" data-djcx-action="unfold" data-djcx-replies="{{ comment.nested_count }}" class="rotate180 hide">&mapstoup;</a>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="body">
+      {% if comment.is_removed %}
+        <p class="muted">
+          {% trans "This comment has been removed." %}
+        </p>
+      {% else %}
+        {{ comment.comment|linebreaks|escape }}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endwith %}

@@ -1,0 +1,179 @@
+@mixin light-theme {
+  --alert-background-color: #fff;
+  --alert-border-color-error: #ffd0d0;
+  --alert-border-color-info: #c4dffd;
+  --alert-border-color-success: #badbba;
+  --alert-border-color-warning: #eac18d;
+  --alert-color-error: #c43939;
+  --alert-color-info: #4a8fcc;
+  --alert-color-success: #44b78b;
+  --alert-color-warning: #c27e35;
+
+  --blockquote-border-color: #f0f0f0;
+
+  --body-background-color: rgb(255 255 255);
+  --body-color: #0f0f0f;
+
+  --border-color-subtle: #f0f0f0;
+
+  --button-primary-color: #fff;
+  --button-primary-background-color: var(--primary-color);
+  --button-primary-border-color: #0d8aee;
+  --button-primary-background-color-hover: #0c83e2;
+  --button-primary-border-color-hover: #0c7cd5;
+
+  --color-scheme: light;
+  --font-color-monospace: #9128e8;
+  --headings-color: rgb(68 68 68);
+
+  --input-color: #222;
+  --input-background-color: #e9ece9;
+
+  --input-color-focus: black;
+  --input-background-color-focus: #fff;
+  --input-border-color-focus: #3164b5;
+
+  --input-color-autofill: black;
+  --input-background-color-autofill: #99e;
+  --input-border-color-autofill: #9090e0;
+
+  --intro-color: #555;
+
+  --link-color: #279bf7;
+  --link-color-hover: #045ca2;
+
+  --marquee-background-color: aliceblue;
+
+  --nav-link-color-hover: white;
+  --nav-link-background-color-active: #2196f3;
+  --nav-link-background-color-hover: #3aa3ff;
+
+  --radio-accent-color: #279bf7;
+
+  color-scheme: light;
+}
+
+@mixin dark-theme {
+  --alert-background-color: #303340;
+  --alert-border-color-error: #733;
+  --alert-border-color-info: #337;
+  --alert-border-color-success: #343;
+  --alert-border-color-warning: #5c4824;
+  --alert-color-error: #f54141;
+  --alert-color-info: #08f;
+  --alert-color-success: #44b78b;
+  --alert-color-warning: orange;
+
+  --blockquote-border-color: #3b3a46;
+
+  --body-background-color: rgb(40 40 50);
+  --body-color: #f0f0f0;
+
+  --border-color-subtle: #3b3a46;
+
+  --button-primary-color: #000;
+  --button-primary-background-color: var(--primary-color);
+  --button-primary-border-color: #0d81df;
+  --button-primary-background-color-hover: #59aaf2;
+  --button-primary-border-color-hover: #1893f3;
+
+  --color-scheme: dark;
+  --font-color-monospace: #dc9cff;
+  --headings-color: rgb(222 222 222);
+
+  --input-color: #ddd;
+  --input-background-color: #3b3b4f;
+
+  --input-color-focus: white;
+  --input-background-color-focus: #3e3e52;
+  --input-border-color-focus: #3164b5;
+
+  --input-color-autofill: white;
+  --input-background-color-autofill: #661;
+  --input-border-color-autofill: #696914;
+
+  --intro-color: #ccc;
+
+  --link-color: #279bf7;
+  --link-color-hover: #63B9FD;
+
+
+  --marquee-background-color: #34323c;
+
+  --nav-link-color-hover: black;
+  --nav-link-background-color-active: #2196f3;
+  --nav-link-background-color-hover: #59aaf2;
+
+  --radio-accent-color: #279bf7;
+
+  color-scheme: dark;
+}
+
+:root {
+    --header-title-1st-color: #3aa3ff;
+    --header-title-2nd-color: #44b78b;
+
+    --primary-color: #2196f3;
+    --nav-link-color: #2196f3;
+
+    --button-primary-disabled-color: #fff;
+    --button-primary-disabled-background-color: #2196f3;
+    --button-primary-disabled-border-color: #2196f3;
+
+    --button-primary-active-color: #fff;
+    --button-primary-active-background-color: #0c7cd5;
+    --button-primary-active-border-color: #0b75c9;
+
+    --button-secondary-color: #222;
+    --button-secondary-background-color: #ddd;
+    --button-secondary-border-color: #d7d6d6;
+
+    --button-secondary-disabled-color: #222;
+    --button-secondary-disabled-background-color: #f0f0f0;
+    --button-secondary-disabled-border-color: #f0f0f0;
+
+    --button-secondary-active-color: #222;
+    --button-secondary-active-background-color: #d7d6d6;
+    --button-secondary-active-border-color: #d0d0d0;
+
+    --input-focus-color: #555;
+    --input-focus-background-color: white;
+    --input-focus-border-color: #9acffa;
+    --input-error-border-color: #f5999c;
+    --helper-text-color: gray;
+    --helper-text-color-error: red;
+
+    --body-font-family: "Comme", "Helvetica Neue", arial, sans-serif;
+    --body-font-weight: 200;
+
+    --font-family-monospace: sfmono-regular,menlo,monaco,consolas,"Liberation Mono","Courier New",monospace;
+    --font-size-monospace: .9rem;
+    --font-weight-monospace: 400;
+
+    --headings-font-family: "Comme", georgia, sans-serif;
+    --headings-font-weight: 400;
+
+    --border-radius: .25rem;
+    --body-font-size: 16px;
+    --form-font-size: .9rem;
+}
+
+:root:not(.light, .dark) {
+  color-scheme: light dark;
+
+  @media (prefers-color-scheme: light) {
+    @include light-theme;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @include dark-theme;
+  }
+}
+
+.light {
+  @include light-theme;
+}
+
+.dark {
+  @include dark-theme;
+}

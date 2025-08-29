@@ -1,0 +1,63 @@
+{% load i18n %}
+{% load static %}
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" />
+    <title>{% block title %}djcx-demo{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/example-styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/comme/stylesheet.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/red-hat-mono/stylesheet.css' %}">
+
+    {% block extra_head %}
+    <style>
+      HTML {
+        font-weight: 300;
+        font-family: "Comme", sans-serif;
+      }
+    </style>
+    {% endblock %}
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="title">
+          <h1><a href="{% url 'homepage' %}">quotes project</a></h1>
+          <h4>django-comments-xtd</h4>
+        </div>
+        <nav class="menu">
+          {% if user.is_authenticated %}
+            {% if user.is_staff %}
+              <a href="{% url 'admin:index' %}">Admin</a>
+            {% endif %}
+            <a class="{% block nav-account-class %}{% endblock %}" href="{% url 'account' %}">Account</a>
+          {% else %}
+            <a class="{% block nav-login-class %}{% endblock %}" href="{% url 'login' %}">Login</a>
+          {% endif %}
+          <a class="{% block nav-quotes-class %}{% endblock %}" href="{% url 'quotes' %}">Quotes</a>
+        </nav>
+      </div>
+    </header>
+
+    {% block content %}
+    {% endblock %}
+
+    <footer>
+      <div class="container">
+        <p>
+          <a href="http://readthedocs.org/docs/django-comments-xtd/">{% translate "documentation" %}</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd">source code</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd/issues">issues</a>
+          &nbsp;&bull;&nbsp;
+          <a href="https://github.com/danirus/django-comments-xtd/discussions">discussions</a>
+        </p>
+        <p>django-comments-xtd</p>
+      </div>
+    </footer>
+  </body>
+</html>

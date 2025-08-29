@@ -51,8 +51,9 @@ class XtdCommentsAdmin(CommentsAdmin):
         ),
     )
     date_hierarchy = "submit_date"
-    ordering = ("thread_id", "order")
+    ordering = ("thread__id", "order")
     search_fields = [
+        "id",
         "object_pk",
         "user__username",
         "user_name",

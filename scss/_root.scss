@@ -1,0 +1,231 @@
+.djcx {
+  --djcx-badge-font-size: .75em;
+  --djcx-badge-font-weight: 700;
+  --djcx-badge-padding: .25em .5em;
+  --djcx-badge-radius: .375em;
+  --djcx-border-radius: .25rem;
+  --djcx-button-border-width: 0 1px 4px 1px;
+  --djcx-button-border-radius: .25rem;
+  --djcx-button-emoji-font-size: 1.2rem;
+  --djcx-button-font-size: 0.8rem;
+  --djcx-button-font-weight: 500;
+  --djcx-button-padding: 0.4rem 1rem 0.3rem;
+  --djcx-button-small-font-size: 0.75rem;
+  --djcx-button-small-padding: 0.2rem 0.8rem;
+  --djcx-comment-box-border-radius: 3px;
+  --djcx-form-font-size: .9rem;
+  --djcx-h5-font-size: 1.2rem;
+  --djcx-h5-font-weight: 400;
+  --djcx-h5-margin: 1.1rem 0;
+  --djcx-font-family-emoji: system-ui, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --djcx-font-family: inherit;
+  --djcx-font-weight: inherit;
+  --djcx-form-font-weight: inherit;
+  --djcx-helper-text-font-size: .85rem;
+  --djcx-max-width: 735px;
+  --djcx-textarea-line-height: 1.5;
+  --djcx-reactions-panel-font-size: .825rem;
+}
+
+@mixin light-theme {
+  --djcx-background-color: rgb(255 255 255);
+  --djcx-border-color-subtle: #d7d7d7;
+
+  --djcx-badge-red-color: #fff;
+  --djcx-badge-red-background-color: rgb(255 71 71);
+
+  --djcx-button-emoji-background-color: white;
+  --djcx-button-emoji-background-color-active: #eee; --djcx-button-emoji-background-color-hover: #f7f7f7;
+
+  --djcx-button-level-0-color: #fff;
+  --djcx-button-level-0-background-color: hsl(207deg 90% 34%);
+  --djcx-button-level-0-border-color: hsl(207deg 90% 28%);
+
+  --djcx-button-level-0-color-hover: #fff;
+  --djcx-button-level-0-background-color-hover: hsl(212deg 90% 34%);
+  --djcx-button-level-0-border-color-hover: hsl(212deg 90% 28%);
+
+  --djcx-button-level-1-color: #fff;
+  --djcx-button-level-1-background-color: hsl(207deg 90% 54%);
+  --djcx-button-level-1-border-color: hsl(207deg 90% 48%);
+
+  --djcx-button-level-1-color-hover: #fff;
+  --djcx-button-level-1-background-color-hover: hsl(212deg 90% 54%);
+  --djcx-button-level-1-border-color-hover: hsl(212deg 90% 48%);
+
+  --djcx-button-level-2-color: #1d3253;
+  --djcx-button-level-2-background-color: hsl(207deg 90% 74%);
+  --djcx-button-level-2-border-color: hsl(207deg 90% 68%);
+
+  --djcx-button-level-2-color-hover: #000;
+  --djcx-button-level-2-background-color-hover: hsl(212deg 90% 74%);
+  --djcx-button-level-2-border-color-hover: hsl(212deg 90% 68%);
+
+  --djcx-button-primary-color: #fff;
+  --djcx-button-primary-background-color: #2196f3;
+  --djcx-button-primary-border-color: #0d8aee;
+
+  --djcx-button-primary-color-hover: #fff;
+  --djcx-button-primary-background-color-hover: #0c83e2;
+  --djcx-button-primary-border-color-hover: #0c7cd5;
+
+  --djcx-button-primary-box-shadow-focus: 0 0 0 0.2rem #2196f380;
+
+  --djcx-button-primary-color-disabled: #eee;
+  --djcx-button-primary-background-disabled: #2196f3;
+  --djcx-button-primary-border-color-disabled: #2196f3;
+
+  --djcx-button-primary-color-active: #fff;
+  --djcx-button-primary-background-active: #0c7cd5;
+  --djcx-button-primary-border-color-active: #0b75c9;
+
+  --djcx-button-secondary-color: #222;
+  --djcx-button-secondary-background-color: #dfdfdf;
+  --djcx-button-secondary-border-color: #d7d6d6;
+
+  --djcx-button-secondary-color-hover: #222;
+  --djcx-button-secondary-background-color-hover: #ccc;
+  --djcx-button-secondary-border-color-hover: #b7b6b6;
+
+  --djcx-button-secondary-box-shadow-focus: 0 0 0 0.2rem #f0f0faff;
+
+  --djcx-button-secondary-color-disabled: #222;
+  --djcx-button-secondary-background-disabled: #f0f0f0;
+  --djcx-button-secondary-border-color-disabled: #f0f0f0;
+
+  --djcx-button-secondary-color-active: #222;
+
+  // --djcx-button-secondary-background-active: #d7d6d6;
+  --djcx-button-secondary-background-active: #d0d0d0;
+  --djcx-button-secondary-border-color-active: #d0d0d0;
+
+  --djcx-color: #0f0f0f;
+  --djcx-color-muted: #a2a2a2;
+  --djcx-color-level-0: hsl(207deg 90% 34%);
+  --djcx-color-level-1: hsl(207deg 90% 54%);
+  --djcx-color-level-2: hsl(207deg 90% 74%);
+
+  --djcx-helper-text-error-color: red;
+  --djcx-input-background-color: #fff;
+  --djcx-input-background-color-focus: #fff;
+  --djcx-input-border-color-focus: #3164b5;
+  --djcx-input-color: #222;
+  --djcx-input-color-focus: black;
+  --djcx-link-color: #279bf7;
+  --djcx-link-color-hover: #045ca2;
+
+  --djcx-panel-box-shadow: 0 2px 4px 0 rgba(0 0 0 0.2), 0 3px 10px 0 rgba(0 0 0 0.19);
+  --djcx-radio-accent-color: #279bf7;
+  --djcx-reactions-panel-arrow-color: #ebebeb;
+  --djcx-reactions-panel-background-color: white;
+  --djcx-reactions-panel-border-bottom: 1px solid #ebebeb;
+  --djcx-user-avatar-border: 2px solid #bbb;
+
+  color-scheme: light;
+}
+
+@mixin dark-theme {
+  --djcx-background-color: rgb(40 40 50);
+  --djcx-border-color-subtle: #3b3a46;
+
+  --djcx-badge-red-color: #fff;
+  --djcx-badge-red-background-color: rgb(151 38 38);
+
+  --djcx-button-emoji-background-color: rgb(52 52 64);
+  --djcx-button-emoji-background-color-active: rgb(70 70 82);
+  --djcx-button-emoji-background-color-hover: rgb(62 62 74);
+
+  --djcx-button-level-0-color: #fff;
+  --djcx-button-level-0-background-color: hsl(207deg 90% 34%);
+  --djcx-button-level-0-border-color: hsl(207deg 90% 28%);
+  --djcx-button-level-0-color-hover: #fff;
+  --djcx-button-level-0-background-color-hover: hsl(202deg 90% 34%);
+  --djcx-button-level-0-border-color-hover: hsl(202deg 90% 28%);
+
+  --djcx-button-level-1-color: #000;
+  --djcx-button-level-1-background-color: hsl(207deg 90% 54%);
+  --djcx-button-level-1-border-color: hsl(207deg 90% 48%);
+  --djcx-button-level-1-color-hover: #000;
+  --djcx-button-level-1-background-color-hover: hsl(202deg 90% 54%);
+  --djcx-button-level-1-border-color-hover: hsl(202deg 90% 48%);
+
+  --djcx-button-level-2-color: #000;
+  --djcx-button-level-2-background-color: hsl(207deg 90% 74%);
+  --djcx-button-level-2-border-color: hsl(207deg 90% 68%);
+  --djcx-button-level-2-color-hover: #000;
+  --djcx-button-level-2-background-color-hover: hsl(202deg 90% 74%);
+  --djcx-button-level-2-border-color-hover: hsl(202deg 90% 68%);
+
+  --djcx-button-primary-color: #000;
+  --djcx-button-primary-background-color: #2196f3;
+  --djcx-button-primary-border-color: #0d81df;
+  --djcx-button-primary-color-hover: #000;
+  --djcx-button-primary-background-color-hover: #59aaf2;
+  --djcx-button-primary-border-color-hover: #1893f3;
+  --djcx-button-primary-box-shadow-focus: 0 0 0 0.2rem #2196f380;
+  --djcx-button-primary-color-disabled: #111;
+  --djcx-button-primary-background-disabled: #2196f3;
+  --djcx-button-primary-border-color-disabled: #2196f3;
+  --djcx-button-primary-color-active: #000;
+  --djcx-button-primary-background-active: #0c7cd5;
+  --djcx-button-primary-border-color-active: #0b75c9;
+
+  --djcx-button-secondary-color: #222;
+  --djcx-button-secondary-background-color: #c4c4c4;
+  --djcx-button-secondary-border-color: #979696;
+  --djcx-button-secondary-color-hover: #000;
+  --djcx-button-secondary-background-color-hover: #ddd;
+  --djcx-button-secondary-border-color-hover: #c7c6c6;
+  --djcx-button-secondary-box-shadow-focus: 0 0 0 0.2rem #f0f0fa80;
+  --djcx-button-secondary-color-disabled: #222;
+  --djcx-button-secondary-background-disabled: #f0f0f0;
+  --djcx-button-secondary-border-color-disabled: #f0f0f0;
+  --djcx-button-secondary-color-active: #222;
+  --djcx-button-secondary-background-active: #d7d6d6;
+  --djcx-button-secondary-border-color-active: #d0d0d0;
+
+  --djcx-color: #f0f0f0;
+  --djcx-color-muted: #626262;
+  --djcx-color-level-0: hsl(207deg 90% 34%);
+  --djcx-color-level-1: hsl(207deg 90% 54%);
+  --djcx-color-level-2: hsl(207deg 90% 74%);
+
+  --djcx-helper-text-error-color: rgb(253 75 75);
+  --djcx-input-background-color: #3b3b4f;
+  --djcx-input-background-color-focus: #3e3e52;
+  --djcx-input-border-color-focus: #3164b5;
+  --djcx-input-color: #ddd;
+  --djcx-input-color-focus: white;
+  --djcx-link-color: #279bf7;
+  --djcx-link-color-hover: #63B9FD;
+
+  --djcx-panel-box-shadow: 0 2px 4px 0 rgba(0 0 0 0.2), 0 3px 10px 0 rgba(0 0 0 0.19);
+  --djcx-radio-accent-color: #279bf7;
+  --djcx-reactions-panel-arrow-color: #3b3a46;
+  --djcx-reactions-panel-background-color: rgb(52 52 64);
+  --djcx-reactions-panel-border-bottom: 1px solid #3b3a46;
+
+  --djcx-user-avatar-border: 1px solid #d7d7d7;
+
+  color-scheme: dark;
+}
+
+:root:not(.light, .dark) {
+  color-scheme: light dark;
+
+  @media (prefers-color-scheme: light) {
+    @include light-theme;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @include dark-theme;
+  }
+}
+
+.light {
+  @include light-theme;
+}
+
+.dark {
+  @include dark-theme;
+}

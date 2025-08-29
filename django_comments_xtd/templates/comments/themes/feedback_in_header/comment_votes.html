@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+<div class="vote-block flex-align-center">
+  {% get_user_vote for comment as user_vote %}
+  <div class="vote"><!-- comments_input_allowed: {{ comments_input_allowed }} -->
+    {% if comments_input_allowed %}
+      <a data-djcx-action="vote-up" data-comment="{{ comment.id }}" data-code="+" href="{% url 'comments-xtd-vote' comment.id %}" {% if not user.is_authenticated %}data-login-next="{% get_comment_permalink comment %}"{% endif %} class="smaller vote-up{% if user_vote == '+' %} active{% endif %}" title="{% if user_vote == '+' %}{% trans 'You voted up' %}{% else %}{% trans 'Vote up' %}{% endif %}"></a>
+      {% if user_vote == '+' %}
+        <div class="tooltip">{% trans "You voted up" %}</div>
+      {% endif %}
+    {% else %}
+      <span class="vote-up{% if user_vote == '+' %} active{% endif %}"></span>
+      {% if user_vote == '+' %}
+        <div class="tooltip">{% trans "You voted up" %}</div>
+      {% endif %}
+    {% endif %}
+  </div>
+  <span class="vote-score">{{ comment.thread.score }}</span>
+  <div class="vote fix-pos-mt">
+    {% if comments_input_allowed %}
+      <a data-djcx-action="vote-down" data-comment="{{ comment.id }}" data-code="-"  href="{% url 'comments-xtd-vote' comment.id %}" {% if not user.is_authenticated %}data-login-next="{% get_comment_permalink comment %}"{% endif %} class="smaller vote-down{% if user_vote == '-' %} active{% endif %}" title="{% if user_vote == '-' %}{% trans 'You voted down' %}{% else %}{% trans 'Vote down' %}{% endif %}"></a>
+      {% if user_vote == '-' %}
+        <div class="tooltip">{% trans "You voted down" %}</div>
+      {% endif %}
+    {% else %}
+      <span class="vote-down{% if user_vote == '-' %} active{% endif %}"></span>
+      {% if user_vote == '-' %}
+        <div class="tooltip">{% trans "You voted down" %}</div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

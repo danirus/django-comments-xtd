@@ -55,6 +55,17 @@
       </section>
 
       <section class="column">
+        <h5>-- default nested theme mockups:</h5>
+        <div class="mockups-grid">
+          {% for mockup in default_nested_theme_mockups %}
+          <span class="">{{ mockup.title }}</span>
+          <span>{% if mockup.url1 %}<a href="{% url mockup.url1 %}">light</a>{% else %}-----{% endif %}</span>
+          <span>{% if mockup.url2 %}<a href="{% url mockup.url2 %}">dark</a>{% else %}----{% endif %}</span>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="column">
         <h5>-- <code>avatar_in_thread</code> mockups:</h5>
         <div class="mockups-grid">
           {% for mockup in avatar_in_thread_theme_mockups %}
@@ -88,7 +99,7 @@
       </section>
 
       <section class="column">
-        <h5>-- <code>Pure HTML</code> mockups:</h5>
+        <h5>-- Almost pure HTML mockups:</h5>
         <div class="mockups-grid">
           {% for mockup in fixed %}
           <span class="">{{ mockup.title }}</span>

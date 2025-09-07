@@ -1,4 +1,4 @@
-# ruff: noqa: PLR2004
+# ruff: noqa: RUF100, PLR2004, PLR0913
 import copy
 import hashlib
 import logging
@@ -46,12 +46,14 @@ class BaseXtdCommentNode(BaseCommentNode):
             return (
                 ContentType.objects.get_for_model(
                     obj,
-                    for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL
+                    for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL,
                 ),
-                obj.pk
+                obj.pk,
             )
         else:
-            return self.ctype, self.object_pk_expr.resolve(context, ignore_failures=True)
+            return self.ctype, self.object_pk_expr.resolve(
+                context, ignore_failures=True
+            )
 
     def get_queryset(self, context):
         ctype, object_pk = self.get_target_ctype_pk(context)
@@ -64,6 +66,7 @@ class BaseXtdCommentNode(BaseCommentNode):
 
 class XtdCommentListNode(BaseXtdCommentNode):
     """Insert a list of comments into the context."""
+
     def get_context_value_from_queryset(self, context, qs):
         return qs
 
@@ -103,7 +106,7 @@ class RenderXtdCommentListNode(XtdCommentListNode):
             "force_allow_voting": "comments_voting_enabled",
         }
         options_enabled = {}
-        tag= tokens.pop(0)
+        tag = tokens.pop(0)
         include_vars = []
 
         # There must be at least a 'for <object>' or 'for <app.model> <pk>'
@@ -120,10 +123,10 @@ class RenderXtdCommentListNode(XtdCommentListNode):
                 tokens.pop(tokens.index(key))
 
         # Extract pairs 'var_name=var_expr'.
-        if 'with' in tokens:
-            t_with_pos = tokens.index('with')
+        if "with" in tokens:
+            t_with_pos = tokens.index("with")
             # From 'with' on, tokens must be pairs vname=vexpr.
-            for pair in tokens[t_with_pos+1:len(tokens)]:
+            for pair in tokens[t_with_pos + 1 : len(tokens)]:
                 if pair.find("=") == -1:
                     raise template.TemplateSyntaxError(
                         f"Expected an assignment expression in {tag!r} "
@@ -139,7 +142,7 @@ class RenderXtdCommentListNode(XtdCommentListNode):
             return cls(
                 object_expr=parser.compile_filter(tokens[0]),
                 options_enabled=options_enabled,
-                include_vars=include_vars
+                include_vars=include_vars,
             )
 
         # {% render_xtdcomment_list for app.models pk %}
@@ -148,13 +151,13 @@ class RenderXtdCommentListNode(XtdCommentListNode):
                 ctype=BaseCommentNode.lookup_content_type(tokens[0], tag),
                 object_pk_expr=parser.compile_filter(tokens[1]),
                 options_enabled=options_enabled,
-                include_vars=include_vars
+                include_vars=include_vars,
             )
 
     def render(self, context):
         ctype, object_pk = self.get_target_ctype_pk(context)
         if not object_pk:
-            return ''
+            return ""
 
         context_dict = context.flatten()
         for var_name, var_expr in self.include_vars:
@@ -166,7 +169,7 @@ class RenderXtdCommentListNode(XtdCommentListNode):
             model=ctype.model,
             theme=context_dict.get(
                 "comments_theme", settings.COMMENTS_XTD_THEME
-            )
+            ),
         )
         options = get_app_model_options(content_type=ctype)
         check_input_allowed_str = options.pop("check_input_allowed")
@@ -174,13 +177,15 @@ class RenderXtdCommentListNode(XtdCommentListNode):
         target_obj = ctype.get_object_for_this_type(pk=object_pk)
         options["comments_input_allowed"] = check_func(target_obj)
 
-        context_dict.update({
-            "max_thread_level": get_max_thread_level(ctype),
-            "comment_list": self.get_context_value_from_queryset(
-                context, self.get_queryset(context)
-            ),
-            "reply_stack": [],  # List to control comment replies rendering.
-        })
+        context_dict.update(
+            {
+                "max_thread_level": get_max_thread_level(ctype),
+                "comment_list": self.get_context_value_from_queryset(
+                    context, self.get_queryset(context)
+                ),
+                "reply_stack": [],  # List to control comment replies rendering.
+            }
+        )
         context_dict.update(options)
         context_dict.update(self.options_enabled)
         liststr = render_to_string(template_search_list, context_dict)
@@ -264,11 +269,11 @@ class RenderXtdCommentFormNode(RenderCommentFormNode):
                 "form", app_label=ctype.app_label, model=ctype.model
             )
             context_dict = context.flatten()
-            context_dict['form'] = self.get_form(context)
+            context_dict["form"] = self.get_form(context)
             formstr = render_to_string(template_search_list, context_dict)
             return formstr
         else:
-            return ''
+            return ""
 
 
 @register.tag
@@ -292,11 +297,11 @@ class RenderCommentReplyTemplateNode(RenderCommentFormNode):
                 "reply_template", app_label=ctype.app_label, model=ctype.model
             )
             context_dict = context.flatten()
-            context_dict['form'] = self.get_form(context)
+            context_dict["form"] = self.get_form(context)
             formstr = render_to_string(template_search_list, context_dict)
             return formstr
         else:
-            return ''
+            return ""
 
 
 @register.tag
@@ -322,7 +327,7 @@ class RenderCommentThreads(template.Node):
         if not max_thread_level:
             ctype = ContentType.objects.get_for_model(
                 comment.content_object,
-                for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL
+                for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL,
             )
             max_thread_level = max_thread_level_for_content_type(ctype)
         return max_thread_level
@@ -341,7 +346,7 @@ class RenderCommentThreads(template.Node):
                 # The last level of comments can't be threaded,
                 # therefore they don't display a thread, so no 'anchor'
                 # element), however it has to be indented.
-                html += '<span class="cthread-end"></span>'
+                html += '<span class="cthread cthread-end"></span>'
             else:
                 if reply_stack[i].id == comment.id:
                     extra = "reply" if self.in_reply_box else "ini"
@@ -513,7 +518,7 @@ def comment_css_thread_range(context, comment, prefix="l"):
     if not max_thread_level:
         ctype = ContentType.objects.get_for_model(
             comment.content_object,
-            for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL
+            for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL,
         )
         max_thread_level = max_thread_level_for_content_type(ctype)
 
@@ -721,8 +726,7 @@ def get_user_vote(parser, token):
 class RenderCommentReactionsPanelTemplate(template.Node):
     def render(self, context):
         enums_details = [
-            (enum.value, enum.label, enum.icon)
-            for enum in get_reaction_enum()
+            (enum.value, enum.label, enum.icon) for enum in get_reaction_enum()
         ]
         context = {
             "enums_details": enums_details,
@@ -741,6 +745,7 @@ def render_comment_reactions_panel_template(parser, token):
 # ----------------------------------------------------------------------
 # Template tag for themes 'avatar_in_thread' and 'avatar_in_header'
 
+
 @register.simple_tag
 def get_user_gravatar(email, config="48,identicon"):
     size, gravatar_type = config.split(",")
@@ -752,7 +757,7 @@ def get_user_gravatar(email, config="48,identicon"):
         ) from exc
 
     digest = hashlib.md5(email.lower().encode("utf-8")).hexdigest()
-    sparam = urlencode({'s': str(size)})
+    sparam = urlencode({"s": str(size)})
     url = f"//www.gravatar.com/avatar/{digest}?{sparam}&d={gravatar_type}"
 
     return mark_safe(

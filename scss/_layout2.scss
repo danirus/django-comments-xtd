@@ -1,0 +1,131 @@
+.djcx {
+  .comments-thread.comments-thread-l0,
+  .comments-thread.comments-thread-l1,
+  .comments-thread.comments-thread-l2 {
+    display: flex;
+    flex-direction: row;
+
+    a.vline,
+    span.vline {
+      display: block;
+      min-width: 24px;
+
+      &::before {
+        position: relative;
+        content: "";
+        top: 7px;
+        left: -5px;
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 6px;
+      }
+
+      &::after {
+        position: relative;
+        top: 2px;
+        bottom: 0;
+        left: 0;
+        display: block;
+        width: 2px;
+        height: calc(100% - 42.5px);
+        content: "";
+      }
+    }
+
+    a.vline {
+      &:hover::after {
+        left: -3px;
+        width: 8px;
+      }
+
+      &.folded {
+        &::after {
+          left: -2px;
+          width: 6px;
+        }
+
+        &.hover::after {
+          left: -3px;
+          width: 8px;
+        }
+      }
+    }
+  }
+
+  .comments-thread.comments-thread-l0 {
+    a.vline,
+    span.vline {
+      &::before {
+        border: 2px solid var(--djcx-color-level-0);
+        background-color: var(--djcx-background-color);
+      }
+
+      &::after {
+        background-color: var(--djcx-color-level-0);
+      }
+    }
+  }
+
+  .comments-thread.comments-thread-l1 {
+    a.vline,
+    span.vline {
+      &::before {
+        border: 2px solid var(--djcx-color-level-1);
+        background-color: var(--djcx-background-color);
+      }
+
+      &::after {
+        background-color: var(--djcx-color-level-1);
+      }
+    }
+  }
+
+  .comments-thread.comments-thread-l2 {
+    a.vline,
+    span.vline {
+      &::before {
+        border: 2px solid var(--djcx-color-level-2);
+        background-color: var(--djcx-background-color);
+      }
+
+      &::after {
+        background-color: var(--djcx-color-level-2);
+      }
+    }
+  }
+
+  .comments-thread.comments-thread-end {
+    margin-left: 24px;
+  }
+
+  .thread-group {
+    width: 100%;
+  }
+
+  .hline-l0,
+  .hline-l1,
+  .hline-l2 {
+    position: absolute;
+    top: 50%;
+    left: -24px;
+    border-top-width: 2px;
+    border-top-style: solid;
+    transform: translateY(-50%);
+    display: block;
+    width: 40px;
+  }
+
+  .hline-l0 {
+    color: var(--djcx-color-level-0);
+  }
+
+  .hline-l1 {
+    color: var(--djcx-color-level-1);
+  }
+
+  .hline-l2 {
+    color: var(--djcx-color-level-2);
+  }
+
+}

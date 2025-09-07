@@ -280,9 +280,20 @@
     "fields": {
         "title": "N comments, levels 0-2, options on, JS",
         "slug": "n-comments-options-on-js",
-        "body": "This page displays a tale that received multiple comments.\r\n\r\nThe tale is an instance of `TaleCommentsL2`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 2.\r\n\r\nThe class `TaleWithMtl0Comments` is setup to enable comment flags, reactions and votes. The `prose/tale_detail.html` includes django-comments-xtd JavaScript plugin. This way user interactions take place via JavaScript.",
+        "body": "This page displays a tale that received multiple comments.\r\n\r\nThe tale is an instance of `TaleCommentsL2`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 2.\r\n\r\nThe class `TaleWithMtl2Comments` is setup to enable comment flags, reactions and votes. The `prose/tale_detail.html` includes django-comments-xtd JavaScript plugin. This way user interactions take place via JavaScript.",
         "allow_comments": true,
         "published_time": "2025-08-29T06:57:15Z"
+    }
+},
+{
+    "model": "prose.talecommentsl3",
+    "pk": 1,
+    "fields": {
+        "title": "N comments, levels 0-2, options on, JS",
+        "slug": "n-comments-options-on-js",
+        "body": "This page displays a tale that received multiple comments.\r\n\r\nThe tale is an instance of `TaleCommentsL3`, which in the setting `COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL` has a `max_thread_level` of 3.\r\n\r\nThe class `TaleWithMtl3Comments` is setup to enable comment flags, reactions and votes. The `prose/tale_detail.html` includes django-comments-xtd JavaScript plugin. This way user interactions take place via JavaScript.",
+        "allow_comments": true,
+        "published_time": "2025-09-01T17:59:35Z"
     }
 }
 ]

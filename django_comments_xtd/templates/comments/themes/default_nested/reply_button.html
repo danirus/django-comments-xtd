@@ -1,0 +1,6 @@
+{% load i18n %}
+{% load comments_xtd %}
+
+<div id="reply-to-{{ comment.id }}" class="{% if not comments_input_allowed or comment.is_removed %}not-{% endif %}reply-box" data-djcx-cid="{{ comment.id }}">
+  Reply button for comment {{ comment.id }}
+</div>

@@ -1,0 +1,36 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+<div
+  class="comment-list"
+  data-djcx="config"
+  {% if user.is_authenticated %}
+  data-djcx-react-url="{% url 'comments-xtd-react' 0 %}"
+  data-djcx-vote-url="{% url 'comments-xtd-vote' 0 %}"
+  data-djcx-flag-url="{% url 'comments-flag' 0 %}"
+  {% else %}
+  data-djcx-login-url="{% url 'login' %}"
+  {% endif %}
+  data-djcx-is-guest-user="{% if user.is_authenticated %}0{% else %}1{% endif %}"
+  data-djcx-is-input-allowed="{% if comments_input_allowed %}1{% else %}0{% endif %}"
+  data-djcx-flagging-enabled="{% if comments_flagging_enabled %}1{% else %}0{% endif %}"
+  data-djcx-reacting-enabled="{% if comments_reacting_enabled %}1{% else %}0{% endif %}"
+  data-djcx-voting-enabled="{% if comments_voting_enabled %}1{% else %}0{% endif %}"
+>
+  {% if max_thread_level == 0 %}
+    {% for comment in comment_list %}
+      {% include "comments/themes/default_nested/comment.html" %}
+    {% endfor %}
+  {% else %}
+    <div class="cthread cthread-{{ current_level }}">
+      {% for comment in comment_list %}
+        {% if comment.level == 0 %}
+          {% include "comments/themes/default_nested/comment.html" %}
+        {% else %}
+          {% render_xtdcomment_thread comment comment_list %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

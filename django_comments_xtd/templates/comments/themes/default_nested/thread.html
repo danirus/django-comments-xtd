@@ -1,0 +1,39 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% if current_level == max_thread_level %}<div class="cthread cthread-end">
+{% else %}<div class="cthread cthread-{{ current_level }}">{% endif %}
+
+{% for comment in comment_list %}
+  {% if comment.level == current_level %}
+    {% include "comments/themes/default_nested/comment.html" %}
+  {% elif comment.level > current_level %}
+    {% render_xtdcomment_thread comment comment_list comment.level %}
+  {% else %}
+    {% with top_comment=reply_stack|get_top_comment %}
+      {% if comment.level <= top_comment.level %}
+        {% for object in reply_stack|pop_comments_gte:comment.level %}
+          {% if object.allow_thread %}
+            {% include "comments/themes/default_nested/reply_button.html" with comment=object %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  {% endif %}
+
+  {% if forloop.last %}
+    {% comment %}
+      # After rendering the last comment, render the reply form for the
+      # rest of comments still queued in the reply_stack.
+    {% endcomment %}
+    {% with reply_stack_copy=reply_stack|copy_reply_stack %}
+      {% for object in reply_stack|pop_comments_gte %}
+        {% if object.allow_thread %}
+          {% include "comments/themes/default_nested/reply_button.html" with comment=object %}
+        {% endif %}
+      {% endfor %}
+    {% endwith %}
+  {% endif %}
+{% endfor %}
+</div>

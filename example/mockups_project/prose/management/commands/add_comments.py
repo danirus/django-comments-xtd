@@ -1,3 +1,4 @@
+# ruff: noqa: RUF100, PLR0913
 from datetime import datetime, timedelta
 from random import randint
 
@@ -82,7 +83,7 @@ content_parameters = [
         "comments": [  # This represents nested comments.
             (1,),  # First level tuples are comments at level 0.
             (2, (3, 4)),  # Here 3 and 4 are replies at level 1.
-            (5, (6, 7, 8))  # Here 6, 7 and 8 are replies at level 1.
+            (5, (6, 7, 8)),  # Here 6, 7 and 8 are replies at level 1.
         ],
         "reactions": [],  # Articles do not allow reactions.
     },
@@ -92,17 +93,17 @@ content_parameters = [
         "comments": [  # This represents nested comments.
             (1,),  # First level tuples are comments at level 0.
             (2, (3, 4)),  # Here 3 and 4 are replies at level 1.
-            (5, (6, 7, 8))  # Here 6, 7 and 8 are replies at level 1.
+            (5, (6, 7, 8)),  # Here 6, 7 and 8 are replies at level 1.
         ],
         "reactions": [
             [("+", 14), ("R", 8), ("S", 3), ("G", 2)],  # reactions for 1
-            [("+", 8), ("S", 5), ("G", 1)],             # reactions for 2
-            [("-", 9), ("E", 7)],                       # reactions for 3
-            [("+", 4), ("S", 3)],                       # reactions for 4
-            [("+", 4), ("R", 3), ("G", 1)],             # reactions for 5
-            [("+", 5), ("G", 4)],                       # reactions for 6
-            [("-", 3), ("E", 2)],                       # reactions for 7
-            [("+", 12), ("H", 9)],                      # reactions for 8
+            [("+", 8), ("S", 5), ("G", 1)],  # reactions for 2
+            [("-", 9), ("E", 7)],  # reactions for 3
+            [("+", 4), ("S", 3)],  # reactions for 4
+            [("+", 4), ("R", 3), ("G", 1)],  # reactions for 5
+            [("+", 5), ("G", 4)],  # reactions for 6
+            [("-", 3), ("E", 2)],  # reactions for 7
+            [("+", 12), ("H", 9)],  # reactions for 8
         ],  # Articles do not allow reactions.
     },
     {
@@ -111,17 +112,17 @@ content_parameters = [
         "comments": [  # This represents nested comments.
             (1,),  # First level tuples are comments at level 0.
             (2, (3, 4)),  # Here 3 and 4 are replies at level 1.
-            (5, (6, 7, 8))  # Here 6, 7 and 8 are replies at level 1.
+            (5, (6, 7, 8)),  # Here 6, 7 and 8 are replies at level 1.
         ],
         "reactions": [
             [("+", 14), ("R", 8), ("S", 3), ("G", 2)],  # reactions for 1
-            [("+", 8), ("S", 5), ("G", 1)],             # reactions for 2
-            [("-", 9), ("E", 7)],                       # reactions for 3
-            [("+", 4), ("S", 3)],                       # reactions for 4
-            [("+", 4), ("R", 3), ("G", 1)],             # reactions for 5
-            [("+", 5), ("G", 4)],                       # reactions for 6
-            [("-", 3), ("E", 2)],                       # reactions for 7
-            [("+", 12), ("H", 9)],                      # reactions for 8
+            [("+", 8), ("S", 5), ("G", 1)],  # reactions for 2
+            [("-", 9), ("E", 7)],  # reactions for 3
+            [("+", 4), ("S", 3)],  # reactions for 4
+            [("+", 4), ("R", 3), ("G", 1)],  # reactions for 5
+            [("+", 5), ("G", 4)],  # reactions for 6
+            [("-", 3), ("E", 2)],  # reactions for 7
+            [("+", 12), ("H", 9)],  # reactions for 8
         ],  # Articles do not allow reactions.
     },
     {
@@ -144,20 +145,22 @@ content_parameters = [
         ],
         "reactions": [
             [("+", 14), ("R", 8), ("S", 3), ("G", 2)],  # reactions for 1
-            [("+", 8), ("S", 5), ("G", 1)],             # reactions for 2
-            [("-", 9), ("E", 7)],                       # reactions for 3
-            [("+", 4), ("S", 3)],                       # reactions for 4
-            [("+", 4), ("R", 3), ("G", 1)],             # reactions for 5
-            [("+", 5), ("G", 4)],                       # reactions for 6
-            [("-", 3), ("E", 2)],                       # reactions for 7
-            [("+", 12), ("H", 9)],                      # reactions for 8
-            [("G", 14), ("C", 5)],                      # reactions for 9
-            [("+", 25), ("R", 6), ("C", 2)],            # reactions for 10
-            [("+", 13), ("G", 1)],                      # reactions for 11
-            [("+", 3),],                                # reactions for 12
-            [("G", 32), ("+", 22), ("H", 12)],          # reactions for 13
-            [("+", 11), ("H", 1)],                      # reactions for 14
-            [("+", 6), ("R", 6), ("H", 6)],             # reactions for 15
+            [("+", 8), ("S", 5), ("G", 1)],  # reactions for 2
+            [("-", 9), ("E", 7)],  # reactions for 3
+            [("+", 4), ("S", 3)],  # reactions for 4
+            [("+", 4), ("R", 3), ("G", 1)],  # reactions for 5
+            [("+", 5), ("G", 4)],  # reactions for 6
+            [("-", 3), ("E", 2)],  # reactions for 7
+            [("+", 12), ("H", 9)],  # reactions for 8
+            [("G", 14), ("C", 5)],  # reactions for 9
+            [("+", 25), ("R", 6), ("C", 2)],  # reactions for 10
+            [("+", 13), ("G", 1)],  # reactions for 11
+            [
+                ("+", 3),
+            ],  # reactions for 12
+            [("G", 32), ("+", 22), ("H", 12)],  # reactions for 13
+            [("+", 11), ("H", 1)],  # reactions for 14
+            [("+", 6), ("R", 6), ("H", 6)],  # reactions for 15
         ],
     },
     {
@@ -170,20 +173,95 @@ content_parameters = [
         ],
         "reactions": [
             [("+", 14), ("R", 8), ("S", 3), ("G", 2)],  # reactions for 1
-            [("+", 8), ("S", 5), ("G", 1)],             # reactions for 2
-            [("-", 9), ("E", 7)],                       # reactions for 3
-            [("+", 4), ("S", 3)],                       # reactions for 4
-            [("+", 4), ("R", 3), ("G", 1)],             # reactions for 5
-            [("+", 5), ("G", 4)],                       # reactions for 6
-            [("-", 3), ("E", 2)],                       # reactions for 7
-            [("+", 12), ("H", 9)],                      # reactions for 8
-            [("G", 14), ("C", 5)],                      # reactions for 9
-            [("+", 25), ("R", 6), ("C", 2)],            # reactions for 10
-            [("+", 13), ("G", 1)],                      # reactions for 11
-            [("+", 3),],                                # reactions for 12
-            [("G", 32), ("+", 22), ("H", 12)],          # reactions for 13
-            [("+", 11), ("H", 1)],                      # reactions for 14
-            [("+", 6), ("R", 6), ("H", 6)],             # reactions for 15
+            [("+", 8), ("S", 5), ("G", 1)],  # reactions for 2
+            [("-", 9), ("E", 7)],  # reactions for 3
+            [("+", 4), ("S", 3)],  # reactions for 4
+            [("+", 4), ("R", 3), ("G", 1)],  # reactions for 5
+            [("+", 5), ("G", 4)],  # reactions for 6
+            [("-", 3), ("E", 2)],  # reactions for 7
+            [("+", 12), ("H", 9)],  # reactions for 8
+            [("G", 14), ("C", 5)],  # reactions for 9
+            [("+", 25), ("R", 6), ("C", 2)],  # reactions for 10
+            [("+", 13), ("G", 1)],  # reactions for 11
+            [
+                ("+", 3),
+            ],  # reactions for 12
+            [("G", 32), ("+", 22), ("H", 12)],  # reactions for 13
+            [("+", 11), ("H", 1)],  # reactions for 14
+            [("+", 6), ("R", 6), ("H", 6)],  # reactions for 15
+        ],
+    },
+    {
+        "model": "ArticleCommentsL3",
+        "slug": "n-comments-options-off",
+        "comments": [  # This represents nested comments.
+            (1, (2, (3, (4, 5), 6, 7), 8, 9)),
+            (10, (11, (12, 13, 14), 15, 16, (17, 18))),
+        ],
+        "reactions": [],
+    },
+    {
+        "model": "StoryCommentsL3",
+        "slug": "n-comments-options-on",
+        "comments": [  # This represents nested comments.
+            (1, (2, (3, (4, 5), 6, 7), 8, 9)),
+            (10, (11, (12, 13, 14), 15, 16, (17, 18))),
+        ],
+        "reactions": [
+            [("+", 14), ("R", 8), ("S", 3), ("G", 2)],  # reactions for 1
+            [("+", 8), ("S", 5), ("G", 1)],  # reactions for 2
+            [("-", 9), ("E", 7)],  # reactions for 3
+            [("+", 4), ("S", 3)],  # reactions for 4
+            [("+", 4), ("R", 3), ("G", 1)],  # reactions for 5
+            [("+", 5), ("G", 4)],  # reactions for 6
+            [("-", 3), ("E", 2)],  # reactions for 7
+            [("+", 12), ("H", 9)],  # reactions for 8
+            [("G", 14), ("C", 5)],  # reactions for 9
+            [("+", 25), ("R", 6), ("C", 2)],  # reactions for 10
+            [("+", 13), ("G", 1)],  # reactions for 11
+            [
+                ("+", 9),
+            ],  # reactions for 12
+            [("G", 32), ("+", 22), ("H", 12)],  # reactions for 13
+            [("+", 11), ("H", 1)],  # reactions for 14
+            [("+", 6), ("R", 6), ("H", 6)],  # reactions for 15
+            [("+", 19), ("R", 5), ("G", 3)],  # reactions for 16
+            [("-", 16), ("E", 8), ("C", 7)],  # reactions for 17
+            [
+                ("+", 3),
+            ],  # reactions for 18
+        ],
+    },
+    {
+        "model": "TaleCommentsL3",
+        "slug": "n-comments-options-on-js",
+        "comments": [  # This represents nested comments.
+            (1, (2, (3, (4, 5), 6, 7), 8, 9)),
+            (10, (11, (12, 13, 14), 15, 16, (17, 18))),
+        ],
+        "reactions": [
+            [("+", 14), ("R", 8), ("S", 3), ("G", 2)],  # reactions for 1
+            [("+", 8), ("S", 5), ("G", 1)],  # reactions for 2
+            [("-", 9), ("E", 7)],  # reactions for 3
+            [("+", 4), ("S", 3)],  # reactions for 4
+            [("+", 4), ("R", 3), ("G", 1)],  # reactions for 5
+            [("+", 5), ("G", 4)],  # reactions for 6
+            [("-", 3), ("E", 2)],  # reactions for 7
+            [("+", 12), ("H", 9)],  # reactions for 8
+            [("G", 14), ("C", 5)],  # reactions for 9
+            [("+", 25), ("R", 6), ("C", 2)],  # reactions for 10
+            [("+", 13), ("G", 1)],  # reactions for 11
+            [
+                ("+", 9),
+            ],  # reactions for 12
+            [("G", 32), ("+", 22), ("H", 12)],  # reactions for 13
+            [("+", 11), ("H", 1)],  # reactions for 14
+            [("+", 6), ("R", 6), ("H", 6)],  # reactions for 15
+            [("+", 19), ("R", 5), ("G", 3)],  # reactions for 16
+            [("-", 16), ("E", 8), ("C", 7)],  # reactions for 17
+            [
+                ("+", 3),
+            ],  # reactions for 18
         ],
     },
 ]
@@ -225,9 +303,9 @@ class Command(BaseCommand):
         and the number of elements in the `votes` list does not
         exceed the number of comments.
         """
-        if isinstance(item['comments'], int):
+        if isinstance(item["comments"], int):
             assert len(item["reactions"]) <= item["comments"]
-        if isinstance(item['comments'], list):
+        if isinstance(item["comments"], list):
             flat_list = get_flat_list(item["comments"])
             assert len(item["reactions"]) <= len(flat_list)
         if len(item["reactions"]):
@@ -296,9 +374,9 @@ class Command(BaseCommand):
             self.validate_content_parameters(item)
             ctype = ContentType.objects.get(
                 app_label="prose",
-                model=item['model'].lower(),
+                model=item["model"].lower(),
             )
-            obj = ctype.model_class().objects.get(slug=item['slug'])
+            obj = ctype.model_class().objects.get(slug=item["slug"])
 
             comments = list(
                 XtdComment.objects.filter(

@@ -201,6 +201,7 @@
 
   .comment-box-img {
     margin-left: 16px;
+    margin-right: 16px;
   }
 
   .comment-box .level-1,
@@ -222,7 +223,8 @@
   }
 
   /* Begin experimental */
-  .cthread {
+  .comment-box .cthread,
+  .reply-box .cthread {
     &.cthread-l0.cthread-reply::after,
     &.cthread-l1.cthread-reply::after,
     &.cthread-l2.cthread-reply::after {
@@ -387,11 +389,65 @@
         }
       }
     }
+
+    &.cthread-end {
+        display: block;
+        min-width: 24px;
+    }
   }
 
-  .cthread-end {
+
+  .comment-box-img .cthread,
+  .reply-box-img .cthread {
+    &.cthread-l0.cthread-reply::after,
+    &.cthread-l1.cthread-reply::after,
+    &.cthread-l2.cthread-reply::after {
+      bottom: calc(50% - .5px);
+    }
+
+    &.cthread-l0 {
       display: block;
-      min-width: 24px;
+      min-width: 35px;
+
+      &.cthread-ini {
+        &::before {
+          position: absolute;
+          content: "";
+          top: 16px;
+          bottom: 0;
+          left: 0;
+          display: block;
+          width: 2px;
+          background-color: var(--djcx-color-level-0);
+        }
+
+        &::after {
+          top: 18px;
+        }
+      }
+
+      &::after {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+        width: 2px;
+        content: "";
+        background-color: var(--djcx-color-level-0);
+      }
+    }
+
+    .cthread-end {
+      display: block;
+      min-width: 16px;
+    }
+  }
+
+  .reply-box-img .cthread {
+    &.cthread-l0 {
+      min-width: 71px;
+    }
   }
 
   /* End experimental */
@@ -516,6 +572,10 @@
     position: relative;
     display: flex;
     padding: 0;
+  }
+
+  .reply-box-img {
+    margin-left: 16px;
   }
 
   .reply-box .content,

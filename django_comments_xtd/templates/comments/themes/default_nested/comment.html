@@ -1,0 +1,7 @@
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% with anchor=comment|get_anchor %}
+<div id="comment-{{ comment.id }}" class="comment-box" data-djcx-cid="{{ comment.id }}">Comment {{ comment.id }}</div>
+{% endwith %}

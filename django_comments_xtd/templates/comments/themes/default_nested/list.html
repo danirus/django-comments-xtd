@@ -20,17 +20,11 @@
 >
   {% if max_thread_level == 0 %}
     {% for comment in comment_list %}
-      {% include "comments/themes/default_nested/comment.html" %}
+      {% include "comments/themes/default_nested/list.html" %}
     {% endfor %}
   {% else %}
-    <div class="cthread cthread-{{ current_level }}">
-      {% for comment in comment_list %}
-        {% if comment.level == 0 %}
-          {% include "comments/themes/default_nested/comment.html" %}
-        {% else %}
-          {% render_xtdcomment_thread comment comment_list %}
-        {% endif %}
-      {% endfor %}
-    </div>
+    {% for comment in comment_list|comments_level:0 %}
+      {% render_xtdcomment_thread for comment in comment_list %}
+    {% endfor %}
   {% endif %}
 </div>

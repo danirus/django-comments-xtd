@@ -1,6 +1,24 @@
 {% load i18n %}
 {% load comments_xtd %}
 
-<div id="reply-to-{{ comment.id }}" class="{% if not comments_input_allowed or comment.is_removed %}not-{% endif %}reply-box" data-djcx-cid="{{ comment.id }}">
-  Reply button for comment {{ comment.id }}
+<div
+  id="reply-to-{{ comment.id }}"
+  class="{% if not comments_input_allowed or comment.is_removed %}not-{% endif %}reply-box"
+  data-djcx-cid="{{ comment.id }}"
+>
+  {% if comments_input_allowed and not comment.is_removed %}
+    <div class="hline-l{{ comment.level }}"></div>
+    <div class="content fix">
+      <section class="reply-form" data-djcx="reply-form">
+        <form id="reply-form-{{ comment.id }}" action="{% url 'comments-xtd-reply' comment.id %}">
+          <input type="hidden" name="reply_to" value="{{ comment.id }}">
+          <div class="col1-2">
+            <div class="inline-left">
+              <button type="submit" class="btn-level-{{ comment.level }} small" data-djcx="reply-button">{% trans "Reply" %}</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+  {% endif %}
 </div>

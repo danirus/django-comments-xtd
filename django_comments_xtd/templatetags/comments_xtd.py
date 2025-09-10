@@ -159,17 +159,15 @@ class RenderXtdCommentListNode(XtdCommentListNode):
         if not object_pk:
             return ""
 
-        context_dict = context.flatten()
+        flat_ctx = context.flatten()
         for var_name, var_expr in self.include_vars:
-            context_dict[var_name] = var_expr.resolve(context)
+            flat_ctx[var_name] = var_expr.resolve(context)
 
         template_search_list = get_template_list(
             "list",
             app_label=ctype.app_label,
             model=ctype.model,
-            theme=context_dict.get(
-                "comments_theme", settings.COMMENTS_XTD_THEME
-            ),
+            theme=flat_ctx.get("comments_theme", settings.COMMENTS_XTD_THEME),
         )
         options = get_app_model_options(content_type=ctype)
         check_input_allowed_str = options.pop("check_input_allowed")
@@ -177,7 +175,7 @@ class RenderXtdCommentListNode(XtdCommentListNode):
         target_obj = ctype.get_object_for_this_type(pk=object_pk)
         options["comments_input_allowed"] = check_func(target_obj)
 
-        context_dict.update(
+        flat_ctx.update(
             {
                 "max_thread_level": get_max_thread_level(ctype),
                 "comment_list": self.get_context_value_from_queryset(
@@ -186,16 +184,16 @@ class RenderXtdCommentListNode(XtdCommentListNode):
                 "reply_stack": [],  # List to control comment replies rendering.
             }
         )
-        context_dict.update(options)
-        context_dict.update(self.options_enabled)
-        liststr = render_to_string(template_search_list, context_dict)
+        flat_ctx.update(options)
+        flat_ctx.update(self.options_enabled)
+        liststr = render_to_string(template_search_list, flat_ctx)
         return liststr
 
 
 @register.tag
 def render_xtdcomment_list(parser, token):
     """
-    Render the comment list (as returned by ``{% get_xtdcomment_list %}``)
+    Renders the comment list (as returned by ``{% get_xtdcomment_list %}``)
     through the ``comments/list.html`` templates.
 
     Syntax::
@@ -221,6 +219,55 @@ def render_xtdcomment_list(parser, token):
 
     """
     return RenderXtdCommentListNode.handle_token(parser, token)
+
+
+# ---------------------------------------------------------------------
+class RenderXtdCommentThreadNode(template.Node):
+    def __init__(self, comment, comment_list):
+        self.comment = template.Variable(comment)
+        self.comment_list = template.Variable(comment_list)
+
+    def render(self, context):
+        comment = self.comment.resolve(context)
+        comment_list = self.comment_list.resolve(context)
+        flat_ctx = context.flatten()
+        template_search_list = get_template_list(
+            "thread",
+            theme=flat_ctx.get("comments_theme", settings.COMMENTS_XTD_THEME),
+        )
+        nested_comment_list = comment_list.filter(
+            parent_id=comment.id, level=comment.level + 1
+        )
+        flat_ctx.update(
+            {
+                "comment": comment,
+                "nested_comment_list": nested_comment_list,
+                "nested_level": comment.level + 1,
+            }
+        )
+        html = render_to_string(template_search_list, flat_ctx)
+        return html
+
+
+@register.tag
+def render_xtdcomment_thread(parser, token):
+    """
+    Renders the given comment and its nested comments in the given queryset.
+
+    Syntax::
+
+        {% render_xtdcomment_thread for [comment] in [comment_list] %}
+    """
+    tokens = token.contents.split()
+    template_syntax_error = (
+        "{% render_xtdcomment_thread for <comment> in <comment_list> %}. "
+        f"found: {{% {token.contents} %}}."
+    )
+
+    if len(tokens) != 5 or tokens[1] != "for" or tokens[3] != "in":
+        raise template.TemplateSyntaxError(template_syntax_error)
+
+    return RenderXtdCommentThreadNode(tokens[2], tokens[4])
 
 
 # ---------------------------------------------------------------------
@@ -405,7 +452,7 @@ def render_comment_threads(parser, token):
     if tokens[1] != "for":
         raise template.TemplateSyntaxError(
             "Templatetag {tokens[0]!r} syntax is {% render_comment_threads "
-            f"for comment %}}. found: {{% {token} %}}."
+            f"for comment %}}. found: {{% {token.contents} %}}."
         )
     if len(tokens) == 5 and tokens[3] == "in" and tokens[4] == "reply_box":
         return RenderCommentThreadsInReplyBox(tokens[2])
@@ -610,6 +657,14 @@ def pop_comments_gte(reply_stack, level_lte=0):
     return comments_lte
 
 
+@register.filter
+def comments_level(comment_list, level=0):
+    """
+    Return `thread.id` values from the list of comments in `comment_list`.
+    """
+    return comment_list.filter(level=level)
+
+
 @register.simple_tag(takes_context=True)
 def push_comment(context, comment):
     """
@@ -665,7 +720,7 @@ def get_user_reactions(parser, token):
     if tokens[1] != "for" or tokens[3] != "as" or len(tokens) != 5:
         raise template.TemplateSyntaxError(
             "Templatetag {tokens[0]!r} syntax is {% get_user_reactions for "
-            f"[comment] as [varname] %}}. found: {{% {token} %}}."
+            f"[comment] as [varname] %}}. found: {{% {token.contents} %}}."
         )
     return GetUserReactionsNode(tokens[2], tokens[4])
 

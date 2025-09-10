@@ -244,6 +244,11 @@ urlpatterns = [
                         "url1": "defn-light--n-comments-levels-0-1-options-off",
                         "url2": "defn-dark--n-comments-levels-0-1-options-off",
                     },
+                    {
+                        "title": "N comments, levels 0-2, options off",
+                        "url1": "defn-light--n-comments-levels-0-2-options-off",
+                        "url2": "defn-dark--n-comments-levels-0-2-options-off",
+                    },
                 ],
                 "avatar_in_thread_theme_mockups": [
                     {
@@ -900,6 +905,29 @@ urlpatterns = [
             theme="default_nested",
         ),
         name="defn-dark--n-comments-levels-0-1-options-off",
+    ),
+    # -----------------------------
+    # -- n-comments, levels 0-1
+    # -- options off
+    path(
+        "defn-light--n-comments-levels-0-2-options-off",
+        prose_v(
+            "ArticleCommentsL2",
+            "n-comments-options-off",
+            "light",
+            theme="default_nested",
+        ),
+        name="defn-light--n-comments-levels-0-2-options-off",
+    ),
+    path(
+        "defn-dark--n-comments-levels-0-2-options-off",
+        prose_v(
+            "ArticleCommentsL2",
+            "n-comments-options-off",
+            "dark",
+            theme="default_nested",
+        ),
+        name="defn-dark--n-comments-levels-0-2-options-off",
     ),
     ###########################
     # avatar_in_thread mockups.

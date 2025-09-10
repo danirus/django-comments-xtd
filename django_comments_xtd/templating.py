@@ -17,9 +17,7 @@ template_patterns = {
             "comments/{theme_dir}/discarded.html",
             "comments/discarded.html",
         ],
-        "default": [
-            "comments/discarded.html"
-        ],
+        "default": ["comments/discarded.html"],
     },
     "flag": {
         "themed": [
@@ -52,7 +50,7 @@ template_patterns = {
             "comments/{app_label}/{model}/form.html",
             "comments/{app_label}/form.html",
             "comments/form.html",
-        ]
+        ],
     },
     "form_js": {
         "themed": [
@@ -130,13 +128,8 @@ template_patterns = {
         ],
     },
     "posted": {
-        "themed": [
-            "comments/{theme_dir}/posted.html",
-            "comments/posted.html"
-        ],
-        "default": [
-            "comments/posted.html"
-        ],
+        "themed": ["comments/{theme_dir}/posted.html", "comments/posted.html"],
+        "default": ["comments/posted.html"],
     },
     "posted_js": {
         "themed": [
@@ -272,6 +265,15 @@ template_patterns = {
             "comments/reply_template.html",
         ],
     },
+    "thread": {
+        "themed": [
+            "comments/{theme_dir}/thread.html",
+            "comments/thread.html",
+        ],
+        "default": [
+            "comments/thread.html",
+        ],
+    },
     "users_reacted_to_comment": {
         "themed": [
             "comments/{theme_dir}/{app_label}/{model}/"
@@ -292,11 +294,11 @@ template_patterns = {
 
 _template_patterns = import_string(settings.COMMENTS_XTD_TEMPLATE_PATTERNS)
 
+
 def get_template_list(template_alias: str, **kwargs) -> list[str]:
     theme = kwargs.get("theme", settings.COMMENTS_XTD_THEME)
     subkey = "themed" if len(theme) else "default"
     template_list = _template_patterns[template_alias][subkey]
     return [
-        t.format(theme_dir=f"themes/{theme}", **kwargs)
-        for t in template_list
+        t.format(theme_dir=f"themes/{theme}", **kwargs) for t in template_list
     ]

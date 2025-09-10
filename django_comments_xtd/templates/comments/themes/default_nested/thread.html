@@ -2,38 +2,23 @@
 {% load comments %}
 {% load comments_xtd %}
 
-{% if current_level == max_thread_level %}<div class="cthread cthread-end">
-{% else %}<div class="cthread cthread-{{ current_level }}">{% endif %}
-
-{% for comment in comment_list %}
-  {% if comment.level == current_level %}
+<div id="ct-{{ comment.id }}" class="comments-thread comments-thread-l{{ comment.level }}">
+  {% if comment.nested_count > 0 %}<a href="#" class="vline"></a>{% else %}<span class="vline"></span>{% endif %}
+  <div class="thread-group">
     {% include "comments/themes/default_nested/comment.html" %}
-  {% elif comment.level > current_level %}
-    {% render_xtdcomment_thread comment comment_list comment.level %}
-  {% else %}
-    {% with top_comment=reply_stack|get_top_comment %}
-      {% if comment.level <= top_comment.level %}
-        {% for object in reply_stack|pop_comments_gte:comment.level %}
-          {% if object.allow_thread %}
-            {% include "comments/themes/default_nested/reply_button.html" with comment=object %}
-          {% endif %}
+    {% if nested_level == max_thread_level %}
+      <div class="comments-thread comments-thread-end">
+        {% for nested_comment in nested_comment_list %}
+          {% include "comments/themes/default_nested/comment.html" with comment=nested_comment %}
         {% endfor %}
-      {% endif %}
-    {% endwith %}
-  {% endif %}
-
-  {% if forloop.last %}
-    {% comment %}
-      # After rendering the last comment, render the reply form for the
-      # rest of comments still queued in the reply_stack.
-    {% endcomment %}
-    {% with reply_stack_copy=reply_stack|copy_reply_stack %}
-      {% for object in reply_stack|pop_comments_gte %}
-        {% if object.allow_thread %}
-          {% include "comments/themes/default_nested/reply_button.html" with comment=object %}
-        {% endif %}
+      </div>
+    {% else %}
+      {% for nested_comment in nested_comment_list %}
+        {% render_xtdcomment_thread for nested_comment in comment_list %}
       {% endfor %}
-    {% endwith %}
-  {% endif %}
-{% endfor %}
+    {% endif %}
+    {% if comment.level < max_thread_level %}
+      {% include "comments/themes/default_nested/reply_button.html" %}
+    {% endif %}
+  </div>
 </div>

@@ -238,18 +238,6 @@ urlpatterns = [
                         "url2": "def-dark--n-comments-levels-0-3-opts-on-js",
                     },
                 ],
-                "default_nested_theme_mockups": [
-                    {
-                        "title": "N comments, levels 0-1, options off",
-                        "url1": "defn-light--n-comments-levels-0-1-options-off",
-                        "url2": "defn-dark--n-comments-levels-0-1-options-off",
-                    },
-                    {
-                        "title": "N comments, levels 0-2, options off",
-                        "url1": "defn-light--n-comments-levels-0-2-options-off",
-                        "url2": "defn-dark--n-comments-levels-0-2-options-off",
-                    },
-                ],
                 "avatar_in_thread_theme_mockups": [
                     {
                         "title": "preview.html level 0 (does logout)",
@@ -880,54 +868,6 @@ urlpatterns = [
         "def-dark--n-comments-levels-0-3-opts-on-js",
         prose_v("TaleCommentsL3", "n-comments-options-on-js", "dark"),
         name="def-dark--n-comments-levels-0-3-opts-on-js",
-    ),
-    ###########################
-    # default_nested mockups.
-    # -----------------------------
-    # -- n-comments, levels 0-1
-    # -- options off
-    path(
-        "defn-light--n-comments-levels-0-1-options-off",
-        prose_v(
-            "ArticleCommentsL1",
-            "n-comments-options-off",
-            "light",
-            theme="default_nested",
-        ),
-        name="defn-light--n-comments-levels-0-1-options-off",
-    ),
-    path(
-        "defn-dark--n-comments-levels-0-1-options-off",
-        prose_v(
-            "ArticleCommentsL1",
-            "n-comments-options-off",
-            "dark",
-            theme="default_nested",
-        ),
-        name="defn-dark--n-comments-levels-0-1-options-off",
-    ),
-    # -----------------------------
-    # -- n-comments, levels 0-1
-    # -- options off
-    path(
-        "defn-light--n-comments-levels-0-2-options-off",
-        prose_v(
-            "ArticleCommentsL2",
-            "n-comments-options-off",
-            "light",
-            theme="default_nested",
-        ),
-        name="defn-light--n-comments-levels-0-2-options-off",
-    ),
-    path(
-        "defn-dark--n-comments-levels-0-2-options-off",
-        prose_v(
-            "ArticleCommentsL2",
-            "n-comments-options-off",
-            "dark",
-            theme="default_nested",
-        ),
-        name="defn-dark--n-comments-levels-0-2-options-off",
     ),
     ###########################
     # avatar_in_thread mockups.

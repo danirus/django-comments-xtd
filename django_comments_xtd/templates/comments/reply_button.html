@@ -7,9 +7,8 @@
   data-djcx-cid="{{ comment.id }}"
 >
   {% if comments_input_allowed and not comment.is_removed %}
-    {% render_comment_threads for comment in reply_box %}
-    {{ comment.level|hline_div }}
-    <div class="content fix">
+    <div class="hline-l{{ comment.level }}"></div>
+    <div class="content">
       <section class="reply-form" data-djcx="reply-form">
         <form id="reply-form-{{ comment.id }}" action="{% url 'comments-xtd-reply' comment.id %}">
           <input type="hidden" name="reply_to" value="{{ comment.id }}">

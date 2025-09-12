@@ -28,7 +28,7 @@
         left: 0;
         display: block;
         width: 2px;
-        height: calc(100% - 42.5px);
+        height: calc(100% - 46.5px);
         content: "";
       }
     }
@@ -107,7 +107,7 @@
   .hline-l1,
   .hline-l2 {
     position: absolute;
-    top: 50%;
+    bottom: 24px;
     left: -24px;
     border-top-width: 2px;
     border-top-style: solid;
@@ -127,5 +127,4 @@
   .hline-l2 {
     color: var(--djcx-color-level-2);
   }
-
 }

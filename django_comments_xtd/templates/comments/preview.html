@@ -35,43 +35,46 @@
               </div>
             </div>
           {% else %}
-            {% with parent=form.reply_to.value|get_comment %}
-              <div class="comment-box">
-                <a class="cthread cthread-l0 cthread-ini"></a>
-                <div class="comment fix">
-                  <div class="header">
-                    <div>{% if parent.url %}<a href="{{ parent.url }}" target="_new">{{ parent.name }}</a>{% else %}{{ parent.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ parent.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink parent page_number %}">¶</a></div>
+            <div class="comments-thread comments-thread-l0">
+              <span href="#" class="vline"></span>
+              <div class="thread-group">
+                {% with parent=form.reply_to.value|get_comment %}
+                  <div class="comment-box">
+                    <div class="comment comment--in-thread">
+                      <div class="header">
+                        <div>{% if parent.url %}<a href="{{ parent.url }}" target="_new">{{ parent.name }}</a>{% else %}{{ parent.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ parent.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink parent page_number %}">¶</a></div>
+                      </div>
+                      <div class="body body-bordered">
+                        {{ parent.comment|linebreaks|escape }}
+                      </div>
+                      <div class="feedback feedback-bordered"></div>
+                    </div>
                   </div>
-                  <div class="body body-bordered">
-                    {{ parent.comment|linebreaks|escape }}
+                {% endwith %}
+
+                <div class="comments-thread comments-thread-end">
+                  <div class="comment-box">
+                    <div class="comment comment--in-thread">
+                      <div class="header">
+                        <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
+                        <div class="small text-info">{% trans "comment in preview" %}</div>
+                      </div>
+                      <div class="body body-bordered">
+                        {{ form.cleaned_data.comment|linebreaks|escape }}
+                      </div>
+                      <div class="feedback feedback-bordered"></div>
+                    </div>
                   </div>
-                  <div class="feedback feedback-bordered"></div>
                 </div>
-              </div>
-            {% endwith %}
 
-            <div class="comment-box">
-              <a class="cthread cthread-l0"></a>
-              <a class="cthread-end"></a>
-              <div class="comment fix">
-                <div class="header">
-                  <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
-                  <div class="small text-info">{% trans "comment in preview" %}</div>
+                <div class="reply-box">
+                  <div class="hline-l0"></div>
+                  <div class="content">
+                    <section class="reply-form active">
+                      {% include "comments/form.html" %}
+                    </section>
+                  </div>
                 </div>
-                <div class="body body-bordered">
-                  {{ form.cleaned_data.comment|linebreaks|escape }}
-                </div>
-                <div class="feedback feedback-bordered"></div>
-              </div>
-            </div>
-
-            <div class="reply-box">
-              <a class="cthread cthread-l0 cthread-reply"></a>
-              <div class="line-0"></div>
-              <div class="content fix">
-                <section class="reply-form active">
-                  {% include "comments/form.html" %}
-                </section>
               </div>
             </div>
           {% endif %}

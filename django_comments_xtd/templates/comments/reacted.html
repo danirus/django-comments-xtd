@@ -29,7 +29,7 @@
                 <div>
                   {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}
                     <div class="inline-block" id="cm-votes-{{ comment.id }}">
-                      {% include "comments/comment_votes.html" %}
+                      {% include "comments/comment_votes.html" with comments_input_allowed=False %}
                     </div>
                     &sdot;
                   {% endif %}
@@ -42,11 +42,6 @@
                   <span class="muted">{{ comment.submit_date }}</span>
                   <a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
                 </div>
-                {% if not comment.is_removed and comments_flagging_enabled and comments_input_allowed %}
-                  <div id="cm-flags-{{ comment.id }}">
-                    {% include "comments/comment_flags.html" %}
-                  </div>
-                {% endif %}
               </div>
               <div class="body body-bordered{% if comments_reacting_enabled %} body-bordered--no-bottom{% endif %}">
                 {{ comment.comment|linebreaks|escape }}

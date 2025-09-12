@@ -581,16 +581,11 @@
   .reply-box .content,
   .reply-box-img .content {
     display: flex;
+    width: 100%;
+    min-height: 48px;
+    margin-left: 16px;
     justify-content: left;
     padding: .6rem 0;
-
-    &.fix {
-      position: relative;
-      margin-left: 16px;
-      padding-right: 16px;
-      width: 100%;
-    }
-
   }
 
   .reply-box .level-1,
@@ -859,7 +854,7 @@
       padding-left: 16px;
       padding-right: 16px;
 
-      &.fix {
+      &.comment--in-thread {
         margin-left: -8px;
         padding-left: 0;
         padding-right: 0;

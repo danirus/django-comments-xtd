@@ -4,8 +4,7 @@
 
 {% with anchor=comment|get_anchor %}
 <div id="comment-{{ comment.id }}" class="comment-box" data-djcx-cid="{{ comment.id }}">
-  {% render_comment_threads for comment %}
-  <div class="comment fix">
+  <div class="comment{% if max_thread_level > 0 %} comment--in-thread{% endif %}">
     <div class="header">
       <div>
         {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}

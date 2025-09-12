@@ -18,45 +18,13 @@
   data-djcx-reacting-enabled="{% if comments_reacting_enabled %}1{% else %}0{% endif %}"
   data-djcx-voting-enabled="{% if comments_voting_enabled %}1{% else %}0{% endif %}"
 >
-  {% for comment in comment_list %}
-    {% comment %}
-      # Before rendering the comment, check the reply_stack to find out
-      # whether a reply-box has to be rendered.
-    {% endcomment %}
-    {% if reply_stack %}
-      {% with top_comment=reply_stack|get_top_comment reply_stack_copy=reply_stack|copy_reply_stack %}
-        {% if comment.level <= top_comment.level %}
-          {% for object in reply_stack|pop_comments_gte:comment.level %}
-            {% if object.allow_thread %}
-              {% include "comments/reply_button.html" with comment=object %}
-            {% endif %}
-          {% endfor %}
-          {% push_comment comment %}
-        {% elif comment.level > top_comment.level and comment.level < max_thread_level %}
-          {% push_comment comment %}
-        {% endif %}
-      {% endwith %}
-    {% else %}
-      {% push_comment comment %}
-    {% endif %}
-
-    {% block comment %}
+  {% if max_thread_level == 0 %}
+    {% for comment in comment_list %}
       {% include "comments/comment.html" %}
-    {% endblock %}
-
-    {% if forloop.last %}
-      {% comment %}
-        # After rendering the last comment, render the reply form for the
-        # rest of comments still queued in the reply_stack.
-      {% endcomment %}
-      {% with reply_stack_copy=reply_stack|copy_reply_stack %}
-        {% for object in reply_stack|pop_comments_gte %}
-          {% if object.allow_thread %}
-            {% include "comments/reply_button.html" with comment=object %}
-          {% endif %}
-        {% endfor %}
-      {% endwith %}
-    {% endif %}
-
-  {% endfor %}
+    {% endfor %}
+  {% else %}
+    {% for comment in comment_list|comments_level:0 %}
+      {% render_xtdcomment_thread for comment in comment_list %}
+    {% endfor %}
+  {% endif %}
 </div>

@@ -20,13 +20,13 @@
     </div>
     <div class="central-column">
       <div class="djcx pb32">
-        <div id="c{{ comment.id }}" class="comment-box l0">
+        <div id="c{{ comment.id }}" class="comment-box">
           <div class="comment">
             <div class="header">
               <div>
                 {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}
                   <div class="inline-block" id="cm-votes-{{ comment.id }}">
-                    {% include "comments/comment_votes.html" %}
+                    {% include "comments/comment_votes.html" with comments_input_allowed=False %}
                   </div>
                   &sdot;
                 {% endif %}
@@ -52,11 +52,6 @@
             <div  id="cm-feedback-{{ comment.id }}" class="feedback feedback-bordered">
               {% if not comment.is_removed and comments_reacting_enabled %}
                 {% include "comments/comment_reactions.html" %}
-                {% if comments_input_allowed %}
-                  <div class="inline-block sepseq">
-                    <a data-djcx="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}#{{ anchor }}" {% if not user.is_authenticated %}data-login-next="{% get_comment_permalink comment %}"{% endif %}>{% trans "React" %}</a>
-                  </div>
-                {% endif %}
               {% endif %}
               {% if comment.nested_count and not comment.is_removed %}
                 <div class="inline-block">

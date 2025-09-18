@@ -1,57 +1,251 @@
 .djcx {
-  .comments-thread.comments-thread-l0,
-  .comments-thread.comments-thread-l1,
-  .comments-thread.comments-thread-l2 {
-    display: flex;
-    flex-direction: row;
+  // .comments-thread.comments-thread-l0,
+  // .comments-thread.comments-thread-l1,
+  // .comments-thread.comments-thread-l2 {
+  //   display: flex;
+  //   flex-direction: row;
 
-    a.vline,
-    span.vline {
-      display: block;
-      min-width: 24px;
+  //   a.vline,
+  //   span.vline {
+  //     display: block;
 
-      &::before {
-        position: relative;
-        content: "";
-        top: 7px;
-        left: -5px;
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 6px;
-      }
+  //     &::before {
+  //       position: relative;
+  //       content: "";
+  //       top: 7px;
+  //       left: -5px;
+  //       display: inline-block;
+  //       width: 12px;
+  //       height: 12px;
+  //       border-radius: 6px;
+  //     }
 
-      &::after {
-        position: relative;
-        top: 2px;
-        bottom: 0;
-        left: 0;
+  //     &::after {
+  //       position: relative;
+  //       top: 2px;
+  //       bottom: 0;
+  //       left: 0;
+  //       display: block;
+  //       width: 2px;
+  //       height: calc(100% - 46.5px);
+  //       content: "";
+  //     }
+  //   }
+
+  //   a.vline {
+  //     &:hover::after {
+  //       left: -3px;
+  //       width: 8px;
+  //     }
+
+  //     &.folded {
+  //       &::after {
+  //         left: -2px;
+  //         width: 6px;
+  //       }
+
+  //       &.hover::after {
+  //         left: -3px;
+  //         width: 8px;
+  //       }
+  //     }
+  //   }
+  // }
+
+  .comments-thread {
+    /* -----------------------
+     * default theme.
+     */
+
+    &.comments-thread-def.comments-thread-l0,
+    &.comments-thread-def.comments-thread-l1,
+    &.comments-thread-def.comments-thread-l2 {
+      display: flex;
+      flex-direction: row;
+      margin-left: 5px;
+
+      a.vline,
+      span.vline {
         display: block;
-        width: 2px;
-        height: calc(100% - 46.5px);
-        content: "";
-      }
-    }
+        min-width: 24px;
 
-    a.vline {
-      &:hover::after {
-        left: -3px;
-        width: 8px;
-      }
-
-      &.folded {
-        &::after {
-          left: -2px;
-          width: 6px;
+        &::before {
+          position: relative;
+          content: "";
+          top: 7px;
+          left: -5px;
+          display: inline-block;
+          width: 12px;
+          height: 12px;
+          border-radius: 6px;
         }
 
-        &.hover::after {
+        &::after {
+          position: relative;
+          top: 2px;
+          bottom: 0;
+          left: 0;
+          display: block;
+          width: 2px;
+          height: calc(100% - 46.5px);
+          content: "";
+        }
+      }
+
+      a.vline {
+        &:hover::after {
           left: -3px;
           width: 8px;
         }
+
+        &.folded {
+          &::after {
+            left: -2px;
+            width: 6px;
+          }
+
+          &:hover::after {
+            left: -3px;
+            width: 8px;
+          }
+        }
+      }
+
+      .hline-l0,
+      .hline-l1,
+      .hline-l2 {
+        position: absolute;
+        bottom: 24px;
+        left: -24px;
+        border-top-width: 2px;
+        border-top-style: solid;
+        transform: translateY(-50%);
+        display: block;
+        width: 40px;
       }
     }
+
+    &.comments-thread-def.comments-thread-end {
+     margin-left: 24px;
+    }
+
+    /* -----------------------
+     * avatar_in_thread theme.
+     */
+    &.comments-thread-ait .comment-box {
+      position: relative;
+      display: flex;
+      padding: 8px 0;
+      margin-left: 0;
+
+      .user-avatar {
+        margin-left: -41px;
+        margin-right: 16px;
+        z-index: -1;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 8px 4px;
+        font-size: 0.8rem;
+        gap: 16px;
+
+        & > div:last-child {
+          display: flex;
+        }
+      }
+
+      .body {
+        font-size: .9rem;
+
+        & > p {
+          margin: .6rem;
+          line-height: 1.4;
+          font-size: 0.9rem;
+        }
+
+        & > p + p {
+          margin-top: 0;
+        }
+      }
+    }
+
+    &.comments-thread-ait.comments-thread-l0,
+    &.comments-thread-ait.comments-thread-l1,
+    &.comments-thread-ait.comments-thread-l2 {
+      display: flex;
+      flex-direction: row;
+      margin-left: 9px;
+
+      a.vline,
+      span.vline {
+        display: block;
+        min-width: 32px;
+
+        &::after {
+          position: relative;
+          top: 46px;
+          bottom: 0;
+          left: 8px;
+          display: block;
+          width: 2px;
+          height: calc(100% - 71px);
+          z-index: 1;
+          content: "";
+        }
+      }
+
+      a.vline {
+        &:hover::after {
+          left: 5px;
+          width: 8px;
+        }
+
+        &.folded {
+          &::after {
+            left: -2px;
+            width: 6px;
+          }
+
+          &:hover::after {
+            left: -3px;
+            width: 8px;
+          }
+        }
+      }
+
+      .reply-box {
+        margin-left: 27px;
+      }
+
+      .hline-l0,
+      .hline-l1,
+      .hline-l2 {
+        position: absolute;
+        bottom: 24px;
+        left: -50px;
+        border-top-width: 2px;
+        border-top-style: solid;
+        transform: translateY(-50%);
+        display: block;
+        width: 66px;
+      }
+    }
+
+    &.comments-thread-ait.comments-thread-end {
+     margin-left: 40px;
+    }
+
   }
+
+  .thread-group {
+    width: 100%;
+  }
+
+  /* --------------------------
+   * Coloring comment threads.
+   */
 
   .comments-thread.comments-thread-l0 {
     a.vline,
@@ -93,27 +287,6 @@
         background-color: var(--djcx-color-level-2);
       }
     }
-  }
-
-  .comments-thread.comments-thread-end {
-    margin-left: 24px;
-  }
-
-  .thread-group {
-    width: 100%;
-  }
-
-  .hline-l0,
-  .hline-l1,
-  .hline-l2 {
-    position: absolute;
-    bottom: 24px;
-    left: -24px;
-    border-top-width: 2px;
-    border-top-style: solid;
-    transform: translateY(-50%);
-    display: block;
-    width: 40px;
   }
 
   .hline-l0 {

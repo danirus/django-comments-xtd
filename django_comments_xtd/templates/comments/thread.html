@@ -2,12 +2,12 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<div id="ct-{{ comment.id }}" class="comments-thread comments-thread-l{{ comment.level }}">
+<div id="ct-{{ comment.id }}" class="comments-thread comments-thread-def comments-thread-l{{ comment.level }}">
   {% if comment.nested_count > 0 %}<a href="#" class="vline"></a>{% else %}<span class="vline"></span>{% endif %}
   <div class="thread-group">
     {% include "comments/comment.html" %}
     {% if nested_level == max_thread_level %}
-      <div class="comments-thread comments-thread-end">
+      <div class="comments-thread comments-thread-def comments-thread-end">
         {% for nested_comment in nested_comment_list %}
           {% include "comments/comment.html" with comment=nested_comment %}
         {% endfor %}

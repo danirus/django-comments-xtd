@@ -1,4 +1,4 @@
-{% extends "base_dark.html" %}
+{% extends "base_light.html" %}
 {% load i18n %}
 {% load static %}
 {% load comments %}
@@ -28,14 +28,17 @@
 
       <h3 class="text-center">There are 8 comments</h3>
 
-      <div class="djcx dark">
+      <div class="djcx light">
         <div class="comment-list" data-djcx="config">
 
-          <div id="ct-1" class="comments-thread comments-thread-def comments-thread-l0">
+          <div id="ct-1" class="comments-thread comments-thread-ait comments-thread-l0">
             <a href="#" class="vline"></a>
             <div class="thread-group">
               <!-- Start comment-1 (level 0) -->
               <div id="comment-1" class="comment-box" data-djcx-cid="1">
+                <div class="user-avatar">
+                  {% get_user_gravatar "lena.rosenthal@example.com" "36,identicon" %}
+                </div>
                 <div class="comment comment--in-thread">
                   <div class="header">
                     <div>
@@ -55,11 +58,14 @@
               </div>
               <!-- End comment-1 -->
 
-              <div id="ct-2" class="comments-thread comments-thread-def comments-thread-l1">
+              <div id="ct-2" class="comments-thread comments-thread-ait comments-thread-l1">
                 <span class="vline"></span>
                 <div class="thread-group">
                   <!-- Start comment-2 (level 1) -->
                   <div id="comment-2" class="comment-box" data-djcx-cid="2">
+                    <div class="user-avatar">
+                      {% get_user_gravatar "lena.rosenthal@example.com" "36,identicon" %}
+                    </div>
                     <div class="comment comment--in-thread">
                       <div class="header">
                         <div>
@@ -119,11 +125,14 @@
             </div><!-- thread-group -->
           </div><!-- comments-thread-l0 #ct-1 -->
 
-          <div id="ct-3" class="comments-thread comments-thread-def comments-thread-l0">
+          <div id="ct-3" class="comments-thread comments-thread-ait comments-thread-l0">
             <span class="vline"></span>
             <div class="thread-group">
               <!-- Start comment-3 (level 0) -->
               <div id="comment-3" class="comment-box" data-djcx-cid="3">
+                <div class="user-avatar">
+                  {% get_user_gravatar "amalia.ocean@example.com" "36,identicon" %}
+                </div>
                 <div class="comment comment--in-thread">
                   <div class="header">
                     <div>
@@ -163,12 +172,15 @@
             </div><!-- thread-group -->
           </div><!-- comments-thread-l0 #ct-3 -->
 
-          <div id="ct-4" class="comments-thread comments-thread-def comments-thread-l0">
+          <div id="ct-4" class="comments-thread comments-thread-ait comments-thread-l0">
             <a href="#" class="vline"></a>
             <div class="thread-group">
 
               <!-- Start comment-4 (level 0) -->
               <div id="comment-4" class="comment-box" data-djcx-cid="4">
+                <div class="user-avatar">
+                  {% get_user_gravatar "isabel.azul@example.com" "36,identicon" %}
+                </div>
                 <div class="comment comment--in-thread">
                   <div class="header">
                     <div>
@@ -188,12 +200,15 @@
               </div>
               <!-- End comment-4 (level 0) -->
 
-              <div id="ct-5" class="comments-thread comments-thread-def comments-thread-l1">
+              <div id="ct-5" class="comments-thread comments-thread-ait comments-thread-l1">
                 <a href="#" class="vline"></a>
                 <div class="thread-group">
 
                   <!-- Start comment-5 (level 1) -->
                   <div id="comment-5" class="comment-box" data-djcx-cid="5">
+                    <div class="user-avatar">
+                      {% get_user_gravatar "amalia.ocean@example.com" "36,identicon" %}
+                    </div>
                     <div class="comment comment--in-thread">
                       <div class="header">
                         <div>
@@ -213,9 +228,12 @@
                   </div>
                   <!-- End comment-5 (level 1) -->
 
-                  <div class="comments-thread comments-thread-def comments-thread-end">
+                  <div class="comments-thread comments-thread-ait comments-thread-end">
                     <!-- End comment-8 (level 2) -->
                     <div id="comment-8" class="comment-box" data-djcx-cid="8">
+                      <div class="user-avatar">
+                        {% get_user_gravatar "isabel.azul@example.com" "36,identicon" %}
+                      </div>
                       <div class="comment comment--in-thread">
                         <div class="header">
                           <div>
@@ -258,11 +276,14 @@
                 </div><!-- thread-group -->
               </div><!-- comments-thread-1 #ct-5 -->
 
-              <div id="ct-6" class="comments-thread comments-thread-def comments-thread-l1">
+              <div id="ct-6" class="comments-thread comments-thread-ait comments-thread-l1">
                 <span class="vline"></span>
                 <div class="thread-group">
                   <!-- Start comment-6 (level 1) -->
                   <div id="comment-6" class="comment-box" data-djcx-cid="6">
+                    <div class="user-avatar">
+                      {% get_user_gravatar "david.fields@example.com" "36,identicon" %}
+                    </div>
                     <div class="comment comment--in-thread">
                       <div class="header">
                         <div>
@@ -302,11 +323,14 @@
                 </div><!-- thread-group -->
               </div><!-- comments-thread-l1 #ct-6 -->
 
-              <div id="ct-7" class="comments-thread comments-thread-def comments-thread-l1">
+              <div id="ct-7" class="comments-thread comments-thread-ait comments-thread-l1">
                 <span class="vline"></span>
                 <div class="thread-group">
                   <!-- Start comment-7 (level 1) -->
                   <div id="comment-7" class="comment-box" data-djcx-cid="7">
+                    <div class="user-avatar">
+                      {% get_user_gravatar "demi-leigh.turnbull@example.com" "36,identicon" %}
+                    </div>
                     <div class="comment comment--in-thread">
                       <div class="header">
                         <div>
@@ -369,7 +393,7 @@
         </div>
       </div>
 
-      <div class="djcx dark">
+      <div class="djcx light">
         <section class="comment-form">
           <h5 class="mb-0 text-center">{% translate "Post your comment" %}</h5>
           {% render_xtdcomment_form for object %}

@@ -3,9 +3,8 @@
 {% load comments_xtd %}
 
 {% with anchor=comment|get_anchor %}
-<div id="comment-{{ comment.id }}" class="comment-box {% comment_css_thread_range comment %}">
-  {{ comment.level|indent_divs }}
-  <div class="comment">
+<div id="comment-{{ comment.id }}" class="comment-box" data-djcx-cid="{{ comment.id }}">
+  <div class="comment{% if max_thread_level > 0 %} comment--in-thread{% endif %}">
     <div class="header flex-align-center">
       {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}
         <div class="flex-align-center" id="cm-votes-{{ comment.id }}">

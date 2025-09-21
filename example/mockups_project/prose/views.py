@@ -5,9 +5,6 @@ from .models import check_comments_input_allowed
 
 
 class ProseDetailView(DetailView):
-    cscheme = ""
-    theme = ""
-
     def get_template_names(self):
         if self.template_name:
             return [self.template_name]
@@ -22,14 +19,12 @@ class ProseDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         obj = context.get("object")
         comments_input_allowed = check_comments_input_allowed(obj)
-        # if len(self.cscheme) == 0:
-        #     self.cscheme = self.request.session.get("cscheme", "")
         context.update(
             {
                 "next": reverse("comments-xtd-sent"),
                 "comments_input_allowed": comments_input_allowed,
-                "comments_cscheme": self.cscheme,
-                "comments_theme": self.theme,
+                "comments_cscheme": self.request.session.get("cscheme"),
+                "comments_theme": self.request.session.get("comments_theme"),
             }
         )
         return context

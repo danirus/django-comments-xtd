@@ -5,11 +5,11 @@
 <div id="ct-{{ comment.id }}" class="cmthread cmthread--narrow cmthread--l{{ comment.level }}">
   {% if comment.nested_count > 0 %}<a href="#" class="vline"></a>{% else %}<span class="vline"></span>{% endif %}
   <div class="thread-group">
-    {% include "comments/comment.html" %}
+    {% include "comments/themes/avatar_in_header/comment.html" %}
     {% if nested_level == max_thread_level %}
       <div class="cmthread cmthread--narrow cmthread--end">
         {% for nested_comment in nested_comment_list %}
-          {% include "comments/comment.html" with comment=nested_comment %}
+          {% include "comments/themes/avatar_in_header/comment.html" with comment=nested_comment %}
         {% endfor %}
       </div>
     {% else %}

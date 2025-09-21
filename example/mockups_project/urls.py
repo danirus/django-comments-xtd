@@ -270,6 +270,11 @@ urlpatterns = [
                         "url2": "ait-dark--1-comment-level-0-options-on",
                     },
                     {
+                        "title": "1 comment, level 0, options on, JS",
+                        "url1": "ait-light--1-comment-level-0-options-on-js",
+                        "url2": "ait-dark--1-comment-level-0-options-on-js",
+                    },
+                    {
                         "title": "N comments, level 0, options off",
                         "url1": "ait-light--n-comments-level-0-options-off",
                         "url2": "ait-dark--n-comments-level-0-options-off",
@@ -278,6 +283,11 @@ urlpatterns = [
                         "title": "N comments, level 0, options on",
                         "url1": "ait-light--n-comments-level-0-options-on",
                         "url2": "ait-dark--n-comments-level-0-options-on",
+                    },
+                    {
+                        "title": "N comments, level 0, options on, JS",
+                        "url1": "ait-light--n-comments-level-0-options-on-js",
+                        "url2": "ait-dark--n-comments-level-0-options-on-js",
                     },
                     {
                         "title": "N comments, levels 0-1, options off",
@@ -290,6 +300,11 @@ urlpatterns = [
                         "url2": "ait-dark--n-comments-levels-0-1-options-on",
                     },
                     {
+                        "title": "N comments, levels 0-1, options on, JS",
+                        "url1": "ait-light--n-comments-levels-0-1-opts-on-js",
+                        "url2": "ait-dark--n-comments-levels-0-1-opts-on-js",
+                    },
+                    {
                         "title": "N comments, levels 0-2, options off",
                         "url1": "ait-light--n-comments-levels-0-2-options-off",
                         "url2": "ait-dark--n-comments-levels-0-2-options-off",
@@ -300,6 +315,11 @@ urlpatterns = [
                         "url2": "ait-dark--n-comments-levels-0-2-options-on",
                     },
                     {
+                        "title": "N comments, levels 0-2, options on, JS",
+                        "url1": "ait-light--n-comments-levels-0-2-opts-on-js",
+                        "url2": "ait-dark--n-comments-levels-0-2-opts-on-js",
+                    },
+                    {
                         "title": "N comments, levels 0-3, options off",
                         "url1": "ait-light--n-comments-levels-0-3-options-off",
                         "url2": "ait-dark--n-comments-levels-0-3-options-off",
@@ -308,6 +328,11 @@ urlpatterns = [
                         "title": "N comments, levels 0-3, options on",
                         "url1": "ait-light--n-comments-levels-0-3-options-on",
                         "url2": "ait-dark--n-comments-levels-0-3-options-on",
+                    },
+                    {
+                        "title": "N comments, levels 0-3, options on, JS",
+                        "url1": "ait-light--n-comments-levels-0-3-opts-on-js",
+                        "url2": "ait-dark--n-comments-levels-0-3-opts-on-js",
                     },
                 ],
                 "feedback_in_header_theme_mockups": [
@@ -342,6 +367,11 @@ urlpatterns = [
                         "url2": "fih-dark--1-comment-level-0-options-on",
                     },
                     {
+                        "title": "1 comment, level 0, options on, JS",
+                        "url1": "fih-light--1-comment-level-0-options-on-js",
+                        "url2": "fih-dark--1-comment-level-0-options-on-js",
+                    },
+                    {
                         "title": "N comments, level 0, options off",
                         "url1": "fih-light--n-comments-level-0-options-off",
                         "url2": "fih-dark--n-comments-level-0-options-off",
@@ -350,6 +380,11 @@ urlpatterns = [
                         "title": "N comments, level 0, options on",
                         "url1": "fih-light--n-comments-level-0-options-on",
                         "url2": "fih-dark--n-comments-level-0-options-on",
+                    },
+                    {
+                        "title": "N comments, level 0, options on, JS",
+                        "url1": "fih-light--n-comments-level-0-options-on-js",
+                        "url2": "fih-dark--n-comments-level-0-options-on-js",
                     },
                     {
                         "title": "N comments, levels 0-1, options off",
@@ -362,6 +397,11 @@ urlpatterns = [
                         "url2": "fih-dark--n-comments-levels-0-1-options-on",
                     },
                     {
+                        "title": "N comments, levels 0-1, options on, JS",
+                        "url1": "fih-light--n-comments-levels-0-1-opts-on-js",
+                        "url2": "fih-dark--n-comments-levels-0-1-opts-on-js",
+                    },
+                    {
                         "title": "N comments, levels 0-2, options off",
                         "url1": "fih-light--n-comments-levels-0-2-options-off",
                         "url2": "fih-dark--n-comments-levels-0-2-options-off",
@@ -372,6 +412,11 @@ urlpatterns = [
                         "url2": "fih-dark--n-comments-levels-0-2-options-on",
                     },
                     {
+                        "title": "N comments, levels 0-2, options on, JS",
+                        "url1": "fih-light--n-comments-levels-0-2-opts-on-js",
+                        "url2": "fih-dark--n-comments-levels-0-2-opts-on-js",
+                    },
+                    {
                         "title": "N comments, levels 0-3, options off",
                         "url1": "fih-light--n-comments-levels-0-3-options-off",
                         "url2": "fih-dark--n-comments-levels-0-3-options-off",
@@ -380,6 +425,11 @@ urlpatterns = [
                         "title": "N comments, levels 0-3, options on",
                         "url1": "fih-light--n-comments-levels-0-3-options-on",
                         "url2": "fih-dark--n-comments-levels-0-3-options-on",
+                    },
+                    {
+                        "title": "N comments, levels 0-3, options on, JS",
+                        "url1": "fih-light--n-comments-levels-0-3-opts-on-js",
+                        "url2": "fih-dark--n-comments-levels-0-3-opts-on-js",
                     },
                 ],
                 "avatar_in_header_theme_mockups": [
@@ -414,9 +464,24 @@ urlpatterns = [
                         "url2": "aih-dark--1-comment-level-0-options-on",
                     },
                     {
+                        "title": "1 comment, level 0, options on, JS",
+                        "url1": "aih-light--1-comment-level-0-options-on-js",
+                        "url2": "aih-dark--1-comment-level-0-options-on-js",
+                    },
+                    {
+                        "title": "N comments, level 0, options off",
+                        "url1": "aih-light--n-comments-level-0-options-off",
+                        "url2": "aih-dark--n-comments-level-0-options-off",
+                    },
+                    {
                         "title": "N comments, level 0, options on",
                         "url1": "aih-light--n-comments-level-0-options-on",
                         "url2": "aih-dark--n-comments-level-0-options-on",
+                    },
+                    {
+                        "title": "N comments, level 0, options on, JS",
+                        "url1": "aih-light--n-comments-level-0-options-on-js",
+                        "url2": "aih-dark--n-comments-level-0-options-on-js",
                     },
                     {
                         "title": "N comments, levels 0-1, options off",
@@ -429,6 +494,11 @@ urlpatterns = [
                         "url2": "aih-dark--n-comments-levels-0-1-options-on",
                     },
                     {
+                        "title": "N comments, levels 0-1, options on, JS",
+                        "url1": "aih-light--n-comments-levels-0-1-opts-on-js",
+                        "url2": "aih-dark--n-comments-levels-0-1-opts-on-js",
+                    },
+                    {
                         "title": "N comments, levels 0-2, options off",
                         "url1": "aih-light--n-comments-levels-0-2-options-off",
                         "url2": "aih-dark--n-comments-levels-0-2-options-off",
@@ -437,6 +507,11 @@ urlpatterns = [
                         "title": "N comments, levels 0-2, options on",
                         "url1": "aih-light--n-comments-levels-0-2-options-on",
                         "url2": "aih-dark--n-comments-levels-0-2-options-on",
+                    },
+                    {
+                        "title": "N comments, levels 0-2, options on, JS",
+                        "url1": "aih-light--n-comments-levels-0-2-opts-on-js",
+                        "url2": "aih-dark--n-comments-levels-0-2-opts-on-js",
                     },
                     {
                         "title": "N comments, levels 0-3, options off",
@@ -448,97 +523,72 @@ urlpatterns = [
                         "url1": "aih-light--n-comments-levels-0-3-options-on",
                         "url2": "aih-dark--n-comments-levels-0-3-options-on",
                     },
+                    {
+                        "title": "N comments, levels 0-3, options on, JS",
+                        "url1": "aih-light--n-comments-levels-0-3-opts-on-js",
+                        "url2": "aih-dark--n-comments-levels-0-3-opts-on-js",
+                    },
                 ],
                 "fixed": [
                     {
-                        "title": "def_nested theme, levels 0-1, options off",
+                        "title": "default theme, levels 0-1, options off",
                         "url1": "defn_light__n_comments_levels_0_1_options_off",
                         "url2": "defn_dark__n_comments_levels_0_1_options_off",
                     },
                     {
-                        "title": "ait_nested theme, levels 0-1, options off",
-                        "url1": "aitn_light__n_comments_levels_0_1_options_off",
-                        "url2": "aitn_dark__n_comments_levels_0_1_options_off",
-                    },
-                    {
-                        "title": "fih_nested theme, levels 0-1, options off",
-                        "url1": "fihn_light__n_comments_levels_0_1_options_off",
-                        "url2": "fihn_dark__n_comments_levels_0_1_options_off",
-                    },
-                    {
-                        "title": "aih_nested theme, levels 0-1, options off",
-                        "url1": "aihn_light__n_comments_levels_0_1_options_off",
-                        "url2": "aihn_dark__n_comments_levels_0_1_options_off",
-                    },
-                    {
-                        "title": "def_nested theme, levels 0-2, options off",
+                        "title": "default theme, levels 0-2, options off",
                         "url1": "defn_light__n_comments_levels_0_2_options_off",
                         "url2": "defn_dark__n_comments_levels_0_2_options_off",
                     },
                     {
-                        "title": "ait_nested theme, levels 0-2, options off",
-                        "url1": "aitn_light__n_comments_levels_0_2_options_off",
-                        "url2": "aitn_dark__n_comments_levels_0_2_options_off",
-                    },
-                    {
-                        "title": "fih_nested theme, levels 0-2, options off",
-                        "url1": "fihn_light__n_comments_levels_0_2_options_off",
-                        "url2": "fihn_dark__n_comments_levels_0_2_options_off",
-                    },
-                    {
-                        "title": "aih_nested theme, levels 0-2, options off",
-                        "url1": "aihn_light__n_comments_levels_0_2_options_off",
-                        "url2": "aihn_dark__n_comments_levels_0_2_options_off",
-                    },
-                    {
-                        "title": "def_nested theme, levels 0-3, options off",
+                        "title": "default theme, levels 0-3, options off",
                         "url1": "defn_light__n_comments_levels_0_3_options_off",
                         "url2": "defn_dark__n_comments_levels_0_3_options_off",
                     },
                     {
-                        "title": "ait_nested theme, levels 0-3, options off",
+                        "title": "avatar_in_thread, levels 0-1, options off",
+                        "url1": "aitn_light__n_comments_levels_0_1_options_off",
+                        "url2": "aitn_dark__n_comments_levels_0_1_options_off",
+                    },
+                    {
+                        "title": "avatar_in_thread, levels 0-2, options off",
+                        "url1": "aitn_light__n_comments_levels_0_2_options_off",
+                        "url2": "aitn_dark__n_comments_levels_0_2_options_off",
+                    },
+                    {
+                        "title": "avatar_in_thread, levels 0-3, options off",
                         "url1": "aitn_light__n_comments_levels_0_3_options_off",
                         "url2": "aitn_dark__n_comments_levels_0_3_options_off",
                     },
                     {
-                        "title": "fih_nested theme, levels 0-3, options off",
+                        "title": "feedback_in_header, levels 0-1, options off",
+                        "url1": "fihn_light__n_comments_levels_0_1_options_off",
+                        "url2": "fihn_dark__n_comments_levels_0_1_options_off",
+                    },
+                    {
+                        "title": "feedback_in_header, levels 0-2, options off",
+                        "url1": "fihn_light__n_comments_levels_0_2_options_off",
+                        "url2": "fihn_dark__n_comments_levels_0_2_options_off",
+                    },
+                    {
+                        "title": "feedback_in_header, levels 0-3, options off",
                         "url1": "fihn_light__n_comments_levels_0_3_options_off",
                         "url2": "fihn_dark__n_comments_levels_0_3_options_off",
                     },
                     {
-                        "title": "aih_nested theme, levels 0-3, options off",
+                        "title": "avatar_in_header, levels 0-1, options off",
+                        "url1": "aihn_light__n_comments_levels_0_1_options_off",
+                        "url2": "aihn_dark__n_comments_levels_0_1_options_off",
+                    },
+                    {
+                        "title": "avatar_in_header, levels 0-2, options off",
+                        "url1": "aihn_light__n_comments_levels_0_2_options_off",
+                        "url2": "aihn_dark__n_comments_levels_0_2_options_off",
+                    },
+                    {
+                        "title": "avatar_in_header, levels 0-3, options off",
                         "url1": "aihn_light__n_comments_levels_0_3_options_off",
                         "url2": "aihn_dark__n_comments_levels_0_3_options_off",
-                    },
-                    {
-                        "title": "default theme, levels 0-1, options off",
-                        "url1": "def_light__n_comments_levels_0_1_options_off",
-                        "url2": "def_dark__n_comments_levels_0_1_options_off",
-                    },
-                    {
-                        "title": "default theme, levels 0-2, options off",
-                        "url1": "def_light__n_comments_levels_0_2_options_off",
-                        "url2": "def_dark__n_comments_levels_0_2_options_off",
-                    },
-                    {
-                        "title": "avatar_in_thread, levels 0-1, options off",
-                        "url1": "ait_light__n_comments_levels_0_1_options_off",
-                        "url2": "ait_dark__n_comments_levels_0_1_options_off",
-                    },
-                    {
-                        "title": "avatar_in_header, levels 0-1, options off",
-                        "url1": "aih_light__n_comments_levels_0_1_options_off",
-                        "url2": "aih_dark__n_comments_levels_0_1_options_off",
-                    },
-                    {
-                        "title": "feedback_in_header, levels 0-3, options off",
-                        "url1": "fih_light__n_comments_levels_0_3_options_off",
-                        "url2": "fih_dark__n_comments_levels_0_3_options_off",
-                    },
-                    {
-                        "title": "feedback_in_header, levels 0-3, options on",
-                        "url1": "fih_light__n_comments_levels_0_3_options_on",
-                        "url2": "fih_dark__n_comments_levels_0_3_options_on",
                     },
                 ],
             }
@@ -1003,6 +1053,7 @@ urlpatterns = [
         ),
         name="ait-dark--1-comment-level-0-options-off",
     ),
+    # -- options on
     path(
         "ait-light--1-comment-level-0-options-on",
         prose_v(
@@ -1022,6 +1073,27 @@ urlpatterns = [
             theme="avatar_in_thread",
         ),
         name="ait-dark--1-comment-level-0-options-on",
+    ),
+    # -- options on-js
+    path(
+        "ait-light--1-comment-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "one-comment-options-on-js",
+            "light",
+            theme="avatar_in_thread",
+        ),
+        name="ait-light--1-comment-level-0-options-on-js",
+    ),
+    path(
+        "ait-dark--1-comment-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "one-comment-options-on-js",
+            "dark",
+            theme="avatar_in_thread",
+        ),
+        name="ait-dark--1-comment-level-0-options-on-js",
     ),
     # ------------------------------------------
     # -- avatar_in_thread, comment list, level 0
@@ -1065,6 +1137,27 @@ urlpatterns = [
         ),
         name="ait-dark--n-comments-level-0-options-on",
     ),
+    # -- options on-js
+    path(
+        "ait-light--n-comments-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "n-comments-options-on-js",
+            "light",
+            theme="avatar_in_thread",
+        ),
+        name="ait-light--n-comments-level-0-options-on-js",
+    ),
+    path(
+        "ait-dark--n-comments-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "n-comments-options-on-js",
+            "dark",
+            theme="avatar_in_thread",
+        ),
+        name="ait-dark--n-comments-level-0-options-on-js",
+    ),
     # ---------------------------------------------
     # -- avatar_in_thread, comment list, levels 0-1
     path(
@@ -1106,6 +1199,27 @@ urlpatterns = [
             theme="avatar_in_thread",
         ),
         name="ait-dark--n-comments-levels-0-1-options-on",
+    ),
+    # -- options on-js
+    path(
+        "ait-light--n-comments-levels-0-1-opts-on-js",
+        prose_v(
+            "TaleCommentsL1",
+            "n-comments-options-on-js",
+            "light",
+            theme="avatar_in_thread",
+        ),
+        name="ait-light--n-comments-levels-0-1-opts-on-js",
+    ),
+    path(
+        "ait-dark--n-comments-levels-0-1-opts-on-js",
+        prose_v(
+            "TaleCommentsL1",
+            "n-comments-options-on-js",
+            "dark",
+            theme="avatar_in_thread",
+        ),
+        name="ait-dark--n-comments-levels-0-1-opts-on-js",
     ),
     # ---------------------------------------------
     # -- avatar_in_thread, comment list, levels 0-2
@@ -1149,6 +1263,27 @@ urlpatterns = [
         ),
         name="ait-dark--n-comments-levels-0-2-options-on",
     ),
+    # -- options on-js
+    path(
+        "ait-light--n-comments-levels-0-2-opts-on-js",
+        prose_v(
+            "TaleCommentsL2",
+            "n-comments-options-on-js",
+            "light",
+            theme="avatar_in_thread",
+        ),
+        name="ait-light--n-comments-levels-0-2-opts-on-js",
+    ),
+    path(
+        "ait-dark--n-comments-levels-0-2-opts-on-js",
+        prose_v(
+            "TaleCommentsL2",
+            "n-comments-options-on-js",
+            "dark",
+            theme="avatar_in_thread",
+        ),
+        name="ait-dark--n-comments-levels-0-2-opts-on-js",
+    ),
     # ---------------------------------------------
     # -- avatar_in_thread, comment list, levels 0-3
     path(
@@ -1190,6 +1325,27 @@ urlpatterns = [
             theme="avatar_in_thread",
         ),
         name="ait-dark--n-comments-levels-0-3-options-on",
+    ),
+    # -- options on-js
+    path(
+        "ait-light--n-comments-levels-0-3-opts-on-js",
+        prose_v(
+            "TaleCommentsL3",
+            "n-comments-options-on-js",
+            "light",
+            theme="avatar_in_thread",
+        ),
+        name="ait-light--n-comments-levels-0-3-opts-on-js",
+    ),
+    path(
+        "ait-dark--n-comments-levels-0-3-opts-on-js",
+        prose_v(
+            "TaleCommentsL3",
+            "n-comments-options-on-js",
+            "dark",
+            theme="avatar_in_thread",
+        ),
+        name="ait-dark--n-comments-levels-0-3-opts-on-js",
     ),
     # ##########################
     # feedback_in_header mockups.
@@ -1300,6 +1456,27 @@ urlpatterns = [
         ),
         name="fih-dark--1-comment-level-0-options-on",
     ),
+    # -- options on-js
+    path(
+        "fih-light--1-comment-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "one-comment-options-on-js",
+            "light",
+            theme="feedback_in_header",
+        ),
+        name="fih-light--1-comment-level-0-options-on-js",
+    ),
+    path(
+        "fih-dark--1-comment-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "one-comment-options-on-js",
+            "dark",
+            theme="feedback_in_header",
+        ),
+        name="fih-dark--1-comment-level-0-options-on-js",
+    ),
     # ------------------------------------------
     # -- feedback_in_header, comment list, level 0
     path(
@@ -1341,6 +1518,27 @@ urlpatterns = [
             theme="feedback_in_header",
         ),
         name="fih-dark--n-comments-level-0-options-on",
+    ),
+    # -- options on-js
+    path(
+        "fih-light--n-comments-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "n-comments-options-on-js",
+            "light",
+            theme="feedback_in_header",
+        ),
+        name="fih-light--n-comments-level-0-options-on-js",
+    ),
+    path(
+        "fih-dark--n-comments-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "n-comments-options-on-js",
+            "dark",
+            theme="feedback_in_header",
+        ),
+        name="fih-dark--n-comments-level-0-options-on-js",
     ),
     # ---------------------------------------------
     # -- feedback_in_header, comment list, levels 0-1
@@ -1384,6 +1582,27 @@ urlpatterns = [
         ),
         name="fih-dark--n-comments-levels-0-1-options-on",
     ),
+    # -- options on-js
+    path(
+        "fih-light--n-comments-levels-0-1-opts-on-js",
+        prose_v(
+            "TaleCommentsL1",
+            "n-comments-options-on-js",
+            "light",
+            theme="feedback_in_header",
+        ),
+        name="fih-light--n-comments-levels-0-1-opts-on-js",
+    ),
+    path(
+        "fih-dark--n-comments-levels-0-1-opts-on-js",
+        prose_v(
+            "TaleCommentsL1",
+            "n-comments-options-on-js",
+            "dark",
+            theme="feedback_in_header",
+        ),
+        name="fih-dark--n-comments-levels-0-1-opts-on-js",
+    ),
     # ---------------------------------------------
     # -- feedback_in_header, comment list, levels 0-2
     path(
@@ -1426,6 +1645,27 @@ urlpatterns = [
         ),
         name="fih-dark--n-comments-levels-0-2-options-on",
     ),
+    # -- options on-js
+    path(
+        "fih-light--n-comments-levels-0-2-opts-on-js",
+        prose_v(
+            "TaleCommentsL2",
+            "n-comments-options-on-js",
+            "light",
+            theme="feedback_in_header",
+        ),
+        name="fih-light--n-comments-levels-0-2-opts-on-js",
+    ),
+    path(
+        "fih-dark--n-comments-levels-0-2-opts-on-js",
+        prose_v(
+            "TaleCommentsL2",
+            "n-comments-options-on-js",
+            "dark",
+            theme="feedback_in_header",
+        ),
+        name="fih-dark--n-comments-levels-0-2-opts-on-js",
+    ),
     # ---------------------------------------------
     # -- feedback_in_header, comment list, levels 0-3
     path(
@@ -1467,6 +1707,27 @@ urlpatterns = [
             theme="feedback_in_header",
         ),
         name="fih-dark--n-comments-levels-0-3-options-on",
+    ),
+    # -- options on-js
+    path(
+        "fih-light--n-comments-levels-0-3-opts-on-js",
+        prose_v(
+            "TaleCommentsL3",
+            "n-comments-options-on-js",
+            "light",
+            theme="feedback_in_header",
+        ),
+        name="fih-light--n-comments-levels-0-3-opts-on-js",
+    ),
+    path(
+        "fih-dark--n-comments-levels-0-3-opts-on-js",
+        prose_v(
+            "TaleCommentsL3",
+            "n-comments-options-on-js",
+            "dark",
+            theme="feedback_in_header",
+        ),
+        name="fih-dark--n-comments-levels-0-3-opts-on-js",
     ),
     # ##########################
     # avatar_in_header mockups.
@@ -1577,6 +1838,27 @@ urlpatterns = [
         ),
         name="aih-dark--1-comment-level-0-options-on",
     ),
+    # -- options on-js
+    path(
+        "aih-light--1-comment-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "one-comment-options-on-js",
+            "light",
+            theme="avatar_in_header",
+        ),
+        name="aih-light--1-comment-level-0-options-on-js",
+    ),
+    path(
+        "aih-dark--1-comment-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "one-comment-options-on-js",
+            "dark",
+            theme="avatar_in_header",
+        ),
+        name="aih-dark--1-comment-level-0-options-on-js",
+    ),
     # ------------------------------------------
     # -- avatar_in_header, comment list, level 0
     path(
@@ -1618,6 +1900,27 @@ urlpatterns = [
             theme="avatar_in_header",
         ),
         name="aih-dark--n-comments-level-0-options-on",
+    ),
+    # -- options on-js
+    path(
+        "aih-light--n-comments-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "n-comments-options-on-js",
+            "light",
+            theme="avatar_in_header",
+        ),
+        name="aih-light--n-comments-level-0-options-on-js",
+    ),
+    path(
+        "aih-dark--n-comments-level-0-options-on-js",
+        prose_v(
+            "TaleCommentsL0",
+            "n-comments-options-on-js",
+            "dark",
+            theme="avatar_in_header",
+        ),
+        name="aih-dark--n-comments-level-0-options-on-js",
     ),
     # ---------------------------------------------
     # -- avatar_in_header, comment list, levels 0-1
@@ -1661,6 +1964,27 @@ urlpatterns = [
         ),
         name="aih-dark--n-comments-levels-0-1-options-on",
     ),
+    # -- options on-js
+    path(
+        "aih-light--n-comments-levels-0-1-opts-on-js",
+        prose_v(
+            "TaleCommentsL1",
+            "n-comments-options-on-js",
+            "light",
+            theme="avatar_in_header",
+        ),
+        name="aih-light--n-comments-levels-0-1-opts-on-js",
+    ),
+    path(
+        "aih-dark--n-comments-levels-0-1-opts-on-js",
+        prose_v(
+            "TaleCommentsL1",
+            "n-comments-options-on-js",
+            "dark",
+            theme="avatar_in_header",
+        ),
+        name="aih-dark--n-comments-levels-0-1-opts-on-js",
+    ),
     # ---------------------------------------------
     # -- avatar_in_header, comment list, levels 0-2
     path(
@@ -1702,6 +2026,27 @@ urlpatterns = [
             theme="avatar_in_header",
         ),
         name="aih-dark--n-comments-levels-0-2-options-on",
+    ),
+    # -- options on-js
+    path(
+        "aih-light--n-comments-levels-0-2-opts-on-js",
+        prose_v(
+            "TaleCommentsL2",
+            "n-comments-options-on-js",
+            "light",
+            theme="avatar_in_header",
+        ),
+        name="aih-light--n-comments-levels-0-2-opts-on-js",
+    ),
+    path(
+        "aih-dark--n-comments-levels-0-2-opts-on-js",
+        prose_v(
+            "TaleCommentsL2",
+            "n-comments-options-on-js",
+            "dark",
+            theme="avatar_in_header",
+        ),
+        name="aih-dark--n-comments-levels-0-2-opts-on-js",
     ),
     # ---------------------------------------------
     # -- avatar_in_header, comment list, levels 0-3
@@ -1745,6 +2090,27 @@ urlpatterns = [
         ),
         name="aih-dark--n-comments-levels-0-3-options-on",
     ),
+    # -- options on-js
+    path(
+        "aih-light--n-comments-levels-0-3-opts-on-js",
+        prose_v(
+            "TaleCommentsL3",
+            "n-comments-options-on-js",
+            "light",
+            theme="avatar_in_header",
+        ),
+        name="aih-light--n-comments-levels-0-3-opts-on-js",
+    ),
+    path(
+        "aih-dark--n-comments-levels-0-3-opts-on-js",
+        prose_v(
+            "TaleCommentsL3",
+            "n-comments-options-on-js",
+            "dark",
+            theme="avatar_in_header",
+        ),
+        name="aih-dark--n-comments-levels-0-3-opts-on-js",
+    ),
     # ##########################
     # Almost pure HTML mockups.
     path_to_template("defn_light__n_comments_levels_0_1_options_off"),
@@ -1771,16 +2137,4 @@ urlpatterns = [
     path_to_template("fihn_dark__n_comments_levels_0_3_options_off"),
     path_to_template("aihn_light__n_comments_levels_0_3_options_off"),
     path_to_template("aihn_dark__n_comments_levels_0_3_options_off"),
-    path_to_template("def_light__n_comments_levels_0_1_options_off"),
-    path_to_template("def_dark__n_comments_levels_0_1_options_off"),
-    path_to_template("def_light__n_comments_levels_0_2_options_off"),
-    path_to_template("def_dark__n_comments_levels_0_2_options_off"),
-    path_to_template("ait_light__n_comments_levels_0_1_options_off"),
-    path_to_template("ait_dark__n_comments_levels_0_1_options_off"),
-    path_to_template("aih_light__n_comments_levels_0_1_options_off"),
-    path_to_template("aih_dark__n_comments_levels_0_1_options_off"),
-    path_to_template("fih_light__n_comments_levels_0_3_options_off"),
-    path_to_template("fih_dark__n_comments_levels_0_3_options_off"),
-    path_to_template("fih_light__n_comments_levels_0_3_options_on"),
-    path_to_template("fih_dark__n_comments_levels_0_3_options_on"),
 ]

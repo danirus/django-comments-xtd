@@ -1,65 +1,12 @@
 .djcx {
-  // .comments-thread.comments-thread-l0,
-  // .comments-thread.comments-thread-l1,
-  // .comments-thread.comments-thread-l2 {
-  //   display: flex;
-  //   flex-direction: row;
-
-  //   a.vline,
-  //   span.vline {
-  //     display: block;
-
-  //     &::before {
-  //       position: relative;
-  //       content: "";
-  //       top: 7px;
-  //       left: -5px;
-  //       display: inline-block;
-  //       width: 12px;
-  //       height: 12px;
-  //       border-radius: 6px;
-  //     }
-
-  //     &::after {
-  //       position: relative;
-  //       top: 2px;
-  //       bottom: 0;
-  //       left: 0;
-  //       display: block;
-  //       width: 2px;
-  //       height: calc(100% - 46.5px);
-  //       content: "";
-  //     }
-  //   }
-
-  //   a.vline {
-  //     &:hover::after {
-  //       left: -3px;
-  //       width: 8px;
-  //     }
-
-  //     &.folded {
-  //       &::after {
-  //         left: -2px;
-  //         width: 6px;
-  //       }
-
-  //       &.hover::after {
-  //         left: -3px;
-  //         width: 8px;
-  //       }
-  //     }
-  //   }
-  // }
-
-  .comments-thread {
+  .cmthread {
     /* -----------------------
-     * default theme.
+     * Used by themes: default, feedback_in_header, avatar_in_header.
      */
 
-    &.comments-thread-def.comments-thread-l0,
-    &.comments-thread-def.comments-thread-l1,
-    &.comments-thread-def.comments-thread-l2 {
+    &.cmthread--narrow.cmthread--l0,
+    &.cmthread--narrow.cmthread--l1,
+    &.cmthread--narrow.cmthread--l2 {
       display: flex;
       flex-direction: row;
       margin-left: 5px;
@@ -125,14 +72,14 @@
       }
     }
 
-    &.comments-thread-def.comments-thread-end {
+    &.cmthread--narrow.cmthread--end {
      margin-left: 24px;
     }
 
     /* -----------------------
      * avatar_in_thread theme.
      */
-    &.comments-thread-ait .comment-box {
+    &.cmthread--wide .comment-box {
       position: relative;
       display: flex;
       padding: 8px 0;
@@ -171,9 +118,9 @@
       }
     }
 
-    &.comments-thread-ait.comments-thread-l0,
-    &.comments-thread-ait.comments-thread-l1,
-    &.comments-thread-ait.comments-thread-l2 {
+    &.cmthread--wide.cmthread--l0,
+    &.cmthread--wide.cmthread--l1,
+    &.cmthread--wide.cmthread--l2 {
       display: flex;
       flex-direction: row;
       margin-left: 9px;
@@ -233,7 +180,7 @@
       }
     }
 
-    &.comments-thread-ait.comments-thread-end {
+    &.cmthread--wide.cmthread--end {
      margin-left: 40px;
     }
 
@@ -247,7 +194,7 @@
    * Coloring comment threads.
    */
 
-  .comments-thread.comments-thread-l0 {
+  .cmthread.cmthread--l0 {
     a.vline,
     span.vline {
       &::before {
@@ -261,7 +208,7 @@
     }
   }
 
-  .comments-thread.comments-thread-l1 {
+  .cmthread.cmthread--l1 {
     a.vline,
     span.vline {
       &::before {
@@ -275,7 +222,7 @@
     }
   }
 
-  .comments-thread.comments-thread-l2 {
+  .cmthread.cmthread--l2 {
     a.vline,
     span.vline {
       &::before {

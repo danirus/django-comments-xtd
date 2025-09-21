@@ -35,7 +35,7 @@
               </div>
             </div>
           {% else %}
-            <div class="comments-thread comments-thread-l0">
+            <div class="cmthread cmthread--narrow cmthread--l0">
               <span href="#" class="vline"></span>
               <div class="thread-group">
                 {% with parent=form.reply_to.value|get_comment %}
@@ -52,7 +52,7 @@
                   </div>
                 {% endwith %}
 
-                <div class="comments-thread comments-thread-end">
+                <div class="cmthread cmthread--narrow cmthread--end">
                   <div class="comment-box">
                     <div class="comment comment--in-thread">
                       <div class="header">

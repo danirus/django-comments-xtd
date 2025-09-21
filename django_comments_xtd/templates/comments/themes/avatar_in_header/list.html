@@ -6,51 +6,25 @@
   class="comment-list"
   data-djcx="config"
   {% if user.is_authenticated %}
-    data-react-url="{% url 'comments-xtd-react' 0 %}"
-    data-vote-url="{% url 'comments-xtd-vote' 0 %}"
-    data-flag-url="{% url 'comments-flag' 0 %}"
+  data-djcx-react-url="{% url 'comments-xtd-react' 0 %}"
+  data-djcx-vote-url="{% url 'comments-xtd-vote' 0 %}"
+  data-djcx-flag-url="{% url 'comments-flag' 0 %}"
   {% else %}
-    data-login-url="{% url 'login' %}"
+  data-djcx-login-url="{% url 'login' %}"
   {% endif %}
-  data-guest-user="{% if user.is_authenticated %}0{% else %}1{% endif %}"
-  data-input-allowed="{% if is_input_allowed %}1{% else %}0{% endif %}"
+  data-djcx-is-guest-user="{% if user.is_authenticated %}0{% else %}1{% endif %}"
+  data-djcx-is-input-allowed="{% if comments_input_allowed %}1{% else %}0{% endif %}"
+  data-djcx-flagging-enabled="{% if comments_flagging_enabled %}1{% else %}0{% endif %}"
+  data-djcx-reacting-enabled="{% if comments_reacting_enabled %}1{% else %}0{% endif %}"
+  data-djcx-voting-enabled="{% if comments_voting_enabled %}1{% else %}0{% endif %}"
 >
-  {% for comment in comment_list %}
-    {% comment %}
-      # Before rendering the comment, check the reply_stack to find out
-      # whether a reply-box has to be rendered.
-    {% endcomment %}
-    {% if reply_stack %}
-      {% with top_comment=reply_stack|get_top_comment %}
-        {% if comment.level <= top_comment.level %}
-          {% for object in reply_stack|pop_comments_gte:comment.level %}
-            {% if object.allow_thread %}
-              {% include "comments/themes/avatar_in_header/reply_button.html" with comment=object %}
-            {% endif %}
-          {% endfor %}
-          {% push_comment comment %}
-        {% elif comment.level > top_comment.level and comment.level < max_thread_level %}
-          {% push_comment comment %}
-        {% endif %}
-      {% endwith %}
-    {% else %}
-      {% push_comment comment %}
-    {% endif %}
-
-    {% block comment %}
+  {% if max_thread_level == 0 %}
+    {% for comment in comment_list %}
       {% include "comments/themes/avatar_in_header/comment.html" %}
-    {% endblock %}
-
-    {% if forloop.last %}
-      {% comment %}
-        # After rendering the last comment, render the reply form for the
-        # rest of comments still queued in the reply_stack.
-      {% endcomment %}
-      {% for object in reply_stack|pop_comments_gte %}
-        {% if object.allow_thread %}
-          {% include "comments/themes/avatar_in_header/reply_button.html" with comment=object %}
-        {% endif %}
-      {% endfor %}
-    {% endif %}
-  {% endfor %}
+    {% endfor %}
+  {% else %}
+    {% for comment in comment_list|comments_level:0 %}
+      {% render_xtdcomment_thread for comment in comment_list %}
+    {% endfor %}
+  {% endif %}
 </div>

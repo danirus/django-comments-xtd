@@ -20,8 +20,7 @@
       <div class="djcx">
         <div class="comment-list">
           {% if form.reply_to.value == "0" %}
-            <div class="comment-box l0">
-              {{ 0|indent_divs }}
+            <div class="comment-box">
               <div class="comment">
                 <div class="header">
                   <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
@@ -34,40 +33,49 @@
               </div>
             </div>
           {% else %}
-            {% with parent=form.reply_to.value|get_comment %}
-              <div class="comment-box l0-ini">
-                <div class="comment">
-                  <div class="header">
-                    <div>{% if parent.url %}<a href="{{ parent.url }}" target="_new">{{ parent.name }}</a>{% else %}{{ parent.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ parent.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink parent %}">¶</a></div>
+            <div class="cmthread cmthread--narrow cmthread--l0">
+              <span href="#" class="vline"></span>
+              <div class="thread-group">
+                {% with parent=form.reply_to.value|get_comment %}
+                  <div class="comment-box">
+                    <div class="comment comment--in-thread">
+                      <div class="header flex-align-center">
+                        <div>
+                          {% if parent.url %}<a href="{{ parent.url }}" target="_new">{{ parent.name }}</a>{% else %}{{ parent.name }}{% endif %}&nbsp;&sdot;&nbsp;<span class="muted">{{ parent.submit_date }}</span>&nbsp;&nbsp;<a class="permalink" title="comment permalink" href="{% get_comment_permalink parent %}">¶</a>
+                        </div>
+                        <div class="feedback"></div>
+                      </div>
+                      <div class="body">
+                        {{ parent.comment|linebreaks|escape }}
+                      </div>
+                    </div>
                   </div>
-                  <div class="body">
-                    {{ parent.comment|linebreaks|escape }}
+                {% endwith %}
+
+                <div class="cmthread cmthread--narrow cmthread--end">
+                  <div class="comment-box">
+                    <div class="comment comment--in-thread">
+                      <div class="header flex-align-center">
+                        <div>
+                          {% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}
+                        </div>
+                        <div class="small text-info">{% trans "comment in preview" %}</div>
+                      </div>
+                      <div class="body">
+                        {{ form.cleaned_data.comment|linebreaks|escape }}
+                      </div>
+                    </div>
                   </div>
-                  <div class="feedback"></div>
                 </div>
-              </div>
-            {% endwith %}
 
-            <div class="comment-box l0-mid">
-              <div class="level-1"></div>
-              <div class="comment">
-                <div class="header">
-                  <div>{% if form.cleaned_data.url %}<a href="{{ form.cleaned_data.url }}" target="_new">{{ form.cleaned_data.name }}</a>{% else %}{{ form.cleaned_data.name }}{% endif %}</div>
-                  <div class="small text-info">{% trans "comment in preview" %}</div>
+                <div class="reply-box">
+                  <div class="hline-l0"></div>
+                  <div class="content">
+                    <section class="reply-form active">
+                      {% include "comments/form.html" %}
+                    </section>
+                  </div>
                 </div>
-                <div class="body">
-                  {{ form.cleaned_data.comment|linebreaks|escape }}
-                </div>
-                <div class="feedback"></div>
-              </div>
-            </div>
-
-            <div class="reply-box l0">
-              <div class="line-0"></div>
-              <div class="content">
-                <section class="reply-form active">
-                  {% include "comments/form.html" %}
-                </section>
               </div>
             </div>
           {% endif %}

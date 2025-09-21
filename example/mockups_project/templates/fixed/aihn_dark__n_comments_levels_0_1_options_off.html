@@ -15,7 +15,7 @@
 <main>
   <article>
     <h2 class="text-center">Comments level 0-1, feedback off</h2>
-    <div class="text-center monospace">aih_nested theme</div>
+    <div class="text-center monospace">avatar_in_header theme</div>
     <h6 class="text-center small">{% now "F j, Y" %}</h6>
     <div class="central-column">
       <div style="margin-bottom: 48px">
@@ -31,7 +31,7 @@
       <div class="djcx dark">
         <div class="comment-list" data-djcx="config">
 
-          <div id="ct-1" class="comments-thread comments-thread-def comments-thread-l0">
+          <div id="ct-1" class="cmthread cmthread--narrow cmthread--l0">
             <a href="#" class="vline"></a>
             <div class="thread-group">
               <!-- Start comment-1 (level 0) -->
@@ -39,7 +39,7 @@
                 <div class="comment comment--in-thread">
                   <div class="header flex-align-center">
                     <div class="user-avatar">
-                      {% get_user_gravatar "lena.rosenthal@example.com" "36,identicon" %}
+                      {% get_email_gravatar "lena.rosenthal@example.com" "36,identicon" %}
                     </div>
                     <div class="flex-grow">
                       Lena Rosenthal<br>
@@ -60,13 +60,13 @@
               </div>
               <!-- End comment-1 -->
 
-              <div class="comments-thread comments-thread-def comments-thread-end">
+              <div class="cmthread cmthread--narrow cmthread--end">
                 <!-- Start comment-2 (level 1) -->
                 <div id="comment-2" class="comment-box" data-djcx-cid="2">
                   <div class="comment comment--in-thread">
                     <div class="header flex-align-center">
                       <div class="user-avatar">
-                        {% get_user_gravatar "isabel.azul@example.com" "36,identicon" %}
+                        {% get_email_gravatar "isabel.azul@example.com" "36,identicon" %}
                       </div>
                       <div class="flex-grow">
                         Isabel Azul<br>
@@ -91,7 +91,7 @@
               <!-- Start Reply-to-1 -->
               <div id="reply-to-1" class="reply-box" data-djcx-cid="1">
                 <div class="hline-l0"></div>
-                <div class="content fix">
+                <div class="content">
                   <section class="reply-form" data-dci="reply-form">
                     <form id="reply-form-12" action="/comments/reply/1/">
                       <input type="hidden" name="reply_to" value="1">
@@ -108,7 +108,7 @@
             </div>
           </div>
 
-          <div id="ct-3" class="comments-thread comments-thread-def comments-thread-l0">
+          <div id="ct-3" class="cmthread cmthread--narrow cmthread--l0">
             <!-- no nested comments, so .vline element is a span
               -- instead of an anchor.
               -->
@@ -119,7 +119,7 @@
                 <div class="comment comment--in-thread">
                   <div class="header flex-align-center">
                     <div class="user-avatar">
-                      {% get_user_gravatar "amalia.ocean@example.com" "36,identicon" %}
+                      {% get_email_gravatar "amalia.ocean@example.com" "36,identicon" %}
                     </div>
                     <div class="flex-grow">
                       Amalia Ocean<br>
@@ -143,7 +143,7 @@
               <!-- Start Reply-to-3 -->
               <div id="reply-to-3" class="reply-box" data-djcx-cid="3">
                 <div class="hline-l0"></div>
-                <div class="content fix">
+                <div class="content">
                   <section class="reply-form" data-dci="reply-form">
                     <form id="reply-form-3" action="/comments/reply/3/">
                       <input type="hidden" name="reply_to" value="3">
@@ -160,7 +160,7 @@
             </div>
           </div>
 
-          <div id="ct-4" class="comments-thread comments-thread-def comments-thread-l0">
+          <div id="ct-4" class="cmthread cmthread--narrow cmthread--l0">
             <a href="#" class="vline"></a>
             <div class="thread-group">
               <!-- Start comment-4 (level 0) -->
@@ -168,7 +168,7 @@
                 <div class="comment comment--in-thread">
                   <div class="header flex-align-center">
                     <div class="user-avatar">
-                      {% get_user_gravatar "isabel.azul@example.com" "36,identicon" %}
+                      {% get_email_gravatar "isabel.azul@example.com" "36,identicon" %}
                     </div>
                     <div class="flex-grow">
                       Isabel Azul<br>
@@ -189,13 +189,13 @@
               </div>
               <!-- End comment-4 (level 0) -->
 
-              <div class="comments-thread comments-thread-def comments-thread-end">
+              <div class="cmthread cmthread--narrow cmthread--end">
                 <!-- Start comment-5 (level 1) -->
                 <div id="comment-5" class="comment-box"  data-djcx-cid="5">
                   <div class="comment comment--in-thread">
                     <div class="header flex-align-center">
                       <div class="user-avatar">
-                        {% get_user_gravatar "amalia.ocean@example.com" "36,identicon" %}
+                        {% get_email_gravatar "amalia.ocean@example.com" "36,identicon" %}
                       </div>
                       <div class="flex-grow">
                         Amalia Ocean<br>
@@ -221,7 +221,7 @@
                   <div class="comment comment--in-thread">
                     <div class="header flex-align-center">
                       <div class="user-avatar">
-                        {% get_user_gravatar "david.fields@example.com" "36,identicon" %}
+                        {% get_email_gravatar "david.fields@example.com" "36,identicon" %}
                       </div>
                       <div class="flex-grow">
                         David Fields<br>
@@ -247,7 +247,7 @@
                   <div class="comment comment--in-thread">
                     <div class="header flex-align-center">
                       <div class="user-avatar">
-                        {% get_user_gravatar "demi-leigh.turnbull@example.com" "36,identicon" %}
+                        {% get_email_gravatar "demi-leigh.turnbull@example.com" "36,identicon" %}
                       </div>
                       <div class="flex-grow">
                         Demi-Leigh Turnbull<br>
@@ -272,7 +272,7 @@
               <!-- Start Reply-to-4 -->
               <div id="reply-to-4" class="reply-box" data-djcx-cid="4">
                 <div class="hline-l0"></div>
-                <div class="content fix">
+                <div class="content">
                   <section class="reply-form" data-dci="reply-form">
                     <form id="reply-form-4" action="/comments/reply/4/">
                       <input type="hidden" name="reply_to" value="4">

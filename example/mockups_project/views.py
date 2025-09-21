@@ -43,8 +43,8 @@ class MockupView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comment'] = self.comment
-        context['form'] = get_form()(
+        context["comment"] = self.comment
+        context["form"] = get_form()(
             self.comment.content_object, comment=self.comment
         )
         return context
@@ -59,24 +59,27 @@ def prose_v(model_name, slug, cscheme, theme=""):
             return self.model.objects.get(slug=slug)
 
         def get_context_data(self, **kwargs):
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = cscheme
+            self.request.session["comments_theme"] = theme
             return super().get_context_data(**kwargs)
 
-    return _ProseDetailView.as_view(cscheme=cscheme, theme=theme)
+    return _ProseDetailView.as_view()
 
 
 def form_js_v(slug, cscheme, theme=""):
     """Force a form with errors submitted via JavaScript."""
 
-    @method_decorator([not_authenticated], name='dispatch')
+    @method_decorator([not_authenticated], name="dispatch")
     class _FormJsView(ProseDetailView):
         model = ArticleCommentsL0
         template_name = "form_js_test.html"
 
         def get_object(self, *args, **kwargs):
+            self.request.session["cscheme"] = cscheme
+            self.request.session["comments_theme"] = theme
             return ArticleCommentsL0.objects.get(slug=slug)
 
-    return _FormJsView.as_view(cscheme=cscheme, theme=theme)
+    return _FormJsView.as_view()
 
 
 def bad_form_v(slug, cscheme, theme=""):
@@ -90,28 +93,31 @@ def bad_form_v(slug, cscheme, theme=""):
             return ArticleCommentsL0.objects.get(slug=slug)
 
         def get_context_data(self, **kwargs):
-            self.cscheme = cscheme
-            self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = cscheme
+            self.request.session["comments_theme"] = theme
             context = super().get_context_data(**kwargs)
-            context['form'] = get_form()(self.object, initial={
-                "comment": (
-                    "This comment form will fail, as it does not have "
-                    "the field 'timestamp'. This way it is possible to "
-                    "see the bad_form.html rendered."
-                ),
-                "name": "Joe Bloggs",
-                "email": "joe@example.com"
-            })
+            context["form"] = get_form()(
+                self.object,
+                initial={
+                    "comment": (
+                        "This comment form will fail, as it does not have "
+                        "the field 'timestamp'. This way it is possible to "
+                        "see the bad_form.html rendered."
+                    ),
+                    "name": "Joe Bloggs",
+                    "email": "joe@example.com",
+                },
+            )
             # Remove a field, say "timestamp", so that validation fails.
-            context['form'].fields.pop("timestamp")
+            context["form"].fields.pop("timestamp")
             return context
 
     return _BadFormView.as_view()
 
 
 def on_confirmation_accept_comment(sender, comment, request, **kwargs):
-    return "discard this comment" not in comment['comment']
+    return "discard this comment" not in comment["comment"]
+
 
 djcx_signals.confirmation_received.connect(on_confirmation_accept_comment)
 
@@ -132,12 +138,10 @@ def discard_comment_v(cscheme, theme=""):
             comment="discard this comment",
         )
         key = signed.dumps(
-            tmp_comment,
-            compress=True,
-            extra_key=settings.COMMENTS_XTD_SALT
+            tmp_comment, compress=True, extra_key=settings.COMMENTS_XTD_SALT
         )
         url = reverse("comments-xtd-confirm", args=(key.decode("utf-8"),))
-        request.session['cscheme'] = cscheme
+        request.session["cscheme"] = cscheme
         return HttpResponseRedirect(url)
 
     return _redirect
@@ -149,7 +153,7 @@ def flag_comment_v(cscheme, theme=""):
     def _redirect(request):
         # Comment with pk=3 (sent to contenttype articles.storycommentsl1).
         url = reverse("comments-flag", args=(3,))
-        request.session['cscheme'] = cscheme
+        request.session["cscheme"] = cscheme
         return HttpResponseRedirect(url)
 
     return _redirect
@@ -166,18 +170,20 @@ def moderated_v(cscheme, theme=""):
         def get_context_data(self, **kwargs):
             self.cscheme = cscheme
             self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = cscheme
+            self.request.session["comments_theme"] = theme
             context = super().get_context_data(**kwargs)
-            context['comment'] = XtdComment.objects.get(pk=1)
+            context["comment"] = XtdComment.objects.get(pk=1)
             return context
 
     return _ModeratedView.as_view()
 
 
 def on_comment_will_be_posted(sender, comment, request, **kwargs):
-    if "moderate this comment" in comment['comment']:
-        comment['is_public'] = False
+    if "moderate this comment" in comment["comment"]:
+        comment["is_public"] = False
     return True
+
 
 djc_signals.comment_will_be_posted.connect(on_comment_will_be_posted)
 
@@ -200,19 +206,23 @@ def moderated_js_v(slug, cscheme, theme=""):
         def get_context_data(self, **kwargs):
             self.cscheme = cscheme
             self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = cscheme
+            self.request.session["comments_theme"] = theme
             context = super().get_context_data(**kwargs)
-            context['form'] = get_form()(self.object, initial={
-                "comment": (
-                    "This comment has to be get the `is_public` "
-                    "attribute to `False`, so that `PostCommentView` "
-                    "sends a JsonResponse with the `moderated_js.html` "
-                    "template. "
-                    "So 'moderate this comment', please."
-                ),
-                "name": "Joe Bloggs",
-                "email": "joe@example.com"
-            })
+            context["form"] = get_form()(
+                self.object,
+                initial={
+                    "comment": (
+                        "This comment has to be get the `is_public` "
+                        "attribute to `False`, so that `PostCommentView` "
+                        "sends a JsonResponse with the `moderated_js.html` "
+                        "template. "
+                        "So 'moderate this comment', please."
+                    ),
+                    "name": "Joe Bloggs",
+                    "email": "joe@example.com",
+                },
+            )
             return context
 
     return _ModerateJsView.as_view()
@@ -227,10 +237,9 @@ def muted_v(cscheme, theme=""):
         def get_context_data(self, **kwargs):
             self.cscheme = cscheme
             self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = self.cscheme
             return super().get_context_data(
-                comment=XtdComment.objects.get(pk=1),
-                **kwargs
+                comment=XtdComment.objects.get(pk=1), **kwargs
             )
 
     return _MutedView.as_view()
@@ -245,10 +254,9 @@ def posted_v(cscheme, theme=""):
         def get_context_data(self, **kwargs):
             self.cscheme = cscheme
             self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = self.cscheme
             return super().get_context_data(
-                target=ArticleCommentsL0.objects.get(pk=1),
-                **kwargs
+                target=ArticleCommentsL0.objects.get(pk=1), **kwargs
             )
 
     return _PostedView.as_view()
@@ -257,7 +265,7 @@ def posted_v(cscheme, theme=""):
 def posted_js_v(slug, cscheme, theme=""):
     """Force render of `posted_js.html`, submitting comment via JavaScript."""
 
-    @method_decorator([not_authenticated], name='dispatch')
+    @method_decorator([not_authenticated], name="dispatch")
     class _FormJsView(ProseDetailView):
         model = ArticleCommentsL0
         template_name = "posted_js_test.html"
@@ -266,18 +274,20 @@ def posted_js_v(slug, cscheme, theme=""):
             return ArticleCommentsL0.objects.get(slug=slug)
 
         def get_context_data(self, **kwargs):
-            self.cscheme = cscheme
-            self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = cscheme
+            self.request.session["comments_theme"] = theme
             context = super().get_context_data(**kwargs)
-            context['form'] = get_form()(self.object, initial={
-                "comment": (
-                    "This comment form is sent directly in the template "
-                    "`posted_js_test.html`, and rendered with the JS plugin."
-                ),
-                "name": "Joe Bloggs",
-                "email": "joe@example.com",
-            })
+            context["form"] = get_form()(
+                self.object,
+                initial={
+                    "comment": (
+                        "This comment form is sent directly in the template "
+                        "`posted_js_test.html`, and rendered with the JS plugin."
+                    ),
+                    "name": "Joe Bloggs",
+                    "email": "joe@example.com",
+                },
+            )
             return context
 
     return _FormJsView.as_view()
@@ -286,7 +296,7 @@ def posted_js_v(slug, cscheme, theme=""):
 def published_js_v(slug, cscheme, theme=""):
     """Force render of `published_js.html`, submit comment via JavaScript."""
 
-    @method_decorator([login_required], name='dispatch')
+    @method_decorator([login_required], name="dispatch")
     class _FormJsView(ProseDetailView):
         model = ArticleCommentsL0
         template_name = "posted_js_test.html"
@@ -300,18 +310,20 @@ def published_js_v(slug, cscheme, theme=""):
             return obj
 
         def get_context_data(self, **kwargs):
-            self.cscheme = cscheme
-            self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = cscheme
+            self.request.session["comments_theme"] = theme
             context = super().get_context_data(**kwargs)
-            context['form'] = get_form()(self.object, initial={
-                "comment": (
-                    "This comment form is sent directly in the template "
-                    "`posted_js_test.html`, to the article 'Force "
-                    "published_js', and rendered with the JS plugin."
-                ),
-                "user": self.request.user,
-            })
+            context["form"] = get_form()(
+                self.object,
+                initial={
+                    "comment": (
+                        "This comment form is sent directly in the template "
+                        "`posted_js_test.html`, to the article 'Force "
+                        "published_js', and rendered with the JS plugin."
+                    ),
+                    "user": self.request.user,
+                },
+            )
             return context
 
     return _FormJsView.as_view()
@@ -319,12 +331,11 @@ def published_js_v(slug, cscheme, theme=""):
 
 # --------------------------------------------
 def reply_comment_v(cscheme, theme=""):
-
     class _ReplyCommentView(ReplyCommentView):
         def get(self, request, *args):
             self.cscheme = cscheme
             self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = self.cscheme
             # comment.id should be 2, as comment with pk=2 is posted
             # to content-type 19 (ArticleCommentsL1). That model can
             # receive comments nested down to level 1.
@@ -345,7 +356,7 @@ def reply_comment_ii_v(cscheme, theme=""):
         def get(self, request, *args):
             self.cscheme = cscheme
             self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = self.cscheme
             # comment.id should be 3, as comment with pk=3 is posted
             # to content-type 23 (StoryCommentsL1). That model can
             # receive comments nested down to level 1.
@@ -356,10 +367,8 @@ def reply_comment_ii_v(cscheme, theme=""):
 
 # --------------------------------------------
 def preview_v(cscheme, theme="", reply_to=0):
-
-    @method_decorator([not_authenticated], name='dispatch')
+    @method_decorator([not_authenticated], name="dispatch")
     class _PreviewCommentView(TemplateView):
-
         def get_template_names(self):
             kwds = {
                 "app_label": "prose",
@@ -372,22 +381,25 @@ def preview_v(cscheme, theme="", reply_to=0):
         def get_context_data(self, **kwargs):
             self.cscheme = cscheme
             self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = self.cscheme
             context = super().get_context_data(**kwargs)
             obj = ArticleCommentsL1.objects.get(pk=1)
             secform = CommentSecurityForm(obj)
-            form = get_form()(obj, data={
-                "comment": (
-                    "This comment form is sent in preview directly "
-                    "in the template `form_js_test.html`, and rendered "
-                    "with the JS plugin."
-                ),
-                "reply_to": f"{reply_to}",  # if != 0, it's the comment id.
-                "name": "Joe Bloggs",
-                "email": "joe@example.com",
-                "timestamp": secform["timestamp"].value(),
-                "security_hash": secform["security_hash"].value(),
-            })
+            form = get_form()(
+                obj,
+                data={
+                    "comment": (
+                        "This comment form is sent in preview directly "
+                        "in the template `form_js_test.html`, and rendered "
+                        "with the JS plugin."
+                    ),
+                    "reply_to": f"{reply_to}",  # if != 0, it's the comment id.
+                    "name": "Joe Bloggs",
+                    "email": "joe@example.com",
+                    "timestamp": secform["timestamp"].value(),
+                    "security_hash": secform["security_hash"].value(),
+                },
+            )
             form.is_valid()  # To produce `cleaned_data`, used in template.
             context["form"] = form
             return context
@@ -396,13 +408,11 @@ def preview_v(cscheme, theme="", reply_to=0):
 
 
 def react_to_comment_v(cscheme, theme=""):
-
     class _ReplyCommentView(ReactToCommentView):
         def get(self, request, *args):
             self.cscheme = cscheme
             self.theme = theme
-            self.request.session['cscheme'] = self.cscheme
+            self.request.session["cscheme"] = self.cscheme
             return super().get(request, 3)  # Comment pk=3 is for reactions.
 
     return _ReplyCommentView.as_view()
-

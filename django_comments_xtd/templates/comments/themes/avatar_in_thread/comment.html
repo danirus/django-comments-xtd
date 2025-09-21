@@ -3,12 +3,11 @@
 {% load comments_xtd %}
 
 {% with anchor=comment|get_anchor %}
-<div id="comment-{{ comment.id }}" class="comment-box-img {% comment_css_thread_range comment %}">
-  {{ comment.level|indent_divs }}
-  <div class="user-avatar" data-djcx-email="{{ comment.user_email }}">
-    {% get_user_gravatar comment.user_email "36,identicon" %}
+<div id="comment-{{ comment.id }}" class="comment-box">
+  <div class="user-avatar">
+    {% get_comment_gravatar comment "36,identicon" %}
   </div>
-  <div class="comment">
+  <div class="comment{% if max_thread_level > 0 %} comment--in-thread{% endif %}">
     <div class="header">
       <div>
         {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}

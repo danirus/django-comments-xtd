@@ -20,9 +20,9 @@
       <div class="djcx">
         <div class="comment-list">
           {% if form.reply_to.value == "0" %}
-            <div class="comment-box-img">
+            <div class="comment-box">
               <div class="user-avatar">
-                {% get_user_gravatar comment.user_email "36,identicon" %}
+                {% get_email_gravatar form.cleaned_data.email "36,identicon" %}
               </div>
               <div class="comment">
                 <div class="header">
@@ -38,13 +38,13 @@
               </div>
             </div>
           {% else %}
-            <div class="comments-thread comments-thread-l0">
+            <div class="cmthread cmthread--wide cmthread--l0">
               <span href="#" class="vline"></span>
               <div class="thread-group">
                 {% with parent=form.reply_to.value|get_comment %}
-                  <div class="comment-box-img">
+                  <div class="comment-box">
                     <div class="user-avatar">
-                      {% get_user_gravatar comment.user_email "36,identicon" %}
+                      {% get_comment_gravatar parent "36,identicon" %}
                     </div>
                     <div class="comment comment--in-thread">
                       <div class="header">
@@ -58,10 +58,10 @@
                   </div>
                 {% endwith %}
 
-                <div class="comments-thread comments-thread-end">
-                  <div class="comment-box-img">
+                <div class="cmthread cmthread--wide cmthread--end">
+                  <div class="comment-box">
                     <div class="user-avatar">
-                      {% get_user_gravatar form.cleaned_data.email "36,identicon" %}
+                      {% get_email_gravatar form.cleaned_data.email "36,identicon" %}
                     </div>
                     <div class="comment comment--in-thread">
                       <div class="header">
@@ -76,7 +76,7 @@
                   </div>
                 </div>
 
-                <div class="reply-box-img">
+                <div class="reply-box">
                   <div class="hline-l0"></div>
                   <div class="content">
                     <section class="reply-form active">

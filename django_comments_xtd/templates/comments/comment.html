@@ -46,7 +46,7 @@
         {% if comment.nested_count %}
           <div class="inline-block">
             <a href="#" class="cfold" data-djcx-cthread-id="{{ comment.id }}">
-              <span id="comment-{{ comment.id}}-replies" data-djcx="nreplies" class="small">{% blocktrans count replies=comment.nested_count %}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>&nbsp;<span class="rotate180">&#9661;</span>
+              <span id="comment-{{ comment.id}}--replies" data-djcx="nreplies" class="small">{% blocktrans count replies=comment.nested_count %}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>&nbsp;<span class="rotate180">&#9661;</span>
             </a>
           </div>
         {% endif %}

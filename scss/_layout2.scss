@@ -70,10 +70,18 @@
         display: block;
         width: 40px;
       }
+
+      &.folded {
+        display: none;
+      }
     }
 
     &.cmthread--narrow.cmthread--end {
      margin-left: 24px;
+
+     &.folded {
+      display: none;
+     }
     }
 
     /* -----------------------
@@ -178,12 +186,19 @@
         display: block;
         width: 66px;
       }
+
+      &.folded {
+        display: none;
+      }
     }
 
     &.cmthread--wide.cmthread--end {
      margin-left: 40px;
-    }
 
+     &.folded {
+      display: none;
+     }
+    }
   }
 
   .thread-group {

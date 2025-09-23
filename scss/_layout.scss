@@ -192,6 +192,10 @@
     display: flex;
     padding: 8px 0;
     margin-left: 0;
+
+    &.folded {
+      display: none;
+    }
   }
 
   .reply-box {

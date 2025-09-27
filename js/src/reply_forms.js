@@ -5,12 +5,14 @@ export default class ReplyFormHandler {
     this.opened_id = 0;
 
     for (const elem of document.querySelectorAll(qs_reply_forms)) {
-      // Extract the reply_to value from the current reply_form
-      // (provided by the Django template reply_button.html).
-      // Then replace the content of elem with a copy of the
-      // generic this.replyFormBase and update the field
-      // reply_to so that it has the same value given in
-      // the original django template.
+      /*
+       * Extract the `reply_to` value from the current `reply-form`
+       * (provided by the Django template reply_button.html). Then
+       * replace the content of elem ([data-djcx=reply-form]) with
+       * a copy of the generic `this.reply_form_base` and update
+       * the field reply_to so that it has the same value given
+       * in the original django template.
+       */
       const rform_el = elem.querySelector("form");
       if (rform_el === null) {
         console.error(

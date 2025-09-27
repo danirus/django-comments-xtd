@@ -2,8 +2,7 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<section class="reply-form active" data-djcx="reply-form-{{ form.reply_to.value }}">
-
+<div class="flex-column flex-grow">
   {% if display_preview %}
     <section class="comment-preview" data-djcx="preview">
       <div class="comment-box">
@@ -21,9 +20,10 @@
     </section>
   {% endif %}
 
-  {% include "comments/reply_form.html" %}
-
-  <div class="reply-form" data-djcx="reply-textarea">
-    <textarea rows="1" placeholder="{% translate 'Your reply' %}"></textarea>
-  </div>
-</section>
+  <section class="reply-form active" data-djcx="reply-form-{{ form.reply_to.value }}">
+    {% include "comments/reply_form.html" %}
+    <div class="reply-form" data-djcx="reply-textarea">
+      <textarea rows="1" placeholder="{% translate 'Your reply' %}"></textarea>
+    </div>
+  </section>
+</div>

@@ -451,6 +451,10 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
   justify-content: space-between;
 }
 
+.flex-column {
+  flex-direction: column;
+}
+
 .centered { margin: 0 auto }
 .mw720 { max-width: 720px }
 .fgrow { flex-grow: 1 }
@@ -556,6 +560,11 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
 .my-0 {  /* before: my0 */
   margin-top: 0;
   margin-bottom: 0;
+}
+
+.py-0 {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .py-1 {  /* before: py06 */

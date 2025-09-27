@@ -3,8 +3,8 @@
 {% load comments_xtd %}
 
 {% with anchor=comment|get_anchor %}
-<div id="comment-{{ comment.id }}" class="comment-box">
-  <div class="user-avatar">
+<div id="comment-{{ comment.id }}" class="comment-box" data-djcx-cid="{{ comment.id }}">
+  <div class="user-avatar {% if max_thread_level > 0 %}pr-1{% else %}pr-2{% endif %}">
     {% get_comment_gravatar comment "36,identicon" %}
   </div>
   <div class="comment{% if max_thread_level > 0 %} comment--in-thread{% endif %}">
@@ -50,14 +50,11 @@
             </div>
           {% endif %}
         {% endif %}
-        {% if comment.level == 0 and comment.nested_count %}
+        {% if comment.nested_count %}
           <div class="inline-block">
-            <span id="comment-{{ comment.id}}-replies" data-djcx="nreplies" data-comment="{{ comment.id }}" class="small">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
-          </div>
-        {% elif comment.level != 0 and comment.nested_count %}
-          <div class="inline-block">
-            <span id="comment-{{ comment.id}}-replies" data-djcx="nreplies" data-comment="{{ comment.id }}" class="small">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
-            <a href="#" id="fold-{{ comment.id}}" data-djcx-action="fold" data-djcx-replies="{{ comment.nested_count }}" class="rotate180 hide">&mapstodown;</a><a href="#" id="unfold-{{ comment.id}}" data-djcx-action="unfold" data-djcx-replies="{{ comment.nested_count }}" class="rotate180 hide">&mapstoup;</a>
+            <a href="#" class="cfold" data-djcx-cthread-id="{{ comment.id }}">
+              <span id="comment-{{ comment.id}}--replies" data-djcx="nreplies" class="small">{% blocktrans count replies=comment.nested_count %}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>&nbsp;<span class="rotate180">&#9661;</span>
+            </a>
           </div>
         {% endif %}
       {% endif %}{# if not comment.is_removed #}

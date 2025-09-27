@@ -159,19 +159,19 @@
 
         &.folded {
           &::after {
-            left: -2px;
+            left: 6px;
             width: 6px;
           }
 
           &:hover::after {
-            left: -3px;
+            left: 5px;
             width: 8px;
           }
         }
       }
 
       .reply-box {
-        margin-left: 27px;
+        margin-left: 35px;
       }
 
       .hline-l0,
@@ -179,12 +179,12 @@
       .hline-l2 {
         position: absolute;
         bottom: 24px;
-        left: -50px;
+        left: -58px;
         border-top-width: 2px;
         border-top-style: solid;
         transform: translateY(-50%);
         display: block;
-        width: 66px;
+        width: 74px;
       }
 
       &.folded {

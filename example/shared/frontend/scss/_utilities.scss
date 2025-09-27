@@ -552,6 +552,22 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
   padding-bottom: 2rem
 }
 
+.pr-1 {
+  padding-right: .5rem;
+}
+
+.pr-2 {
+  padding-right: 1rem;
+}
+
+.pl-1 {
+  padding-left: .5rem;
+}
+
+.pl-2 {
+  padding-left: 1rem;
+}
+
 .mx-0 {  /* before: mx0 */
   margin-left: 0;
   margin-right: 0;

@@ -34,7 +34,7 @@
       {% endif %}
 
       {% if comments_input_allowed %}
-      <div class="djcx">
+      <div class="djcx" data-djcx="comment-form">
         <section class="comment-form">
           <h5 class="mb-0 text-center">{% translate "Post your comment" %}</h5>
           {% render_xtdcomment_form for object %}

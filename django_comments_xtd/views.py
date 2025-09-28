@@ -52,6 +52,7 @@ from django_comments_xtd.templating import get_template_list
 
 XtdComment = get_model()
 
+
 # ---------------------------------------------------------------------
 def send_email_confirmation_request(
     comment,
@@ -114,7 +115,7 @@ def create_comment(tmp_comment):
     """
     comment = XtdComment(**tmp_comment)
     if settings.COMMENTS_XTD_FOR_CONCRETE_MODEL is False:
-        comment.content_type = tmp_comment['content_type']
+        comment.content_type = tmp_comment["content_type"]
     comment.save()
     return comment
 
@@ -368,7 +369,6 @@ class CommentsParamsMixin:
         return next
 
 
-
 class JsonResponseMixin:
     def json_response(self, template_list, context, status):
         html = loader.render_to_string(template_list, context, self.request)
@@ -469,14 +469,16 @@ class SingleCommentView(CommentsParamsMixin, JsonResponseMixin, DetailView):
         return super().get_context_data(
             comments_input_allowed=self.is_input_allowed,
             comments_cscheme=self.cscheme,
-            **kwargs
+            **kwargs,
         )
 
 
 @method_decorator(csrf_protect, name="dispatch")
 class PostCommentView(CommentsParamsMixin, JsonResponseMixin, FormView):
     context_object_name = "comment"
-    http_method_names: ClassVar = ["post",]
+    http_method_names: ClassVar = [
+        "post",
+    ]
     is_ajax = False
 
     # Templates when returning from an Ajax request.
@@ -618,8 +620,7 @@ class PostCommentView(CommentsParamsMixin, JsonResponseMixin, FormView):
             app_label=self.target_object._meta.app_label,
             model=self.target_object._meta.model_name,
         )
-        comment_url = self.get_success_url()
-
+        comment_url = self.object.get_absolute_url()
         return self.json_response(
             templates,
             {"comment": self.object, "comment_url": comment_url},
@@ -715,9 +716,7 @@ class PostCommentView(CommentsParamsMixin, JsonResponseMixin, FormView):
             else:
                 msg = exc.why
             templates = get_template_list("bad_form")
-            return self.json_response(
-                templates, {"error_msg": msg}, status=400
-            )
+            return self.json_response(templates, {"error_msg": msg}, status=400)
         else:
             return self.post_js_response()
 
@@ -733,8 +732,10 @@ class PostCommentView(CommentsParamsMixin, JsonResponseMixin, FormView):
 
 
 class ReplyCommentView(SingleCommentView):
-    http_method_names: ClassVar = ["get",]
-    template_alias ="reply"
+    http_method_names: ClassVar = [
+        "get",
+    ]
+    template_alias = "reply"
 
     def get(self, request, cid):
         self.object = self.get_object(cid)
@@ -760,6 +761,7 @@ class ReplyCommentView(SingleCommentView):
 
 class MuteCommentView(SingleTmpCommentView):
     """Implements the GET request to disable notifications on new comments."""
+
     template_alias = "muted"
 
     def get_object(self, key):
@@ -801,7 +803,7 @@ class MuteCommentView(SingleTmpCommentView):
         # )
         # target = model._default_manager.get(pk=self.object.object_pk)
         self.perform_mute()
-        context = self.get_context_data()  #(content_object=target)
+        context = self.get_context_data()  # (content_object=target)
         return self.render_to_response(context)
 
 
@@ -883,7 +885,7 @@ class ReactToCommentView(SingleCommentView):
         return context
 
     def perform_react(self):
-        created = False   # Whether an instance of CommentReaction is created.
+        created = False  # Whether an instance of CommentReaction is created.
         operation = None  # 'add' or 'del' a reaction.
         reaction = self.request.POST["reaction"]
         creaction_qs = CommentReaction.objects.filter(
@@ -947,7 +949,7 @@ class ReactToCommentView(SingleCommentView):
             next or "comments-xtd-react-done",
             c=self.object.pk,
         )
-        request.session['reaction_op'] = operation
+        request.session["reaction_op"] = operation
         return http.HttpResponseRedirect(next_redirect_url)
 
 
@@ -964,8 +966,7 @@ class ReactToCommentDoneView(SingleCommentView):
         comment_id = request.GET.get("c", None)
         self.object = self.get_object(comment_id)
         context = self.get_context_data(
-            object=self.object,
-            operation=request.session.get("reaction_op")
+            object=self.object, operation=request.session.get("reaction_op")
         )
         return self.render_to_response(context)
 
@@ -1096,7 +1097,9 @@ class VoteCommentView(SingleCommentView):
 
 @method_decorator([csrf_protect, login_required], name="dispatch")
 class VoteCommentDoneView(SingleCommentView):
-    http_method_names: ClassVar = ["get",]
+    http_method_names: ClassVar = [
+        "get",
+    ]
     check_option = "comment_votes_enabled"
     template_alias = "voted"
     context_object_name = "comment"

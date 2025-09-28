@@ -2,9 +2,12 @@
 {% load comments %}
 {% load comments_xtd %}
 
-<div id="ct-{{ comment.id }}" class="cmthread cmthread--narrow cmthread--l{{ comment.level }}">
-  {% if comment.nested_count > 0 %}<a href="#" class="vline"></a>{% else %}<span class="vline"></span>{% endif %}
-  <div class="thread-group">
+<div
+  id="ct-{{ comment.id }}"
+  class="cmthread cmthread--narrow cmthread--l{{ comment.level }}"
+>
+  {% if comment.nested_count > 0 %}<a href="#" class="vline" data-djcx-cthread-id="{{ comment.id }}"></a>{% else %}<span class="vline"></span>{% endif %}
+  <div class="thread-group" data-djcx-cthread-id="{{ comment.id }}">
     {% include "comments/themes/feedback_in_header/comment.html" %}
     {% if nested_level == max_thread_level %}
       <div class="cmthread cmthread--narrow cmthread--end">

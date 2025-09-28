@@ -33,16 +33,9 @@
 
         {% if comment.nested_count and not comment.is_removed %}
           <div class="flex-row-right">
-            {% if comment.level == 0 %}
-              <div class="sepseq">
-                <span id="comment-{{ comment.id}}-replies" data-djcx="nreplies" data-comment="{{ comment.id }}" class="smaller">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
-              </div>
-            {% elif comment.level != 0 %}
-              <div class="sepseq">
-                <span id="comment-{{ comment.id}}-replies" data-djcx="nreplies" data-comment="{{ comment.id }}" class="smaller">{% blocktrans count replies=comment.nested_count%}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
-                <a href="#" id="fold-{{ comment.id}}" data-djcx-action="fold" data-djcx-replies="{{ comment.nested_count }}" class="rotate180 hide">&mapstodown;</a><a href="#" id="unfold-{{ comment.id}}" data-djcx-action="unfold" data-djcx-replies="{{ comment.nested_count }}" class="rotate180 hide">&mapstoup;</a>
-              </div>
-            {% endif %}
+            <a href="#" class="cfold" data-djcx-cthread-id="{{ comment.id }}">
+              <span id="comment-{{ comment.id}}--replies" data-djcx="nreplies" class="small">{% blocktrans count replies=comment.nested_count %}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>&nbsp;<span class="rotate180">&#9661;</span>
+            </a>
           </div>
         {% endif %}
       </div>

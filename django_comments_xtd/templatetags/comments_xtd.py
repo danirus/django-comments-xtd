@@ -484,6 +484,18 @@ def comment_reaction_form_target(comment):
     return reverse("comments-xtd-react", args=(comment.id,))
 
 
+@register.simple_tag
+def comment_vote_form_target(comment):
+    """
+    Get the target URL for the comment vote form.
+
+    Example::
+
+        <form action="{% comment_vote_form_target comment %}" method="post">
+    """
+    return reverse("comments-xtd-vote", args=(comment.id,))
+
+
 class RenderCommentReactionsButtons(template.Node):
     def __init__(self, user_reactions):
         self.user_reactions = template.Variable(user_reactions)

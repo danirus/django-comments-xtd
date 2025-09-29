@@ -1,0 +1,64 @@
+{% extends "comments/base.html" %}
+
+{% load i18n %}
+{% load comments %}
+{% load comments_xtd %}
+
+{% block title %}{% trans "Thank you for your vote" %}{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <div class="container">
+      <h2 class="text-center">{% trans "Thanks for taking the time to participate." %}</h2>
+      <h6 class="text-center pb24">
+        {% trans "Your vote already changed the comment's score." %}
+      </h6>
+    </div>
+
+    {% if comment %}
+      <div class="central-column">
+        <div class="djcx pb32">
+          <div id="c{{ comment.id }}" class="comment-box">
+            <div class="comment">
+              <div class="header">
+                <div>
+                  {% if not comment.is_removed %}
+                    <div class="inline-block">
+                      <span class="vote-score">{{ comment.thread.score }}</span>
+                    </div>
+                    &nbsp;&sdot;
+                  {% endif %}
+                  {% if comment.url and not comment.is_removed %}
+                    <a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>
+                  {% else %}
+                    {{ comment.name }}
+                  {% endif %}
+                  &sdot;
+                  <span class="muted">{{ comment.submit_date }}</span>
+                  <a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
+                </div>
+              </div>
+              <div class="body body-bordered{% if comments_reacting_enabled %} body-bordered--no-bottom{% endif %}">
+                {{ comment.comment|linebreaks|escape }}
+              </div>
+              <div class="feedback feedback-bordered">
+                {% include "comments/comment_reactions.html" %}
+                {% if comments_input_allowed %}
+                  <div class="inline-block sepseq">
+                    <a data-djcx="reactions-panel" data-comment="{{ comment.id }}" class="small" data-user-auth="{{ user.is_authenticated }}" href="{% url 'comments-xtd-react' comment.id %}#{{ anchor }}" {% if not user.is_authenticated %}data-login-next="{% get_comment_permalink comment %}"{% endif %}>{% trans "React" %}</a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <h6 class="text-center">
+          <a href="{% get_comment_permalink comment %}">{% trans "Go back to the comment's page." %}</a>
+        </h6>
+      </div>
+    {% endif %}
+  </article>
+</main>
+{% endblock %}

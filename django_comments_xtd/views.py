@@ -1024,7 +1024,7 @@ VOTE_VALUE = {CommentVote.POSITIVE: +1, CommentVote.NEGATIVE: -1}
 @method_decorator([csrf_protect, login_required], name="dispatch")
 class VoteCommentView(SingleCommentView):
     http_method_names: ClassVar = ["get", "post"]
-    check_option = "comment_voting_enabled"
+    check_option = "comments_voting_enabled"
     template_alias = "vote"
     template_alias_js = "voted_js"
     context_object_name = "comment"
@@ -1100,7 +1100,7 @@ class VoteCommentDoneView(SingleCommentView):
     http_method_names: ClassVar = [
         "get",
     ]
-    check_option = "comment_votes_enabled"
+    check_option = "comments_voting_enabled"
     template_alias = "voted"
     context_object_name = "comment"
 

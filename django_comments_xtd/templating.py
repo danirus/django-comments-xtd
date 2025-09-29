@@ -290,6 +290,20 @@ template_patterns = {
             "comments/users_reacted_to_comment.html",
         ],
     },
+    "vote": {
+        "themed": [
+            "comments/{theme_dir}/vote.html",
+            "comments/vote.html",
+        ],
+        "default": ["comments/vote.html"],
+    },
+    "voted": {
+        "themed": [
+            "comments/{theme_dir}/voted.html",
+            "comments/voted.html",
+        ],
+        "default": ["comments/voted.html"],
+    },
 }
 
 _template_patterns = import_string(settings.COMMENTS_XTD_TEMPLATE_PATTERNS)

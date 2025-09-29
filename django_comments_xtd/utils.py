@@ -19,7 +19,7 @@ from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 
 from django_comments_xtd.conf import settings
-from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_OPTIONS
+from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_CONFIG
 
 mail_sent_queue = queue.Queue()
 
@@ -83,7 +83,7 @@ def get_max_thread_level(content_type):
 # --------------------------------------------------------------------
 def get_app_model_options(comment=None, content_type=None):
     """
-    Get the app_model_option from `COMMENTS_XTD_APP_MODEL_OPTIONS`.
+    Get the app_model_option from `COMMENTS_XTD_APP_MODEL_CONFIG`.
 
     If a comment is given, the content_type is extracted from it. Otherwise,
     the `content_type` kwarg has to be provided. The funcion checks whether
@@ -91,10 +91,10 @@ def get_app_model_options(comment=None, content_type=None):
     for the `content_type` and returns it. Otherwise it returns the default
     from:
 
-        `django_comments_xtd.conf.defaults.COMMENTS_XTD_APP_MODEL_OPTIONS`
+        `django_comments_xtd.conf.defaults.COMMENTS_XTD_APP_MODEL_CONFIG`
     """
-    init_opts = dict.copy(COMMENTS_XTD_APP_MODEL_OPTIONS)
-    custom_opts = dict.copy(settings.COMMENTS_XTD_APP_MODEL_OPTIONS)
+    init_opts = dict.copy(COMMENTS_XTD_APP_MODEL_CONFIG)
+    custom_opts = dict.copy(settings.COMMENTS_XTD_APP_MODEL_CONFIG)
     if init_opts != custom_opts and "default" in custom_opts:
         default_opts = dict.copy(init_opts["default"])
         default_opts.update(custom_opts["default"])
@@ -103,7 +103,7 @@ def get_app_model_options(comment=None, content_type=None):
     if comment:
         content_type = ContentType.objects.get_for_model(
             comment.content_object,
-            for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL
+            for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL,
         )
         key = f"{content_type.app_label}.{content_type.model}"
     elif content_type:
@@ -123,25 +123,26 @@ OPTION_MSGS = {
     "comments_flagging_enabled": {
         "PROD": "Comments not allowed to be flagged.",
         "DEBUG": (
-            "Check the COMMENTS_XTD_APP_MODEL_OPTIONS setting. "
+            "Check the COMMENTS_XTD_APP_MODEL_CONFIG setting. "
             "Option 'comments_flagging_enabled' is False."
         ),
     },
     "comments_voting_enabled": {
         "PROD": "Comments not allowed to receive votes.",
         "DEBUG": (
-            "Check the COMMENTS_XTD_APP_MODEL_OPTIONS setting. "
+            "Check the COMMENTS_XTD_APP_MODEL_CONFIG setting. "
             "Option 'comments_voting_enabled' is False."
         ),
     },
     "comments_reacting_enabled": {
         "PROD": "Comments not allowed to receive reactions.",
         "DEBUG": (
-            "Check the COMMENTS_XTD_APP_MODEL_OPTIONS setting. "
+            "Check the COMMENTS_XTD_APP_MODEL_CONFIG setting. "
             "Option 'comments_reacting_enabled' is False."
         ),
     },
 }
+
 
 def check_option(option, comment=None, content_type=None, options=None):
     retrieved_option = False
@@ -156,19 +157,18 @@ def check_option(option, comment=None, content_type=None, options=None):
     if retrieved_option is False:
         env = "DEBUG" if settings.DEBUG else "PROD"
         raise PermissionDenied(
-            detail=OPTION_MSGS[option][env],
-            code=status.HTTP_403_FORBIDDEN
+            detail=OPTION_MSGS[option][env], code=status.HTTP_403_FORBIDDEN
         )
 
 
 def check_input_allowed(object):
     """
     This is a generic function called with the object being commented.
-    It's defined as the default in 'COMMENTS_XTD_APP_MODEL_OPTIONS'.
+    It's defined as the default in 'COMMENTS_XTD_APP_MODEL_CONFIG'.
 
     If you want to disallow comments input to your 'app.model' instances under
     a given conditions, rewrite this function in your code and modify the
-    'COMMENTS_XTD_APP_MODEL_OPTIONS' in your settings.
+    'COMMENTS_XTD_APP_MODEL_CONFIG' in your settings.
     """
     return True
 

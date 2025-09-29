@@ -1,4 +1,4 @@
-from django.urls import include, path, re_path
+from django.urls import re_path
 from django_comments.views.comments import comment_done
 from django_comments.views.moderation import (
     approve,
@@ -10,7 +10,6 @@ from django_comments.views.moderation import (
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from django_comments_xtd import views
-from django_comments_xtd.conf import settings
 
 urlpatterns = [
     re_path(
@@ -28,26 +27,22 @@ urlpatterns = [
     re_path(
         r"^mute/(?P<key>[^/]+)/$",
         views.MuteCommentView.as_view(),
-        name="comments-xtd-mute"
+        name="comments-xtd-mute",
     ),
     re_path(
         r"^reply/(?P<cid>\d+)/$",
         views.ReplyCommentView.as_view(),
-        name="comments-xtd-reply"
+        name="comments-xtd-reply",
     ),
     # Remap comments-flag to check allow-flagging is enabled.
     re_path(
-        r"^flag/(\d+)/$",
-        views.FlagCommentView.as_view(),
-        name="comments-flag"
+        r"^flag/(\d+)/$", views.FlagCommentView.as_view(), name="comments-flag"
     ),
-
     re_path(r"^flagged/$", flag_done, name="comments-flag-done"),
     re_path(r"^delete/(\d+)/$", delete, name="comments-delete"),
     re_path(r"^deleted/$", delete_done, name="comments-delete-done"),
     re_path(r"^approve/(\d+)/$", approve, name="comments-approve"),
     re_path(r"^approved/$", approve_done, name="comments-approve-done"),
-
     re_path(
         r"^vote/(\d+)/$",
         views.VoteCommentView.as_view(),
@@ -76,9 +71,8 @@ urlpatterns = [
     re_path(
         r"^cr/(\d+)/(\d+)/(\d+)/$",
         views.CommentUrlView.as_view(),
-        name='comments-url-redirect'
+        name="comments-url-redirect",
     ),
-
     # API handlers.
     # path(
     #     "api/",

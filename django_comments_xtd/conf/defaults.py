@@ -47,30 +47,31 @@ COMMENTS_XTD_SEND_HTML_EMAIL = True
 COMMENTS_XTD_THREADED_EMAILS = True
 
 # Define what commenting features a pair app_label.model can have.
-COMMENTS_XTD_APP_MODEL_OPTIONS = {
+COMMENTS_XTD_APP_MODEL_CONFIG = {
     "default": {
         "who_can_post": "all",  # Valid values: "users", "all".
-
         # Function to determine whether new comments, reactions, etc.
         # should be allowed for a given object.
         "check_input_allowed": "django_comments_xtd.utils.check_input_allowed",
-
         # Whether to display a link to flag comments as inappropriate.
         "comments_flagging_enabled": False,
-
         # Whether to allow users to submit reactions on comments.
         # Default reactions are +1/-1. They can be customize. See
         # example projects.
         "comments_reacting_enabled": False,
-
         # Whether to allow users to vote on comments.
         "comments_voting_enabled": False,
+        # Default order to list comments.
+        "list_order": ("thread__id", "order"),
     }
 }
+
 
 # Define a function to return the user representation.
 def _get_username(user):
     return user.username
+
+
 COMMENTS_XTD_FN_USER_REPR = _get_username
 
 # Makes the "Notify me about followup comments" checkbox in the

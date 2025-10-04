@@ -19,7 +19,11 @@ from django_comments_xtd import get_form, signed
 from django_comments_xtd import signals as djcx_signals
 from django_comments_xtd.models import TmpXtdComment, XtdComment
 from django_comments_xtd.templating import get_template_list
-from django_comments_xtd.views import ReactToCommentView, ReplyCommentView
+from django_comments_xtd.views import (
+    ReactToCommentView,
+    ReplyCommentView,
+    VoteOnCommentView,
+)
 
 from shared.users.decorators import not_authenticated
 from prose.models import ArticleCommentsL0, ArticleCommentsL1
@@ -408,11 +412,22 @@ def preview_v(cscheme, theme="", reply_to=0):
 
 
 def react_to_comment_v(cscheme, theme=""):
-    class _ReplyCommentView(ReactToCommentView):
+    class _View(ReactToCommentView):
         def get(self, request, *args):
             self.cscheme = cscheme
             self.theme = theme
             self.request.session["cscheme"] = self.cscheme
             return super().get(request, 3)  # Comment pk=3 is for reactions.
 
-    return _ReplyCommentView.as_view()
+    return _View.as_view()
+
+
+def vote_on_comment_v(cscheme, theme=""):
+    class _View(VoteOnCommentView):
+        def get(self, request, *args):
+            self.cscheme = cscheme
+            self.theme = theme
+            self.request.session["cscheme"] = self.cscheme
+            return super().get(request, 3)  # Comment pk=3 is for reactions.
+
+    return _View.as_view()

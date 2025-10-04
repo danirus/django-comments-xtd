@@ -21,6 +21,7 @@ from .views import (
     react_to_comment_v,
     reply_comment_ii_v,
     reply_comment_v,
+    vote_on_comment_v,
 )
 
 
@@ -161,6 +162,11 @@ urlpatterns = [
                         "title": "react.html and reacted.html",
                         "url1": "def-light--react-to-comment",
                         "url2": "def-dark--react-to-comment",
+                    },
+                    {
+                        "title": "vote.html and voted.html",
+                        "url1": "def-light--vote-on-comment",
+                        "url2": "def-dark--vote-on-comment",
                     },
                     {
                         "title": "1 comment, level 0, options off",
@@ -788,6 +794,17 @@ urlpatterns = [
         "def-dark--react-to-comment",
         react_to_comment_v("dark"),
         name="def-dark--react-to-comment",
+    ),
+    # --------------------------------------------
+    path(
+        "def-light--vote-on-comment",
+        vote_on_comment_v("light"),
+        name="def-light--vote-on-comment",
+    ),
+    path(
+        "def-dark--vote-on-comment",
+        vote_on_comment_v("dark"),
+        name="def-dark--vote-on-comment",
     ),
     # ----------------------
     # -- 1 comment, level 0

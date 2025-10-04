@@ -14,50 +14,16 @@ from django_comments.models import Comment, CommentFlag
 
 from django_comments_xtd import get_model, get_reaction_enum
 from django_comments_xtd.conf import settings
-from django_comments_xtd.utils import get_current_site_id
-
-
-def max_thread_level_for_content_type(content_type):
-    app_model = f"{content_type.app_label}.{content_type.model}"
-    if app_model in settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL:
-        return settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL[app_model]
-    else:
-        return settings.COMMENTS_XTD_MAX_THREAD_LEVEL
+from django_comments_xtd.utils import get_current_site_id, get_max_thread_level
 
 
 # ruff: noqa: N818
 class MaxThreadLevelExceededException(Exception):
     def __init__(self, comment):
         self.comment = comment
-        # self.max_by_app = max_thread_level_for_content_type(content_type)
 
     def __str__(self):
         return f"Max thread level reached for comment {self.comment.id}"
-
-
-class XtdCommentManager(CommentManager):
-    def for_app_models(self, *args, **kwargs):
-        """Return XtdComments for pairs "app.model" given in args"""
-        content_types = []
-        for app_model in args:
-            app, model = app_model.split(".")
-            content_types.append(
-                ContentType.objects.get(app_label=app, model=model)
-            )
-        return self.for_content_types(content_types, **kwargs)
-
-    def for_content_types(self, content_types, site=None):
-        filter_fields = {"content_type__in": content_types}
-        if site is not None:
-            filter_fields["site"] = site
-        qs = self.get_queryset().filter(**filter_fields).reverse()
-        return qs
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.select_related("user", "content_type").order_by(
-            *settings.COMMENTS_XTD_LIST_ORDER
-        )
 
 
 class CommentThread(models.Model):
@@ -80,8 +46,7 @@ class XtdComment(Comment):
         blank=True, default=False, help_text=_("Notify follow-up comments")
     )
     nested_count = models.IntegerField(default=0, db_index=True)
-    objects = XtdCommentManager()
-    norel_objects = CommentManager()
+    objects = CommentManager()
 
     def __str__(self):
         return f"({self.id}) {self.name}: {self.comment[:50]}..."
@@ -95,7 +60,7 @@ class XtdComment(Comment):
                 comment_thread.save()
                 self.parent_id = self.id
                 self.thread = comment_thread
-            elif max_thread_level_for_content_type(self.content_type):
+            elif get_max_thread_level(self.content_type):
                 with atomic():
                     self._calculate_thread_data()
             else:
@@ -113,12 +78,12 @@ class XtdComment(Comment):
         # Implements the following approach:
         #  http://www.sqlteam.com/article/sql-for-threaded-discussion-forums
         parent = XtdComment.objects.get(pk=self.parent_id)
-        if parent.level == max_thread_level_for_content_type(self.content_type):
+        if parent.level == get_max_thread_level(self.content_type):
             raise MaxThreadLevelExceededException(self)
 
         self.thread = parent.thread
         self.level = parent.level + 1
-        qc_eq_thread = XtdComment.norel_objects.filter(thread=parent.thread)
+        qc_eq_thread = XtdComment.objects.filter(thread=parent.thread)
         qc_ge_level = qc_eq_thread.filter(
             level__lte=parent.level, order__gt=parent.order
         )
@@ -148,7 +113,7 @@ class XtdComment(Comment):
         return reverse("comments-xtd-reply", kwargs={"cid": self.pk})
 
     def allow_thread(self):
-        return self.level < max_thread_level_for_content_type(self.content_type)
+        return self.level < get_max_thread_level(self.content_type)
 
     def get_reactions(self, from_user=None):
         total_counter = 0
@@ -180,7 +145,7 @@ class XtdComment(Comment):
         # Return only the values of OrderedDict after it has been sorted.
         result = {
             "counter": total_counter,
-            "list": [v for v in reactions.values() if len(v)]
+            "list": [v for v in reactions.values() if len(v)],
         }
         return result
 
@@ -209,7 +174,7 @@ class XtdComment(Comment):
         if content_object:
             content_type = ContentType.objects.get_for_model(
                 content_object,
-                for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL
+                for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL,
             )
             object_pk = content_object.id
 
@@ -240,14 +205,12 @@ class XtdComment(Comment):
 
 
 def publish_or_withhold_nested_comments(comment, shall_be_public=False):
-    qs = get_model().norel_objects.filter(
-        ~Q(pk=comment.id), parent_id=comment.id
-    )
+    qs = get_model().objects.filter(~Q(pk=comment.id), parent_id=comment.id)
     nested = [cm.id for cm in qs]
     qs.update(is_public=shall_be_public)
     while len(nested) > 0:
         cm_id = nested.pop()
-        qs = get_model().norel_objects.filter(~Q(pk=cm_id), parent_id=cm_id)
+        qs = get_model().objects.filter(~Q(pk=cm_id), parent_id=cm_id)
         nested.extend([cm.id for cm in qs])
         qs.update(is_public=shall_be_public)
     # Update nested_count in parents comments in the same thread.
@@ -258,7 +221,7 @@ def publish_or_withhold_nested_comments(comment, shall_be_public=False):
         op = F("nested_count") + comment.nested_count
     else:
         op = F("nested_count") - comment.nested_count
-    get_model().norel_objects.filter(
+    get_model().objects.filter(
         thread=comment.thread,
         level__lt=comment.level,
         order__lt=comment.order,
@@ -273,16 +236,14 @@ def publish_or_withhold_on_pre_save(sender, instance, raw, using, **kwargs):
 
 def on_comment_deleted(sender, instance, using, **kwargs):
     # Create the list of nested ink-comments that have to be deleted too.
-    qs = get_model().norel_objects.filter(
-        ~Q(pk=instance.id), parent_id=instance.id
-    )
+    qs = get_model().objects.filter(~Q(pk=instance.id), parent_id=instance.id)
     nested = [cm.id for cm in qs]
     for cm_id in nested:
-        qs = get_model().norel_objects.filter(~Q(pk=cm_id), parent_id=cm_id)
+        qs = get_model().objects.filter(~Q(pk=cm_id), parent_id=cm_id)
         nested.extend([cm.id for cm in qs])
 
     # Update the nested_count attribute up the tree.
-    get_model().norel_objects.filter(
+    get_model().objects.filter(
         thread=instance.thread,
         level__lt=instance.level,
         order__lt=instance.order,
@@ -443,6 +404,7 @@ class ReactionField(models.TextField):
 
 # -----------------------------------------------
 # Comment reaction model.
+
 
 class CommentReaction(models.Model):
     reaction = ReactionField(

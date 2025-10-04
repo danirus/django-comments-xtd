@@ -106,8 +106,7 @@ DEFAULT_FROM_EMAIL = "Alice Bloggs <alice@example.com>"
 
 COMMENTS_XTD_CONFIRM_EMAIL = True
 COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
-COMMENTS_XTD_MAX_THREAD_LEVEL = 3
-COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {"tests.diary": 0}
+COMMENTS_XTD_DEFAULT_MAX_THREAD_LEVEL = 3
 
 COMMENTS_XTD_APP_MODEL_OPTIONS = {
     "default": {
@@ -118,6 +117,7 @@ COMMENTS_XTD_APP_MODEL_OPTIONS = {
         "allow_flagging": True,
         "allow_feedback": True,
         "show_feedback": True,
+        "max_thread_level": 0,
     },
     "tests.quote": {
         "who_can_post": "users",

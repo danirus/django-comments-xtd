@@ -171,26 +171,26 @@ COMMENTS_XTD_FN_USER_REPR = _comments_xtd_fn_user_repr
 COMMENTS_XTD_SEND_HTML_EMAIL = True
 
 # Maximum Thread Level.
-COMMENTS_XTD_MAX_THREAD_LEVEL = 1
+# COMMENTS_XTD_DEFAULT_MAX_THREAD_LEVEL = 0
 
 # Maximum Thread Level per app.model basis.
 # In this example project it makes no sense, as the previous setting
 # already establishes the maximum thread level to 1 for the only model
 # that can receive comments: the `quotes.quote` model.
-COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
-    "prose.articlecommentsl0": 0,
-    "prose.articlecommentsl1": 1,
-    "prose.articlecommentsl2": 2,
-    "prose.articlecommentsl3": 3,
-    "prose.storycommentsl0": 0,
-    "prose.storycommentsl1": 1,
-    "prose.storycommentsl2": 2,
-    "prose.storycommentsl3": 3,
-    "prose.talecommentsl0": 0,
-    "prose.talecommentsl1": 1,
-    "prose.talecommentsl2": 2,
-    "prose.talecommentsl3": 3,
-}
+# COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
+#     "prose.articlecommentsl0": 0,
+#     "prose.articlecommentsl1": 1,
+#     "prose.articlecommentsl2": 2,
+#     "prose.articlecommentsl3": 3,
+#     "prose.storycommentsl0": 0,
+#     "prose.storycommentsl1": 1,
+#     "prose.storycommentsl2": 2,
+#     "prose.storycommentsl3": 3,
+#     "prose.talecommentsl0": 0,
+#     "prose.talecommentsl1": 1,
+#     "prose.talecommentsl2": 2,
+#     "prose.talecommentsl3": 3,
+# }
 
 # By default ContentType.objects.get_for_model pass True in the
 # keyword argument `for_concrete_model`. If you use Proxy models
@@ -202,35 +202,48 @@ COMMENTS_XTD_FOR_CONCRETE_MODEL = False
 COMMENTS_XTD_APP_MODEL_CONFIG = {
     "default": {
         "who_can_post": "all",
+        "max_thread_level": 0,
         "comments_flagging_enabled": True,
         "comments_reacting_enabled": True,
         "comments_voting_enabled": True,
         "list_order": ("-thread__score", "thread__id", "order"),
     },
     "prose.articlecommentsl0": {
+        "max_thread_level": 0,
         "comments_flagging_enabled": False,
         "comments_reacting_enabled": False,
         "comments_voting_enabled": False,
         "list_order": ("thread__id", "order"),
     },
     "prose.articlecommentsl1": {
+        "max_thread_level": 1,
         "comments_flagging_enabled": False,
         "comments_reacting_enabled": False,
         "comments_voting_enabled": False,
         "list_order": ("thread__id", "order"),
     },
     "prose.articlecommentsl2": {
+        "max_thread_level": 2,
         "comments_flagging_enabled": False,
         "comments_reacting_enabled": False,
         "comments_voting_enabled": False,
         "list_order": ("thread__id", "order"),
     },
     "prose.articlecommentsl3": {
+        "max_thread_level": 3,
         "comments_flagging_enabled": False,
         "comments_reacting_enabled": False,
         "comments_voting_enabled": False,
         "list_order": ("thread__id", "order"),
     },
+    "prose.storycommentsl1": {"max_thread_level": 1},
+    "prose.storycommentsl2": {
+        "max_thread_level": 2,
+    },
+    "prose.storycommentsl3": {"max_thread_level": 3},
+    "prose.talecommentsl1": {"max_thread_level": 1},
+    "prose.talecommentsl2": {"max_thread_level": 2},
+    "prose.talecommentsl3": {"max_thread_level": 3},
 }
 
 # How many users are listed when hovering a reaction.

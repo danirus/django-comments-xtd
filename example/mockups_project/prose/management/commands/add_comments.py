@@ -314,6 +314,7 @@ class Command(BaseCommand):
 
     def get_submit_date(self):
         self._submit_date += timedelta(hours=1)
+        return self._submit_date
 
     def add_comment(self, site, ctype, obj, reply_to=0):
         user = User.objects.get(pk=randint(1, self._n_users))

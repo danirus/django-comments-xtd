@@ -74,10 +74,30 @@ def send_mail(
 # --------------------------------------------------------------------
 def get_max_thread_level(content_type):
     """Get the max_thread_level for a given content_type."""
-    app_model = f"{content_type.app_label}.{content_type.model}"
-    return settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL.get(
-        app_model, settings.COMMENTS_XTD_MAX_THREAD_LEVEL
-    )
+    key = f"{content_type.app_label}.{content_type.model}"
+    setting = settings.COMMENTS_XTD_APP_MODEL_CONFIG  # Aliasing.
+
+    if key in setting and setting[key].get("max_thread_level"):
+        return setting[key]["max_thread_level"]
+
+    if setting["default"].get("max_thread_level"):
+        return setting["default"]["list_order"]
+
+    return settings.COMMENTS_XTD_DEFAULT_MAX_THREAD_LEVEL
+
+
+def get_list_order(content_type):
+    """Get tuple of fields to use in `order by` clause in comment queries."""
+    key = f"{content_type.app_label}.{content_type.model}"
+    setting = settings.COMMENTS_XTD_APP_MODEL_CONFIG  # Aliasing.
+
+    if key in setting and setting[key].get("list_order"):
+        return setting[key]["list_order"]
+
+    if setting["default"].get("list_order"):
+        return setting["default"]["list_order"]
+
+    return settings.COMMENTS_XTD_DEFAULT_LIST_ORDER
 
 
 # --------------------------------------------------------------------

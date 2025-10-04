@@ -25,8 +25,8 @@ class Command(BaseCommand):
         # comments.
 
         # 1st: Process comments on per app_model basis.
-        MTL_PER_APP = settings.COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL
-        for app_model, mtl in MTL_PER_APP.items():
+        APP_MODEL_CONFIG = settings.COMMENTS_XTD_APP_MODEL_CONFIG
+        for app_model, mtl in APP_MODEL_CONFIG.items():
             bits = app_model.split(".")
             app, model = ".".join(bits[:-1]), bits[-1]
             try:

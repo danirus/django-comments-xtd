@@ -22,10 +22,10 @@ from django_comments.templatetags.comments import (
 from django_comments_xtd import get_model as get_comment_model
 from django_comments_xtd import get_reaction_enum
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import max_thread_level_for_content_type
 from django_comments_xtd.templating import get_template_list
 from django_comments_xtd.utils import (
     get_app_model_options,
+    get_list_order,
     get_max_thread_level,
 )
 
@@ -61,7 +61,13 @@ class BaseXtdCommentNode(BaseCommentNode):
             return self.comment_model.objects.none()
 
         mtl = get_max_thread_level(ctype)
-        return super().get_queryset(context).filter(level__lte=mtl)
+        order_by_tuple = get_list_order(ctype)
+        return (
+            super()
+            .get_queryset(context)
+            .filter(level__lte=mtl)
+            .order_by(*order_by_tuple)
+        )
 
 
 class XtdCommentListNode(BaseXtdCommentNode):
@@ -376,7 +382,7 @@ class RenderCommentThreads(template.Node):
                 comment.content_object,
                 for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL,
             )
-            max_thread_level = max_thread_level_for_content_type(ctype)
+            max_thread_level = get_max_thread_level(ctype)
         return max_thread_level
 
     def render(self, context):
@@ -579,7 +585,7 @@ def comment_css_thread_range(context, comment, prefix="l"):
             comment.content_object,
             for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL,
         )
-        max_thread_level = max_thread_level_for_content_type(ctype)
+        max_thread_level = get_max_thread_level(ctype)
 
     result = ""
     for i in range(comment.level + 1):

@@ -15,10 +15,7 @@ COMMENTS_XTD_FROM_EMAIL = settings.DEFAULT_FROM_EMAIL
 COMMENTS_XTD_CONTACT_EMAIL = settings.DEFAULT_FROM_EMAIL
 
 # Maximum Thread Level.
-COMMENTS_XTD_MAX_THREAD_LEVEL = 0
-
-# Maximum Thread Level per app.model basis.
-COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {}
+COMMENTS_XTD_DEFAULT_MAX_THREAD_LEVEL = 0
 
 # By default ContentType.objects.get_for_model pass True in the
 # keyword argument `for_concrete_model`. If you use Proxy models
@@ -27,7 +24,9 @@ COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {}
 COMMENTS_XTD_FOR_CONCRETE_MODEL = True
 
 # Default order to list comments in.
-COMMENTS_XTD_LIST_ORDER = ("thread__id", "order")
+# This setting has lower preference than:
+#  COMMENTS_XTD_APP_MODEL_CONFIG["default"]["list_order"]
+COMMENTS_XTD_DEFAULT_LIST_ORDER = ("thread__id", "order")
 
 # Form class to use.
 COMMENTS_XTD_FORM_CLASS = "django_comments_xtd.forms.XtdCommentForm"
@@ -55,13 +54,13 @@ COMMENTS_XTD_APP_MODEL_CONFIG = {
         "check_input_allowed": "django_comments_xtd.utils.check_input_allowed",
         # Whether to display a link to flag comments as inappropriate.
         "comments_flagging_enabled": False,
-        # Whether to allow users to submit reactions on comments.
-        # Default reactions are +1/-1. They can be customize. See
-        # example projects.
+        # Whether to allow users to submit reactions to comments.
         "comments_reacting_enabled": False,
         # Whether to allow users to vote on comments.
         "comments_voting_enabled": False,
-        # Default order to list comments.
+        # It has preference over COMMENTS_XTD_DEFAULT_MAX_THREAD_LEVEL.
+        "max_thread_level": 0,
+        # It has preference over COMMENTS_XTD_DEFAULT_LIST_ORDER.
         "list_order": ("thread__id", "order"),
     }
 }

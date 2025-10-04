@@ -45,12 +45,12 @@ urlpatterns = [
     re_path(r"^approved/$", approve_done, name="comments-approve-done"),
     re_path(
         r"^vote/(\d+)/$",
-        views.VoteCommentView.as_view(),
+        views.VoteOnCommentView.as_view(),
         name="comments-xtd-vote",
     ),
     re_path(
         r"^voted/$",
-        views.VoteCommentDoneView.as_view(),
+        views.VoteOnCommentDoneView.as_view(),
         name="comments-xtd-vote-done",
     ),
     re_path(

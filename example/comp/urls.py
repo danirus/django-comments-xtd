@@ -4,9 +4,17 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path, re_path
 from django.views.i18n import JavaScriptCatalog
 from django_comments.feeds import LatestCommentFeed
+from rest_framework.schemas import get_schema_view
 
 from comp import views
 from django_comments_xtd.views import XtdCommentListView
+
+try:
+    from drf_spectacular.views import SpectacularAPIView
+
+    has_drf_spectacular = True
+except ImportError:
+    has_drf_spectacular = False
 
 admin.autodiscover()
 
@@ -36,6 +44,23 @@ urlpatterns = [
     ),
     re_path(r"admin/", admin.site.urls),
 ]
+
+if has_drf_spectacular:
+    urlpatterns.append(
+        path("openapi", SpectacularAPIView.as_view(), name="openapi-schema"),
+    )
+else:
+    urlpatterns.append(
+        re_path(
+            "openapi",
+            get_schema_view(
+                title="django-comments-xtd API",
+                description="Example Comp Project - API",
+                version="1.0.0",
+            ),
+            name="openapi-schema",
+        )
+    )
 
 
 if settings.DEBUG:

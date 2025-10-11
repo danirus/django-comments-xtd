@@ -108,6 +108,7 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -117,6 +118,7 @@ MIDDLEWARE = [
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    # "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 
@@ -136,6 +138,7 @@ INSTALLED_APPS = (
     "django_extensions",
     "rosetta",
     "rest_framework",
+    "drf_spectacular",
     "django_markdown2",
     "django_comments_xtd",
     "django_comments",
@@ -197,5 +200,17 @@ DEBUG_TOOLBAR_PANELS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
     "https://cdnjs.cloudflare.com",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "django-comments-xtd API",
+    "DESCRIPTION": "Example django-comments-xtd Project",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}

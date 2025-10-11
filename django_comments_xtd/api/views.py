@@ -16,7 +16,7 @@ from rest_framework import (
 )
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.schemas.openapi import AutoSchema
+from rest_framework.schemas.openapi import AutoSchema as DRFAutoSchema
 
 from django_comments_xtd import get_model, views
 from django_comments_xtd.api import serializers
@@ -28,7 +28,21 @@ from django_comments_xtd.models import (
 )
 from django_comments_xtd.utils import get_current_site_id
 
+try:
+    from drf_spectacular.openapi import AutoSchema as SpectacularAutoSchema
+
+    has_drf_spectacular = True
+except ImportError:
+    has_drf_spectacular = False
+
 XtdComment = get_model()
+
+
+def get_auto_schema(*args, **kwargs):
+    if has_drf_spectacular:
+        return SpectacularAutoSchema()
+    else:
+        return DRFAutoSchema(*args, **kwargs)
 
 
 class DefaultsMixin:
@@ -143,7 +157,8 @@ class ToggleFeedbackFlag(
     serializer_class = serializers.FlagSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    schema = AutoSchema(operation_id_base="Feedback")
+    # For compatibility reasons, if drf-spectacular is not installed.
+    schema = get_auto_schema(operation_id_base="Feedback")
 
     created = None
 
@@ -165,7 +180,7 @@ class CreateReportFlag(DefaultsMixin, generics.CreateAPIView):
     serializer_class = serializers.FlagSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    schema = AutoSchema(operation_id_base="ReportFlag")
+    schema = get_auto_schema(operation_id_base="ReportFlag")
 
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)

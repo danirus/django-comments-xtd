@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - v2
   pull_request:
 
 env:

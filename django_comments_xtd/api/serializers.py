@@ -1,4 +1,3 @@
-# ruff:noqa: N806
 from typing import ClassVar
 
 from django.apps import apps
@@ -29,6 +28,13 @@ from django_comments_xtd.signals import (
     should_request_be_authorized,
 )
 from django_comments_xtd.utils import get_app_model_options
+
+try:
+    from drf_spectacular.utils import extend_schema_field
+    from drf_spectacular.types import OpenApiTypes
+    has_drf_spectacular = True
+except ImportError:
+    has_drf_spectacular = False
 
 COMMENT_MAX_LENGTH = getattr(settings, "COMMENT_MAX_LENGTH", 3000)
 
@@ -253,6 +259,28 @@ class FlagSerializer(serializers.ModelSerializer):
         return data
 
 
+def extend_schema_field_if_exists(*args, **kwargs):
+    def convert_arg(arg):
+        if isinstance(arg, str) and arg.startswith("OpenApiTypes"):
+            _, arg = arg.split(".")
+            return getattr(OpenApiTypes, arg)
+        return arg
+
+    def wrap(cls):
+        if has_drf_spectacular:
+            alt_args = [convert_arg(arg) for arg in args]
+            alt_kwargs = {kw: convert_arg(kv) for kw, kv in kwargs}
+            return extend_schema_field(*alt_args, **alt_kwargs)(cls)
+        else:
+            return cls
+    return wrap
+
+# If using drf-spectacular, and wanting to pass params of type OpenApiTypes,
+# for compatibility with Django projects not using drf-spectacular, pass
+# the params as strings, and they will be converted in the decorator
+# extend_schema_field_if_exists, defined here above.
+#
+@extend_schema_field_if_exists("OpenApiTypes.OBJECT")
 class ReadFlagField(serializers.RelatedField):
     def to_representation(self, value):
         if value.flag == CommentFlag.SUGGEST_REMOVAL:
@@ -306,7 +334,7 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         self.request = kwargs["context"]["request"]
         super().__init__(*args, **kwargs)
 
-    def get_submit_date(self, obj):
+    def get_submit_date(self, obj) -> str:
         activate(get_language())
         if settings.USE_TZ:
             submit_date = timezone.localtime(obj.submit_date)
@@ -318,13 +346,13 @@ class ReadCommentSerializer(serializers.ModelSerializer):
             use_l10n=True,
         )
 
-    def get_comment(self, obj):
+    def get_comment(self, obj) -> str:
         if obj.is_removed:
             return _("This comment has been removed.")
         else:
             return obj.comment
 
-    def get_user_moderator(self, obj):
+    def get_user_moderator(self, obj) -> bool:
         try:
             return obj.user and obj.user.has_perm(
                 "django_comments.can_moderate"
@@ -332,11 +360,11 @@ class ReadCommentSerializer(serializers.ModelSerializer):
         except Exception:
             return None
 
-    def get_allow_reply(self, obj):
+    def get_allow_reply(self, obj) -> bool:
         return obj.allow_thread()
 
-    def get_user_avatar(self, obj):
+    def get_user_avatar(self, obj) -> str:
         return import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)(obj)
 
-    def get_permalink(self, obj):
+    def get_permalink(self, obj) -> str:
         return obj.get_absolute_url()

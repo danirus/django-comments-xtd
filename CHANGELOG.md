@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.10.10] - 2025-10-11
+
+* Fixes issue [475](https://github.com/danirus/django-comments-xtd/issues/475): Add support for drf-spectacular.
+
 ## [2.10.9] - 2025-08-12
 
 * Opens up the range of supported djangorestframework versions to `>=3.12, <3.17`.

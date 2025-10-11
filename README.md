@@ -4,7 +4,7 @@ Work on version 3 is taking place in the branch [v3-2nd-attempt](https://github.
 
 A Django pluggable application that adds comments to your project.
 
-<p align="center"><img align="center" src="https://github.com/danirus/django-comments-xtd/blob/master/docs/images/cover.light.png"></p>
+<p align="center"><img align="center" src="https://github.com/danirus/django-comments-xtd/blob/raw/v2/docs/images/cover.light.png"></p>
 
 It extends the original [Django Comments Framework](https://pypi.python.org/pypi/django-contrib-comments) with the following features:
 
@@ -19,6 +19,8 @@ It extends the original [Django Comments Framework](https://pypi.python.org/pypi
 * Emails sent through threads (can be disable to allow other solutions, like a Celery app).
 * Fully functional JavaScript plugin using ReactJS, Bootstrap 5.3 and Remarkable.
 
+From v2.10.10 django-comments-xtd includes support for [drf-spectacular](https://pypi.org/search/?q=drf-spectacular).
+
 Example sites and tests run under officially Django [supported versions](https://www.djangoproject.com/download/#supported-versions):
 
 * Django 5.1, 5.0, 4.2, 4.1
@@ -28,5 +30,6 @@ Additional Dependencies:
 
 * django-contrib-comments >=2.2
 * djangorestframework >=3.12,<3.17
+
 
 Check out the tutorial and examples in the [documentation](http://readthedocs.org/docs/django-comments-xtd/).

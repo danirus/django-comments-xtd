@@ -30,8 +30,9 @@ from django_comments_xtd.signals import (
 from django_comments_xtd.utils import get_app_model_options
 
 try:
-    from drf_spectacular.utils import extend_schema_field
     from drf_spectacular.types import OpenApiTypes
+    from drf_spectacular.utils import extend_schema_field
+
     has_drf_spectacular = True
 except ImportError:
     has_drf_spectacular = False
@@ -75,7 +76,7 @@ class WriteCommentSerializer(serializers.Serializer):
         if value.strip():
             return value.strip()
         if self.request.user.is_authenticated:
-            UserModel = apps.get_model(settings.AUTH_USER_MODEL)
+            UserModel = apps.get_model(settings.AUTH_USER_MODEL)  # noqa: N806
             if hasattr(UserModel, "get_email_field_name"):
                 email_field = UserModel.get_email_field_name()
                 email = getattr(self.request.user, email_field, None)
@@ -273,7 +274,9 @@ def extend_schema_field_if_exists(*args, **kwargs):
             return extend_schema_field(*alt_args, **alt_kwargs)(cls)
         else:
             return cls
+
     return wrap
+
 
 # If using drf-spectacular, and wanting to pass params of type OpenApiTypes,
 # for compatibility with Django projects not using drf-spectacular, pass

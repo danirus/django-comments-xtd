@@ -11,6 +11,7 @@ from django_comments_xtd.views import XtdCommentListView
 
 try:
     from drf_spectacular.views import SpectacularAPIView
+
     has_drf_spectacular = True
 except ImportError:
     has_drf_spectacular = False
@@ -46,7 +47,7 @@ urlpatterns = [
 
 if has_drf_spectacular:
     urlpatterns.append(
-        path('openapi', SpectacularAPIView.as_view(), name='openapi-schema'),
+        path("openapi", SpectacularAPIView.as_view(), name="openapi-schema"),
     )
 else:
     urlpatterns.append(

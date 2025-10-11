@@ -30,17 +30,20 @@ from django_comments_xtd.utils import get_current_site_id
 
 try:
     from drf_spectacular.openapi import AutoSchema as SpectacularAutoSchema
+
     has_drf_spectacular = True
 except ImportError:
     has_drf_spectacular = False
 
 XtdComment = get_model()
 
+
 def get_auto_schema(*args, **kwargs):
     if has_drf_spectacular:
         return SpectacularAutoSchema()
     else:
         return DRFAutoSchema(*args, **kwargs)
+
 
 class DefaultsMixin:
     @property

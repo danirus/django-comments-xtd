@@ -858,7 +858,8 @@ class FlagCommentView(SingleCommentView):
         self.perform_flag()
 
         if request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
-            template_list = self.get_template_names(is_ajax=True)
+            self.is_ajax = True
+            template_list = self.get_template_names()
             context = self.get_context_data()
             status = 200
             return self.json_response(template_list, context, status)
@@ -1084,7 +1085,8 @@ class VoteOnCommentView(SingleCommentView):
             created = self.perform_vote()
 
         if request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
-            template_list = self.get_template_names(is_ajax=True)
+            self.is_ajax = True
+            template_list = self.get_template_names()
             context = self.get_context_data()
             status = 201 if created else 200
             return self.json_response(template_list, context, status)

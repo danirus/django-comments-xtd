@@ -304,6 +304,21 @@ template_patterns = {
         ],
         "default": ["comments/voted.html"],
     },
+    "voted_js": {
+        "themed": [
+            "comments/{theme_dir}/{app_label}/{model}/comment_votes.html",
+            "comments/{theme_dir}/{app_label}/comment_votes.html",
+            "comments/{theme_dir}/comment_votes.html",
+            "comments/{app_label}/{model}/comment_votes.html",
+            "comments/{app_label}/comment_votes.html",
+            "comments/comment_votes.html",
+        ],
+        "default": [
+            "comments/{app_label}/{model}/comment_votes.html",
+            "comments/{app_label}/comment_votes.html",
+            "comments/comment_votes.html",
+        ],
+    },
 }
 
 _template_patterns = import_string(settings.COMMENTS_XTD_TEMPLATE_PATTERNS)

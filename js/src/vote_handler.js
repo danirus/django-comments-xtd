@@ -6,7 +6,7 @@ export default class VoteHandler {
     this.cfg_el = config_el;
 
     this.is_guest = this.cfg_el.dataset.djcxIsGuestUser === "1";
-    this_login_url = get_login_url(this.cfg_el, this.is_guest);
+    this.login_url = get_login_url(this.cfg_el, this.is_guest);
     this.vote_url = get_vote_url(this.cfg_el, this.is_guest);
 
     this.qs_up = '[data-djcx-action="vote-up"]';
@@ -19,6 +19,27 @@ export default class VoteHandler {
 
     for(const el of document.querySelectorAll(this.qs_down)) {
       el.addEventListener("click", this.on_click)
+    }
+
+    /* If the conditions here below are true, the default action that
+     * runs on the `commentvote` event is to reload the page... It
+     * could better though.
+     */
+    if (
+      ( // Check HTML arguments of element with data-djcx="config".
+        !this.cfg_el.dataset.djcxUseDefaultVoteHandler
+        || this.cfg_el.dataset.djcxUseDefaultVoteHandler !== "false"
+      ) && ( // Additionally check whether JS variable djcx_options.
+        !globalThis.djcx_options
+        || globalThis.djcx_options.useDefaultVoteHandler !== false
+      )
+    ) {
+      const comments = document.querySelectorAll(".comment-box");
+      for(const comment of comments) {
+        comment.addEventListener("commentvote", (e) => {
+          globalThis.location = e.target.querySelector(".permalink").href;
+        });
+      }
     }
   }
 
@@ -63,6 +84,16 @@ export default class VoteHandler {
         if (qs_vote_down) {
           qs_vote_down.addEventListener("click", this.on_click);
         }
+        // Dispatch 'commentvote'  event.
+        cm_votes_el.closest(".comment-box").dispatchEvent(
+          new CustomEvent(
+            "commentvote", {
+              detail: {
+                "comment_id": this.comment_id,
+              }
+            }
+          )
+        )
       }
     } else if (response.status > 400) {
       alert(

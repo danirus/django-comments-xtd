@@ -9,7 +9,7 @@ function init_commenting(cfg) {
   }
 
   // Highlight the visual elements that make up threads of comments.
-  globalThis.djcx.cthreads = new CommentThreads();
+  globalThis.djcx.cthreads = CommentThreads.initialize();
 
   globalThis.djcx.comment_form = undefined;
   globalThis.djcx.reply_forms_handler = undefined;

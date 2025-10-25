@@ -204,6 +204,18 @@
     padding: 0;
   }
 
+  @keyframes highlight-comment-border {
+    0%   { border-color: var(--djcx-border-color-subtle);    }
+    25%  { border-color: var(--djcx-border-color-highlight); }
+    100% { border-color: var(--djcx-border-color-subtle);    }
+  }
+
+    @keyframes highlight-comment-background {
+    0%   { background-color: var(--djcx-background-color);    }
+    25%  { background-color: var(--djcx-background-color-highlight); }
+    100% { background-color: var(--djcx-background-color);    }
+  }
+
   .reply-box .content {
     display: flex;
     width: 100%;
@@ -238,6 +250,12 @@
       }
   }
 
+  .comment-box.comment-box--highlight-background .comment {
+    animation-name: var(--djcx-highlight-background-animation-name);
+    animation-duration: var(--djcx-highlight-background-animation-duration)  !important;
+    animation-delay: var(--djcx-highlight-background-animation-delay);
+  }
+
   .comment-box .header {
     display: flex;
     justify-content: space-between;
@@ -266,12 +284,18 @@
 
   .body-bordered {
     padding: 4px;
-    border: 1px solid var(--djcx-border-color-subtle);
+    border-width: 1px;
     border-bottom: 0;
     border-color: var(--djcx-border-color-subtle);
     border-style: solid;
     border-top-left-radius: var(--djcx-border-radius);
     border-top-right-radius: var(--djcx-border-radius);
+  }
+
+  .comment-box.comment-box--highlight-border .body-bordered {
+    animation-name: var(--djcx-highlight-border-animation-name);
+    animation-duration: var(--djcx-highlight-border-animation-duration) !important;
+    animation-delay: var(--djcx-highlight-background-animation-delay);
   }
 
   .feedback-bordered {
@@ -280,6 +304,12 @@
     border-top: 0;
     border-bottom-left-radius: 0.3rem;
     border-bottom-right-radius: 0.3rem;
+  }
+
+  .comment-box.comment-box--highlight-border .feedback-bordered {
+    animation-name: highlight-comment;
+    animation-duration: 1.5s !important;
+    animation-delay: .25s;
   }
 
   .comment-box .feedback {

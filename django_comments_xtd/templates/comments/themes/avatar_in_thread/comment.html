@@ -3,7 +3,7 @@
 {% load comments_xtd %}
 
 {% with anchor=comment|get_anchor %}
-<div id="comment-{{ comment.id }}" class="comment-box" data-djcx-cid="{{ comment.id }}">
+<div id="comment-{{ comment.id }}" class="comment-box{% if highlight_cid == comment.id %} comment-box--highlight{% endif %}" data-djcx-cid="{{ comment.id }}">
   <div class="user-avatar {% if max_thread_level > 0 %}pr-1{% else %}pr-2{% endif %}">
     {% get_comment_gravatar comment "36,identicon" %}
   </div>

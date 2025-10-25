@@ -65,3 +65,19 @@ export function get_flag_url(config_el, is_guest) {
   }
   return url;
 }
+
+// From:
+// https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
+//
+export async function digest_loc() {
+  const href = URL.parse(globalThis.location.href);
+  // Encode as (utf-8) Uint8Array.
+  const uint8 = new TextEncoder().encode(href.pathname);
+  const hash_buf = await globalThis.crypto.subtle.digest("SHA-256", uint8);
+  // Convert buffer to byte array.
+  const hash_arr = Array.from(new Uint8Array(hash_buf));
+  const hash_hex = hash_arr
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join(""); // Convert bytes to hex string.
+  return hash_hex;
+}

@@ -54,6 +54,7 @@ export default [{
     "unicorn/expiring-todo-comments": "off",
     "unicorn/prefer-module": "off",
     "unicorn/prefer-query-selector": "off",
+    "unicorn/prefer-spread": "off",
     "unicorn/prevent-abbreviations": "off",
   },
 }];

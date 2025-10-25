@@ -333,6 +333,7 @@ djc_signals.comment_was_posted.connect(
 # ---------------------------------------------------------------------
 class CommentUrlView(RedirectView):
     def get_redirect_url(self, content_type_id, object_id, comment_id):
+        self.request.session["djcx_highlight_cid"] = int(comment_id)
         response = shortcut(self.request, content_type_id, object_id)
         return response.url
 

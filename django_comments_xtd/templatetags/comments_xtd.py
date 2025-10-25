@@ -169,6 +169,7 @@ class RenderXtdCommentListNode(XtdCommentListNode):
         for var_name, var_expr in self.include_vars:
             flat_ctx[var_name] = var_expr.resolve(context)
 
+        highlight_cid = context.request.session.pop("djcx_highlight_cid", None)
         template_search_list = get_template_list(
             "list",
             app_label=ctype.app_label,
@@ -183,6 +184,7 @@ class RenderXtdCommentListNode(XtdCommentListNode):
 
         flat_ctx.update(
             {
+                "highlight_cid": highlight_cid,
                 "max_thread_level": get_max_thread_level(ctype),
                 "comment_list": self.get_context_value_from_queryset(
                     context, self.get_queryset(context)

@@ -26,11 +26,19 @@
   --djcx-textarea-line-height: 1.5;
   --djcx-textarea-padding: 4px 12px;
   --djcx-reactions-panel-font-size: .825rem;
+  --djcx-highlight-background-animation-name: highlight-comment-background;
+  --djcx-highlight-background-animation-duration: 4s;
+  --djcx-highlight-background-animation-delay: .25s;
+  --djcx-highlight-border-animation-name: highlight-comment-border;
+  --djcx-highlight-border-animation-duration: 4s;
+  --djcx-highlight-border-animation-delay: .25s;
 }
 
 @mixin light-theme {
   --djcx-background-color: rgb(255 255 255);
+  --djcx-background-color-highlight: #fee;
   --djcx-border-color-subtle: #d7d7d7;
+  --djcx-border-color-highlight: red;
 
   --djcx-badge-red-color: #fff;
   --djcx-badge-red-background-color: rgb(255 71 71);
@@ -127,7 +135,9 @@
 
 @mixin dark-theme {
   --djcx-background-color: rgb(40 40 50);
+  --djcx-background-color-highlight: #423;
   --djcx-border-color-subtle: #3b3a46;
+  --djcx-border-color-highlight: red;
 
   --djcx-badge-red-color: #fff;
   --djcx-badge-red-background-color: rgb(151 38 38);

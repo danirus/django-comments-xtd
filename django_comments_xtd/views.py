@@ -1087,6 +1087,7 @@ class VoteOnCommentView(SingleCommentView):
 
         if request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
             self.is_ajax = True
+            request.session["djcx_highlight_cid"] = int(comment_id)
             template_list = self.get_template_names()
             context = self.get_context_data()
             status = 201 if created else 200

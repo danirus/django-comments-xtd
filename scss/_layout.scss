@@ -205,15 +205,15 @@
   }
 
   @keyframes highlight-comment-border {
-    0%   { border-color: var(--djcx-border-color-subtle);    }
-    25%  { border-color: var(--djcx-border-color-highlight); }
-    100% { border-color: var(--djcx-border-color-subtle);    }
+    0% { border-color: var(--djcx-border-color-subtle); }
+    25% { border-color: var(--djcx-border-color-highlight); }
+    100% { border-color: var(--djcx-border-color-subtle); }
   }
 
-    @keyframes highlight-comment-background {
-    0%   { background-color: var(--djcx-background-color);    }
-    25%  { background-color: var(--djcx-background-color-highlight); }
-    100% { background-color: var(--djcx-background-color);    }
+  @keyframes highlight-comment-background {
+    0% { background-color: var(--djcx-background-color); }
+    25% { background-color: var(--djcx-background-color-highlight); }
+    100% { background-color: var(--djcx-background-color); }
   }
 
   .reply-box .content {
@@ -307,9 +307,9 @@
   }
 
   .comment-box.comment-box--highlight-border .feedback-bordered {
-    animation-name: highlight-comment;
-    animation-duration: 1.5s !important;
-    animation-delay: .25s;
+    animation-name: var(--djcx-highlight-border-animation-name);
+    animation-duration: var(--djcx-highlight-border-animation-duration) !important;
+    animation-delay: var(--djcx-highlight-background-animation-delay);
   }
 
   .comment-box .feedback {

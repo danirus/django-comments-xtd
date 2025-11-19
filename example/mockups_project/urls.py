@@ -4,24 +4,24 @@ from django.http.response import HttpResponseRedirect
 from django.urls import include, path, reverse
 
 from .views import (
+    BadFormView,
+    FormJsView,
     HomepageView,
     MockupView,
-    bad_form_v,
+    ModeratedView,
+    ModerateJsView,
+    MutedView,
+    PostedJsView,
+    PostedView,
+    PublishedJsView,
+    ReactToCmntView,
+    ReplyComment2View,
+    ReplyComment3View,
+    VoteOnCmntView,
     discard_comment_v,
-    flag_comment_v,
-    form_js_v,
-    moderated_js_v,
-    moderated_v,
-    muted_v,
-    posted_js_v,
-    posted_v,
     preview_v,
     prose_v,
-    published_js_v,
-    react_to_comment_v,
-    reply_comment_ii_v,
-    reply_comment_v,
-    vote_on_comment_v,
+    redirect,
 )
 
 
@@ -607,33 +607,39 @@ urlpatterns = [
     # Default theme mockups.
     path(
         "def-light--comments-not-allowed",
-        prose_v("ArticleCommentsL0", "comments-not-allowed", "light"),
+        prose_v("ArticleCommentsL0", "comments-not-allowed"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--comments-not-allowed",
     ),
     path(
         "def-dark--comments-not-allowed",
-        prose_v("ArticleCommentsL0", "comments-not-allowed", "dark"),
+        prose_v("ArticleCommentsL0", "comments-not-allowed"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--comments-not-allowed",
     ),
     path(
         "def-light--comment-form",
-        prose_v("ArticleCommentsL0", "comment-form", "light"),
+        prose_v("ArticleCommentsL0", "comment-form"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--comment-form",
     ),
     path(
         "def-dark--comment-form",
-        prose_v("ArticleCommentsL0", "comment-form", "dark"),
+        prose_v("ArticleCommentsL0", "comment-form"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--comment-form",
     ),
     # -------------------------------------------
     path(
         "def-light--comment-form_js",
-        form_js_v("force-form-js", "light"),
+        FormJsView.as_view(),
+        {"theme": "", "cscheme": "light"},
         name="def-light--comment-form_js",
     ),
     path(
         "def-dark--comment-form_js",
-        form_js_v("force-form-js", "dark"),
+        FormJsView.as_view(),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--comment-form_js",
     ),
     path(
@@ -649,12 +655,14 @@ urlpatterns = [
     # -------------------------------------------
     path(
         "def_light__preview_level_0",
-        preview_v("light", reply_to=0),
+        preview_v(reply_to=0),
+        {"theme": "", "cscheme": "light"},
         name="def_light__preview_level_0",
     ),
     path(
         "def_dark__preview_level_0",
-        preview_v("dark", reply_to=0),
+        preview_v(reply_to=0),
+        {"theme": "", "cscheme": "dark"},
         name="def_dark__preview_level_0",
     ),
     path(
@@ -670,12 +678,14 @@ urlpatterns = [
     # -------------------------------------------
     path(
         "def_light__preview_level_1",
-        preview_v("light", reply_to=1),
+        preview_v(reply_to=1),
+        {"theme": "", "cscheme": "light"},
         name="def_light__preview_level_1",
     ),
     path(
         "def_dark__preview_level_1",
-        preview_v("dark", reply_to=1),
+        preview_v(reply_to=1),
+        {"theme": "", "cscheme": "dark"},
         name="def_dark__preview_level_1",
     ),
     path(
@@ -689,79 +699,125 @@ urlpatterns = [
         name="logout-and-def-dark--preview-level-1",
     ),
     # -------------------------------------------
-    path("def-light--reply", reply_comment_v("light"), name="def-light--reply"),
-    path("def-dark--reply", reply_comment_v("dark"), name="def-dark--reply"),
+    path(
+        "def-light--reply",
+        ReplyComment2View.as_view(),
+        {"theme": "", "cscheme": "light"},
+        name="def-light--reply",
+    ),
+    path(
+        "def-dark--reply",
+        ReplyComment2View.as_view(),
+        {"theme": "", "cscheme": "dark"},
+        name="def-dark--reply",
+    ),
     path(
         "def-light--reply-ii",
-        reply_comment_ii_v("light"),
+        ReplyComment3View.as_view(),
+        {"theme": "", "cscheme": "light"},
         name="def-light--reply-ii",
     ),
     path(
         "def-dark--reply-ii",
-        reply_comment_ii_v("dark"),
+        ReplyComment3View.as_view(),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--reply-ii",
     ),
     path(
         "def-light--bad-form-part",
-        bad_form_v("force-bad-form", "light"),
+        BadFormView.as_view(),
+        {"theme": "", "cscheme": "light"},
         name="def-light--bad-form-part",
     ),
     path(
         "def-dark--bad-form-part",
-        bad_form_v("force-bad-form", "dark"),
+        BadFormView.as_view(),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--bad-form-part",
     ),
     path(
         "def-light--discarded",
-        discard_comment_v("light"),
+        discard_comment_v,
+        {"theme": "", "cscheme": "light"},
         name="def-light--discarded",
     ),
     path(
         "def-dark--discarded",
-        discard_comment_v("dark"),
+        discard_comment_v,
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--discarded",
     ),
     path(
         "def-light--flag-comment",
-        flag_comment_v("light"),
+        redirect,
+        {"theme": "", "cscheme": "light"},
         name="def-light--flag-comment",
     ),
     path(
         "def-dark--flag-comment",
-        flag_comment_v("dark"),
+        redirect,
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--flag-comment",
     ),
     path(
         "def-light--moderated",
-        moderated_v("light"),
+        ModeratedView.as_view(),
+        {"theme": "", "cscheme": "light"},
         name="def-light--moderated",
     ),
     path(
-        "def-dark--moderated", moderated_v("dark"), name="def-dark--moderated"
+        "def-dark--moderated",
+        ModeratedView.as_view(),
+        {"theme": "", "cscheme": "dark"},
+        name="def-dark--moderated",
     ),
     path(
         "def-light--moderated_js",
-        moderated_js_v("force-moderated-js", "light"),
+        ModerateJsView.as_view(),
+        {"theme": "", "cscheme": "light"},
         name="def-light--moderated_js",
     ),
     path(
         "def-dark--moderated_js",
-        moderated_js_v("force-moderated-js", "dark"),
+        ModerateJsView.as_view(),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--moderated_js",
     ),
-    path("def-light--muted", muted_v("light"), name="def-light--muted"),
-    path("def-dark--muted", muted_v("dark"), name="def-dark--muted"),
-    path("def-light--posted", posted_v("light"), name="def-light--posted"),
-    path("def-dark--posted", posted_v("dark"), name="def-dark--posted"),
+    path(
+        "def-light--muted",
+        MutedView.as_view(),
+        {"theme": "", "cscheme": "light"},
+        name="def-light--muted",
+    ),
+    path(
+        "def-dark--muted",
+        MutedView.as_view(),
+        {"theme": "", "cscheme": "dark"},
+        name="def-dark--muted",
+    ),
+    path(
+        "def-light--posted",
+        PostedView.as_view(),
+        {"theme": "", "cscheme": "light"},
+        name="def-light--posted",
+    ),
+    path(
+        "def-dark--posted",
+        PostedView.as_view(),
+        {"theme": "", "cscheme": "dark"},
+        name="def-dark--posted",
+    ),
     # --------------------------------------------
     path(
         "def_light__comment_posted_js",
-        posted_js_v("force-posted-js", "light"),
+        PostedJsView.as_view(),
+        {"theme": "", "cscheme": "light"},
         name="def_light__comment_posted_js",
     ),
     path(
         "def_dark__comment_posted_js",
-        posted_js_v("force-posted-js", "dark"),
+        PostedJsView.as_view(),
+        {"theme": "", "cscheme": "dark"},
         name="def_dark__comment_posted_js",
     ),
     path(
@@ -776,34 +832,40 @@ urlpatterns = [
     ),
     path(
         "def-light--comment-published-js",
-        published_js_v("force-published-js", "light"),
+        PublishedJsView.as_view(),
+        {"theme": "", "cscheme": "light"},
         name="def-light--comment-published-js",
     ),
     path(
         "def-dark--comment-published-js",
-        published_js_v("force-published-js", "dark"),
+        PublishedJsView.as_view(),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--comment-published-js",
     ),
     # --------------------------------------------
     path(
         "def-light--react-to-comment",
-        react_to_comment_v("light"),
+        ReactToCmntView.as_view(),
+        {"theme": "", "cscheme": "light"},
         name="def-light--react-to-comment",
     ),
     path(
         "def-dark--react-to-comment",
-        react_to_comment_v("dark"),
+        ReactToCmntView.as_view(),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--react-to-comment",
     ),
     # --------------------------------------------
     path(
         "def-light--vote-on-comment",
-        vote_on_comment_v("light"),
+        VoteOnCmntView.as_view(),
+        {"theme": "", "cscheme": "light"},
         name="def-light--vote-on-comment",
     ),
     path(
         "def-dark--vote-on-comment",
-        vote_on_comment_v("dark"),
+        VoteOnCmntView.as_view(),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--vote-on-comment",
     ),
     # ----------------------
@@ -811,34 +873,40 @@ urlpatterns = [
     # -- options off
     path(
         "def-light--1-comment-level-0-options-off",
-        prose_v("ArticleCommentsL0", "one-comment-options-off", "light"),
+        prose_v("ArticleCommentsL0", "one-comment-options-off"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--1-comment-level-0-options-off",
     ),
     path(
         "def-dark--1-comment-level-0-options-off",
-        prose_v("ArticleCommentsL0", "one-comment-options-off", "dark"),
+        prose_v("ArticleCommentsL0", "one-comment-options-off"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--1-comment-level-0-options-off",
     ),
     # -- options on
     path(
         "def-light--1-comment-level-0-options-on",
-        prose_v("StoryCommentsL0", "one-comment-options-on", "light"),
+        prose_v("StoryCommentsL0", "one-comment-options-on"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--1-comment-level-0-options-on",
     ),
     path(
         "def-dark--1-comment-level-0-options-on",
-        prose_v("StoryCommentsL0", "one-comment-options-on", "dark"),
+        prose_v("StoryCommentsL0", "one-comment-options-on"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--1-comment-level-0-options-on",
     ),
     # -- options on-js
     path(
         "def-light--1-comment-level-0-options-on-js",
-        prose_v("TaleCommentsL0", "one-comment-options-on-js", "light"),
+        prose_v("TaleCommentsL0", "one-comment-options-on-js"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--1-comment-level-0-options-on-js",
     ),
     path(
         "def-dark--1-comment-level-0-options-on-js",
-        prose_v("TaleCommentsL0", "one-comment-options-on-js", "dark"),
+        prose_v("TaleCommentsL0", "one-comment-options-on-js"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--1-comment-level-0-options-on-js",
     ),
     # -----------------------------
@@ -846,34 +914,40 @@ urlpatterns = [
     # -- options off
     path(
         "def-light--n-comments-level-0-options-off",
-        prose_v("ArticleCommentsL0", "n-comments-options-off", "light"),
+        prose_v("ArticleCommentsL0", "n-comments-options-off"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-level-0-options-off",
     ),
     path(
         "def-dark--n-comments-level-0-options-off",
-        prose_v("ArticleCommentsL0", "n-comments-options-off", "dark"),
+        prose_v("ArticleCommentsL0", "n-comments-options-off"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-level-0-options-off",
     ),
     # -- options on
     path(
         "def-light--n-comments-level-0-options-on",
-        prose_v("StoryCommentsL0", "n-comments-options-on", "light"),
+        prose_v("StoryCommentsL0", "n-comments-options-on"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-level-0-options-on",
     ),
     path(
         "def-dark--n-comments-level-0-options-on",
-        prose_v("StoryCommentsL0", "n-comments-options-on", "dark"),
+        prose_v("StoryCommentsL0", "n-comments-options-on"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-level-0-options-on",
     ),
     # -- options on-js
     path(
         "def-light--n-comments-level-0-options-on-js",
-        prose_v("TaleCommentsL0", "n-comments-options-on-js", "light"),
+        prose_v("TaleCommentsL0", "n-comments-options-on-js"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-level-0-options-on-js",
     ),
     path(
         "def-dark--n-comments-level-0-options-on-js",
-        prose_v("TaleCommentsL0", "n-comments-options-on-js", "dark"),
+        prose_v("TaleCommentsL0", "n-comments-options-on-js"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-level-0-options-on-js",
     ),
     # -----------------------------
@@ -881,34 +955,40 @@ urlpatterns = [
     # -- options off
     path(
         "def-light--n-comments-levels-0-1-options-off",
-        prose_v("ArticleCommentsL1", "n-comments-options-off", "light"),
+        prose_v("ArticleCommentsL1", "n-comments-options-off"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-levels-0-1-options-off",
     ),
     path(
         "def-dark--n-comments-levels-0-1-options-off",
-        prose_v("ArticleCommentsL1", "n-comments-options-off", "dark"),
+        prose_v("ArticleCommentsL1", "n-comments-options-off"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-levels-0-1-options-off",
     ),
     # -- options on
     path(
         "def-light--n-comments-levels-0-1-options-on",
-        prose_v("StoryCommentsL1", "n-comments-options-on", "light"),
+        prose_v("StoryCommentsL1", "n-comments-options-on"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-levels-0-1-options-on",
     ),
     path(
         "def-dark--n-comments-levels-0-1-options-on",
-        prose_v("StoryCommentsL1", "n-comments-options-on", "dark"),
+        prose_v("StoryCommentsL1", "n-comments-options-on"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-levels-0-1-options-on",
     ),
     # -- options on-js
     path(
         "def-light--n-comments-levels-0-1-opts-on-js",
-        prose_v("TaleCommentsL1", "n-comments-options-on-js", "light"),
+        prose_v("TaleCommentsL1", "n-comments-options-on-js"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-levels-0-1-opts-on-js",
     ),
     path(
         "def-dark--n-comments-levels-0-1-opts-on-js",
-        prose_v("TaleCommentsL1", "n-comments-options-on-js", "dark"),
+        prose_v("TaleCommentsL1", "n-comments-options-on-js"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-levels-0-1-opts-on-js",
     ),
     # -----------------------------
@@ -916,34 +996,40 @@ urlpatterns = [
     # -- options off
     path(
         "def-light--n-comments-levels-0-2-options-off",
-        prose_v("ArticleCommentsL2", "n-comments-options-off", "light"),
+        prose_v("ArticleCommentsL2", "n-comments-options-off"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-levels-0-2-options-off",
     ),
     path(
         "def-dark--n-comments-levels-0-2-options-off",
-        prose_v("ArticleCommentsL2", "n-comments-options-off", "dark"),
+        prose_v("ArticleCommentsL2", "n-comments-options-off"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-levels-0-2-options-off",
     ),
     # -- options on
     path(
         "def-light--n-comments-levels-0-2-options-on",
-        prose_v("StoryCommentsL2", "n-comments-options-on", "light"),
+        prose_v("StoryCommentsL2", "n-comments-options-on"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-levels-0-2-options-on",
     ),
     path(
         "def-dark--n-comments-levels-0-2-options-on",
-        prose_v("StoryCommentsL2", "n-comments-options-on", "dark"),
+        prose_v("StoryCommentsL2", "n-comments-options-on"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-levels-0-2-options-on",
     ),
     # -- options on-js
     path(
         "def-light--n-comments-levels-0-2-opts-on-js",
-        prose_v("TaleCommentsL2", "n-comments-options-on-js", "light"),
+        prose_v("TaleCommentsL2", "n-comments-options-on-js"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-levels-0-2-opts-on-js",
     ),
     path(
         "def-dark--n-comments-levels-0-2-opts-on-js",
-        prose_v("TaleCommentsL2", "n-comments-options-on-js", "dark"),
+        prose_v("TaleCommentsL2", "n-comments-options-on-js"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-levels-0-2-opts-on-js",
     ),
     # -----------------------------
@@ -951,46 +1037,54 @@ urlpatterns = [
     # -- options off
     path(
         "def-light--n-comments-levels-0-3-options-off",
-        prose_v("ArticleCommentsL3", "n-comments-options-off", "light"),
+        prose_v("ArticleCommentsL3", "n-comments-options-off"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-levels-0-3-options-off",
     ),
     path(
         "def-dark--n-comments-levels-0-3-options-off",
-        prose_v("ArticleCommentsL3", "n-comments-options-off", "dark"),
+        prose_v("ArticleCommentsL3", "n-comments-options-off"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-levels-0-3-options-off",
     ),
     # -- options on
     path(
         "def-light--n-comments-levels-0-3-options-on",
-        prose_v("StoryCommentsL3", "n-comments-options-on", "light"),
+        prose_v("StoryCommentsL3", "n-comments-options-on"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-levels-0-3-options-on",
     ),
     path(
         "def-dark--n-comments-levels-0-3-options-on",
-        prose_v("StoryCommentsL3", "n-comments-options-on", "dark"),
+        prose_v("StoryCommentsL3", "n-comments-options-on"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-levels-0-3-options-on",
     ),
     # -- options on-js
     path(
         "def-light--n-comments-levels-0-3-opts-on-js",
-        prose_v("TaleCommentsL3", "n-comments-options-on-js", "light"),
+        prose_v("TaleCommentsL3", "n-comments-options-on-js"),
+        {"theme": "", "cscheme": "light"},
         name="def-light--n-comments-levels-0-3-opts-on-js",
     ),
     path(
         "def-dark--n-comments-levels-0-3-opts-on-js",
-        prose_v("TaleCommentsL3", "n-comments-options-on-js", "dark"),
+        prose_v("TaleCommentsL3", "n-comments-options-on-js"),
+        {"theme": "", "cscheme": "dark"},
         name="def-dark--n-comments-levels-0-3-opts-on-js",
     ),
     ###########################
     # avatar_in_thread mockups.
     path(
         "ait_light__preview_level_0",
-        preview_v("light", theme="avatar_in_thread", reply_to=0),
+        preview_v(reply_to=0),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait_light__preview_level_0",
     ),
     path(
         "ait_dark__preview_level_0",
-        preview_v("dark", theme="avatar_in_thread", reply_to=0),
+        preview_v(reply_to=0),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait_dark__preview_level_0",
     ),
     path(
@@ -1006,12 +1100,14 @@ urlpatterns = [
     # -------------------------------------------
     path(
         "ait_light__preview_level_1",
-        preview_v("light", theme="avatar_in_thread", reply_to=1),
+        preview_v(reply_to=1),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait_light__preview_level_1",
     ),
     path(
         "ait_dark__preview_level_1",
-        preview_v("dark", theme="avatar_in_thread", reply_to=1),
+        preview_v(reply_to=1),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait_dark__preview_level_1",
     ),
     path(
@@ -1029,22 +1125,26 @@ urlpatterns = [
     #
     path(
         "ait-light--reply",
-        reply_comment_v("light", theme="avatar_in_thread"),
+        ReplyComment2View.as_view(),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--reply",
     ),
     path(
         "ait-dark--reply",
-        reply_comment_v("dark", theme="avatar_in_thread"),
+        ReplyComment2View.as_view(),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--reply",
     ),
     path(
         "ait-light--reply-ii",
-        reply_comment_ii_v("light", theme="avatar_in_thread"),
+        ReplyComment3View.as_view(),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--reply-ii",
     ),
     path(
         "ait-dark--reply-ii",
-        reply_comment_ii_v("dark", theme="avatar_in_thread"),
+        ReplyComment3View.as_view(),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--reply-ii",
     ),
     # ----------------------
@@ -1052,328 +1152,210 @@ urlpatterns = [
     # -- options off
     path(
         "ait-light--1-comment-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "one-comment-options-off",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL0", "one-comment-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--1-comment-level-0-options-off",
     ),
     path(
         "ait-dark--1-comment-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "one-comment-options-off",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL0", "one-comment-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--1-comment-level-0-options-off",
     ),
     # -- options on
     path(
         "ait-light--1-comment-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "one-comment-options-on",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL0", "one-comment-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--1-comment-level-0-options-on",
     ),
     path(
         "ait-dark--1-comment-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "one-comment-options-on",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL0", "one-comment-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--1-comment-level-0-options-on",
     ),
     # -- options on-js
     path(
         "ait-light--1-comment-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "one-comment-options-on-js",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL0", "one-comment-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--1-comment-level-0-options-on-js",
     ),
     path(
         "ait-dark--1-comment-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "one-comment-options-on-js",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL0", "one-comment-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--1-comment-level-0-options-on-js",
     ),
     # ------------------------------------------
     # -- avatar_in_thread, comment list, level 0
     path(
         "ait-light--n-comments-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "n-comments-options-off",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL0", "n-comments-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-level-0-options-off",
     ),
     path(
         "ait-dark--n-comments-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "n-comments-options-off",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL0", "n-comments-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-level-0-options-off",
     ),
     path(
         "ait-light--n-comments-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "n-comments-options-on",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL0", "n-comments-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-level-0-options-on",
     ),
     path(
         "ait-dark--n-comments-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "n-comments-options-on",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL0", "n-comments-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-level-0-options-on",
     ),
     # -- options on-js
     path(
         "ait-light--n-comments-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "n-comments-options-on-js",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL0", "n-comments-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-level-0-options-on-js",
     ),
     path(
         "ait-dark--n-comments-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "n-comments-options-on-js",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL0", "n-comments-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-level-0-options-on-js",
     ),
     # ---------------------------------------------
     # -- avatar_in_thread, comment list, levels 0-1
     path(
         "ait-light--n-comments-levels-0-1-options-off",
-        prose_v(
-            "ArticleCommentsL1",
-            "n-comments-options-off",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL1", "n-comments-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-levels-0-1-options-off",
     ),
     path(
         "ait-dark--n-comments-levels-0-1-options-off",
-        prose_v(
-            "ArticleCommentsL1",
-            "n-comments-options-off",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL1", "n-comments-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-levels-0-1-options-off",
     ),
     path(
         "ait-light--n-comments-levels-0-1-options-on",
-        prose_v(
-            "StoryCommentsL1",
-            "n-comments-options-on",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL1", "n-comments-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-levels-0-1-options-on",
     ),
     path(
         "ait-dark--n-comments-levels-0-1-options-on",
-        prose_v(
-            "StoryCommentsL1",
-            "n-comments-options-on",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL1", "n-comments-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-levels-0-1-options-on",
     ),
     # -- options on-js
     path(
         "ait-light--n-comments-levels-0-1-opts-on-js",
-        prose_v(
-            "TaleCommentsL1",
-            "n-comments-options-on-js",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL1", "n-comments-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-levels-0-1-opts-on-js",
     ),
     path(
         "ait-dark--n-comments-levels-0-1-opts-on-js",
-        prose_v(
-            "TaleCommentsL1",
-            "n-comments-options-on-js",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL1", "n-comments-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-levels-0-1-opts-on-js",
     ),
     # ---------------------------------------------
     # -- avatar_in_thread, comment list, levels 0-2
     path(
         "ait-light--n-comments-levels-0-2-options-off",
-        prose_v(
-            "ArticleCommentsL2",
-            "n-comments-options-off",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL2", "n-comments-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-levels-0-2-options-off",
     ),
     path(
         "ait-dark--n-comments-levels-0-2-options-off",
-        prose_v(
-            "ArticleCommentsL2",
-            "n-comments-options-off",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL2", "n-comments-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-levels-0-2-options-off",
     ),
     path(
         "ait-light--n-comments-levels-0-2-options-on",
-        prose_v(
-            "StoryCommentsL2",
-            "n-comments-options-on",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL2", "n-comments-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-levels-0-2-options-on",
     ),
     path(
         "ait-dark--n-comments-levels-0-2-options-on",
-        prose_v(
-            "StoryCommentsL2",
-            "n-comments-options-on",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL2", "n-comments-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-levels-0-2-options-on",
     ),
     # -- options on-js
     path(
         "ait-light--n-comments-levels-0-2-opts-on-js",
-        prose_v(
-            "TaleCommentsL2",
-            "n-comments-options-on-js",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL2", "n-comments-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-levels-0-2-opts-on-js",
     ),
     path(
         "ait-dark--n-comments-levels-0-2-opts-on-js",
-        prose_v(
-            "TaleCommentsL2",
-            "n-comments-options-on-js",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL2", "n-comments-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-levels-0-2-opts-on-js",
     ),
     # ---------------------------------------------
     # -- avatar_in_thread, comment list, levels 0-3
     path(
         "ait-light--n-comments-levels-0-3-options-off",
-        prose_v(
-            "ArticleCommentsL3",
-            "n-comments-options-off",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL3", "n-comments-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-levels-0-3-options-off",
     ),
     path(
         "ait-dark--n-comments-levels-0-3-options-off",
-        prose_v(
-            "ArticleCommentsL3",
-            "n-comments-options-off",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("ArticleCommentsL3", "n-comments-options-off"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-levels-0-3-options-off",
     ),
     path(
         "ait-light--n-comments-levels-0-3-options-on",
-        prose_v(
-            "StoryCommentsL3",
-            "n-comments-options-on",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL3", "n-comments-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-levels-0-3-options-on",
     ),
     path(
         "ait-dark--n-comments-levels-0-3-options-on",
-        prose_v(
-            "StoryCommentsL3",
-            "n-comments-options-on",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("StoryCommentsL3", "n-comments-options-on"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-levels-0-3-options-on",
     ),
     # -- options on-js
     path(
         "ait-light--n-comments-levels-0-3-opts-on-js",
-        prose_v(
-            "TaleCommentsL3",
-            "n-comments-options-on-js",
-            "light",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL3", "n-comments-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "light"},
         name="ait-light--n-comments-levels-0-3-opts-on-js",
     ),
     path(
         "ait-dark--n-comments-levels-0-3-opts-on-js",
-        prose_v(
-            "TaleCommentsL3",
-            "n-comments-options-on-js",
-            "dark",
-            theme="avatar_in_thread",
-        ),
+        prose_v("TaleCommentsL3", "n-comments-options-on-js"),
+        {"theme": "avatar_in_thread", "cscheme": "dark"},
         name="ait-dark--n-comments-levels-0-3-opts-on-js",
     ),
     # ##########################
     # feedback_in_header mockups.
     path(
         "fih_light__preview_level_0",
-        preview_v("light", theme="feedback_in_header", reply_to=0),
+        preview_v(reply_to=0),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih_light__preview_level_0",
     ),
     path(
         "fih_dark__preview_level_0",
-        preview_v("dark", theme="feedback_in_header", reply_to=0),
+        preview_v(reply_to=0),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih_dark__preview_level_0",
     ),
     path(
@@ -1389,12 +1371,14 @@ urlpatterns = [
     # -------------------------------------------
     path(
         "fih_light__preview_level_1",
-        preview_v("light", theme="feedback_in_header", reply_to=1),
+        preview_v(reply_to=1),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih_light__preview_level_1",
     ),
     path(
         "fih_dark__preview_level_1",
-        preview_v("dark", theme="feedback_in_header", reply_to=1),
+        preview_v(reply_to=1),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih_dark__preview_level_1",
     ),
     path(
@@ -1412,22 +1396,26 @@ urlpatterns = [
     #
     path(
         "fih-light--reply",
-        reply_comment_v("light", theme="feedback_in_header"),
+        ReplyComment2View.as_view(),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--reply",
     ),
     path(
         "fih-dark--reply",
-        reply_comment_v("dark", theme="feedback_in_header"),
+        ReplyComment2View.as_view(),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--reply",
     ),
     path(
         "fih-light--reply-ii",
-        reply_comment_ii_v("light", theme="feedback_in_header"),
+        ReplyComment3View.as_view(),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--reply-ii",
     ),
     path(
         "fih-dark--reply-ii",
-        reply_comment_ii_v("dark", theme="feedback_in_header"),
+        ReplyComment3View.as_view(),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--reply-ii",
     ),
     # ----------------------
@@ -1435,158 +1423,98 @@ urlpatterns = [
     # -- options off
     path(
         "fih-light--1-comment-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "one-comment-options-off",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL0", "one-comment-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--1-comment-level-0-options-off",
     ),
     path(
         "fih-dark--1-comment-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "one-comment-options-off",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL0", "one-comment-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--1-comment-level-0-options-off",
     ),
     path(
         "fih-light--1-comment-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "one-comment-options-on",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("StoryCommentsL0", "one-comment-options-on"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--1-comment-level-0-options-on",
     ),
     path(
         "fih-dark--1-comment-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "one-comment-options-on",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("StoryCommentsL0", "one-comment-options-on"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--1-comment-level-0-options-on",
     ),
     # -- options on-js
     path(
         "fih-light--1-comment-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "one-comment-options-on-js",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL0", "one-comment-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--1-comment-level-0-options-on-js",
     ),
     path(
         "fih-dark--1-comment-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "one-comment-options-on-js",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL0", "one-comment-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--1-comment-level-0-options-on-js",
     ),
     # ------------------------------------------
     # -- feedback_in_header, comment list, level 0
     path(
         "fih-light--n-comments-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "n-comments-options-off",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL0", "n-comments-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-level-0-options-off",
     ),
     path(
         "fih-dark--n-comments-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "n-comments-options-off",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL0", "n-comments-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-level-0-options-off",
     ),
     path(
         "fih-light--n-comments-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "n-comments-options-on",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("StoryCommentsL0", "n-comments-options-on"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-level-0-options-on",
     ),
     path(
         "fih-dark--n-comments-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "n-comments-options-on",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("StoryCommentsL0", "n-comments-options-on"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-level-0-options-on",
     ),
     # -- options on-js
     path(
         "fih-light--n-comments-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "n-comments-options-on-js",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL0", "n-comments-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-level-0-options-on-js",
     ),
     path(
         "fih-dark--n-comments-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "n-comments-options-on-js",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL0", "n-comments-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-level-0-options-on-js",
     ),
     # ---------------------------------------------
     # -- feedback_in_header, comment list, levels 0-1
     path(
         "fih-light--n-comments-levels-0-1-options-off",
-        prose_v(
-            "ArticleCommentsL1",
-            "n-comments-options-off",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL1", "n-comments-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-levels-0-1-options-off",
     ),
     path(
         "fih-dark--n-comments-levels-0-1-options-off",
-        prose_v(
-            "ArticleCommentsL1",
-            "n-comments-options-off",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL1", "n-comments-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-levels-0-1-options-off",
     ),
     path(
         "fih-light--n-comments-levels-0-1-options-on",
-        prose_v(
-            "StoryCommentsL1",
-            "n-comments-options-on",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("StoryCommentsL1", "n-comments-options-on"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-levels-0-1-options-on",
     ),
     path(
@@ -1594,168 +1522,113 @@ urlpatterns = [
         prose_v(
             "StoryCommentsL1",
             "n-comments-options-on",
-            "dark",
-            theme="feedback_in_header",
         ),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-levels-0-1-options-on",
     ),
     # -- options on-js
     path(
         "fih-light--n-comments-levels-0-1-opts-on-js",
-        prose_v(
-            "TaleCommentsL1",
-            "n-comments-options-on-js",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL1", "n-comments-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-levels-0-1-opts-on-js",
     ),
     path(
         "fih-dark--n-comments-levels-0-1-opts-on-js",
-        prose_v(
-            "TaleCommentsL1",
-            "n-comments-options-on-js",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL1", "n-comments-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-levels-0-1-opts-on-js",
     ),
     # ---------------------------------------------
     # -- feedback_in_header, comment list, levels 0-2
     path(
         "fih-light--n-comments-levels-0-2-options-off",
-        prose_v(
-            "ArticleCommentsL2",
-            "n-comments-options-off",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL2", "n-comments-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-levels-0-2-options-off",
     ),
     path(
         "fih-dark--n-comments-levels-0-2-options-off",
-        prose_v(
-            "ArticleCommentsL2",
-            "n-comments-options-off",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL2", "n-comments-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-levels-0-2-options-off",
     ),
     path(
         "fih-light--n-comments-levels-0-2-options-on",
-        prose_v(
-            "StoryCommentsL2",
-            "n-comments-options-on",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("StoryCommentsL2", "n-comments-options-on"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-levels-0-2-options-on",
     ),
     path(
         "fih-dark--n-comments-levels-0-2-options-on",
-        prose_v(
-            "StoryCommentsL2",
-            "n-comments-options-on",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("StoryCommentsL2", "n-comments-options-on"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-levels-0-2-options-on",
     ),
     # -- options on-js
     path(
         "fih-light--n-comments-levels-0-2-opts-on-js",
-        prose_v(
-            "TaleCommentsL2",
-            "n-comments-options-on-js",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL2", "n-comments-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-levels-0-2-opts-on-js",
     ),
     path(
         "fih-dark--n-comments-levels-0-2-opts-on-js",
-        prose_v(
-            "TaleCommentsL2",
-            "n-comments-options-on-js",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL2", "n-comments-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-levels-0-2-opts-on-js",
     ),
     # ---------------------------------------------
     # -- feedback_in_header, comment list, levels 0-3
     path(
         "fih-light--n-comments-levels-0-3-options-off",
-        prose_v(
-            "ArticleCommentsL3",
-            "n-comments-options-off",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL3", "n-comments-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-levels-0-3-options-off",
     ),
     path(
         "fih-dark--n-comments-levels-0-3-options-off",
-        prose_v(
-            "ArticleCommentsL3",
-            "n-comments-options-off",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("ArticleCommentsL3", "n-comments-options-off"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-levels-0-3-options-off",
     ),
     path(
         "fih-light--n-comments-levels-0-3-options-on",
-        prose_v(
-            "StoryCommentsL3",
-            "n-comments-options-on",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("StoryCommentsL3", "n-comments-options-on"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-levels-0-3-options-on",
     ),
     path(
         "fih-dark--n-comments-levels-0-3-options-on",
-        prose_v(
-            "StoryCommentsL3",
-            "n-comments-options-on",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("StoryCommentsL3", "n-comments-options-on"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-levels-0-3-options-on",
     ),
     # -- options on-js
     path(
         "fih-light--n-comments-levels-0-3-opts-on-js",
-        prose_v(
-            "TaleCommentsL3",
-            "n-comments-options-on-js",
-            "light",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL3", "n-comments-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "light"},
         name="fih-light--n-comments-levels-0-3-opts-on-js",
     ),
     path(
         "fih-dark--n-comments-levels-0-3-opts-on-js",
-        prose_v(
-            "TaleCommentsL3",
-            "n-comments-options-on-js",
-            "dark",
-            theme="feedback_in_header",
-        ),
+        prose_v("TaleCommentsL3", "n-comments-options-on-js"),
+        {"theme": "feedback_in_header", "cscheme": "dark"},
         name="fih-dark--n-comments-levels-0-3-opts-on-js",
     ),
     # ##########################
     # avatar_in_header mockups.
     path(
         "aih_light__preview_level_0",
-        preview_v("light", theme="avatar_in_header", reply_to=0),
+        preview_v(reply_to=0),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih_light__preview_level_0",
     ),
     path(
         "aih_dark__preview_level_0",
-        preview_v("dark", theme="avatar_in_header", reply_to=0),
+        preview_v(reply_to=0),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih_dark__preview_level_0",
     ),
     path(
@@ -1771,12 +1644,14 @@ urlpatterns = [
     # -------------------------------------------
     path(
         "aih_light__preview_level_1",
-        preview_v("light", theme="avatar_in_header", reply_to=1),
+        preview_v(reply_to=1),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih_light__preview_level_1",
     ),
     path(
         "aih_dark__preview_level_1",
-        preview_v("dark", theme="avatar_in_header", reply_to=1),
+        preview_v(reply_to=1),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih_dark__preview_level_1",
     ),
     path(
@@ -1794,22 +1669,26 @@ urlpatterns = [
     #
     path(
         "aih-light--reply",
-        reply_comment_v("light", theme="avatar_in_header"),
+        ReplyComment2View.as_view(),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--reply",
     ),
     path(
         "aih-dark--reply",
-        reply_comment_v("dark", theme="avatar_in_header"),
+        ReplyComment2View.as_view(),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--reply",
     ),
     path(
         "aih-light--reply-ii",
-        reply_comment_ii_v("light", theme="avatar_in_header"),
+        ReplyComment3View.as_view(),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--reply-ii",
     ),
     path(
         "aih-dark--reply-ii",
-        reply_comment_ii_v("dark", theme="avatar_in_header"),
+        ReplyComment3View.as_view(),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--reply-ii",
     ),
     # ----------------------
@@ -1817,274 +1696,170 @@ urlpatterns = [
     # -- options off
     path(
         "aih-light--1-comment-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "one-comment-options-off",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL0", "one-comment-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--1-comment-level-0-options-off",
     ),
     path(
         "aih-dark--1-comment-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "one-comment-options-off",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL0", "one-comment-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--1-comment-level-0-options-off",
     ),
     path(
         "aih-light--1-comment-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "one-comment-options-on",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("StoryCommentsL0", "one-comment-options-on"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--1-comment-level-0-options-on",
     ),
     path(
         "aih-dark--1-comment-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "one-comment-options-on",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("StoryCommentsL0", "one-comment-options-on"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--1-comment-level-0-options-on",
     ),
     # -- options on-js
     path(
         "aih-light--1-comment-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "one-comment-options-on-js",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL0", "one-comment-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--1-comment-level-0-options-on-js",
     ),
     path(
         "aih-dark--1-comment-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "one-comment-options-on-js",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL0", "one-comment-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--1-comment-level-0-options-on-js",
     ),
     # ------------------------------------------
     # -- avatar_in_header, comment list, level 0
     path(
         "aih-light--n-comments-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "n-comments-options-off",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL0", "n-comments-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-level-0-options-off",
     ),
     path(
         "aih-dark--n-comments-level-0-options-off",
-        prose_v(
-            "ArticleCommentsL0",
-            "n-comments-options-off",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL0", "n-comments-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-level-0-options-off",
     ),
     path(
         "aih-light--n-comments-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "n-comments-options-on",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("StoryCommentsL0", "n-comments-options-on"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-level-0-options-on",
     ),
     path(
         "aih-dark--n-comments-level-0-options-on",
-        prose_v(
-            "StoryCommentsL0",
-            "n-comments-options-on",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("StoryCommentsL0", "n-comments-options-on"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-level-0-options-on",
     ),
     # -- options on-js
     path(
         "aih-light--n-comments-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "n-comments-options-on-js",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL0", "n-comments-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-level-0-options-on-js",
     ),
     path(
         "aih-dark--n-comments-level-0-options-on-js",
-        prose_v(
-            "TaleCommentsL0",
-            "n-comments-options-on-js",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL0", "n-comments-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-level-0-options-on-js",
     ),
     # ---------------------------------------------
     # -- avatar_in_header, comment list, levels 0-1
     path(
         "aih-light--n-comments-levels-0-1-options-off",
-        prose_v(
-            "ArticleCommentsL1",
-            "n-comments-options-off",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL1", "n-comments-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-levels-0-1-options-off",
     ),
     path(
         "aih-dark--n-comments-levels-0-1-options-off",
-        prose_v(
-            "ArticleCommentsL1",
-            "n-comments-options-off",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL1", "n-comments-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-levels-0-1-options-off",
     ),
     path(
         "aih-light--n-comments-levels-0-1-options-on",
-        prose_v(
-            "StoryCommentsL1",
-            "n-comments-options-on",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("StoryCommentsL1", "n-comments-options-on"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-levels-0-1-options-on",
     ),
     path(
         "aih-dark--n-comments-levels-0-1-options-on",
-        prose_v(
-            "StoryCommentsL1",
-            "n-comments-options-on",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("StoryCommentsL1", "n-comments-options-on"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-levels-0-1-options-on",
     ),
     # -- options on-js
     path(
         "aih-light--n-comments-levels-0-1-opts-on-js",
-        prose_v(
-            "TaleCommentsL1",
-            "n-comments-options-on-js",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL1", "n-comments-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-levels-0-1-opts-on-js",
     ),
     path(
         "aih-dark--n-comments-levels-0-1-opts-on-js",
-        prose_v(
-            "TaleCommentsL1",
-            "n-comments-options-on-js",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL1", "n-comments-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-levels-0-1-opts-on-js",
     ),
     # ---------------------------------------------
     # -- avatar_in_header, comment list, levels 0-2
     path(
         "aih-light--n-comments-levels-0-2-options-off",
-        prose_v(
-            "ArticleCommentsL2",
-            "n-comments-options-off",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL2", "n-comments-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-levels-0-2-options-off",
     ),
     path(
         "aih-dark--n-comments-levels-0-2-options-off",
-        prose_v(
-            "ArticleCommentsL2",
-            "n-comments-options-off",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL2", "n-comments-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-levels-0-2-options-off",
     ),
     path(
         "aih-light--n-comments-levels-0-2-options-on",
-        prose_v(
-            "StoryCommentsL2",
-            "n-comments-options-on",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("StoryCommentsL2", "n-comments-options-on"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-levels-0-2-options-on",
     ),
     path(
         "aih-dark--n-comments-levels-0-2-options-on",
-        prose_v(
-            "StoryCommentsL2",
-            "n-comments-options-on",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("StoryCommentsL2", "n-comments-options-on"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-levels-0-2-options-on",
     ),
     # -- options on-js
     path(
         "aih-light--n-comments-levels-0-2-opts-on-js",
-        prose_v(
-            "TaleCommentsL2",
-            "n-comments-options-on-js",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL2", "n-comments-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-levels-0-2-opts-on-js",
     ),
     path(
         "aih-dark--n-comments-levels-0-2-opts-on-js",
-        prose_v(
-            "TaleCommentsL2",
-            "n-comments-options-on-js",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL2", "n-comments-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-levels-0-2-opts-on-js",
     ),
     # ---------------------------------------------
     # -- avatar_in_header, comment list, levels 0-3
     path(
         "aih-light--n-comments-levels-0-3-options-off",
-        prose_v(
-            "ArticleCommentsL3",
-            "n-comments-options-off",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL3", "n-comments-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-levels-0-3-options-off",
     ),
     path(
         "aih-dark--n-comments-levels-0-3-options-off",
-        prose_v(
-            "ArticleCommentsL3",
-            "n-comments-options-off",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("ArticleCommentsL3", "n-comments-options-off"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-levels-0-3-options-off",
     ),
     path(
@@ -2092,40 +1867,27 @@ urlpatterns = [
         prose_v(
             "StoryCommentsL3",
             "n-comments-options-on",
-            "light",
-            theme="avatar_in_header",
         ),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-levels-0-3-options-on",
     ),
     path(
         "aih-dark--n-comments-levels-0-3-options-on",
-        prose_v(
-            "StoryCommentsL3",
-            "n-comments-options-on",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("StoryCommentsL3", "n-comments-options-on"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-levels-0-3-options-on",
     ),
     # -- options on-js
     path(
         "aih-light--n-comments-levels-0-3-opts-on-js",
-        prose_v(
-            "TaleCommentsL3",
-            "n-comments-options-on-js",
-            "light",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL3", "n-comments-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "light"},
         name="aih-light--n-comments-levels-0-3-opts-on-js",
     ),
     path(
         "aih-dark--n-comments-levels-0-3-opts-on-js",
-        prose_v(
-            "TaleCommentsL3",
-            "n-comments-options-on-js",
-            "dark",
-            theme="avatar_in_header",
-        ),
+        prose_v("TaleCommentsL3", "n-comments-options-on-js"),
+        {"theme": "avatar_in_header", "cscheme": "dark"},
         name="aih-dark--n-comments-levels-0-3-opts-on-js",
     ),
     # ##########################

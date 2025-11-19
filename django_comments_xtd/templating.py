@@ -325,7 +325,7 @@ _template_patterns = import_string(settings.COMMENTS_XTD_TEMPLATE_PATTERNS)
 
 
 def get_template_list(template_alias: str, **kwargs) -> list[str]:
-    theme = kwargs.get("theme", settings.COMMENTS_XTD_THEME)
+    theme = kwargs.get("theme") or settings.COMMENTS_XTD_THEME
     subkey = "themed" if theme and len(theme) else "default"
     template_list = _template_patterns[template_alias][subkey]
     return [

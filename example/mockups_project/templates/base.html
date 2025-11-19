@@ -2,7 +2,7 @@
 {% load static %}
 
 <!doctype html>
-<html lang="en" {% block color_scheme %}{% if comments_cscheme %}class="{{ comments_cscheme }}"{% elif request.session.cscheme %}class="{{ request.session.cscheme }}"{% endif %}{% endblock %}>
+<html lang="en" {% block color_scheme %}{% if request.session.cscheme %}class="{{ request.session.cscheme }}"{% endif %}{% endblock %}>
   <head>
     <meta name="charset" content="UTF-8">
     <link rel="icon" href="{% static 'img/favicon.ico' %}" />

@@ -418,10 +418,6 @@ class SingleCommentView(CommentsParamsMixin, JsonResponseMixin, DetailView):
     template_alias = None
     template_alias_js = None
 
-    # Purely design/CSS/UI related attributes:
-    theme = ""
-    cscheme = ""
-
     def get_object(self, comment_id):
         comment = get_object_or_404(
             self.model,
@@ -460,7 +456,6 @@ class SingleCommentView(CommentsParamsMixin, JsonResponseMixin, DetailView):
 
         return get_template_list(
             template_alias,
-            theme=self.theme,
             app_label=self.object.content_object._meta.app_label,
             model=self.object.content_object._meta.model_name,
         )
@@ -469,7 +464,6 @@ class SingleCommentView(CommentsParamsMixin, JsonResponseMixin, DetailView):
         kwargs.update(self.options)
         return super().get_context_data(
             comments_input_allowed=self.is_input_allowed,
-            comments_cscheme=self.cscheme,
             **kwargs,
         )
 

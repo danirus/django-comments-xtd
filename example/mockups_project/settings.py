@@ -39,6 +39,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "middleware.MockupsMiddleware",
 ]
 
 ROOT_URLCONF = "mockups_project.urls"
@@ -169,28 +170,6 @@ COMMENTS_XTD_FN_USER_REPR = _comments_xtd_fn_user_repr
 
 # Make django-comments-xtd send emails in HTML format too.
 COMMENTS_XTD_SEND_HTML_EMAIL = True
-
-# Maximum Thread Level.
-# COMMENTS_XTD_DEFAULT_MAX_THREAD_LEVEL = 0
-
-# Maximum Thread Level per app.model basis.
-# In this example project it makes no sense, as the previous setting
-# already establishes the maximum thread level to 1 for the only model
-# that can receive comments: the `quotes.quote` model.
-# COMMENTS_XTD_MAX_THREAD_LEVEL_BY_APP_MODEL = {
-#     "prose.articlecommentsl0": 0,
-#     "prose.articlecommentsl1": 1,
-#     "prose.articlecommentsl2": 2,
-#     "prose.articlecommentsl3": 3,
-#     "prose.storycommentsl0": 0,
-#     "prose.storycommentsl1": 1,
-#     "prose.storycommentsl2": 2,
-#     "prose.storycommentsl3": 3,
-#     "prose.talecommentsl0": 0,
-#     "prose.talecommentsl1": 1,
-#     "prose.talecommentsl2": 2,
-#     "prose.talecommentsl3": 3,
-# }
 
 # By default ContentType.objects.get_for_model pass True in the
 # keyword argument `for_concrete_model`. If you use Proxy models

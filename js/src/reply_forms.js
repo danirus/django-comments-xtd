@@ -22,9 +22,11 @@ export default class ReplyFormHandler {
         return;
       }
 
+      const level = Number.parseInt(elem.dataset.djcxLevel);
       const reply_to = Number.parseInt(rform_el.elements.reply_to.value);
       const section = this.reply_form_base.cloneNode(true);
       section.dataset.djcx = `reply-form-${reply_to}`;
+      section.classList.add(`reply-form-l${level}`);
 
       // Update field reply_to.
       const new_form = section.querySelector("form");

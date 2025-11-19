@@ -9,7 +9,7 @@
   {% if comments_input_allowed and not comment.is_removed %}
     <div class="hline-l{{ comment.level }}"></div>
     <div class="content">
-      <section class="reply-form" data-djcx="reply-form">
+      <section class="reply-form" data-djcx="reply-form" data-djcx-level="{{ comment.level }}">
         <form id="reply-form-{{ comment.id }}" action="{% url 'comments-xtd-reply' comment.id %}">
           <input type="hidden" name="reply_to" value="{{ comment.id }}">
           <div class="col1-2">

@@ -23,8 +23,8 @@ From v2.10.10 django-comments-xtd includes support for [drf-spectacular](https:/
 
 Example sites and tests run under officially Django [supported versions](https://www.djangoproject.com/download/#supported-versions):
 
-* Django 5.1, 5.0, 4.2, 4.1
-* Python 3.13, 3.12, 3.11, 3.10
+* Django 6.0, 5.1, 5.0, 4.2, 4.1
+* Python 3.14, 3.13, 3.12, 3.11, 3.10
 
 Additional Dependencies:
 

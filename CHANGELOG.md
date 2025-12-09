@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.10.11] - 2025-12-09
+
+* Tested against Django 6.0.
+
 ## [2.10.10] - 2025-10-11
 
 * Fixes issue [475](https://github.com/danirus/django-comments-xtd/issues/475): Add support for drf-spectacular.

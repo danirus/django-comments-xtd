@@ -77,7 +77,7 @@ def get_max_thread_level(content_type):
     key = f"{content_type.app_label}.{content_type.model}"
     setting = settings.COMMENTS_XTD_APP_MODEL_CONFIG  # Aliasing.
 
-    if key in setting and setting[key].get("max_thread_level"):
+    if key in setting and "max_thread_level" in setting[key]:
         return setting[key]["max_thread_level"]
 
     if setting["default"].get("max_thread_level"):
@@ -86,22 +86,24 @@ def get_max_thread_level(content_type):
     return settings.COMMENTS_XTD_DEFAULT_MAX_THREAD_LEVEL
 
 
-def get_list_order(content_type):
+def get_list_order(content_type=None):
     """Get tuple of fields to use in `order by` clause in comment queries."""
-    key = f"{content_type.app_label}.{content_type.model}"
     setting = settings.COMMENTS_XTD_APP_MODEL_CONFIG  # Aliasing.
 
-    if key in setting and setting[key].get("list_order"):
-        return setting[key]["list_order"]
+    if content_type:
+        key = f"{content_type.app_label}.{content_type.model}"
 
-    if setting["default"].get("list_order"):
+        if key in setting and "list_order" in setting[key]:
+            return setting[key]["list_order"]
+
+    if "default" in setting and "list_order" in setting["default"]:
         return setting["default"]["list_order"]
 
     return settings.COMMENTS_XTD_DEFAULT_LIST_ORDER
 
 
 # --------------------------------------------------------------------
-def get_app_model_options(comment=None, content_type=None):
+def get_app_model_config(comment=None, content_type=None):
     """
     Get the app_model_option from `COMMENTS_XTD_APP_MODEL_CONFIG`.
 
@@ -170,7 +172,7 @@ def check_option(option, comment=None, content_type=None, options=None):
     if options is not None:
         retrieved_option = options[option]
     else:
-        retrieved_option = get_app_model_options(
+        retrieved_option = get_app_model_config(
             comment=comment, content_type=content_type
         )[option]
 

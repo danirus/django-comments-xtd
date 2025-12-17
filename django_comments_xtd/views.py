@@ -280,7 +280,7 @@ def on_comment_will_be_posted(sender, comment, request, **kwargs):
     else:
         user_is_authenticated = False
 
-    options = utils.get_app_model_options(comment)
+    options = utils.get_app_model_config(comment)
     return not (  # Return False to reject comment.
         options["who_can_post"] == "users" and not user_is_authenticated
     )
@@ -424,7 +424,7 @@ class SingleCommentView(CommentsParamsMixin, JsonResponseMixin, DetailView):
             pk=comment_id,
             site__pk=utils.get_current_site_id(self.request),
         )
-        self.options = utils.get_app_model_options(
+        self.options = utils.get_app_model_config(
             content_type=comment.content_type
         )
 

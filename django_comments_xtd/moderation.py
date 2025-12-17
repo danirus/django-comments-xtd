@@ -48,9 +48,7 @@ class XtdCommentModerator(CommentModerator):
         recipient_list = [
             manager_tuple[1] for manager_tuple in settings.MANAGERS
         ]
-        t = loader.get_template(
-            "django_comments_xtd/removal_notification_email.txt"
-        )
+        t = loader.get_template("comments/removal_notification_email.txt")
         c = {
             "comment": comment,
             "content_object": content_object,
@@ -116,7 +114,13 @@ class XtdModerator(Moderator):
         comment_was_flagged.connect(self.comment_flagged, sender=get_model())
 
     def comment_flagged(
-        self, sender, comment, flag, created, request, **kwargs
+        self,
+        sender,
+        comment,
+        flag,
+        created,
+        request,
+        **kwargs,
     ):
         model = comment.content_type.model_class()
         if model not in self._registry:

@@ -65,6 +65,10 @@ COMMENTS_XTD_APP_MODEL_CONFIG = {
     }
 }
 
+# When True, an approval or removal operation on a comment will
+# trigger a publishing or withholding operation on its nested comments.
+COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED = True
+
 
 # Define a function to return the user representation.
 def _get_username(user):
@@ -84,7 +88,14 @@ COMMENTS_XTD_REACTIONS_ROW_LENGTH = 4
 # How many users are listed when hovering a reaction.
 COMMENTS_XTD_MAX_USERS_IN_TOOLTIP = 10
 
-# Use a theme by assigning a value to the COMMENTS_INK_THEME setting.
+# How many users are listed per page in the `list_reacted` API view.
+COMMENTS_XTD_REACTION_AUTHORS_PER_PAGE = 30
+
+# When listing reaction authors, the list of
+# authors is ordered using the following list.
+COMMENTS_XTD_REACTION_AUTHORS_LIST_ORDER = ("-id",)
+
+# Use a theme by assigning a value to the COMMENTS_XTD_THEME setting.
 # The value must be the name of a directory within the templates directory.
 # By default django-comments-xtd comes with a few themes that you can use
 # to render comments. Create your own themed templates by adding a new

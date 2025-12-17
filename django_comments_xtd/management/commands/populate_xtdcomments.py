@@ -19,10 +19,7 @@ class Command(BaseCommand):
         for comment in Comment.objects.all():
             #
             # Insert into django_comments_xtd_thread.
-            sql = (
-                "INSERT INTO %(table)s ('id', 'score', 'rating') "
-                "VALUES (%(id)d, 0, 0)"
-            )
+            sql = "INSERT INTO %(table)s ('id', 'score') VALUES (%(id)d, 0)"
             cursor.execute(
                 sql % {"table": CommentThread._meta.db_table, "id": comment.id}
             )
@@ -47,9 +44,7 @@ class Command(BaseCommand):
                 self.populate_db(connections[db_conn].cursor())
                 total += XtdComment.objects.using(db_conn).count()
             except ConnectionDoesNotExist:
-                self.stdout.write(
-                    f"DB connection '{db_conn}' does not exist."
-                )
+                self.stdout.write(f"DB connection '{db_conn}' does not exist.")
             except IntegrityError:
                 if db_conn != "default":
                     self.stdout.write(
@@ -62,4 +57,4 @@ class Command(BaseCommand):
                     )
             finally:
                 continue  # noqa: B012
-        self.stdout.write(f"Added {total} InkComment object(s).")
+        self.stdout.write(f"Added {total} XtdComment object(s).")

@@ -1,46 +1,18 @@
 from unittest.mock import patch
 
 import django_comments
-from django.contrib.sites.models import Site
 from django.test import TestCase
 
 from django_comments_xtd.forms import XtdCommentForm
 from django_comments_xtd.models import TmpXtdComment, XtdComment
 from django_comments_xtd.tests.models import Article
+from django_comments_xtd.tests.test_models import thread_test_step_1
 
 
 class GetFormTestCase(TestCase):
     def test_get_form(self):
-        # check function django_comments_xtd.get_form retrieves the due class
+        # check function django_comments_ink.get_form retrieves the due class
         self.assertTrue(django_comments.get_form() == XtdCommentForm)
-
-    def test_form_uses_comment_in_kwargs(self):
-        site = Site.objects.get(pk=1)
-        article = Article.objects.create(
-            title="September",
-            slug="september",
-            body="What I did on September...",
-        )
-        comment = XtdComment.objects.create(
-            id=134,
-            content_object=article,
-            site=site,
-            comment="comment 1 to article",
-            is_removed=False,
-            is_public=True,
-        )
-
-        form = XtdCommentForm(target_object=article, comment=None)
-        self.assertNotIn("reply_to", form.initial)
-        self.assertEqual(
-            form.fields["followup"].widget.attrs["id"], "id_followup"
-        )
-
-        form = XtdCommentForm(target_object=article, comment=comment)
-        self.assertEqual(form.initial["reply_to"], 134)
-        self.assertEqual(
-            form.fields["followup"].widget.attrs["id"], "id_followup_134"
-        )
 
 
 class XtdCommentFormTestCase(TestCase):
@@ -65,7 +37,7 @@ class XtdCommentFormTestCase(TestCase):
             "reply_to": 0,
             "level": 1,
             "order": 1,
-            "comment": "Es war einmal eine kleine...",
+            "comment": "Es war einmal iene kleine...",
         }
         data.update(self.form.initial)
         form = django_comments.get_form()(self.article, data)
@@ -76,10 +48,19 @@ class XtdCommentFormTestCase(TestCase):
         # it does have the new field 'followup'
         self.assertTrue("followup" in comment)
 
+    def test_get_form_to_reply(self):
+        thread_test_step_1(self.article)
+        comment = XtdComment.objects.first()
+        form = django_comments.get_form()(self.article, comment=comment)
+        reply_to_initial_value = form.get_initial_for_field(
+            form.fields["reply_to"], field_name="reply_to"
+        )
+        self.assertEqual(reply_to_initial_value, comment.pk)
+
     @patch.multiple(
         "django_comments_xtd.conf.settings", COMMENTS_XTD_DEFAULT_FOLLOWUP=False
     )
-    def test_followup_pre_checked(self):
+    def test_followup_prechecked(self):
         # Have to update form object to re-initialize 'followup' checkbox
         # with settings.
         self.form = django_comments.get_form()(self.article)
@@ -88,7 +69,7 @@ class XtdCommentFormTestCase(TestCase):
     @patch.multiple(
         "django_comments_xtd.conf.settings", COMMENTS_XTD_DEFAULT_FOLLOWUP=True
     )
-    def test_followup_pre_unchecked(self):
+    def test_followup_preunchecked(self):
         # Have to update form object to re-initialize 'followup' checkbox
         # with settings.
         self.form = django_comments.get_form()(self.article)

@@ -8,13 +8,18 @@ from django.db.models import F, Max, Min, Prefetch, Q
 from django.db.models.signals import post_delete
 from django.db.transaction import atomic
 from django.urls import reverse
+from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from django_comments.managers import CommentManager
 from django_comments.models import Comment, CommentFlag
 
 from django_comments_xtd import get_model, get_reaction_enum
 from django_comments_xtd.conf import settings
-from django_comments_xtd.utils import get_current_site_id, get_max_thread_level
+from django_comments_xtd.utils import (
+    get_current_site_id,
+    get_list_order,
+    get_max_thread_level,
+)
 
 
 # ruff: noqa: N818
@@ -29,6 +34,24 @@ class MaxThreadLevelExceededException(Exception):
 class CommentThread(models.Model):
     id = models.BigIntegerField(primary_key=True)
     score = models.IntegerField(default=0, db_index=True)  # Sum of +/- votes.
+
+
+class XtdCommentManager(CommentManager):
+    def get_queryset(self):
+        return super().get_queryset().order_by(*get_list_order())
+
+    def for_model(self, model, site=None):
+        content_type = ContentType.objects.get_for_model(model)
+        filter_fields = {
+            "content_type": content_type,
+            "level__lte": get_max_thread_level(content_type),
+        }
+        if site:
+            filter_fields["site"] = site
+        qs = super().get_queryset().filter(**filter_fields)
+        if isinstance(model, models.Model):
+            qs = qs.filter(object_pk=force_str(model._get_pk_val()))
+        return qs.order_by(*get_list_order(content_type))
 
 
 class XtdComment(Comment):
@@ -46,7 +69,7 @@ class XtdComment(Comment):
         blank=True, default=False, help_text=_("Notify follow-up comments")
     )
     nested_count = models.IntegerField(default=0, db_index=True)
-    objects = CommentManager()
+    objects = XtdCommentManager()
 
     def __str__(self):
         return f"({self.id}) {self.name}: {self.comment[:50]}..."

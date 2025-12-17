@@ -16,7 +16,15 @@ DATABASES = {
         "PASSWORD": "",
         "HOST": "",
         "PORT": "",
-    }
+    },
+    "secondary": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "secondary_db",
+        "USER": "",
+        "PASSWORD": "",
+        "HOST": "",
+        "PORT": "",
+    },
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -104,23 +112,28 @@ COMMENTS_APP = "django_comments_xtd"
 
 DEFAULT_FROM_EMAIL = "Alice Bloggs <alice@example.com>"
 
+COMMENTS_HIDE_REMOVED = True
+
+COMMENTS_XTD_PUBLISH_OR_WITHHOLD_NESTED = True
+
 COMMENTS_XTD_CONFIRM_EMAIL = True
 COMMENTS_XTD_SALT = b"es-war-einmal-una-bella-princesa-in-a-beautiful-castle"
 COMMENTS_XTD_DEFAULT_MAX_THREAD_LEVEL = 3
 
-COMMENTS_XTD_APP_MODEL_OPTIONS = {
+COMMENTS_XTD_APP_MODEL_CONFIG = {
     "default": {
         "who_can_post": "all",  # Valid values: "users", "all"
-        "allow_flagging": True,
+        "comments_flagging_enabled": True,
     },
     "tests.diary": {
-        "allow_flagging": True,
-        "allow_feedback": True,
-        "show_feedback": True,
+        "comments_flagging_enabled": True,
+        "comments_reacting_enabled": True,
         "max_thread_level": 0,
     },
     "tests.quote": {
         "who_can_post": "users",
+        "comments_voting_enabled": True,
+        "list_order": ("-thread__score", "thread__id", "order"),
     },
 }
 
@@ -134,3 +147,7 @@ REST_FRAMEWORK = {
 }
 
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
+
+FORMS_URLFIELD_ASSUME_HTTPS = True
+
+COMMENTS_XTD_REACTION_AUTHORS_PER_PAGE = 5

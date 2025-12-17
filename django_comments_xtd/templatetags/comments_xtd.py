@@ -24,7 +24,7 @@ from django_comments_xtd import get_reaction_enum
 from django_comments_xtd.conf import settings
 from django_comments_xtd.templating import get_template_list
 from django_comments_xtd.utils import (
-    get_app_model_options,
+    get_app_model_config,
     get_list_order,
     get_max_thread_level,
 )
@@ -60,13 +60,11 @@ class BaseXtdCommentNode(BaseCommentNode):
         if not object_pk:
             return self.comment_model.objects.none()
 
-        mtl = get_max_thread_level(ctype)
-        order_by_tuple = get_list_order(ctype)
         return (
             super()
             .get_queryset(context)
-            .filter(level__lte=mtl)
-            .order_by(*order_by_tuple)
+            .filter(level__lte=get_max_thread_level(ctype))
+            .order_by(*get_list_order(ctype))
         )
 
 
@@ -176,7 +174,7 @@ class RenderXtdCommentListNode(XtdCommentListNode):
             model=ctype.model,
             theme=flat_ctx.get("comments_theme", settings.COMMENTS_XTD_THEME),
         )
-        options = get_app_model_options(content_type=ctype)
+        options = get_app_model_config(content_type=ctype)
         check_input_allowed_str = options.pop("check_input_allowed")
         check_func = import_string(check_input_allowed_str)
         target_obj = ctype.get_object_for_this_type(pk=object_pk)

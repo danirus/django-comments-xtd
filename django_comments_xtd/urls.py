@@ -1,4 +1,4 @@
-from django.urls import re_path
+from django.urls import include, path, re_path
 from django_comments.views.comments import comment_done
 from django_comments.views.moderation import (
     approve,
@@ -15,7 +15,7 @@ urlpatterns = [
     re_path(
         r"^post/$",
         views.PostCommentView.as_view(),
-        name="comments-xtd-post-comment",
+        name="comments-xtd-post",
     ),
     re_path(r"^posted/$", comment_done, name="comments-comment-done"),
     re_path(r"^sent/$", views.sent, name="comments-xtd-sent"),
@@ -74,12 +74,7 @@ urlpatterns = [
         name="comments-url-redirect",
     ),
     # API handlers.
-    # path(
-    #     "api/",
-    #     include("django_comments_xtd.api.urls"),
-    #     {"override_drf_defaults": settings.COMMENTS_XTD_OVERRIDE_DRF_DEFAULTS},
-    # ),
+    path("api/", include("django_comments_xtd.api.urls")),
 ]
-
 
 urlpatterns = format_suffix_patterns(urlpatterns)

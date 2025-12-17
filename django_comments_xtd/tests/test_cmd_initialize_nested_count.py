@@ -1,7 +1,7 @@
 from io import StringIO
 from unittest.mock import patch
 
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.test import TestCase
 from django.utils.connection import ConnectionDoesNotExist
 
@@ -15,6 +15,12 @@ from django_comments_xtd.tests.test_models import (
     thread_test_step_5,
 )
 
+app_model_options_mock = {
+    "tests.nomodel": {
+        "max_thread_level": 3,
+    }
+}
+
 
 class InitializeNestedCountCmdTest(TestCase):
     def setUp(self):
@@ -27,6 +33,8 @@ class InitializeNestedCountCmdTest(TestCase):
         thread_test_step_4(self.article_1)
         thread_test_step_5(self.article_1)
         self.check_nested_count()
+        # Set all comments nested_count field to 0.
+        XtdComment.objects.update(nested_count=0)
 
     def check_nested_count(self):
         (  # content ->    cmt.id  thread_id  parent_id  level  order  nested
@@ -51,8 +59,6 @@ class InitializeNestedCountCmdTest(TestCase):
         self.assertEqual(self.c9.nested_count, 0)
 
     def test_calling_command_computes_nested_count(self):
-        # Set all comments nested_count field to 0.
-        XtdComment.norel_objects.update(nested_count=0)
         out = StringIO()
         call_command("initialize_nested_count", stdout=out)
         self.assertIn("Updated 9 XtdComment object(s).", out.getvalue())
@@ -61,6 +67,34 @@ class InitializeNestedCountCmdTest(TestCase):
     def test_command_is_idempotent(self):
         out = StringIO()
         call_command("initialize_nested_count", stdout=out)
+        call_command("initialize_nested_count", stdout=out)
+        self.assertIn("Updated 9 XtdComment object(s).", out.getvalue())
+        self.check_nested_count()
+
+    # ---------------------------------------
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_XTD_APP_MODEL_CONFIG={
+            "tests.nomodel": {
+                "max_thread_level": 3,
+            }
+        },
+    )
+    def test_ctype_does_not_exist(self):
+        with self.assertRaises(CommandError) as cmd_error:
+            call_command("initialize_nested_count")
+        self.assertIn(
+            "app.model 'tests.nomodel' does not exist.",
+            cmd_error.exception.args[0],
+        )
+
+    # ---------------------------------------
+    @patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_XTD_APP_MODEL_CONFIG={"default": {"who_can_post": "all"}},
+    )
+    def test_implicit_content_types(self):
+        out = StringIO()
         call_command("initialize_nested_count", stdout=out)
         self.assertIn("Updated 9 XtdComment object(s).", out.getvalue())
         self.check_nested_count()

@@ -116,5 +116,9 @@ def authorize_api_post_comment(sender, comment, request, **kwargs):
     )
 
 
+def comment_will_be_rejected(sender, comment, request, **kwargs):
+    return False
+
+
 class MyComment(XtdComment):
     title = models.CharField(max_length=256)

@@ -19,7 +19,8 @@ def get_form():
 
 def get_form_target():
     from django.urls import reverse
-    return reverse("comments-xtd-post-comment")
+
+    return reverse("comments-xtd-post")
 
 
 def get_reaction_enum():

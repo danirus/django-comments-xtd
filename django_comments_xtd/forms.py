@@ -28,7 +28,7 @@ class XtdCommentForm(CommentForm):
         else:
             followup_suffix = ""
 
-        super(CommentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields["name"].label = _("Name")
         self.fields["name"].widget = forms.TextInput(
@@ -50,7 +50,9 @@ class XtdCommentForm(CommentForm):
         )
 
         self.fields["comment"].widget = forms.Textarea(
-            attrs={"placeholder": _("Your comment"),}
+            attrs={
+                "placeholder": _("Your comment"),
+            }
         )
         self.fields["comment"].max_length = settings.COMMENT_MAX_LENGTH
         self.fields["comment"].widget.attrs.pop("cols")
@@ -68,7 +70,7 @@ class XtdCommentForm(CommentForm):
         data = {
             "content_type": ContentType.objects.get_for_model(
                 self.target_object,
-                for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL
+                for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL,
             ),
             "object_pk": force_str(self.target_object._get_pk_val()),
             "user_name": self.cleaned_data["name"],

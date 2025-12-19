@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [
     {name = "Daniela Rus Morales", email = "danirus@eml.cc"}
 ]
@@ -19,7 +19,7 @@ classifiers = [
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: News/Diary',
 ]
 dependencies = [
-    "Django >=4, <6",
+    "Django >=5, <7",
     'django-contrib-comments >=2.2.0, <2.3',
     'djangorestframework >=3.16.1, <3.17',
     'docutils',

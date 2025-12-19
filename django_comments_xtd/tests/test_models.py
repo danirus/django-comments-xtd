@@ -1,4 +1,3 @@
-# ruff:noqa: N801, PLR2004
 from datetime import datetime
 from unittest.mock import patch
 

@@ -93,6 +93,11 @@ class Diary(models.Model):
         )
 
 
+class DiaryWithMTL1(Diary):
+    class Meta:
+        proxy = True
+
+
 class UUIDDiary(Diary):
     """Diary, that accepts comments."""
 

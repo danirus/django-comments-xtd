@@ -1,4 +1,3 @@
-# ruff:noqa: N802
 import json
 from datetime import datetime
 from unittest.mock import patch

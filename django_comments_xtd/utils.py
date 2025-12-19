@@ -1,14 +1,7 @@
-# Idea borrowed from Selwin Ong post:
-# http://ui.co.id/blog/asynchronous-send_mail-in-django
-
 import hashlib
 import queue
 import threading
-
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
+from urllib.parse import urlencode
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.shortcuts import get_current_site
@@ -24,7 +17,10 @@ from django_comments_xtd.conf.defaults import COMMENTS_XTD_APP_MODEL_CONFIG
 mail_sent_queue = queue.Queue()
 
 
-# ruff:noqa: PLR0913
+# Idea borrowed from Selwin Ong post:
+# http://ui.co.id/blog/asynchronous-send_mail-in-django
+
+
 class EmailThread(threading.Thread):
     def __init__(
         self, subject, body, from_email, recipient_list, fail_silently, html
@@ -74,14 +70,16 @@ def send_mail(
 # --------------------------------------------------------------------
 def get_max_thread_level(content_type):
     """Get the max_thread_level for a given content_type."""
-    key = f"{content_type.app_label}.{content_type.model}"
     setting = settings.COMMENTS_XTD_APP_MODEL_CONFIG  # Aliasing.
 
-    if key in setting and "max_thread_level" in setting[key]:
-        return setting[key]["max_thread_level"]
+    if content_type:
+        key = f"{content_type.app_label}.{content_type.model}"
 
-    if setting["default"].get("max_thread_level"):
-        return setting["default"]["list_order"]
+        if key in setting and "max_thread_level" in setting[key]:
+            return setting[key]["max_thread_level"]
+
+    if "default" in setting and "max_thread_level" in setting["default"]:
+        return setting["default"]["max_thread_level"]
 
     return settings.COMMENTS_XTD_DEFAULT_MAX_THREAD_LEVEL
 

@@ -287,7 +287,9 @@ def on_comment_will_be_posted(sender, comment, request, **kwargs):
 
 
 djc_signals.comment_will_be_posted.connect(
-    on_comment_will_be_posted, sender=TmpXtdComment
+    on_comment_will_be_posted,
+    sender=TmpXtdComment,
+    dispatch_uid="django_comments.signals.comment_will_be_posted",
 )
 
 
@@ -326,7 +328,9 @@ def on_comment_was_posted(sender, comment, request, **kwargs):
 
 
 djc_signals.comment_was_posted.connect(
-    on_comment_was_posted, sender=TmpXtdComment
+    on_comment_was_posted,
+    sender=TmpXtdComment,
+    dispatch_uid="django_comments.signals.comment_was_posted",
 )
 
 
@@ -775,7 +779,7 @@ class MuteCommentView(SingleTmpCommentView):
         return tmp_comment
 
     def perform_mute(self):
-        XtdComment.norel_objects.filter(
+        XtdComment.objects.filter(
             content_type=self.object.content_type,
             object_pk=self.object.object_pk,
             user_email=self.object.user_email,

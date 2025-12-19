@@ -1,7 +1,8 @@
+import contextlib
 from io import StringIO
 from unittest.mock import patch
 
-from django.core.management import CommandError, call_command
+from django.core.management import call_command
 from django.test import TestCase
 from django.utils.connection import ConnectionDoesNotExist
 
@@ -81,12 +82,15 @@ class InitializeNestedCountCmdTest(TestCase):
         },
     )
     def test_ctype_does_not_exist(self):
-        with self.assertRaises(CommandError) as cmd_error:
-            call_command("initialize_nested_count")
-        self.assertIn(
-            "app.model 'tests.nomodel' does not exist.",
-            cmd_error.exception.args[0],
-        )
+        with StringIO() as buffer:
+            with contextlib.redirect_stderr(buffer):
+                call_command("initialize_nested_count")
+            self.assertIn(
+                "app.model 'tests.nomodel' listed in "
+                "COMMENTS_XTD_APP_MODEL_CONFIG does not exist "
+                "as a ContentType instance.",
+                buffer.getvalue(),
+            )
 
     # ---------------------------------------
     @patch.multiple(

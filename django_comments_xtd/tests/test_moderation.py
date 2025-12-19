@@ -12,6 +12,7 @@ from django_comments.models import Comment, CommentFlag
 from django_comments.views.moderation import delete
 
 from django_comments_xtd.models import XtdComment
+from django_comments_xtd.templating import get_template_list
 from django_comments_xtd.tests.models import (
     Article,
     Diary,
@@ -147,6 +148,28 @@ class ModeratorHoldsComment(TestCase):
             )
         )
         confirm_comment_url(key)
+        self.assertTrue(self.mailer_app1.call_count == 1)
+        self.assertTrue(self.mailer_app2.call_count == 1)
+        comment = django_comments.get_model().objects.for_model(Diary).first()
+        self.assertTrue(comment.is_public is False)
+
+    def test_moderation_with_unregistered_user__template_moderated(self):
+        # Same case as the previous. Only, it passes a kwargs
+        # `template_moderated` to test that `views.confirm`
+        # uses that parameter when given.
+        self.post_valid_data()
+        self.assertTrue(self.mailer_app1.call_count == 0)
+        self.assertTrue(self.mailer_app2.call_count == 1)
+        mail_msg = self.mailer_app2.call_args[0][1]
+        key = str(
+            re.search(r"http://.+/confirm/(?P<key>[\S]+)/", mail_msg).group(
+                "key"
+            )
+        )
+        template_list = get_template_list(
+            "moderated", app_label="tests", model="diary"
+        )
+        confirm_comment_url(key, template_moderated=template_list)
         self.assertTrue(self.mailer_app1.call_count == 1)
         self.assertTrue(self.mailer_app2.call_count == 1)
         comment = django_comments.get_model().objects.for_model(Diary).first()

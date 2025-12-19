@@ -130,6 +130,7 @@ COMMENTS_XTD_APP_MODEL_CONFIG = {
         "comments_reacting_enabled": True,
         "max_thread_level": 0,
     },
+    "tests.diarywithmtl1": {"max_thread_level": 1},
     "tests.quote": {
         "who_can_post": "users",
         "comments_voting_enabled": True,

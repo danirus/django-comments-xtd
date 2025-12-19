@@ -1,6 +1,6 @@
-Work on version 3 is taking place in the branch [v3-2nd-attempt](https://github.com/danirus/django-comments-xtd/tree/v3-2nd-attempt). Version 3 will be backward incompatible.
-
 # django-comments-xtd  [![tests](https://github.com/danirus/django-comments-xtd/workflows/tests/badge.svg)](https://github.com/danirus/django-comments-xtd/actions/workflows/ci-pipeline.yml)
+
+Work on version 3.0 is taking place in the `main` branch. When curious, take a look at the example `mockups_project`. Still some points `TODO.md` to have it ready. 🚀
 
 A Django pluggable application that adds comments to your project.
 

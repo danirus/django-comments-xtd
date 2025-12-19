@@ -1,3 +1,4 @@
+# ruff: noqa: RUF012
 from django.contrib import admin
 
 from .models import Quote

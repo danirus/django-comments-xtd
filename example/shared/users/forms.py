@@ -24,9 +24,7 @@ usr_not_auth_msg = _(
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(
-        widget=forms.EmailInput(attrs={"tabindex": 1})
-    )
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"tabindex": 1}))
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={"tabindex": 2})
     )
@@ -76,6 +74,7 @@ class LoginForm(forms.Form):
 # * ... Once email is confirmed ...
 # * 2nd step: Provide a password for your account: CreatePwdStep2Form.
 
+
 class RegisterStep1Form(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={"tabindex": 1}))
     name = forms.CharField(
@@ -108,7 +107,9 @@ class RegisterStep1Form(forms.Form):
                 or len(self.cleaned_data["name"]) < MIN_NAME_LEN
             ):
                 raise forms.ValidationError(
-                    _(f"Please, provide a name with at least {MIN_NAME_LEN} characters.")
+                    _(
+                        f"Please, provide a name with at least {MIN_NAME_LEN} characters."
+                    )
                 )
             return self.cleaned_data["name"]
 

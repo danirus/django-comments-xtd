@@ -94,8 +94,10 @@ def user_register_confirm(request, key):
         return render(
             request,
             "users/register_step_2.html",
-            {"form": SetPwdStep2Form(
-                initial={"email": form.cleaned_data.get("email")})
+            {
+                "form": SetPwdStep2Form(
+                    initial={"email": form.cleaned_data.get("email")}
+                )
             },
         )
     elif request.method == "POST":
@@ -112,7 +114,7 @@ def user_register_confirm(request, key):
                 (
                     "Your registration is complete.\n"
                     "You can now log in using the form below."
-                )
+                ),
             )
             return login_redirect
         else:
@@ -127,7 +129,7 @@ def user_reset_password(request):
         if form.is_valid():
             try:
                 user = get_user_model().objects.get(
-                    email=form.cleaned_data['email']
+                    email=form.cleaned_data["email"]
                 )
                 key = signed.dumps(
                     request.POST,
@@ -185,14 +187,13 @@ def user_reset_password_confirm(request, key):
                 (
                     "Password changed successfully.\n"
                     "You can now log in using the form below."
-                )
+                ),
             )
             return login_redirect
         else:
             return render(
                 request, "users/reset_password_step_2.html", {"form": form}
             )
-
 
 
 @login_required
@@ -323,11 +324,11 @@ def user_delete_confirm(request, key):
             raise ValueError(
                 "The deletion request was generated for %s, "
                 "but the current active account email is %s.?!?",
-                *(data.get("email"), request.user.email)
+                *(data.get("email"), request.user.email),
             )
     except (ValueError, signed.BadSignature) as exc:
         return bad_request(request, exc)
     # TODO: Delete the user taking into account the 'anonymize'
     #       field provided within the data dict.
-    print("TODO: Now I can delete the account.")
+    print("TODO: Now I can delete the account.")  # noqa: T201
     return user_logout(request)

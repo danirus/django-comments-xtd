@@ -5,6 +5,7 @@ from django.utils.safestring import mark_safe
 
 register = Library()
 
+
 @stringfilter
 @register.filter
 def render_markdown(text):

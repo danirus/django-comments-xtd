@@ -16,7 +16,7 @@ class APIRequestAuthentication(authentication.BaseAuthentication):
         if len(pieces) == 1:
             msg = _("Invalid token header. No credentials provided.")
             raise exceptions.AuthenticationFailed(msg)
-        elif len(pieces) > 2:  # noqa: PLR2004
+        elif len(pieces) > 2:
             msg = _(
                 "Invalid token header.Token string should not contain spaces."
             )

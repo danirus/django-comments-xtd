@@ -129,9 +129,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = PROJECT_DIR / "static"
 
 # Additional locations of static files
-STATICFILES_DIRS = [
-    PROJECT_DIR.parent / "shared" / "frontend"
-]
+STATICFILES_DIRS = [PROJECT_DIR.parent / "shared" / "frontend"]
 
 
 # List of finder classes that know how to find static files in
@@ -179,10 +177,13 @@ COMMENTS_XTD_CONTACT_EMAIL = "helpdesk@example.com"
 # other backend (say Celery based) send your emails.
 COMMENTS_XTD_THREADED_EMAILS = False
 
+
 # Define a function to return the user representation. Used by
 # the web API to represent user strings in HTTP responses.
 def _comments_xtd_fn_user_repr(user):
     return user.name
+
+
 COMMENTS_XTD_FN_USER_REPR = _comments_xtd_fn_user_repr
 
 # Make django-comments-xtd send emails in HTML format too.

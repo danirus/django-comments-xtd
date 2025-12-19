@@ -38,6 +38,7 @@ class ProseCommonAdmin(admin.ModelAdmin):
         ),
     )
 
+
 admin.site.register(ArticleCommentsL0, ProseCommonAdmin)
 admin.site.register(ArticleCommentsL1, ProseCommonAdmin)
 admin.site.register(ArticleCommentsL2, ProseCommonAdmin)

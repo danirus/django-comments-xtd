@@ -4,6 +4,7 @@
 * Document `commentvote` JavaScript event.
 * Document all CSS customizable vars.
 * Document folding/unfolding with JavaScript (sessionStorage).
+* Document use case with proxy model.
 * Add folding/unfolding with Django
 * Add tests for the backend code (On it)
 * Add tests for the frontend tests

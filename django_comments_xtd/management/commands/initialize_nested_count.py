@@ -1,6 +1,6 @@
 # ruff: noqa: N806
 from django.contrib.contenttypes.models import ContentType
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.db.utils import ConnectionDoesNotExist
 
@@ -36,10 +36,12 @@ class Command(BaseCommand):
             try:
                 ctype = ContentType.objects.get(app_label=app, model=model)
                 ctype_list.append(ctype)
-            except ContentType.DoesNotExist as exc:
-                raise CommandError(
-                    f"app.model '{app_model}' does not exist."
-                ) from exc
+            except ContentType.DoesNotExist:
+                self.stderr.write(
+                    f"app.model '{app_model}' listed in "
+                    "COMMENTS_XTD_APP_MODEL_CONFIG does not exist "
+                    "as a ContentType instance."
+                )
             else:
                 mtl = utils.get_max_thread_level(ctype)
                 qs = (

@@ -8,7 +8,7 @@ from django_comments.models import CommentFlag
 
 from django_comments_xtd import get_reaction_enum
 from django_comments_xtd.models import CommentReaction, XtdComment
-from django_comments_xtd.tests.models import Article
+from django_comments_xtd.tests.models import Article, Diary, DiaryWithMTL1
 
 
 @pytest.fixture
@@ -22,28 +22,21 @@ def an_article():
 
 
 @pytest.fixture
-def an_articles_comment(an_article):
-    """Send a comment to the article."""
-    article_ct = ContentType.objects.get(app_label="tests", model="article")
-    site = Site.objects.get(pk=1)
-    comment = XtdComment.objects.create(
-        content_type=article_ct,
-        object_pk=an_article.pk,
-        content_object=an_article,
-        site=site,
-        comment="First comment to the article.",
-        submit_date=datetime.now(),
-    )
-    yield comment
-    comment.delete()
+def a_diary_entry():
+    """Creates a `Diary` instance that can receive comments with MTL 0."""
+    entry = Diary.objects.create(body="About today...")
+    yield entry
+    entry.delete()
 
 
 @pytest.fixture
-def an_articles_comment_removed(an_articles_comment):
-    """Mark the comment as removed."""
-    an_articles_comment.is_removed = True
-    an_articles_comment.save()
-    yield an_articles_comment
+def a_diary_with_mtl1():
+    """
+    Creates a `DiaryWithThreads` instance that can receive comments with MTL 1.
+    """
+    entry = DiaryWithMTL1.objects.create(body="About today...")
+    yield entry
+    entry.delete()
 
 
 @pytest.fixture
@@ -68,6 +61,33 @@ def an_user_2():
     )
     yield user2
     user2.delete()
+
+
+@pytest.fixture
+def an_articles_comment(an_article):
+    """Send a comment to the article."""
+    article_ct = ContentType.objects.get(app_label="tests", model="article")
+    site = Site.objects.get(pk=1)
+    comment = XtdComment.objects.create(
+        content_type=article_ct,
+        object_pk=an_article.pk,
+        content_object=an_article,
+        site=site,
+        comment="First comment to the article.",
+        submit_date=datetime.now(),
+        user_email="alice@example.org",
+        user_name="Alice Bloggs",
+    )
+    yield comment
+    comment.delete()
+
+
+@pytest.fixture
+def an_articles_comment_removed(an_articles_comment):
+    """Mark the comment as removed."""
+    an_articles_comment.is_removed = True
+    an_articles_comment.save()
+    yield an_articles_comment
 
 
 @pytest.fixture

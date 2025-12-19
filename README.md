@@ -2,25 +2,27 @@
 
 A Django pluggable application that adds comments to your project.
 
-<p align="center"><img align="center" src="https://github.com/danirus/django-comments-xtd/blob/master/docs/images/cover.light.png"></p>
+<p align="center"><img align="center" src="https://github.com/danirus/django-comments-xtd/raw/main/docs/images/cover-gh.png"></p>
 
 It extends the original [Django Comments Framework](https://pypi.python.org/pypi/django-contrib-comments) with the following features:
 
 * Thread support, so comments can be nested.
-* Customizable maximum thread level, either for all models or on a per app.model basis.
+* Customizable maximum thread level on per `app.model` basis.
 * Optional notifications on follow-up comments via email.
 * Mute links to allow cancellation of follow-up notifications.
 * Comment confirmation via email when users are not authenticated.
 * Comments hit the database only after they have been confirmed.
-* Registered users can like/dislike comments and can suggest comments removal.
-* Template tags to list/render the last N comments posted to any given list of app.model pairs.
-* Emails sent through threads (can be disable to allow other solutions, like a Celery app).
-* Fully functional JavaScript plugin using ReactJS, Bootstrap 5.3 and Remarkable.
+* Enable comment reactions, comment votes and comment flagging on per `app.model` basis.
+* Comment reactions visitors can choose are customizable. Defaults to thumb up and thumb down.
+* Several themes available.
+* Plain vanilla JavaScript plugin.
+* ReST API to support your own frontend.
+* ...
 
 Example sites and tests run under officially Django [supported versions](https://www.djangoproject.com/download/#supported-versions):
 
-* Django 5.1, 5.0, 4.2, 4.1
-* Python 3.13, 3.12, 3.11, 3.10
+* Django 6.0, 5.1, 5.0, 4.2
+* Python 3.14, 3.13, 3.12, 3.11
 
 Additional Dependencies:
 

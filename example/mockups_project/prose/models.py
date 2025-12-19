@@ -17,8 +17,7 @@ class CommonProse(models.Model):
     body = models.TextField("body")
     allow_comments = models.BooleanField("allow comments", default=True)
     published_time = models.DateTimeField(
-        "published time",
-        default=datetime.now
+        "published time", default=datetime.now
     )
 
     class Meta:
@@ -34,6 +33,7 @@ class CommonProse(models.Model):
 # comment form submission, comment preview, and comment reply, take place
 # via backend.
 
+
 class ArticleCommentsL0(CommonProse):
     class Meta(CommonProse.Meta):
         app_label = "prose"
@@ -43,7 +43,9 @@ class ArticleCommentsL0(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "article-comments-l0",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -56,7 +58,9 @@ class ArticleCommentsL1(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "article-comments-l1",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -69,7 +73,9 @@ class ArticleCommentsL2(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "article-comments-l2",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -82,7 +88,9 @@ class ArticleCommentsL3(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "article-comments-l3",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -103,7 +111,9 @@ class StoryCommentsL0(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "story-comments-l0",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -116,7 +126,9 @@ class StoryCommentsL1(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "story-comments-l1",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -129,7 +141,9 @@ class StoryCommentsL2(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "story-comments-l2",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -142,7 +156,9 @@ class StoryCommentsL3(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "story-comments-l3",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -151,6 +167,7 @@ class StoryCommentsL3(CommonProse):
 # template use django-comments-xtd JavaScript plugin. So comment form
 # submission, comment preview, comment reply, flagging, votes and emotions
 # are sent via JavaScript.
+
 
 class TaleCommentsL0(CommonProse):
     class Meta(CommonProse.Meta):
@@ -161,7 +178,9 @@ class TaleCommentsL0(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "tale-comments-l0",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -174,7 +193,9 @@ class TaleCommentsL1(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "tale-comments-l1",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -187,7 +208,9 @@ class TaleCommentsL2(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "tale-comments-l2",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 
@@ -200,7 +223,9 @@ class TaleCommentsL3(CommonProse):
     def get_absolute_url(self):
         return reverse(
             "tale-comments-l3",
-            kwargs={"slug": self.slug,}
+            kwargs={
+                "slug": self.slug,
+            },
         )
 
 

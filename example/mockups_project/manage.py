@@ -3,12 +3,14 @@ import os
 import sys
 
 sys.path.insert(0, "../..")  # Parent of django_comments_xtd directory,
-sys.path.insert(0, "..")     # and `example` directory.
+sys.path.insert(0, "..")  # and `example` directory.
+
 
 def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mockups_project.settings")
     try:
         from django.core.management import execute_from_command_line
+
         found = importlib.util.find_spec("settings")
         if not found:
             sys.stderr.write(

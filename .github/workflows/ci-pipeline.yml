@@ -86,4 +86,4 @@ jobs:
       - name: Install Node.js dependencies
         run: npm install
       - name: Run javascript unit tests
-        run: make js-tests
+        run: npm test

@@ -17,7 +17,7 @@ if [ -f "runserver.pid" ]; then
   exit 1
 fi
 
-rm db.sqlite3
+rm -f db.sqlite3
 source ../../venv/bin/activate
 python manage.py migrate
 python manage.py loaddata fixtures/sites.json

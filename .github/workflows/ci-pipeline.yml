@@ -71,10 +71,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Python setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "${{ env.NODE }}"
           cache: npm
-      - run: npm ci
-      - run: npm test
+      - name: Install Python dependencies
+        run: pip install .
+      - name: Install Node.js dependencies
+        run: npm install
+      - name: Run javascript unit tests
+        run: make js-tests

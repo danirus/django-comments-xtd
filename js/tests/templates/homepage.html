@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_head %}
+  {{ block.super }}
+{% endblock extra_head %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="intro big fw300">
+      <p>This is the Django project that runs frontend tests. It is available in the directory <code>js/tests/</code>. It is made of an app called <code>specs</code>, that contains two models: <code>LoggedOutSpec</code> and <code>LoggedInSpec</code>.</p>
+      <p>Both models have a field called <code>filename</code> that refers to the test spec that runs when visiting each <code>LoggedOutSpec</code> or <code>LoggedInSpec</code> instance URL. The first model requires no authenticated user. The second model requires a logged in user, specified with the field <code>user</code>.</p>
+      <p>To run it manually, take a look at how the <code>Gruntfile</code> sets up the project.</p>
+    </div>
+    <h2 class="text-center">Logged Out Specs</h2>
+    <ol class="w-100">
+      {% for logged_out_spec in logged_out_specs %}
+        <li><a class="monospace" href="{% url 'logged-out-spec-detail' logged_out_spec.slug %}">{{ logged_out_spec.filename }}</a></li>
+      {% endfor %}
+    </ol>
+  </div>
+</main>
+{% endblock content %}

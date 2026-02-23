@@ -34,8 +34,8 @@ class HomepageView(TemplateView):
     template_name = "homepage.html"
 
     def get_context_data(self, **kwargs):
-        # Show the homepage with the default color scheme
-        # selected by the user with system settings.
+        # Reset the user selected color scheme to the
+        # system's color scheme when loading the homepage.
         if "cscheme" in self.request.session:
             self.request.session.pop("cscheme")
         return super().get_context_data(**kwargs)

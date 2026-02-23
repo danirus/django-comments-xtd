@@ -82,7 +82,9 @@ jobs:
           node-version: "${{ env.NODE }}"
           cache: npm
       - name: Install Python dependencies
-        run: pip install .
+        run: |
+          pip install .
+          pip install -r js/tests/requirements.txt
       - name: Install Node.js dependencies
         run: npm install
       - name: Run javascript unit tests

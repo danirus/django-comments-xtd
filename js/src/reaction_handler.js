@@ -1,5 +1,5 @@
-import ReactionsPanel from "./reactions_panel";
-import { get_login_url, get_react_url } from "./utils";
+import ReactionsPanel from "./reactions_panel.js";
+import { get_login_url, get_react_url } from "./utils.js";
 
 
 export default class ReactionHandler {

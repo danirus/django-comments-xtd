@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% load comments %}
+{% load comments_xtd %}
+{% load mytags %}
+
+{% block title %}{{ block.super }} - {{object.spec_path }}{% endblock %}
+
+{% block content %}
+<main>
+  <article>
+    <h2 class="text-center">{{ object.spec_path }} <a class="small permalink" href="{{ object.get_absolute_url }}">¶</a></h2>
+    <div class="central-column">
+      {% get_xtdcomment_count for object as comment_count %}
+      {% if comment_count %}
+      <h6 class="text-center">
+        {% if comment_count == 1 %}
+        There is one comment
+        {% else %}
+        There are {{ comment_count }} comments
+        {% endif %}
+      </h6>
+      {% endif %}
+
+      <div class="djcx">
+        {% render_xtdcomment_list for object %}
+      </div>
+
+      <div class="djcx" data-djcx="comment-form">
+        <section class="comment-form">
+          <h5 class="mb-0 text-center">Post your comment</h5>
+          {% render_xtdcomment_form for object %}
+        </section>
+      </div>
+    </div>
+  </article>
+</main>
+{% endblock content %}
+
+{% block extra_html %}
+<div class="djcx">
+  {% render_comment_reply_template for object %}
+  {% render_comment_reactions_panel_template %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- These are relative to the repository root directory: -->
+<script src="{% static 'node_modules/qunit/qunit/qunit.js' %}"></script>
+<script src="{% static 'node_modules/sinon/pkg/sinon.js' %}"></script>
+<!-- index.js is relative to the <root>/js/src directory: -->
+<script type="module" src="{% static 'index.js' %}"></script>
+<!-- comment_form.spec.mjs is relative to the js/tests/specs directory: -->
+<script type="module" src="{% static object.spec_path %}"></script>
+{% endblock %}

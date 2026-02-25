@@ -88,6 +88,7 @@ exclude = [
     "django_comments_xtd/migrations/",
     "django_comments_xtd/tests/migrations/",
     "example/**/migrations/",
+    "js/tests/**/migrations/",
 ]
 line-length = 80
 

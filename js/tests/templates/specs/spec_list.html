@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load comments %}
+
+{% block title %}{{ block.super }} - spec list{% endblock %}
+
+{% block content %}
+<main>
+  <div class="container">
+    {% if object_list %}
+    <ul>
+      {% for spec in object_list %}
+        {% get_comment_count for spec as comment_count %}
+        <li>
+          <a href="{{ spec.get_absolute_url }}">{{ spec.filename }}</a>{% if comment_count %}<span class="small">- {{ comment_count }} comment{{ comment_count|pluralize }}</span>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</main>
+{% endblock content %}

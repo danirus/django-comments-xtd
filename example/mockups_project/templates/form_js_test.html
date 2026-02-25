@@ -29,8 +29,8 @@
       </h6>
       {% endif %}
 
-      <div class="djcx" data-comments-theme={{ comments_theme }}>
-        {% render_xtdcomment_list for object with comments_theme=comments_theme %}
+      <div class="djcx">
+        {% render_xtdcomment_list for object %}
       </div>
 
       {% if comments_input_allowed %}

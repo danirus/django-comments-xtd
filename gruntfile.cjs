@@ -5,6 +5,12 @@ const globalThreshold = 50; // Global code coverage threshold (as a percentage)
 module.exports = function configureGrunt(grunt) {
   grunt.initConfig({
     qunit: {
+      options: {
+        puppeteer: {
+          disableSetuidSandbox: true,
+          noSandbox: true,
+        }
+      },
       all: {
         options: {
           urls: [

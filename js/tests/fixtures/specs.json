@@ -1,0 +1,9 @@
+[
+{
+    "model": "specs.loggedoutspec",
+    "pk": "comment-form-spec",
+    "fields": {
+        "spec_path": "specs/comment_form.spec.mjs"
+    }
+}
+]

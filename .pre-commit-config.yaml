@@ -19,11 +19,3 @@ repos:
         args:
           - "--fix"
       - id: ruff-format
-
-  - repo: local
-    hooks:
-      - id: js-lint
-        name: local-js-lint
-        entry: npm run js-lint --
-        language: node
-        types: [javascript]

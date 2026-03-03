@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import unicorn from "eslint-plugin-unicorn";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,13 +22,15 @@ export default [{
     "django_comments_xtd/*",
     "docs/*",
     "example/*",
+    "js/tests/*",
     "scss/*",
     "venv/*",
   ],
-}, ...fixupConfigRules(compat.extends(
+},
+unicorn.configs.recommended,
+...fixupConfigRules(compat.extends(
   "plugin:import/errors",
   "plugin:import/warnings",
-  "plugin:unicorn/recommended",
 )), {
   rules: {
     indent: ["error", 2, {

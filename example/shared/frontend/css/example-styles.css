@@ -361,7 +361,6 @@ input[type=password] {
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 0;
   color: var(--input-color-focus);
   background-color: var(--input-background-color-focus);
   border: 1px solid var(--input-border-color-focus);
@@ -371,7 +370,6 @@ textarea:focus {
 input:is(:-webkit-autofill, :autofill),
 select:is(:-webkit-autofill, :autofill),
 textarea:is(:-webkit-autofill, :autofill) {
-  outline: 0;
   color: var(--input-color-autofill);
   background-color: var(--input-background-color-autofill) !important;
   border: 1px solid var(--input-border-color-autofill) !important;
@@ -755,7 +753,6 @@ a.btn.disabled {
 button:focus,
 button.focus,
 a.btn:focus {
-  outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
 }
 
@@ -902,7 +899,7 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
 .grid-form form {
   display: grid;
   grid-template-columns: 1fr 3fr;
-  grid-gap: 1rem;
+  gap: 1rem;
   padding: 0 2rem;
 }
 
@@ -976,6 +973,7 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
 .central-column {
   margin: 0 auto;
   max-width: 735px;
+  line-height: 1.5;
 }
 
 .wo-y-margins * {
@@ -1061,6 +1059,10 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
 
 .text-right {
   text-align: right;
+}
+
+.w-100 {
+  width: 100%;
 }
 
 .m-2 { /* before: m2 */

@@ -28,7 +28,8 @@ INSTALLED_APPS = [
     "django_comments_xtd",
     "django_comments",
     "shared.users",
-    "tests.specs",
+    "django_cypress",
+    # "tests.specs",
 ]
 
 MIDDLEWARE = [

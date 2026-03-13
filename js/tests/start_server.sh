@@ -21,7 +21,7 @@ rm -f db.sqlite3
 python manage.py migrate
 python manage.py loaddata fixtures/sites.json
 python manage.py loaddata fixtures/users.json
-python manage.py loaddata fixtures/specs.json
-nohup ./manage.py runserver localhost:8333 &>/dev/null &
+# python manage.py loaddata fixtures/specs.json
+nohup ./manage.py runserver 8333 &>/dev/null &
 echo $! > runserver.pid
 exit 0

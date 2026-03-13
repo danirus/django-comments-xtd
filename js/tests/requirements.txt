@@ -1,1 +1,2 @@
 markdown>=3.10,<3.11
+django-cypress==1.0.1

@@ -1,3 +1,7 @@
+#
+# This code comes from django-cypress:
+# https://github.com/HelloWorld-PC/django-cypress
+#
 from django.urls import path
 from django_cypress.views import (
     CreateUserView,

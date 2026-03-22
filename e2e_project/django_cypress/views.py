@@ -1,3 +1,7 @@
+#
+# This code comes from django-cypress:
+# https://github.com/HelloWorld-PC/django-cypress
+#
 import json
 from http import HTTPStatus
 

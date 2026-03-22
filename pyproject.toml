@@ -88,6 +88,7 @@ exclude = [
     "venv/",
     "django_comments_xtd/migrations/",
     "django_comments_xtd/tests/migrations/",
+    "e2e_project/**/migrations/",
     "example/**/migrations/",
     "js/tests/**/migrations/",
 ]

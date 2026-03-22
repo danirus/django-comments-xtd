@@ -4,21 +4,6 @@ const globalThreshold = 50; // Global code coverage threshold (as a percentage)
 
 module.exports = function configureGrunt(grunt) {
   grunt.initConfig({
-    // qunit: {
-    //   options: {
-    //     puppeteer: {
-    //       disableSetuidSandbox: true,
-    //       noSandbox: true,
-    //     }
-    //   },
-    //   all: {
-    //     options: {
-    //       urls: [
-    //         'http://localhost:8333/specs/logged-out/comment-form-spec/'
-    //       ]
-    //     }
-    //   }
-    // },
     shell: {
       options: {
         stdout: true,
@@ -26,13 +11,13 @@ module.exports = function configureGrunt(grunt) {
         failOnError: true,
       },
       start: {
-        command: 'js/tests/start_server.sh',
+        command: 'e2e_project/start_server.sh',
       },
       cypress: {
         command: 'npx cypress run',
       },
       stop: {
-        command: 'js/tests/stop_server.sh'
+        command: 'e2e_project/stop_server.sh'
       }
     }
   });

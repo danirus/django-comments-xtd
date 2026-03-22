@@ -41,6 +41,7 @@ dev = [
     "build >= 1.3, <1.4",
     "coverage >=7.6, <7.7",
     "django-coverage-plugin >=3.1, <3.2",
+    "django-cypress==1.0.1",
     "markdown >=3.8, <3.9",
     "pre-commit >=4.0.1",
     "pytest >=8.3, <8.4",
@@ -87,7 +88,9 @@ exclude = [
     "venv/",
     "django_comments_xtd/migrations/",
     "django_comments_xtd/tests/migrations/",
+    "e2e_project/**/migrations/",
     "example/**/migrations/",
+    "js/tests/**/migrations/",
 ]
 line-length = 80
 

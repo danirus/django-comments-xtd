@@ -1,6 +1,6 @@
-import CommentForm from "./comment_form";
-import CommentThreads from "./comment_threads";
-import ReplyFormHandler from "./reply_forms";
+import CommentForm from "./comment_form.js";
+import CommentThreads from "./comment_threads.js";
+import ReplyFormHandler from "./reply_forms.js";
 
 
 function init_commenting(cfg) {

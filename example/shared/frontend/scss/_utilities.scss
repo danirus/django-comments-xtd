@@ -215,8 +215,7 @@ a.btn.disabled {
 button:focus,
 button.focus,
 a.btn:focus {
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 25%);
+  box-shadow: 0 0 0 0.2rem rgb(33, 150, 243, 25%);
 }
 
 button:hover,
@@ -344,7 +343,7 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
 }
 
 .grid-form.bordered {
-  border: 8px solid rgba(0, 0, 0, 10%);
+  border: 8px solid rgb(0, 0, 0, 10%);
   border-radius: 0.5rem;
 }
 
@@ -363,7 +362,7 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
 .grid-form form {
   display: grid;
   grid-template-columns: 1fr 3fr;
-  grid-gap: 1rem;
+  gap: 1rem;
   padding: 0 2rem;
 }
 
@@ -440,6 +439,7 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
 .central-column {
   margin: 0 auto;
   max-width: 735px;
+  line-height: 1.5;
 }
 
 .wo-y-margins * {
@@ -479,6 +479,10 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
 
 .text-center { text-align: center; }
 .text-right { text-align: right; }
+
+.w-100 {
+  width: 100%;
+}
 
 .m-2 { /* before: m2 */
   margin: 1rem;

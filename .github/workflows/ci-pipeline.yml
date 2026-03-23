@@ -83,8 +83,8 @@ jobs:
           cache: npm
       - name: Install Python dependencies
         run: |
-          pip install .
-          pip install -r js/tests/requirements.txt
+          pip install .[dev]
+          pip install -r e2e_project/requirements.txt
       - name: Install Node.js dependencies
         run: npm install
       - name: Run javascript unit tests

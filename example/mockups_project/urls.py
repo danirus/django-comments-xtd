@@ -631,25 +631,25 @@ urlpatterns = [
     ),
     # -------------------------------------------
     path(
-        "def-light--comment-form_js",
+        "def-light--comment-form-js",
         FormJsView.as_view(),
         {"theme": "", "cscheme": "light"},
-        name="def-light--comment-form_js",
+        name="def-light--comment-form-js",
     ),
     path(
-        "def-dark--comment-form_js",
+        "def-dark--comment-form-js",
         FormJsView.as_view(),
         {"theme": "", "cscheme": "dark"},
-        name="def-dark--comment-form_js",
+        name="def-dark--comment-form-js",
     ),
     path(
         "logout-and-def-light--comment-form-js",
-        logout_and_redirect("def-light--comment-form_js"),
+        logout_and_redirect("def-light--comment-form-js"),
         name="logout-and-def-light--comment-form-js",
     ),
     path(
         "logout-and-def-dark--comment-form-js",
-        logout_and_redirect("def-dark--comment-form_js"),
+        logout_and_redirect("def-dark--comment-form-js"),
         name="logout-and-def-dark--comment-form-js",
     ),
     # -------------------------------------------

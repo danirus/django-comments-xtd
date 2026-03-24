@@ -57,7 +57,6 @@
 
   input:focus,
   textarea:focus {
-    outline: 0;
     color: var(--djcx-input-color-focus);
     background-color: var(--djcx-input-background-color-focus);
     border: 1px solid var(--djcx-input-border-color-focus);
@@ -115,7 +114,6 @@
   button:focus,
   button.focus,
   a.btn:focus {
-    outline: 0;
     box-shadow: 0 0 0 0.2rem rgb(33 150 243 / 25%);
   }
 

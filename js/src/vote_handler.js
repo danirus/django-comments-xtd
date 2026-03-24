@@ -1,4 +1,4 @@
-import { get_cookie, get_login_url, get_vote_url } from "./utils";
+import { get_cookie, get_login_url, get_vote_url } from "./utils.js";
 
 
 export default class VoteHandler {

@@ -51,7 +51,7 @@
     form {
       display: grid;
       grid-template-columns: 1fr 3fr;
-      grid-gap: 1rem;
+      gap: 1rem;
       padding: 1.5rem 2.5rem;
     }
 
@@ -95,29 +95,30 @@
     form {
       display: grid;
       grid-template-columns: 1fr 3fr;
-      grid-gap: 1rem;
+      gap: 1rem;
     }
 
-    &.reply-form-l0.active { border-color: var(--djcx-color-level-0); }
-    &.reply-form-l1.active { border-color: var(--djcx-color-level-1); }
-    &.reply-form-l2.active { border-color: var(--djcx-color-level-2); }
+    // &.reply-form-l0.active { border-color: var(--djcx-color-level-0); }
+    // &.reply-form-l1.active { border-color: var(--djcx-color-level-1); }
+    // &.reply-form-l2.active { border-color: var(--djcx-color-level-2); }
   }
 
-  .comment-list {
-    > .level-1,
-    > .level-2,
-    > .level-3 {
-      margin-top: 0;
-    }
+  // .comment-list {
+  //   > .level-1,
+  //   > .level-2,
+  //   > .level-3 {
+  //     margin-top: 0;
+  //   }
 
-    &:first-child {
-      margin-top: 0;
-    }
-  }
+  //   &:first-child {
+  //     margin-top: 0;
+  //   }
+  // }
 
   .user-avatar {
     display: flex;
     justify-content: center;
+    margin-right: .5rem;
   }
 
   .in-preview-header {
@@ -265,7 +266,7 @@
     justify-content: space-between;
     margin: 0 8px 4px;
     font-size: 0.8rem;
-    gap: 16px;
+    gap: .5rem;
 
     & > div:last-child {
       display: flex;
@@ -400,7 +401,6 @@
     margin: 1px;
     padding: 2px 10px;
     border: 0;
-    outline: none;
     background: var(--djcx-button-emoji-background-color);
     font-size: var(--djcx-button-emoji-font-size);
     border-style: none;
@@ -411,14 +411,12 @@
     margin-top: 0;
     border-bottom-width: 0;
     background: var(--djcx-button-emoji-background-color-hover);
-    outline: none;
   }
 
   button.emoji.active {
     margin-top: 0;
     border-bottom-width: 0;
     background: var(--djcx-button-emoji-background-color-active);
-    outline: none;
 
     &:hover {
       background: var(--djcx-button-emoji-background-color-hover);
@@ -530,5 +528,269 @@
     color: white;
     background-color: #f66;
     border-radius: 4px;
+  }
+
+  .cmthread {
+    /* -----------------------
+     * Used by themes: default, feedback_in_header, avatar_in_header.
+     */
+
+    &.cmthread--narrow.cmthread--l0,
+    &.cmthread--narrow.cmthread--l1,
+    &.cmthread--narrow.cmthread--l2 {
+      display: flex;
+      flex-direction: row;
+      margin-left: 5px;
+
+      a.vline,
+      span.vline {
+        display: block;
+        min-width: 24px;
+
+        &::before {
+          position: relative;
+          content: "";
+          top: 7px;
+          left: -5px;
+          display: inline-block;
+          width: 12px;
+          height: 12px;
+          border-radius: 6px;
+        }
+
+        &::after {
+          position: relative;
+          top: 2px;
+          bottom: 0;
+          left: 0;
+          display: block;
+          width: 2px;
+          height: calc(100% - 51px);
+          content: "";
+        }
+      }
+
+      a.vline {
+        &:hover::after {
+          left: -3px;
+          width: 8px;
+        }
+
+        &.folded {
+          &::after {
+            left: -2px;
+            width: 6px;
+          }
+
+          &:hover::after {
+            left: -3px;
+            width: 8px;
+          }
+        }
+      }
+
+      .hline-l0,
+      .hline-l1,
+      .hline-l2 {
+        position: absolute;
+        bottom: 24px;
+        left: -24px;
+        border-top-width: 2px;
+        border-top-style: solid;
+        transform: translateY(-50%);
+        display: block;
+        width: 40px;
+      }
+
+      &.folded {
+        display: none;
+      }
+    }
+
+    &.cmthread--narrow.cmthread--end {
+     margin-left: 24px;
+
+     &.folded {
+      display: none;
+     }
+    }
+
+    /* -----------------------
+     * avatar_in_thread theme.
+     */
+    &.cmthread--wide .comment-box {
+      position: relative;
+      display: flex;
+      padding: 8px 0;
+      margin-left: 0;
+
+      .user-avatar {
+        margin-left: -41px;
+        margin-right: 16px;
+        z-index: -1;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 8px 4px;
+        font-size: 0.8rem;
+        gap: 16px;
+
+        & > div:last-child {
+          display: flex;
+        }
+      }
+
+      .body {
+        font-size: .9rem;
+
+        & > p {
+          margin: .6rem;
+          line-height: 1.4;
+          font-size: 0.9rem;
+        }
+
+        & > p + p {
+          margin-top: 0;
+        }
+      }
+    }
+
+    &.cmthread--wide.cmthread--l0,
+    &.cmthread--wide.cmthread--l1,
+    &.cmthread--wide.cmthread--l2 {
+      display: flex;
+      flex-direction: row;
+      margin-left: 9px;
+
+      a.vline,
+      span.vline {
+        display: block;
+        min-width: 32px;
+
+        &::after {
+          position: relative;
+          top: 46px;
+          bottom: 0;
+          left: 8px;
+          display: block;
+          width: 2px;
+          height: calc(100% - 71px);
+          z-index: 1;
+          content: "";
+        }
+      }
+
+      a.vline {
+        &:hover::after {
+          left: 5px;
+          width: 8px;
+        }
+
+        &.folded {
+          &::after {
+            left: 6px;
+            width: 6px;
+          }
+
+          &:hover::after {
+            left: 5px;
+            width: 8px;
+          }
+        }
+      }
+
+      .reply-box {
+        margin-left: 35px;
+      }
+
+      .hline-l0,
+      .hline-l1,
+      .hline-l2 {
+        position: absolute;
+        bottom: 24px;
+        left: -58px;
+        border-top-width: 2px;
+        border-top-style: solid;
+        transform: translateY(-50%);
+        display: block;
+        width: 74px;
+      }
+
+      &.folded {
+        display: none;
+      }
+    }
+
+    &.cmthread--wide.cmthread--end {
+     margin-left: 40px;
+
+     &.folded {
+      display: none;
+     }
+    }
+  }
+
+  .thread-group {
+    width: 100%;
+  }
+
+  /* --------------------------
+   * Coloring comment threads.
+   */
+
+  .cmthread.cmthread--l0 {
+    a.vline,
+    span.vline {
+      &::before {
+        border: 2px solid var(--djcx-color-level-0);
+        background-color: var(--djcx-background-color);
+      }
+
+      &::after {
+        background-color: var(--djcx-color-level-0);
+      }
+    }
+  }
+
+  .cmthread.cmthread--l1 {
+    a.vline,
+    span.vline {
+      &::before {
+        border: 2px solid var(--djcx-color-level-1);
+        background-color: var(--djcx-background-color);
+      }
+
+      &::after {
+        background-color: var(--djcx-color-level-1);
+      }
+    }
+  }
+
+  .cmthread.cmthread--l2 {
+    a.vline,
+    span.vline {
+      &::before {
+        border: 2px solid var(--djcx-color-level-2);
+        background-color: var(--djcx-background-color);
+      }
+
+      &::after {
+        background-color: var(--djcx-color-level-2);
+      }
+    }
+  }
+
+  .hline-l0 {
+    color: var(--djcx-color-level-0);
+  }
+
+  .hline-l1 {
+    color: var(--djcx-color-level-1);
+  }
+
+  .hline-l2 {
+    color: var(--djcx-color-level-2);
   }
 }

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block color_scheme %}class="dark"{% endblock %}
+
+{% block extra_head %}
+{{ block.super }}
+<style>
+  :root {
+    --body-background-color: rgb(40, 40, 50);
+    --body-color: #f0f0f0;
+    --link-color: #279bf7;
+    --link-color-hover: #63b9fd;
+  }
+
+  .djcx:not(.light, .dark) {
+    /* Redefine CSS vars django-comments-xtd (prefixed with --djcx) here. */
+  }
+
+  li {
+    margin: .5rem 0;
+  }
+</style>
+{% endblock extra_head %}

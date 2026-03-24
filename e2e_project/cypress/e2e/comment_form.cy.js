@@ -15,18 +15,27 @@ describe('Check form status', () => {
 
     // Field with name='comment' is invalid.
     cy.get(".comment-form form [name='comment']:invalid")
-      .invoke("prop", "validationMessage")
-      .should("equal", "Please fill in this field.");
+      .invoke("prop", "validationMessage").should(($value) => {
+        expect($value).to.be.oneOf(
+          ["Please fill in this field.", "Please fill out this field."]
+        )
+      });
 
     // Field with name='name' is invalid.
     cy.get(".comment-form form [name='name']:invalid")
-      .invoke("prop", "validationMessage")
-      .should("equal", "Please fill in this field.");
+      .invoke("prop", "validationMessage").should(($value) => {
+        expect($value).to.be.oneOf(
+          ["Please fill in this field.", "Please fill out this field."]
+        )
+      });
 
     // Field with name='email' is invalid.
     cy.get(".comment-form form [name='email']:invalid")
-      .invoke("prop", "validationMessage")
-      .should("equal", "Please fill in this field.");
+      .invoke("prop", "validationMessage").should(($value) => {
+        expect($value).to.be.oneOf(
+          ["Please fill in this field.", "Please fill out this field."]
+        )
+      });
   });
 });
 

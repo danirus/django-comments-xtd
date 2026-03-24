@@ -24,6 +24,6 @@ python manage.py loaddata fixtures/users.json
 python manage.py loaddata fixtures/prose.json
 python manage.py add_comments
 # python manage.py loaddata fixtures/specs.json
-nohup ./manage.py runserver 8333 &>/dev/null &
+nohup python manage.py runserver localhost:8333 &>/dev/null &
 echo $! > runserver.pid
 exit 0

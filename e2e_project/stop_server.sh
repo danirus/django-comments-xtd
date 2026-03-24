@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-set -e  # If a cmd exits with non-zero status, exit immediately.
+# I use pkill down here, and as it can return 1 when no process matches
+# the pid given in the file, I disable the `set -e` in this line below.
+# Otherwise `pkill -F runserver.pid`, when returning 1, would exit
+# immediately.
+# set -e  # If a cmd exits with non-zero status, exit immediately.
 
 # Get the script's path.
 SCRIPT_PATH="${BASH_SOURCE[0]}"
@@ -12,6 +16,8 @@ cd "$SCRIPT_DIR" || {
     exit 1
 }
 
-pkill -F runserver.pid
-rm runserver.pid
+if [ -f runserver.pid ]; then
+    pkill -F runserver.pid
+    rm runserver.pid
+fi
 exit 0

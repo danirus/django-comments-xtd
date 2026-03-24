@@ -21,8 +21,8 @@ js-tests:  ## Run JavaScript tests.
 	npm run test
 
 build:  clean  ## Build django-comments-xtd package.
-	npm run css
-	npm run js
+	npm run css-all
+	npm run js-all
 	python -m build
 
 help: ## Show help message.

@@ -4,7 +4,7 @@
  *  comment threads (the blue lines displayes at the left side).
  *
  */
-import { digest_loc } from "./utils";
+import { digest_loc } from "./utils.js";
 
 
 export default class CommentThreads {
@@ -36,7 +36,7 @@ export default class CommentThreads {
   }
 
   static async initialize() {
-    sst_key = await digest_loc();
+    const sst_key = await digest_loc();
     return new CommentThreads(sst_key);
   }
 

@@ -1,7 +1,7 @@
-import { init_commenting } from "./commenting";
-import { init_flagging } from "./flagging";
-import { init_reacting } from "./reacting";
-import { init_voting } from "./voting";
+import { init_commenting } from "./commenting.js";
+import { init_flagging } from "./flagging.js";
+import { init_reacting } from "./reacting.js";
+import { init_voting } from "./voting.js";
 
 globalThis.djcx = {
   init_commenting: init_commenting,

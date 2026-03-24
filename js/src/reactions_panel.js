@@ -1,4 +1,4 @@
-import { get_cookie } from "./utils";
+import { get_cookie } from "./utils.js";
 
 
 export default class ReactionsPanel {

@@ -1,8 +1,13 @@
 export default class CommentForm {
   constructor(form_wrapper) {
-    this.form_wrapper = form_wrapper;  // CSS selector.
-    this.form_wrapper_el = undefined; // Element matching form_wrapper selector.
+    this.form_wrapper = form_wrapper;  // A string CSS selector.
+    this.form_wrapper_el = undefined; // Element matching form_wrapper.
     this.form_el = undefined;  // <FORM> Element inside form_wrapper_el.
+
+    // True when the comment is posted and
+    // the form is no longer available.
+    this.form_is_gone = false;
+
     this.init();
   }
 
@@ -34,7 +39,7 @@ export default class CommentForm {
     return true;
   }
 
-  post(submit_button_name) {
+  async post(submit_button_name) {
     if (!this.is_valid()) {
       return;
     }
@@ -53,38 +58,22 @@ export default class CommentForm {
       form_data.append(submit_button_name, 1);
     }
 
-    fetch(this.form_el.action, {
+    const response = await fetch(this.form_el.action, {
       method: 'POST',
       headers: {
         "X-Requested-With": "XMLHttpRequest",
       },
       body: form_data
-    }).then(response => {
-      if (submit_button_name === "preview") {
-        this.handle_preview_comment_response(response);
-      } else if (submit_button_name === "post") {
-        this.handle_post_comment_response(response);
-      }
     });
 
-    this.disable_btns(false);
+    await this.handle_response(response);
+    if (!this.form_is_gone) {
+      this.disable_btns(false);
+    }
     return false; // To prevent calling the action attribute.
   }
 
-  async handle_preview_comment_response(response) {
-    const data = await response.json();
-    if (response.status === 200) {
-      this.form_wrapper_el.innerHTML = data.html;
-      this.init();
-      if (data.field_focus) {
-        this.form_el.querySelector(`[name=${data.field_focus}]`).focus();
-      }
-    } else if (response.status === 400) {
-      this.form_el.innerHTML = data.html;
-    }
-  }
-
-  async handle_post_comment_response(response) {
+  async handle_response(response) {
     const data = await response.json();
 
     if (response.status === 200) {
@@ -99,7 +88,11 @@ export default class CommentForm {
       response.status === 202 ||
       response.status === 400
     ) {
+      /* This makes the comment form dissapear. From
+       * here on the rest of the methods should not work.
+       */
       this.form_el.innerHTML = data.html;
+      this.form_is_gone = true;  // The form is gone.
     }
     else if (response.status > 400) {
       alert(

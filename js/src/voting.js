@@ -1,4 +1,4 @@
-import VoteHandler from "./vote_handler";
+import VoteHandler from "./vote_handler.js";
 
 function init_voting(cfg) {
   // Handler for clicking events on vote up/down elements.

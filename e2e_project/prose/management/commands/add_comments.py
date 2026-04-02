@@ -12,6 +12,8 @@ from shared.users.models import User
 
 from django_comments_xtd.models import CommentReaction, XtdComment
 
+# Do not change the reactions unless you change the Cypress tests associated.
+
 content_parameters = [
     {
         "model": "ArticleCommentsL0",

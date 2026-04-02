@@ -1,6 +1,6 @@
-describe('Check form status', () => {
+describe('Test /02-def-dark--comment-form', () => {
   beforeEach(() => {
-    cy.visit("/def-dark--comment-form");
+    cy.visit("/02-def-dark--comment-form");
   });
 
   it("is an invalid form due to missing required fields", () => {
@@ -41,7 +41,7 @@ describe('Check form status', () => {
 
 describe("Fill the form and send it to the Django backend", () => {
   beforeEach(() => {
-    cy.visit("/def-dark--comment-form");
+    cy.visit("/02-def-dark--comment-form");
     // Type content for the required fields.
     cy.get("form [name='comment']").type("Your story is inspiring.");
     cy.get("form [name='name']").type("Fulanita de Tal");

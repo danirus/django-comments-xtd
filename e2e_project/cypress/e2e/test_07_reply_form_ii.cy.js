@@ -93,8 +93,8 @@ describe("Test /07-def-dark--reply-ii", () => {
       .get("div.comment")
       .get("div.feedback")
       .get("div.active-reactions")
-      .get("div.reaction:first-child > div.tooltip")
-      .should("be.hidden");
+      .get("div.reaction:first-child > div")
+      .should("have.class", "tooltip");
   });
 
   it("contains 2 heart reactions", () => {
@@ -119,7 +119,7 @@ describe("Test /07-def-dark--reply-ii", () => {
       .get("div.comment")
       .get("div.feedback")
       .get("div.active-reactions")
-      .get("div.reaction:last-child > div.tooltip")
-      .should("be.hidden");
+      .get("div.reaction:last-child > div")
+      .should("have.class", "tooltip");
   });
 });

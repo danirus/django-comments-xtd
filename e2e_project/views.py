@@ -266,7 +266,7 @@ class ReplyComment2View(ReplyCommentView):
     def get(self, request, *args, **kwargs):
         # comment.id should be 2, as comment with pk=2 is posted
         # to content-type 19 (ArticleCommentsL1). That model can
-        # receive comments nested down to level 1.
+        # receive comments nested 1 level down.
         return super().get(request, 2)  # Comment with pk=2
 
 
@@ -274,7 +274,7 @@ class ReplyComment3View(ReplyCommentView):
     def get(self, request, *args, **kwargs):
         # comment.id should be 3, as comment with pk=3 is posted
         # to content-type 23 (StoryCommentsL1). That model can
-        # receive comments nested down to level 1.
+        # receive comments nested 1 level down.
         return super().get(request, 3)  # Comment with pk=3
 
 

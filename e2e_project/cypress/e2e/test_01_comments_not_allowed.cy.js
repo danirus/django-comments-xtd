@@ -1,6 +1,6 @@
-describe('comments not allowed', () => {
+describe('Test /01-def-dark--comments-not-allowed', () => {
   beforeEach(() => {
-    cy.visit('/def-dark--comments-not-allowed');
+    cy.visit('/01-def-dark--comments-not-allowed');
   });
 
   it('displays "New comments are not allowed"', () => {

@@ -87,5 +87,7 @@ jobs:
           pip install -r e2e_project/requirements.txt
       - name: Install Node.js dependencies
         run: npm install
+      - name: Build JavaScript bundle
+        run: npm run js-all
       - name: Run javascript unit tests
         run: npm test

@@ -22,7 +22,7 @@ export default [{
     "django_comments_xtd/*",
     "docs/*",
     "example/*",
-    "js/tests/*",
+    "e2e_project/*",
     "scss/*",
     "venv/*",
   ],

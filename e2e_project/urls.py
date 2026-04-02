@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth import logout
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http.response import HttpResponseRedirect
 from django.urls import include, path, reverse
+
+from django_comments_xtd.conf import settings
 
 from .views import (
     BadFormView,
@@ -1907,3 +1910,6 @@ urlpatterns = [
     path_to_template("aihn_light__n_comments_levels_0_3_options_off"),
     path_to_template("aihn_dark__n_comments_levels_0_3_options_off"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()

@@ -147,7 +147,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 COMMENTS_APP = "django_comments_xtd"
 
-COMMENTS_XTD_REACTION_ENUM = "mockups_project.enums.ReactionEnum"
+COMMENTS_XTD_REACTION_ENUM = "e2e_project.enums.ReactionEnum"
 
 COMMENTS_HIDE_REMOVED = False
 

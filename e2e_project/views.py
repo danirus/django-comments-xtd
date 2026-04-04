@@ -113,6 +113,13 @@ djcx_signals.confirmation_received.connect(on_confirmation_accept_comment)
 
 def discard_comment_v(request, *args, **kwargs):
     """Force the comment `discarded.html` template."""
+    #
+    # It is discarded because the receiver of the signal
+    # `confirmation_received`, a few lines above this, will
+    # return False, which has the effect of discarding the
+    # comment (see function `confirm` for details in
+    # `django_comments_xtd/views.py`).
+    #
     obj = ArticleCommentsL0.objects.get(pk=1)
     tmp_comment = TmpXtdComment(
         content_type=ContentType.objects.get_for_model(obj),
@@ -131,7 +138,7 @@ def discard_comment_v(request, *args, **kwargs):
     return HttpResponseRedirect(url)
 
 
-def redirect(request, *args, **kwargs):
+def redirect_flag(request, *args, **kwargs):
     # Comment with pk=3 (sent to contenttype articles.storycommentsl1).
     url = reverse("comments-flag", args=(3,))
     return HttpResponseRedirect(url)

@@ -16,6 +16,7 @@
 /// <reference types="./" />
 
 import './commands';
+import './helpers';
 
 before(() => {});
 

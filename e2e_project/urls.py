@@ -24,7 +24,7 @@ from .views import (
     discard_comment_v,
     preview_v,
     prose_v,
-    redirect,
+    redirect_flag,
 )
 
 
@@ -99,19 +99,19 @@ urlpatterns = [
                         "url2": "07-def-dark--reply-ii",
                     },
                     {
-                        "title": "bad_form.html (JS)",
-                        "url1": "def-light--bad-form-part",
-                        "url2": "def-dark--bad-form-part",
+                        "title": "08: bad_form.html (JS)",
+                        "url1": "08-def-light--bad-form",
+                        "url2": "08-def-dark--bad-form",
                     },
                     {
-                        "title": "discarded.html",
-                        "url1": "def-light--discarded",
-                        "url2": "def-dark--discarded",
+                        "title": "09: discarded.html",
+                        "url1": "09-def-light--discarded",
+                        "url2": "09-def-dark--discarded",
                     },
                     {
-                        "title": "flag.html",
-                        "url1": "def-light--flag-comment",
-                        "url2": "def-dark--flag-comment",
+                        "title": "10: flag.html",
+                        "url1": "10-def-light--flag-comment",
+                        "url2": "10-def-dark--flag-comment",
                     },
                     {
                         "title": "moderated.html",
@@ -710,42 +710,42 @@ urlpatterns = [
     ),
     # bad_form.html (JS) ----------------------------------
     path(
-        "def-light--bad-form-part",
+        "08-def-light--bad-form",
         BadFormView.as_view(),
         {"theme": "", "cscheme": "light"},
-        name="def-light--bad-form-part",
+        name="08-def-light--bad-form",
     ),
     path(
-        "def-dark--bad-form-part",
+        "08-def-dark--bad-form",
         BadFormView.as_view(),
         {"theme": "", "cscheme": "dark"},
-        name="def-dark--bad-form-part",
+        name="08-def-dark--bad-form",
     ),
     # discarded.html --------------------------------------
     path(
-        "def-light--discarded",
+        "09-def-light--discarded",
         discard_comment_v,
         {"theme": "", "cscheme": "light"},
-        name="def-light--discarded",
+        name="09-def-light--discarded",
     ),
     path(
-        "def-dark--discarded",
+        "09-def-dark--discarded",
         discard_comment_v,
         {"theme": "", "cscheme": "dark"},
-        name="def-dark--discarded",
+        name="09-def-dark--discarded",
     ),
     # flag.html -------------------------------------------
     path(
-        "def-light--flag-comment",
-        redirect,
+        "10-def-light--flag-comment",
+        redirect_flag,
         {"theme": "", "cscheme": "light"},
-        name="def-light--flag-comment",
+        name="10-def-light--flag-comment",
     ),
     path(
-        "def-dark--flag-comment",
-        redirect,
+        "10-def-dark--flag-comment",
+        redirect_flag,
         {"theme": "", "cscheme": "dark"},
-        name="def-dark--flag-comment",
+        name="10-def-dark--flag-comment",
     ),
     # moderated.html --------------------------------------
     path(

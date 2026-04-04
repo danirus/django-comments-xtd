@@ -9,14 +9,8 @@
 <main>
   <article>
     <div class="container">
-      <h2 class="text-center">
-        {% if user_flagged %}{% trans "You already flagged this comment." %}
-        {% else %}{% trans "Flag this comment?" %}{% endif %}
-      </h2>
-      <h6 class="text-center pb24">
-        {% trans "Comment sent to:" %}<br/>
-        <a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a>
-      </h6>
+      <h2 class="text-center">{% if user_flagged %}{% trans "You already flagged this comment." %}{% else %}{% trans "Flag this comment?" %}{% endif %}</h2>
+      <h6 class="text-center pb24">{% trans "Comment sent to:" %}<br/><a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a></h6>
     </div>
     <div class="central-column">
       <div class="djcx pb32">

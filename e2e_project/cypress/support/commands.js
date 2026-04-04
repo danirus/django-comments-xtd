@@ -1,3 +1,8 @@
+/*
+ * This code comes from django-cypress:
+ * https://github.com/HelloWorld-PC/django-cypress
+ *
+ */
 Cypress.Commands.add('csrfToken', () => {
     return cy.request({
         method: 'GET',

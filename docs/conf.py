@@ -21,7 +21,12 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 #     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 html_theme = 'sphinx_nefertiti'
-html_style = ["custom.css"]
+html_css_files = ["custom.css"]
+
+# Add any paths that contain custom static files (such as style sheets) here,
+# relative to this directory. They are copied after the builtin static files,
+# so a file named "default.css" will overwrite the builtin "default.css".
+html_static_path = ["static"]
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -57,7 +62,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'django-comments-xtd'
-copyright = u'2025, Daniela Rus Morales'
+copyright = u'2026, Daniela Rus Morales'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -65,9 +70,9 @@ copyright = u'2025, Daniela Rus Morales'
 #
 # import django_comments_xtd
 # The short X.Y version.
-version = '2.10'
+version = '3.0'
 # The full version, including alpha/beta/rc tags.
-release = '2.10.9'
+release = '3.0.0'
 
 releases = [
     "latest",
@@ -132,8 +137,12 @@ csi_add_script_to_html_output = False
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    "monospace_font_size": ".90rem",
-    "doc_headers_font": "Nunito",
+    "project_name_font": "Montserrat",
+    "monospace_font": "Fira Code",
+    "monospace_font_size": "1.0rem",
+    # "documentation_font": "Work Sans",
+    "documentation_font_size": "1.1rem",
+    "doc_headers_font": "Montserrat",
 
     "style": "green",
     "pygments_light_style": "pastie",
@@ -198,12 +207,6 @@ html_theme_options = {
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
 html_favicon = "static/chat-text-fill.svg"
-
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["static"]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.

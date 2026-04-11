@@ -12,7 +12,7 @@
         </div>
       {% endif %}
       <div class="user-avatar flex-align-center">
-        {% get_comment_gravatar comment "36,identicon" %}
+        {% get_comments_gravatar comment "36,identicon" %}
       </div>
       <div class="flex-grow py-0">
         {% if comment.url and not comment.is_removed %}<a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>{% else %}{{ comment.name }}{% endif %}<br/>

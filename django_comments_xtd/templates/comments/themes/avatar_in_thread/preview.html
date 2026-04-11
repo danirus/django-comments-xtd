@@ -44,7 +44,7 @@
                 {% with parent=form.reply_to.value|get_comment %}
                   <div class="comment-box">
                     <div class="user-avatar">
-                      {% get_comment_gravatar parent "36,identicon" %}
+                      {% get_comments_gravatar parent "36,identicon" %}
                     </div>
                     <div class="comment comment--in-thread">
                       <div class="header">

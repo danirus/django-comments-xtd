@@ -45,7 +45,7 @@
                     <div class="comment comment--in-thread">
                       <div class="header flex-align-center">
                         <div class="user-avatar">
-                          {% get_comment_gravatar parent "36,identicon" %}
+                          {% get_comments_gravatar parent "36,identicon" %}
                         </div>
                         <div class="flex-grow">
                           {% if parent.url %}<a href="{{ parent.url }}" target="_new">{{ parent.name }}</a>{% else %}{{ parent.name }}{% endif %}<br>

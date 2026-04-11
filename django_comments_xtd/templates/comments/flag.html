@@ -14,48 +14,7 @@
     </div>
     <div class="central-column">
       <div class="djcx pb32">
-        <div id="c{{ comment.id }}" class="comment-box">
-          <div class="comment">
-            <div class="header">
-              <div>
-                {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}
-                  <div class="inline-block" id="cm-votes-{{ comment.id }}">
-                    {% include "comments/comment_votes.html" with comments_input_allowed=False %}
-                  </div>
-                  &sdot;
-                {% endif %}
-                {% if comment.url and not comment.is_removed %}
-                  <a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>
-                {% else %}
-                  {{ comment.name }}
-                {% endif %}
-                &sdot;
-                <span class="muted">{{ comment.submit_date }}</span>
-                <a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
-              </div>
-              {% if not comment.is_removed and comments_flagging_enabled and comments_input_allowed %}
-                {% with cflags=comment.get_flags %}
-                  {% if user in cflags.users %}<div class="tip-container"><span>&#9873;</span><div class="tooltip">{% trans "You have flagged this comment as inappropriate" %}</div></div>{% endif %}
-                {% endwith %}
-              {% endif %}
-            </div>
-            <div class="body body-bordered{% if comments_reacting_enabled %} body-bordered--no-bottom{% endif %}">
-              {{ comment.comment|linebreaks|escape }}
-            </div>
-            {% if comments_reacting_enabled %}
-            <div  id="cm-feedback-{{ comment.id }}" class="feedback feedback-bordered">
-              {% if not comment.is_removed and comments_reacting_enabled %}
-                {% include "comments/comment_reactions.html" %}
-              {% endif %}
-              {% if comment.nested_count and not comment.is_removed %}
-                <div class="inline-block">
-                  <span id="comment-{{ comment.id}}-replies" data-djcx="nreplies" data-comment="{{ comment.id }}" class="small">{% blocktrans count replies=comment.nested_count %}One reply{% plural %}{{ replies }} replies{% endblocktrans %}</span>
-                </div>
-              {% endif %}
-            </div>
-            {% endif %}
-          </div>
-        </div>
+        {% include "comments/comment.html" %}
 
         <section>
           <h6 class="text-center">{% if user_flagged %}{% trans "Click on the remove button to no longer mark the comment as inappropriate." %}{% else %}{% trans "Click on the flag button to mark the following comment as inappropriate." %}{% endif %}</h6>
@@ -65,12 +24,8 @@
             <input type="hidden" name="{{ comments_page_qs_param }}" value="{{ comments_page }}" />
             <input type="hidden" name="{{ comments_folded_qs_param }}" value="{{ comments_folded }}" />
             <div class="inline-centered text-center">
-              <button type="submit" class="primary" name="submit" value="flag">
-                {% if user_flagged %}{% trans "Remove flag" %}{% else %}{% trans "Flag" %}{% endif %}
-              </button>&nbsp;
-              <a class="btn secondary" href="{% get_comment_permalink comment %}">
-                {% trans "cancel" %}
-              </a>
+              <button type="submit" class="primary" name="submit" value="flag">{% if user_flagged %}{% trans "remove flag" %}{% else %}{% trans "flag" %}{% endif %}</button>
+              <a class="btn secondary" href="{% get_comment_permalink comment %}">{% trans "cancel" %}</a>
             </div>
           </form>
         </section>

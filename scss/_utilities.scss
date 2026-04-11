@@ -94,6 +94,18 @@
   .inline-left {
     display: flex;
     justify-content: left;
+    gap: .2rem;
+  }
+
+  .inline-centered {
+    display: flex;
+    justify-content: center;
+    gap: .2rem;
+  }
+
+  .inline-left>*,
+  .inline-centered>* {
+    display: inline-block;
   }
 
   .hide { display: none }

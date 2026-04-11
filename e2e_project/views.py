@@ -166,7 +166,8 @@ def on_comment_will_be_posted(sender, comment, request, **kwargs):
 djc_signals.comment_will_be_posted.connect(on_comment_will_be_posted)
 
 
-class ModerateJsView(ProseDetailView):
+@method_decorator([login_required], name="dispatch")
+class ModeratedJsView(ProseDetailView):
     model = ArticleCommentsL0
     template_name = "moderated_js_test.html"
 

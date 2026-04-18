@@ -14,7 +14,7 @@
     </div>
     <div class="central-column">
       <div class="djcx pb32">
-        {% include "comments/comment.html" %}
+        {% include "comments/comment.html" with max_thread_level=0 %}
 
         <section>
           <h6 class="text-center">{% if user_flagged %}{% trans "Click on the remove button to no longer mark the comment as inappropriate." %}{% else %}{% trans "Click on the flag button to mark the following comment as inappropriate." %}{% endif %}</h6>

@@ -32,6 +32,15 @@ describe("Test /10-def-dark--flag-comment", () => {
     cy.djcx.testDefCommentBox("main div.central-column > div.djcx");
   });
 
+  it("does not have the css class 'comment--in-thread'", () => {
+    // When displaying the comment in a single page, like it happens
+    // when using the flag.html or the react.html templates, the
+    // comment is displayed alone, the CSS class 'comment--in-thread'
+    // should not be displayed.
+    cy.get("main div.central-column > div.djcx > div.comment-box > div")
+      .should("not.have.class", "comment--in-thread");
+  });
+
   it("flag and unflag the comment", () => {
     /*
      * This test flags the comment and then removes the flag.

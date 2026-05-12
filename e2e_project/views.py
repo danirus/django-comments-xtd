@@ -323,11 +323,29 @@ def preview_v(reply_to=0):
     return _PreviewCommentView.as_view()
 
 
-class ReactToCmntView(ReactToCommentView):
-    def get(self, request, *args, **kwargs):
-        return super().get(request, 3)  # Comment pk=3 is for reactions.
+class AltReactToCommentView(ReactToCommentView):
+    """
+    This view simulates that the setting COMMENTS_XTD_SKIP_DONE_VIEWS
+    is True. But it won't be used when submitting the vote form, as that
+    one refers to the url comments-xtd-vote, which is handled by
+    VoteOnCommentView, which for this project has skip_done to False.
+    It means that if you click on the voting links at the left and right
+    side of the voting score, then the view VoteOnCommentView is used
+    instead of this one, and in such case the `skip_done` is False.
+    """
+
+    skip_done = True
 
 
-class VoteOnCmntView(VoteOnCommentView):
-    def get(self, request, *args, **kwargs):
-        return super().get(request, 3)  # Comment pk=3 is for reactions.
+class AltVoteOnCommentView(VoteOnCommentView):
+    """
+    This view simulates that the setting COMMENTS_XTD_SKIP_DONE_VIEWS
+    is True. But it won't be used when submitting the vote form, as that
+    one refers to the url comments-xtd-vote, which is handled by
+    VoteOnCommentView, which for this project has skip_done to False.
+    It means that if you click on the voting links at the left and right
+    side of the voting score, then the view VoteOnCommentView is used
+    instead of this one, and in such case the `skip_done` is False.
+    """
+
+    skip_done = True

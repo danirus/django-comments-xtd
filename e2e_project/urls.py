@@ -5,8 +5,11 @@ from django.http.response import HttpResponseRedirect
 from django.urls import include, path, reverse
 
 from django_comments_xtd.conf import settings
+from django_comments_xtd.views import ReactToCommentView, VoteOnCommentView
 
 from .views import (
+    AltReactToCommentView,
+    AltVoteOnCommentView,
     BadFormView,
     FormJsView,
     HomepageView,
@@ -17,10 +20,8 @@ from .views import (
     PostedJsView,
     PostedView,
     PublishedJsView,
-    ReactToCmntView,
     ReplyComment2View,
     ReplyComment3View,
-    VoteOnCmntView,
     discard_comment_v,
     preview_v,
     prose_v,
@@ -109,7 +110,7 @@ urlpatterns = [
                         "url2": "09-def-dark--discarded",
                     },
                     {
-                        "title": "10: flag.html",
+                        "title": "10: flag.html, and return to comment",
                         "url1": "10-def-light--flag-comment",
                         "url2": "10-def-dark--flag-comment",
                     },
@@ -144,14 +145,24 @@ urlpatterns = [
                         "url2": "16-def-dark--comment-published-js",
                     },
                     {
-                        "title": "17: react.html & reacted.html (req. login)",
+                        "title": "17: react.html & reacted.html (req login)",
                         "url1": "17-def-light--react-to-comment",
                         "url2": "17-def-dark--react-to-comment",
                     },
                     {
-                        "title": "vote.html and voted.html (requires login)",
-                        "url1": "def-light--vote-on-comment",
-                        "url2": "def-dark--vote-on-comment",
+                        "title": "18: react.html & back to comment (req login)",
+                        "url1": "18-def-light--react-to-comment",
+                        "url2": "18-def-dark--react-to-comment",
+                    },
+                    {
+                        "title": "19: vote.html and voted.html (req login)",
+                        "url1": "19-def-light--vote-on-comment",
+                        "url2": "19-def-dark--vote-on-comment",
+                    },
+                    {
+                        "title": "20: vote.html & back to comment (req login)",
+                        "url1": "20-def-light--vote-on-comment",
+                        "url2": "20-def-dark--vote-on-comment",
                     },
                     {
                         "title": "1 comment, level 0, options off",
@@ -838,28 +849,54 @@ urlpatterns = [
     # react.html and reacted.html -------------------------
     path(
         "17-def-light--react-to-comment",
-        ReactToCmntView.as_view(),
-        {"theme": "", "cscheme": "light"},
+        ReactToCommentView.as_view(),
+        {"theme": "", "cscheme": "light", "comment_id": 3},
         name="17-def-light--react-to-comment",
     ),
     path(
         "17-def-dark--react-to-comment",
-        ReactToCmntView.as_view(),
-        {"theme": "", "cscheme": "dark"},
+        ReactToCommentView.as_view(),
+        {"theme": "", "cscheme": "dark", "comment_id": 3},
         name="17-def-dark--react-to-comment",
+    ),
+    # react.html and back to comment -------------------------
+    path(
+        "18-def-light--react-to-comment",
+        AltReactToCommentView.as_view(),
+        {"theme": "", "cscheme": "light", "comment_id": 3},
+        name="18-def-light--react-to-comment",
+    ),
+    path(
+        "18-def-dark--react-to-comment",
+        AltReactToCommentView.as_view(),
+        {"theme": "", "cscheme": "dark", "comment_id": 3},
+        name="18-def-dark--react-to-comment",
     ),
     # vote.html and voted.html ----------------------------
     path(
-        "def-light--vote-on-comment",
-        VoteOnCmntView.as_view(),
-        {"theme": "", "cscheme": "light"},
-        name="def-light--vote-on-comment",
+        "19-def-light--vote-on-comment",
+        VoteOnCommentView.as_view(),
+        {"theme": "", "cscheme": "light", "comment_id": 3},
+        name="19-def-light--vote-on-comment",
     ),
     path(
-        "def-dark--vote-on-comment",
-        VoteOnCmntView.as_view(),
-        {"theme": "", "cscheme": "dark"},
-        name="def-dark--vote-on-comment",
+        "19-def-dark--vote-on-comment",
+        VoteOnCommentView.as_view(),
+        {"theme": "", "cscheme": "dark", "comment_id": 3},
+        name="19-def-dark--vote-on-comment",
+    ),
+    # vote.html and back to comment --------------------------
+    path(
+        "20-def-light--vote-on-comment",
+        AltVoteOnCommentView.as_view(),
+        {"theme": "", "cscheme": "light", "comment_id": 3},
+        name="20-def-light--vote-on-comment",
+    ),
+    path(
+        "20-def-dark--vote-on-comment",
+        AltVoteOnCommentView.as_view(),
+        {"theme": "", "cscheme": "dark", "comment_id": 3},
+        name="20-def-dark--vote-on-comment",
     ),
     # ----------------------
     # -- 1 comment, level 0

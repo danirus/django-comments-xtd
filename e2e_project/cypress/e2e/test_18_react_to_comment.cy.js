@@ -1,7 +1,6 @@
-describe("Test /17-def-dark--react-to-comment", () => {
-
+describe("Test /18-def-dark--react-to-comment", () => {
   beforeEach(() => {
-    cy.visit("/17-def-dark--react-to-comment");
+    cy.visit("/18-def-dark--react-to-comment");
     // Requires login. Then it redirects to the target URL.
     cy.get("form [name='email']").type("isabel.azul@example.com");
     cy.get("form [name='password']").type("isabel.azul");
@@ -54,7 +53,7 @@ describe("Test /17-def-dark--react-to-comment", () => {
       .should("contain", "Smile");
   });
 
-  it("can receive the 'smile' reaction and then remove it", () => {
+  it("can receive the 'rocket' reaction and then remove it", () => {
     /*
      * This test clicks on the button "SMILE", checks that the comment
      * displays the "SMILE" feedback, then clicks again on the button
@@ -62,27 +61,18 @@ describe("Test /17-def-dark--react-to-comment", () => {
      * in the comment.
      */
     // Find the 'flag' button and click on it.
-    cy.get("form > div.buttons-row").first()
+    cy.get("form > div.buttons-row").last()
       .find("button:nth-child(3)")
-      .should("have.attr", "value", "S")
-      .should("contain", "Smile")
+      .should("have.attr", "value", "R")
+      .should("contain", "Rocket")
       .click();
 
     // After clicking, the user is redirected to the URL of
     // the Django object that the comment was posted to.
     console.log("location.pathname:", cy.location("pathname"));
-    cy.url().should("contains", "/comments/reacted/?c=3");
-
-    // Check that the new page displays the expected
-    // headers, and the comment.
-    cy.get("body > main > article h2")
-      .should("have.class", "text-center")
-      .should("contain", "Thanks for taking the time to participate");
-    cy.get("body > main > article h6")
-      .should("have.class", "text-center", "pb24")
-      .should("contain", "Your feedback is already part of the comment.");
-    // From e2e_project/cypress/support/helpers.
-    cy.djcx.testDefCommentBox("main div.central-column > div.djcx");
+    cy.url().should(
+      "contains", "/story-comments-l1/reply-to-comment/#comment-3"
+    );
 
     // Check that there is a div#cm-reactions-3 with three divs inside.
     // Each div inside .active-reactions corresponds to a reaction.
@@ -92,23 +82,29 @@ describe("Test /17-def-dark--react-to-comment", () => {
 
     // Check that the reaction Smile has a tooltip with the expected text.
     cy.get("#cm-reactions-3 > div.active-reactions")
-      .find("div[data-reaction='S'] div.tooltip")
+      .find("div[data-reaction='R'] div.tooltip")
       .should("have.length", "1")
-      .should("contain", "Isabel Azul gave a Smile");
+      .should("contain", "Isabel Azul gave a Rocket");
 
     // Check that the reaction Smile has a span.smaller with a text '1'.
-    cy.get("#cm-reactions-3 > div.active-reactions div[data-reaction='S']")
+    cy.get("#cm-reactions-3 > div.active-reactions div[data-reaction='R']")
       .find("span.smaller")
       .should("contain", "1");
 
     // Check that the reaction Smile has a span.emoji
     // with the expected emoji.
-    cy.get("#cm-reactions-3 > div.active-reactions div[data-reaction='S']")
+    cy.get("#cm-reactions-3 > div.active-reactions div[data-reaction='R']")
       .find(" span.emoji")
-      .should("contain", "😀");
+      .should("contain", "🚀");
 
     // ------------------------------------------
-    // Revert the feedback back.
+    // Revert the feedback given.
+    //
+    // Clicking on the 'React' button takes to the 'react.html' instead
+    // to the url /18-def-dark--react-to-comment, so the 'next' template
+    // variable is empty, and therefore, after clicking on the 'rocket'
+    // we will be redirected to the "reacted.html" template.
+    //
     cy.get("a[data-djcx='reactions-panel']").click();
 
     // After clicking, the user is redirected to the /react/ feedback.
@@ -124,13 +120,12 @@ describe("Test /17-def-dark--react-to-comment", () => {
       );
 
     // There is a button with class 'active' corresponding to the
-    // Smile reaction.
+    // Rocket reaction.
     cy.get("button.active")
-      .should("have.attr", "value", "S")
+      .should("have.attr", "value", "R")
       .click();
 
-    // After clicking, the user is redirected to the URL of
-    // the Django object that the comment was posted to.
+    // After clicking, the user is redirected to the 'reacted' view.
     console.log("location.pathname:", cy.location("pathname"));
     cy.url().should("contains", "/comments/reacted/?c=3");
 

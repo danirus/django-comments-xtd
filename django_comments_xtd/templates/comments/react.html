@@ -27,6 +27,7 @@
           {% endif %}
           <form method="POST" autocomplete="off" action="{% comment_reaction_form_target comment %}">
             {% csrf_token %}
+            {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
             {% render_comment_reactions_buttons user_reactions %}
             {% if user_reactions %}
               <h6 class="text-center">{% trans "Click on a button to select or deselect your feedback choise." %}</h6>

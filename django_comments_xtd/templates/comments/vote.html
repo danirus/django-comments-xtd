@@ -18,42 +18,16 @@
     </div>
     <div class="central-column">
       <div class="djcx pb32">
-        <div id="c{{ comment.id }}" class="comment-box">
-          <div class="comment">
-            <div class="header">
-              <div>
-                {% if not comment.is_removed and comments_voting_enabled and comment.level == 0 %}
-                  <div class="inline-block">
-                    <span class="vote-score">{{ comment.thread.score }}</span>
-                  </div>
-                  &nbsp;&sdot;
-                {% endif %}
-                {% if comment.url and not comment.is_removed %}
-                  <a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>
-                {% else %}
-                  {{ comment.name }}
-                {% endif %}
-                &sdot;
-                <span class="muted">{{ comment.submit_date }}</span>
-                <a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
-              </div>
-            </div>
-            <div class="body body-bordered{% if comments_reacting_enabled %} body-bordered--no-bottom{% endif %}">
-              {{ comment.comment|linebreaks|escape }}
-            </div>
-            <div class="feedback feedback-bordered">
-              {% include "comments/comment_reactions.html" %}
-            </div>
-          </div>
-        </div>
+        {% include "comments/comment.html" with max_thread_level=0 %}
 
         <section class="vote-form">
           <h5 class="text-center">Your vote:</h5>
           {% if user_vote %}
-            <p class="text-center">{% trans "The pressed button correspond to your current vote to this comment." %}</p>
+            <p class="text-center">{% trans "The pressed button corresponds to your current vote to this comment." %}</p>
           {% endif %}
           <form method="POST" autocomplete="off" action="{% comment_vote_form_target comment %}">
             {% csrf_token %}
+            {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
             <div class="buttons-row">
               <button
                 type="submit" name="vote" value="+"

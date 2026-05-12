@@ -19,36 +19,9 @@
     {% if comment %}
       <div class="central-column">
         <div class="djcx pb32">
-          <div id="c{{ comment.id }}" class="comment-box">
-            <div class="comment">
-              <div class="header">
-                <div>
-                  {% if not comment.is_removed and comments_voting_enabled and comment.level == 0  %}
-                    <div class="inline-block" id="cm-votes-{{ comment.id }}">
-                      {% include "comments/comment_votes.html" with comments_input_allowed=False %}
-                    </div>
-                    &nbsp;&sdot;
-                  {% endif %}
-                  {% if comment.url and not comment.is_removed %}
-                    <a href="{{ comment.url }}" target="_new">{{ comment.name }}</a>
-                  {% else %}
-                    {{ comment.name }}
-                  {% endif %}
-                  &sdot;
-                  <span class="muted">{{ comment.submit_date }}</span>
-                  <a class="permalink" title="comment permalink" href="{% get_comment_permalink comment %}">¶</a>
-                </div>
-              </div>
-              <div class="body body-bordered{% if comments_reacting_enabled %} body-bordered--no-bottom{% endif %}">
-                {{ comment.comment|linebreaks|escape }}
-              </div>
-              <div class="feedback feedback-bordered">
-                {% include "comments/comment_reactions.html" %}
-              </div>
-            </div>
-          </div>
-
+          {% include "comments/comment.html" with max_thread_level=0 %}
         </div>
+
         <h6 class="text-center">
           <a href="{% get_comment_permalink comment %}">{% trans "Go back to the comment's page." %}</a>
         </h6>

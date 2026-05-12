@@ -20,9 +20,7 @@
           <h6 class="text-center">{% if user_flagged %}{% trans "Click on the remove button to no longer mark the comment as inappropriate." %}{% else %}{% trans "Click on the flag button to mark the following comment as inappropriate." %}{% endif %}</h6>
           <form action="." method="post">
             {% csrf_token %}
-            <input type="hidden" name="next" value="{{ comment.get_absolute_url }}"/>
-            <input type="hidden" name="{{ comments_page_qs_param }}" value="{{ comments_page }}" />
-            <input type="hidden" name="{{ comments_folded_qs_param }}" value="{{ comments_folded }}" />
+            <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}{{ comment.get_absolute_url }}{% endif %}"/>
             <div class="inline-centered text-center">
               <button type="submit" class="primary" name="submit" value="flag">{% if user_flagged %}{% trans "remove flag" %}{% else %}{% trans "flag" %}{% endif %}</button>
               <a class="btn secondary" href="{% get_comment_permalink comment %}">{% trans "cancel" %}</a>

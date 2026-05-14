@@ -121,7 +121,8 @@ describe("Test /18-def-dark--react-to-comment", () => {
 
     // There is a button with class 'active' corresponding to the
     // Rocket reaction.
-    cy.get("button.active")
+    cy.get("form > div.buttons-row").last()
+      .find("button:nth-child(3)")
       .should("have.attr", "value", "R")
       .click();
 

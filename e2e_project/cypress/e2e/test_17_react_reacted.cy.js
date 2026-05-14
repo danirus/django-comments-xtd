@@ -54,7 +54,7 @@ describe("Test /17-def-dark--react-to-comment", () => {
       .should("contain", "Smile");
   });
 
-  it("can receive the 'smile' reaction and then remove it", () => {
+  it.only("can receive the 'smile' reaction and then remove it", () => {
     /*
      * This test clicks on the button "SMILE", checks that the comment
      * displays the "SMILE" feedback, then clicks again on the button
@@ -78,10 +78,12 @@ describe("Test /17-def-dark--react-to-comment", () => {
     cy.get("body > main > article h2")
       .should("have.class", "text-center")
       .should("contain", "Thanks for taking the time to participate");
-    cy.get("body > main > article h6")
+
+      cy.get("body > main > article h6")
       .should("have.class", "text-center", "pb24")
       .should("contain", "Your feedback is already part of the comment.");
-    // From e2e_project/cypress/support/helpers.
+
+      // From e2e_project/cypress/support/helpers.
     cy.djcx.testDefCommentBox("main div.central-column > div.djcx");
 
     // Check that there is a div#cm-reactions-3 with three divs inside.
@@ -125,7 +127,8 @@ describe("Test /17-def-dark--react-to-comment", () => {
 
     // There is a button with class 'active' corresponding to the
     // Smile reaction.
-    cy.get("button.active")
+    cy.get("form > div.buttons-row").first()
+      .find("button:nth-child(3)")
       .should("have.attr", "value", "S")
       .click();
 

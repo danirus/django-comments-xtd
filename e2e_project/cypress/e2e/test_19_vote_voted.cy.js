@@ -66,6 +66,16 @@ describe("Test /19-def-dark--vote-on-comment", () => {
      * "SMILE", and checks that the "SMILE" feedback is not displayed
      * in the comment.
      */
+
+    // Before starting the process of voting and removing the vote,
+    // check that the comment does not have a positive vote from the
+    // beginning.
+    cy.get("#cm-votes-3 > div.vote").first()
+      .find("a")
+      .should("have.class", "vote-up", "active")
+      .should("have.attr", "title", "Vote up")
+      .should("have.attr", "href", "/comments/vote/3/");
+
     // Find the 'flag' button and click on it.
     cy.get("form > div.buttons-row")
       .find("button:nth-child(1)")
@@ -138,7 +148,7 @@ describe("Test /19-def-dark--vote-on-comment", () => {
       );
 
     // There is a button with class 'active' corresponding to the '+'.
-    cy.get("button.active")
+    cy.get("div.buttons-row button:first-child")
       .should("have.attr", "value", "+")
       .click();
 

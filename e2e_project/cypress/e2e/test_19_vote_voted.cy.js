@@ -70,14 +70,14 @@ describe("Test /19-def-dark--vote-on-comment", () => {
     // Before starting the process of voting and removing the vote,
     // check that the comment does not have a positive vote from the
     // beginning.
-    cy.get("#cm-votes-3 > div.vote").first()
+    cy.get("#cm-votes-3 > div.vote")
       .find("a")
       .should("have.class", "vote-up")
       .should("have.attr", "title", "Vote up")
       .should("have.attr", "href", "/comments/vote/3/");
 
     // Find the 'flag' button and click on it.
-    cy.get("form > div.buttons-row")
+    cy.get("form > div.buttons-row").first()
       .find("button:nth-child(1)")
       .should("have.attr", "value", "+")
       .should("contain", "+1")
@@ -92,9 +92,11 @@ describe("Test /19-def-dark--vote-on-comment", () => {
     cy.get("body > main > article h2")
       .should("have.class", "text-center")
       .should("contain", "Thanks for taking the time to participate");
+
     cy.get("body > main > article h6")
       .should("have.class", "text-center", "pb24")
       .should("contain", "Your vote already changed the comment's score.");
+
     // From e2e_project/cypress/support/helpers.
     cy.djcx.testDefCommentBox("main div.central-column > div.djcx");
 
@@ -128,8 +130,8 @@ describe("Test /19-def-dark--vote-on-comment", () => {
       .should("have.text", "1");
 
     // ------------------------------------------
-    // Revert the feedback back.
-    cy.get("a[data-djcx-action='vote-up']").click();
+    // Revert the feedback.
+    cy.visit("/comments/vote/3/");
 
     // After clicking, the user is redirected to the /vote/ feedback.
     console.log("location.pathname:", cy.location("pathname"));
@@ -155,6 +157,5 @@ describe("Test /19-def-dark--vote-on-comment", () => {
     // Check that there is a div#cm-votes-3 with a div-score and text 0.
     cy.get("#cm-votes-3 > span.vote-score")
       .should("have.text", 0);
-
   });
 });

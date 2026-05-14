@@ -120,8 +120,8 @@ describe("Test /20-def-dark--vote-on-comment", () => {
       .should("have.text", "1");
 
     // ------------------------------------------
-    // Revert the feedback back.
-    cy.get("a[data-djcx-action='vote-up']").click();
+    // Revert the feedback.
+    cy.visit("/comments/vote/3/");
 
     // After clicking, the user is redirected to the /vote/ feedback.
     console.log("location.pathname:", cy.location("pathname"));

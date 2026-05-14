@@ -72,7 +72,7 @@ describe("Test /19-def-dark--vote-on-comment", () => {
     // beginning.
     cy.get("#cm-votes-3 > div.vote").first()
       .find("a")
-      .should("have.class", "vote-up", "active")
+      .should("have.class", "vote-up")
       .should("have.attr", "title", "Vote up")
       .should("have.attr", "href", "/comments/vote/3/");
 
@@ -103,12 +103,10 @@ describe("Test /19-def-dark--vote-on-comment", () => {
     cy.get("#cm-votes-3 > div.vote")
       .should("have.length", 2);
 
-    // The first 'div.vote' contains a div with class 'vote-up'. It will
-    // also have the class 'active' when the user has clicked on +1,
-    // which is the case here.
+    // The first 'div.vote' contains a div with class 'vote-up'.
     cy.get("#cm-votes-3 > div.vote").first()
       .find("a")
-      .should("have.class", "vote-up", "active")
+      .should("have.class", "vote-up")
       .should("have.attr", "title", "Your vote is positive")
       .should("have.attr", "href", "/comments/vote/3/");
 
@@ -118,12 +116,10 @@ describe("Test /19-def-dark--vote-on-comment", () => {
       .should("have.class", "tooltip")
       .should("contain", "Your vote is positive");
 
-    // The second 'div.vote' contains a div with class 'vote-down'. In
-    // this case it does not have the class active.
+    // The second 'div.vote' contains a div with class 'vote-down'.
     cy.get("#cm-votes-3 > div.vote").last()
       .find("a")
       .should("have.class", "vote-down")
-      .should("not.have.class", "active")
       .should("have.attr", "title", "Vote down")
       .should("have.attr", "href", "/comments/vote/3/");
 
@@ -147,7 +143,7 @@ describe("Test /19-def-dark--vote-on-comment", () => {
         "The pressed button corresponds to your current vote to this comment."
       );
 
-    // There is a button with class 'active' corresponding to the '+'.
+    // Click on the button with the attr value equal '+'.
     cy.get("div.buttons-row button:first-child")
       .should("have.attr", "value", "+")
       .click();

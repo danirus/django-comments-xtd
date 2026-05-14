@@ -54,7 +54,7 @@ describe("Test /17-def-dark--react-to-comment", () => {
       .should("contain", "Smile");
   });
 
-  it.only("can receive the 'smile' reaction and then remove it", () => {
+  it("can receive the 'smile' reaction and then remove it", () => {
     /*
      * This test clicks on the button "SMILE", checks that the comment
      * displays the "SMILE" feedback, then clicks again on the button

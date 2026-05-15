@@ -7,6 +7,11 @@
 django-comments-xtd
 ===================
 
+.. admonition:: Not updated to v3.0
+    :class: warning
+
+    This version of the documentation covers only v2.10. At some point in the near future, hopefully before 2027, the documentation will be updated to v3.0.
+
 .. module:: django_comments_xtd
    :synopsis: django-comments-extended.
 
@@ -27,10 +32,10 @@ Features
 * Mute links to allow cancellation of follow-up notifications.
 * Comment confirmation via email when users are not authenticated.
 * Comments hit the database only after they have been confirmed.
-* Registered users can like/dislike comments and can suggest comments removal.
+* Optionally registered users can give feedback on comments in the form of so-called reactions and votes, and can suggest comments removal.
 * Template tags to list/render the last N comments posted to any given list of app.model pairs.
 * Emails sent through threads (can be disable to allow other solutions, like a Celery app).
-* Fully functional JavaScript plugin using ReactJS, Bootstrap, Remarkable and MD5.
+* Fully functional vanilla JavaScript plugin.
 
 -----
 

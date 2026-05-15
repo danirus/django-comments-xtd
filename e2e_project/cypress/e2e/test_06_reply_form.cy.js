@@ -21,6 +21,9 @@ describe("Test /06-def-light--reply", () => {
       .get("div.comment-box")
       .get("div.comment")
       .should("have.class", "comment--in-thread");
+
+    // From e2e_project/cypress/support/helpers.
+    cy.djcx.testDefCommentBox("div.djcx div.cmthread div.thread-group");
   });
 
   it("contains a 'thread-group' with a 'reply-box' and a 'hline-l0'", () => {

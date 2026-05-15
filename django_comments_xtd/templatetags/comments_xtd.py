@@ -820,7 +820,7 @@ def render_comment_reactions_panel_template(parser, token):
 
 
 @register.simple_tag
-def get_email_gravatar(email, config="48,identicon"):
+def get_emails_gravatar(email, config="48,identicon"):
     size, gravatar_type = config.split(",")
     try:
         size_number = int(size)
@@ -841,6 +841,6 @@ def get_email_gravatar(email, config="48,identicon"):
 
 
 @register.simple_tag
-def get_comment_gravatar(comment, config="48,identicon"):
+def get_comments_gravatar(comment, config="48,identicon"):
     email = comment.user.email if comment.user else comment.user_email
-    return get_email_gravatar(email, config)
+    return get_emails_gravatar(email, config)

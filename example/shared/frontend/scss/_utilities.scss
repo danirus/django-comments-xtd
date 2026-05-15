@@ -421,21 +421,6 @@ button.secondary:not(:disabled):not(.disabled).active:focus {
 /* ***************** */
 /*  Utility classes  */
 
-.inline-left {
-  display: flex;
-  justify-content: left;
-}
-
-.inline-centered {
-  display: flex;
-  justify-content: center;
-}
-
-.inline-left>*,
-.inline-centered>* {
-  display: inline-block;
-}
-
 .central-column {
   margin: 0 auto;
   max-width: 735px;

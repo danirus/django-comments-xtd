@@ -4,7 +4,7 @@
 
 * A new model class `CommentThread` implements the data referred to the thread that each comment belongs to. It serves also the purpose of storing the score for each comment at level 0, when comment voting is enabled.
 * A new model class `CommentVote` allows to vote for comments. Voting is only allowed for comments at thread level 0 (no nested comments).
-* A new model class `CommentReaction` allows to send reactions to a comment. Reactions are customizable. See `example/mockups_project/enums.py` for an example. By default reactions are like (thumb up) and dislike (thumb down).
+* A new model class `CommentReaction` allows to send reactions to comments. Reactions are customizable. See `e2e_project/enums.py` for an example. By default reactions are only two: like (thumb up) and dislike (thumb down).
 * The model `XtdComment`:
   - Does not provide the `tree_from_queryset` method anymore, so a tree representation is no longer available.
   - Provides a new method `get_reactions`, that returns a dictionary with the number of reactions and the list of every reaction sent to a comment.
@@ -12,6 +12,13 @@
 * Functions `models.publish_or_unpublish_nested_comments` and `models.publish_or_unpublish_on_pre_save` have been renamed to `models.publish_or_withhold_nested_comments` and `models.publish_or_withhold_on_pre_save` respectively.
 * A new `models.on_comment_deleted` function is provided, associated with the signal `post_delete` in association with the model `XtdComment`, that deletes the nested comments and the comment reactions of a comment when its deletion is requested.
 * The ReactJS plugin provided with v2.x has been removed. A new vanilla JS plugin is provided.
+* The following template tags have been removed from v3.0:
+  - get_xtdcomment_tree
+  - render_xtdcomment_tree
+  - get_last_xtdcomments
+  - render_last_xtdcomments
+* The following template filters have been removed from v3.0:
+  - `xtd_comment_gravatar` and `xtd_comment_gravatar_url`, both replaced with `get_email_gravatar`
 * Template directory `django_comments_xtd` has been removed in favor of the `comments` template directory.
 * It provides a `scss/` directory with SCSS styling. It no longer uses the CSS Bootstrap framework (in the past AKA as twitter-bootstrap). All Bootstrap CSS classes referenced in the code have been removed.
 * To do: rewrite REST API.

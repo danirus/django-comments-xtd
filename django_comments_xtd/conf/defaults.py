@@ -31,11 +31,29 @@ COMMENTS_XTD_DEFAULT_LIST_ORDER = ("thread__id", "order")
 # Form class to use.
 COMMENTS_XTD_FORM_CLASS = "django_comments_xtd.forms.XtdCommentForm"
 
+# Target URL for the comment form submission view.
+COMMENTS_XTD_FORM_TARGET = "comments-xtd-post"
+
 # Model to use.
 COMMENTS_XTD_MODEL = "django_comments_xtd.models.XtdComment"
 
 # Enum class for comment reactions.
 COMMENTS_XTD_REACTION_ENUM = "django_comments_xtd.models.ReactionEnum"
+
+# Target URL for the "flag this comment" view.
+COMMENTS_XTD_FLAG_URL = "comments-flag"
+
+# Target URL for the "delete this comment" view.
+COMMENTS_XTD_DELETE_URL = "comments-delete"
+
+# Target URL for the "approve this comment from moderation" view.
+COMMENTS_XTD_APPROVE_URL = "comments-approve"
+
+# Target URL for the "send feedback to this comment" view.
+COMMENTS_XTD_REACT_URL = "comments-xtd-react"
+
+# Target URL for the "vote on this comment" view.
+COMMENTS_XTD_VOTE_URL = "comments-xtd-vote"
 
 # Send HTML emails.
 COMMENTS_XTD_SEND_HTML_EMAIL = True
@@ -117,3 +135,8 @@ COMMENTS_XTD_NUM_COMMENT_REACTION_USERS_PER_PAGE = 30
 # Tuple of fields to establish the order to list the users
 # that selected the same comment reaction.
 COMMENTS_XTD_COMMENT_REACTION_USERS_ORDER: tuple = ("-id",)
+
+# When this settings is False, those views with a `<view>-done`, like
+# flag, react and vote, return directly to the get_absolute_url of the
+# object receiving the action.
+COMMENTS_XTD_SKIP_DONE_VIEWS = False

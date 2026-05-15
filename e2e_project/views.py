@@ -113,6 +113,13 @@ djcx_signals.confirmation_received.connect(on_confirmation_accept_comment)
 
 def discard_comment_v(request, *args, **kwargs):
     """Force the comment `discarded.html` template."""
+    #
+    # It is discarded because the receiver of the signal
+    # `confirmation_received`, a few lines above this, will
+    # return False, which has the effect of discarding the
+    # comment (see function `confirm` for details in
+    # `django_comments_xtd/views.py`).
+    #
     obj = ArticleCommentsL0.objects.get(pk=1)
     tmp_comment = TmpXtdComment(
         content_type=ContentType.objects.get_for_model(obj),
@@ -131,7 +138,7 @@ def discard_comment_v(request, *args, **kwargs):
     return HttpResponseRedirect(url)
 
 
-def redirect(request, *args, **kwargs):
+def redirect_flag(request, *args, **kwargs):
     # Comment with pk=3 (sent to contenttype articles.storycommentsl1).
     url = reverse("comments-flag", args=(3,))
     return HttpResponseRedirect(url)
@@ -159,7 +166,8 @@ def on_comment_will_be_posted(sender, comment, request, **kwargs):
 djc_signals.comment_will_be_posted.connect(on_comment_will_be_posted)
 
 
-class ModerateJsView(ProseDetailView):
+@method_decorator([login_required], name="dispatch")
+class ModeratedJsView(ProseDetailView):
     model = ArticleCommentsL0
     template_name = "moderated_js_test.html"
 
@@ -315,11 +323,29 @@ def preview_v(reply_to=0):
     return _PreviewCommentView.as_view()
 
 
-class ReactToCmntView(ReactToCommentView):
-    def get(self, request, *args, **kwargs):
-        return super().get(request, 3)  # Comment pk=3 is for reactions.
+class AltReactToCommentView(ReactToCommentView):
+    """
+    This view simulates that the setting COMMENTS_XTD_SKIP_DONE_VIEWS
+    is True. But it won't be used when submitting the vote form, as that
+    one refers to the url comments-xtd-vote, which is handled by
+    VoteOnCommentView, which for this project has skip_done to False.
+    It means that if you click on the voting links at the left and right
+    side of the voting score, then the view VoteOnCommentView is used
+    instead of this one, and in such case the `skip_done` is False.
+    """
+
+    skip_done = True
 
 
-class VoteOnCmntView(VoteOnCommentView):
-    def get(self, request, *args, **kwargs):
-        return super().get(request, 3)  # Comment pk=3 is for reactions.
+class AltVoteOnCommentView(VoteOnCommentView):
+    """
+    This view simulates that the setting COMMENTS_XTD_SKIP_DONE_VIEWS
+    is True. But it won't be used when submitting the vote form, as that
+    one refers to the url comments-xtd-vote, which is handled by
+    VoteOnCommentView, which for this project has skip_done to False.
+    It means that if you click on the voting links at the left and right
+    side of the voting score, then the view VoteOnCommentView is used
+    instead of this one, and in such case the `skip_done` is False.
+    """
+
+    skip_done = True

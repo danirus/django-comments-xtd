@@ -44,16 +44,6 @@ urlpatterns = [
     re_path(r"^approve/(\d+)/$", approve, name="comments-approve"),
     re_path(r"^approved/$", approve_done, name="comments-approve-done"),
     re_path(
-        r"^vote/(\d+)/$",
-        views.VoteOnCommentView.as_view(),
-        name="comments-xtd-vote",
-    ),
-    re_path(
-        r"^voted/$",
-        views.VoteOnCommentDoneView.as_view(),
-        name="comments-xtd-vote-done",
-    ),
-    re_path(
         r"^react/(\d+)/$",
         views.ReactToCommentView.as_view(),
         name="comments-xtd-react",
@@ -67,6 +57,16 @@ urlpatterns = [
         r"^reaction-user-list/(\d+)/([\w\+\-]+)/$",
         views.CommentReactionUserListView.as_view(),
         name="comments-xtd-reaction-user-list",
+    ),
+    re_path(
+        r"^vote/(\d+)/$",
+        views.VoteOnCommentView.as_view(),
+        name="comments-xtd-vote",
+    ),
+    re_path(
+        r"^voted/$",
+        views.VoteOnCommentDoneView.as_view(),
+        name="comments-xtd-vote-done",
     ),
     re_path(
         r"^cr/(\d+)/(\d+)/(\d+)/$",

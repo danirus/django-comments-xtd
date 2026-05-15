@@ -1,4 +1,4 @@
-from typing import ClassVar
+# ruff: noqa: RUF012
 from urllib.parse import urlencode
 
 from django import http
@@ -387,9 +387,7 @@ class JsonResponseMixin:
 
 
 class SingleTmpCommentView(DetailView):
-    http_method_names: ClassVar = [
-        "get",
-    ]
+    http_method_names = ["get"]
     context_object_name = "comment"
     template_alias = None
 
@@ -475,13 +473,8 @@ class SingleCommentView(CommentsParamsMixin, JsonResponseMixin, DetailView):
 @method_decorator(csrf_protect, name="dispatch")
 class PostCommentView(CommentsParamsMixin, JsonResponseMixin, FormView):
     context_object_name = "comment"
-    http_method_names: ClassVar = [
-        "post",
-    ]
+    http_method_names = ["post"]
     is_ajax = False
-
-    # Templates when returning from an Ajax request.
-    moderated_js_template_alias = "moderated_js"
 
     def get_target_object(self, data):
         ctype = data.get("content_type")
@@ -731,9 +724,7 @@ class PostCommentView(CommentsParamsMixin, JsonResponseMixin, FormView):
 
 
 class ReplyCommentView(SingleCommentView):
-    http_method_names: ClassVar = [
-        "get",
-    ]
+    http_method_names = ["get"]
     template_alias = "reply"
 
     def get(self, request, cid):
@@ -871,11 +862,12 @@ class FlagCommentView(SingleCommentView):
 
 @method_decorator([csrf_protect, login_required], name="dispatch")
 class ReactToCommentView(SingleCommentView):
-    http_method_names: ClassVar = ["get", "post"]
+    http_method_names = ["get", "post"]
     check_option = "comments_reacting_enabled"
     template_alias = "react"
     template_alias_js = "reacted_js"
     context_object_name = "comment"
+    skip_done = settings.COMMENTS_XTD_SKIP_DONE_VIEWS
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -918,7 +910,7 @@ class ReactToCommentView(SingleCommentView):
         )
         return created, operation
 
-    def get(self, request, comment_id, next=None):
+    def get(self, request, comment_id, next=None, **kwargs):
         self.object = self.get_object(comment_id)
         user_reactions_qs = CommentReaction.objects.filter(
             comment=self.object, authors=request.user
@@ -927,12 +919,15 @@ class ReactToCommentView(SingleCommentView):
             get_reaction_enum()(reaction_obj.reaction)
             for reaction_obj in user_reactions_qs
         ]
+        if next is None and self.skip_done:
+            next = self.object.get_absolute_url()
+
         context = self.get_context_data(
             user_reactions=user_reactions, next=next
         )
         return self.render_to_response(context)
 
-    def post(self, request, comment_id, next=None):
+    def post(self, request, comment_id, next=None, **kwargs):
         self.object = self.get_object(comment_id)
 
         with transaction.atomic():
@@ -945,6 +940,9 @@ class ReactToCommentView(SingleCommentView):
             status = 201 if created else 200
             return self.json_response(template_list, context, status)
 
+        if next is None and self.skip_done:
+            next = self.object.get_absolute_url()
+
         next_redirect_url = self.get_next_redirect_url(
             next or "comments-xtd-react-done",
             c=self.object.pk,
@@ -955,9 +953,7 @@ class ReactToCommentView(SingleCommentView):
 
 @method_decorator([csrf_protect, login_required], name="dispatch")
 class ReactToCommentDoneView(SingleCommentView):
-    http_method_names: ClassVar = [
-        "get",
-    ]
+    http_method_names = ["get"]
     check_option = "comments_reacting_enabled"
     template_alias = "reacted"
     context_object_name = "comment"
@@ -972,7 +968,7 @@ class ReactToCommentDoneView(SingleCommentView):
 
 
 class CommentReactionUserListView(ListView):
-    http_method_names: ClassVar = ["get"]
+    http_method_names = ["get"]
     allow_empty = False
     paginate_by = settings.COMMENTS_XTD_NUM_COMMENT_REACTION_USERS_PER_PAGE
     ordering = settings.COMMENTS_XTD_COMMENT_REACTION_USERS_ORDER
@@ -1023,11 +1019,12 @@ VOTE_VALUE = {CommentVote.POSITIVE: +1, CommentVote.NEGATIVE: -1}
 
 @method_decorator([csrf_protect, login_required], name="dispatch")
 class VoteOnCommentView(SingleCommentView):
-    http_method_names: ClassVar = ["get", "post"]
+    http_method_names = ["get", "post"]
     check_option = "comments_voting_enabled"
     template_alias = "vote"
     template_alias_js = "voted_js"
     context_object_name = "comment"
+    skip_done = settings.COMMENTS_XTD_SKIP_DONE_VIEWS
 
     def get_object(self, comment_id):
         comment = super().get_object(comment_id)
@@ -1068,16 +1065,21 @@ class VoteOnCommentView(SingleCommentView):
         )
         return created
 
-    def get(self, request, comment_id, next=None):
+    def get(self, request, comment_id, next=None, **kwargs):
         self.object = self.get_object(comment_id)
         user_votes_qs = CommentVote.objects.filter(
             comment=self.object, author=request.user
         )
         user_vote = None if user_votes_qs.count() == 0 else user_votes_qs[0]
-        context = self.get_context_data(user_vote=user_vote, next=next)
+        if next is None and self.skip_done:
+            next = self.object.get_absolute_url()
+
+        context = self.get_context_data(
+            user_vote=user_vote, next=next, **kwargs
+        )
         return self.render_to_response(context)
 
-    def post(self, request, comment_id, next=None):
+    def post(self, request, comment_id, next=None, **kwargs):
         self.object = self.get_object(comment_id)
 
         with transaction.atomic():
@@ -1087,9 +1089,12 @@ class VoteOnCommentView(SingleCommentView):
             self.is_ajax = True
             request.session["djcx_highlight_cid"] = int(comment_id)
             template_list = self.get_template_names()
-            context = self.get_context_data()
+            context = self.get_context_data(**kwargs)
             status = 201 if created else 200
             return self.json_response(template_list, context, status)
+
+        if next is None and self.skip_done:
+            next = self.object.get_absolute_url()
 
         next_redirect_url = self.get_next_redirect_url(
             next or "comments-xtd-vote-done", c=self.object.pk
@@ -1099,9 +1104,7 @@ class VoteOnCommentView(SingleCommentView):
 
 @method_decorator([csrf_protect, login_required], name="dispatch")
 class VoteOnCommentDoneView(SingleCommentView):
-    http_method_names: ClassVar = [
-        "get",
-    ]
+    http_method_names = ["get"]
     check_option = "comments_voting_enabled"
     template_alias = "voted"
     context_object_name = "comment"

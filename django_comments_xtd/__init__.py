@@ -1,4 +1,4 @@
-# ruff:noqa: I001
+# ruff: noqa: I001 PLC0415
 
 default_app_config = "django_comments_xtd.apps.CommentsXtdConfig"
 
@@ -17,7 +17,7 @@ def get_form():
     return import_string(settings.COMMENTS_XTD_FORM_CLASS)
 
 
-VERSION = (2, 10, 11, "f", 0)  # following PEP 440
+VERSION = (2, 10, 12, "f", 0)  # following PEP 440
 
 
 def get_version():

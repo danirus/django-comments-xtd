@@ -41,7 +41,9 @@ class XtdCommentManager(CommentManager):
         return super().get_queryset().order_by(*get_list_order())
 
     def for_model(self, model, site=None):
-        content_type = ContentType.objects.get_for_model(model)
+        content_type = ContentType.objects.get_for_model(
+            model, for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL
+        )
         filter_fields = {
             "content_type": content_type,
             "level__lte": get_max_thread_level(content_type),

@@ -104,7 +104,10 @@ class WriteCommentSerializer(serializers.Serializer):
         try:
             model = apps.get_model(*content_type.split(".", 1))
             target = model._default_manager.get(pk=object_pk)
-            ctype = ContentType.objects.get_for_model(model)
+            ctype = ContentType.objects.get_for_model(
+                model,
+                for_concrete_model=settings.COMMENTS_XTD_FOR_CONCRETE_MODEL,
+            )
             whocan = get_app_model_config(content_type=ctype)["who_can_post"]
         except (AttributeError, TypeError, LookupError) as exc:
             raise serializers.ValidationError(

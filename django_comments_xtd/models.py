@@ -30,7 +30,7 @@ class MaxThreadLevelExceededException(Exception):
         # self.max_by_app = max_thread_level_for_content_type(content_type)
 
     def __str__(self):
-        return "Max thread level reached for comment %d" % self.comment.id
+        return f"Max thread level reached for comment {self.comment.id}"
 
 
 class XtdCommentManager(CommentManager):
@@ -230,7 +230,7 @@ def publish_or_unpublish_nested_comments(comment, are_public=False):
     )
     nested = [cm.id for cm in qs]
     qs.update(is_public=are_public)
-    while len(nested):
+    while nested:
         cm_id = nested.pop()
         qs = XtdComment.norel_objects.filter(~Q(pk=cm_id), parent_id=cm_id)
         nested.extend([cm.id for cm in qs])

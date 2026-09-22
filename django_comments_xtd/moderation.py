@@ -58,7 +58,7 @@ class XtdCommentModerator(CommentModerator):
             "request": request,
         }
         subject = (
-            f'[{c["current_site"].name}] Comment removal '
+            f"[{c['current_site'].name}] Comment removal "
             f'suggestion on "{content_object}"'
         )
         message = t.render(c)
@@ -115,7 +115,6 @@ class XtdModerator(Moderator):
         )
         comment_was_flagged.connect(self.comment_flagged, sender=get_model())
 
-    # ruff: noqa: PLR0913
     def comment_flagged(
         self, sender, comment, flag, created, request, **kwargs
     ):

@@ -133,9 +133,9 @@ class CommentBoxDriver:
         except TypeError:  # Django >= 1.11
             user_is_authenticated = user.is_authenticated
         if user and user_is_authenticated:
-            d[
-                "current_user"
-            ] = f"{user.pk}:{settings.COMMENTS_XTD_API_USER_REPR(user)}"
+            d["current_user"] = (
+                f"{user.pk}:{settings.COMMENTS_XTD_API_USER_REPR(user)}"
+            )
             d["is_authenticated"] = True
             d["can_moderate"] = user.has_perm("django_comments.can_moderate")
             d["request_name"] = not bool(len(user.get_full_name()))

@@ -1,3 +1,4 @@
+# ruff: noqa: TRY002
 from typing import ClassVar
 
 from django.apps import apps
@@ -76,7 +77,7 @@ class WriteCommentSerializer(serializers.Serializer):
         if value.strip():
             return value.strip()
         if self.request.user.is_authenticated:
-            UserModel = apps.get_model(settings.AUTH_USER_MODEL)  # noqa: N806
+            UserModel = apps.get_model(settings.AUTH_USER_MODEL)
             if hasattr(UserModel, "get_email_field_name"):
                 email_field = UserModel.get_email_field_name()
                 email = getattr(self.request.user, email_field, None)
@@ -356,12 +357,12 @@ class ReadCommentSerializer(serializers.ModelSerializer):
             return obj.comment
 
     def get_user_moderator(self, obj) -> bool:
-        try:
-            return obj.user and obj.user.has_perm(
-                "django_comments.can_moderate"
-            )
-        except Exception:
-            return None
+        return (
+            obj
+            and hasattr(obj, "user")
+            and hasattr(obj.user, "has_perm")
+            and obj.user.has_perm("django_comments.can_moderate")
+        )
 
     def get_allow_reply(self, obj) -> bool:
         return obj.allow_thread()

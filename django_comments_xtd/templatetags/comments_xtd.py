@@ -605,10 +605,7 @@ def comments_xtd_api_list_url(obj):
 # ----------------------------------------------------------------------
 @register.filter
 def has_permission(user_obj, str_permission):
-    try:
-        return user_obj.has_perm(str_permission)
-    except Exception as exc:
-        raise exc
+    return user_obj.has_perm(str_permission)
 
 
 # ----------------------------------------------------------------------

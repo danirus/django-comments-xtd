@@ -209,7 +209,7 @@ class ReadCommentsGetUserAvatarTestCase(TestCase):
             site=self.site,
             comment="testing comment from Bob",
             user=joe,
-            submit_date=datetime.now(),  # noqa: DTZ005
+            submit_date=datetime.now(),
         )
 
         # Testing comment from Alice.
@@ -220,7 +220,7 @@ class ReadCommentsGetUserAvatarTestCase(TestCase):
             site=self.site,
             comment="testing comment from Alice",
             user=alice,
-            submit_date=datetime.now(),  # noqa: DTZ005
+            submit_date=datetime.now(),
         )
 
     @patch.multiple(

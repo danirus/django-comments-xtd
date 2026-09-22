@@ -12,8 +12,10 @@ if __name__ == "__main__":
     found = importlib.util.find_spec("settings")
     if not found:
         sys.stderr.write(
-            "Error: Can't find the file 'settings.py' in the directory containing %r. It appears you've customized things.\nYou'll have to run django-admin.py, passing it your settings module.\n"
-            % __file__
+            "Error: Can't find the file 'settings.py' in the directory "
+            f"containing {__file__!r}. It appears you've customized things.\n"
+            "You'll have to run django-admin.py, passing it your settings "
+            "module.\n"
         )
         sys.exit(1)
 

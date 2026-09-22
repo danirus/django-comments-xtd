@@ -48,7 +48,7 @@ LANGUAGES = (
     ("zh-hans", "Simplified Chinese"),
 )
 
-SITE_ID = os.environ.get("SITE_ID", 1)
+SITE_ID = int(os.environ.get("SITE_ID", "1"))
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.

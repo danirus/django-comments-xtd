@@ -30,7 +30,7 @@ class Article(models.Model):
         ordering = ("-publish",)
 
     def __str__(self):
-        return "%s" % self.title
+        return self.title
 
     def get_absolute_url(self):
         return reverse(

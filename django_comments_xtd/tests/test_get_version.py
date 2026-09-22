@@ -1,3 +1,4 @@
+# ruff: noqa: PLC0415
 from unittest.mock import patch
 
 from django.test import TestCase

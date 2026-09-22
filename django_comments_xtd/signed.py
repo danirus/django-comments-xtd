@@ -1,3 +1,4 @@
+# ruff: noqa: PLC0415
 """
 Borrowed from Simon Willison's Django-OpenID project:
   * https://github.com/simonw/django-openid
@@ -80,12 +81,9 @@ def loads(s, key=None, extra_key=b""):
     """Reverse of dumps(), raises ValueError if signature fails"""
     if isinstance(s, six.text_type):
         s = s.encode("utf8")  # base64 works on bytestrings
-    try:
-        base64d = unsign(
-            s, (key or settings.SECRET_KEY.encode("ascii")) + extra_key
-        )
-    except ValueError:
-        raise
+    base64d = unsign(
+        s, (key or settings.SECRET_KEY.encode("ascii")) + extra_key
+    )
     decompress = False
     if base64d.startswith(b"."):
         # It's compressed; uncompress it first

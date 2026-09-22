@@ -1,3 +1,5 @@
+# ruff: noqa: PLC0415
+#
 import os
 import sys
 from pathlib import Path
@@ -8,11 +10,8 @@ plugins = [
 
 
 def pytest_configure(config):
-    try:
-        os.chdir("django_comments_xtd")
-        sys.path.insert(0, f"{Path.cwd()}")
-    except Exception:
-        pass
+    os.chdir("django_comments_xtd")
+    sys.path.insert(0, f"{Path.cwd()}")
     os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
 
     import django

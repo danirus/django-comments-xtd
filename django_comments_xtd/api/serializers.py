@@ -1,4 +1,3 @@
-# ruff: noqa: TRY002
 from typing import ClassVar
 
 from django.apps import apps

@@ -8,7 +8,7 @@ on:
 
 env:
   FORCE_COLOR: true
-  NODE: 22.14
+  NODE: 26.0
   PYTHON: 3.13
 
 jobs:

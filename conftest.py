@@ -1,4 +1,4 @@
-# ruff: noqa: PLC0415
+# ruff: noqa: PLC0415, S110
 #
 import os
 import sys
@@ -10,8 +10,11 @@ plugins = [
 
 
 def pytest_configure(config):
-    os.chdir("django_comments_xtd")
-    sys.path.insert(0, f"{Path.cwd()}")
+    try:
+        os.chdir("django_comments_xtd")
+        sys.path.insert(0, f"{Path.cwd()}")
+    except Exception:
+        pass
     os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
 
     import django

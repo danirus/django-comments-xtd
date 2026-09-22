@@ -1,4 +1,3 @@
-# ruff:noqa: N802
 from datetime import datetime
 from unittest.mock import patch
 
@@ -210,7 +209,7 @@ class ReadCommentsGetUserAvatarTestCase(TestCase):
             site=self.site,
             comment="testing comment from Bob",
             user=joe,
-            submit_date=datetime.now(),
+            submit_date=datetime.now(),  # noqa: DTZ005
         )
 
         # Testing comment from Alice.
@@ -221,7 +220,7 @@ class ReadCommentsGetUserAvatarTestCase(TestCase):
             site=self.site,
             comment="testing comment from Alice",
             user=alice,
-            submit_date=datetime.now(),
+            submit_date=datetime.now(),  # noqa: DTZ005
         )
 
     @patch.multiple(
@@ -248,7 +247,7 @@ class RenderSubmitDateTestCase(TestCase):
             utc = pytz.timezone("UTC")
             submit_date = datetime(2021, 1, 10, 10, 15, tzinfo=utc)
         else:
-            submit_date = datetime(2021, 1, 10, 10, 15)
+            submit_date = datetime(2021, 1, 10, 10, 15)  # noqa: DTZ001
         self.cm = XtdComment.objects.create(
             content_type=ctype,
             object_pk=self.article.id,

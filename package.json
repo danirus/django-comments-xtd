@@ -64,7 +64,7 @@
     "npm-run-all2": "^8.0.1",
     "qunit": "^2.25.0",
     "rollup": "^4.24.4",
-    "sass": "^1.97.0",
+    "sass": "^1.104.1",
     "sinon": "^21.0.1",
     "stylelint": "^16.19.1",
     "stylelint-config-standard-scss": "^16.0.0",

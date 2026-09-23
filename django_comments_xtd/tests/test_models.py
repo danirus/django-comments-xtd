@@ -15,7 +15,12 @@ from django_comments_xtd.models import (
     publish_or_withhold_on_pre_save,
 )
 from django_comments_xtd.moderation import SpamModerator, moderator
-from django_comments_xtd.tests.models import Article, Diary, MyComment
+from django_comments_xtd.tests.models import (
+    Article,
+    Diary,
+    DiaryWithMTL1,
+    MyComment,
+)
 from django_comments_xtd.tests.test_views import post_article_comment
 
 
@@ -1165,3 +1170,37 @@ def test__xtdcomment__str(an_articles_comment):
     assert f"{an_articles_comment.id}" in comment_as_str
     assert an_articles_comment.name in comment_as_str
     assert an_articles_comment.comment[:50] in comment_as_str
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("for_concrete_model", [True, False])
+def test__for_model__honours_for_concrete_model(for_concrete_model):
+    # Comments stored under the proxy's own content type are only found by
+    # ``for_model(ProxyModel)`` when the setting makes the manager resolve the
+    # proxy type too; with the default it resolves the parent, as it always did.
+    entry = DiaryWithMTL1.objects.create(body="About today...")
+    site = Site.objects.get(pk=1)
+    proxy_ct = ContentType.objects.get_for_model(
+        entry, for_concrete_model=False
+    )
+    parent_ct = ContentType.objects.get_for_model(
+        entry, for_concrete_model=True
+    )
+    assert proxy_ct != parent_ct
+    # Not passing ``content_object``: assigning it would make the generic FK
+    # re-resolve the content type to the concrete model.
+    for ct in (proxy_ct, parent_ct):
+        XtdComment.objects.create(
+            content_type=ct,
+            object_pk=entry.pk,
+            site=site,
+            comment=f"stored under {ct.model}",
+            submit_date=datetime.now(),
+        )
+    with patch.multiple(
+        "django_comments_xtd.conf.settings",
+        COMMENTS_XTD_FOR_CONCRETE_MODEL=for_concrete_model,
+    ):
+        qs = XtdComment.objects.for_model(DiaryWithMTL1)
+    expected_ct = parent_ct if for_concrete_model else proxy_ct
+    assert list(qs.values_list("content_type", flat=True)) == [expected_ct.pk]

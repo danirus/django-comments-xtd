@@ -2,6 +2,7 @@
 
 ## [3.0.0] -
 
+* `COMMENTS_XTD_FOR_CONCRETE_MODEL` is now honoured by `XtdComment.objects.for_model()` and by the REST API's `WriteCommentSerializer.validate()`. Both resolved the concrete model unconditionally, so with the setting set to `False` comments posted through the API were authorised against the parent model's `who_can_post`, and `for_model(ProxyModel)` never found the comments stored under the proxy's content type.
 * A new model class `CommentThread` implements the data referred to the thread that each comment belongs to. It serves also the purpose of storing the score for each comment at level 0, when comment voting is enabled.
 * A new model class `CommentVote` allows to vote for comments. Voting is only allowed for comments at thread level 0 (no nested comments).
 * A new model class `CommentReaction` allows to send reactions to comments. Reactions are customizable. See `e2e_project/enums.py` for an example. By default reactions are only two: like (thumb up) and dislike (thumb down).

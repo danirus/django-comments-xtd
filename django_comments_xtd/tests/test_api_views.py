@@ -604,3 +604,46 @@ def test_CommentReactionAuthorsList_may_be_empty(an_articles_comment):
     assert data["count"] == 0
     assert "results" in data
     assert data["results"] == []
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "for_concrete_model, expected_status",
+    [(True, 201), (False, 400)],
+)
+def test__create_comment__who_can_post_honours_for_concrete_model(
+    for_concrete_model, expected_status, a_diary_with_mtl1
+):
+    # ``who_can_post`` is looked up by the content type the serializer resolves.
+    # Here only the proxy restricts posting to users: an anonymous POST must be
+    # accepted when the parent's config applies and rejected when the proxy's does.
+    config = {
+        "default": {"who_can_post": "all"},
+        "tests.diarywithmtl1": {"who_can_post": "users"},
+    }
+    form = django_comments.get_form()(a_diary_with_mtl1)
+    data = {
+        "name": "Bob",
+        "email": "bob@example.com",
+        "followup": True,
+        "reply_to": 0,
+        "level": 0,
+        "order": 1,
+        "comment": "Es war einmal eine kleine...",
+        "honeypot": "",
+    }
+    data.update(form.initial)
+    data["content_type"] = "tests.diarywithmtl1"
+    with (
+        patch.multiple(
+            "django_comments_xtd.conf.settings",
+            COMMENTS_XTD_FOR_CONCRETE_MODEL=for_concrete_model,
+            COMMENTS_XTD_APP_MODEL_CONFIG=config,
+            COMMENTS_XTD_CONFIRM_EMAIL=False,
+        ),
+        patch("django_comments_xtd.views.utils.send_mail"),
+    ):
+        response = post_comment(data)
+    assert response.status_code == expected_status
+    if expected_status == 400:
+        assert response.rendered_content == b'"User not authenticated"'

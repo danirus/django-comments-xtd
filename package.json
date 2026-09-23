@@ -21,7 +21,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.22.5",
     "@babel/preset-env": "^7.22.5",
     "@babel/preset-react": "^7.25.9",
-    "@babel/register": "^7.22.5",
+    "@babel/register": "^8.0.6",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@testing-library/jest-dom": "^5.16.5",

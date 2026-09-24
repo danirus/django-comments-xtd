@@ -1,5 +1,15 @@
 # Change Log
 
+## [2.10.13] - 2026-09-24
+
+* Allows djangorestframework between >=3.12 and <3.19.
+* Updates multiple JavaScript dependencies (but sticks to React 18).
+* Fixes version numbers so that the JS plugin version matches the Django package version (thanks to @gassan).
+
+## [2.10.12] - 2026-07-11
+
+* Opens up the range of supported djangorestframework versions to >=3.12, <3.18.
+
 ## [2.10.11] - 2025-12-09
 
 * Tested against Django 6.0.

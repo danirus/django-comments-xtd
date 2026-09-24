@@ -52,7 +52,7 @@
     "cypress": "^15.17.0",
     "del-cli": "^7.0.0",
     "eslint": "^9.14.0",
-    "eslint-plugin-html": "^8.1.2",
+    "eslint-plugin-html": "^8.2.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-unicorn": "^62.0.0",
     "find-unused-sass-variables": "^6.1.0",

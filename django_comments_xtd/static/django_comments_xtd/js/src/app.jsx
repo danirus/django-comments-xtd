@@ -1,8 +1,7 @@
 import React, { useReducer } from 'react';
-
+import { CommentBox } from './commentbox.jsx';
 import { InitContext, StateContext } from './context.js';
 import { reducer } from './reducer.js';
-import { CommentBox } from './commentbox.jsx';
 
 /*
  * props is an object containing all the attributes sent

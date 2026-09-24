@@ -1,9 +1,8 @@
 import django from 'django';
 import React, { useContext, useEffect, useMemo } from 'react';
-
-import { InitContext, StateContext } from './context';
 import { Comment } from './comment.jsx';
 import { CommentForm } from './commentform.jsx';
+import { InitContext, StateContext } from './context';
 
 
 function CommentCounter({counter}) {

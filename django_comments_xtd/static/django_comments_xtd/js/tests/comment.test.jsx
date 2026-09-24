@@ -1,22 +1,20 @@
-import React, { useReducer } from 'react';
-import { act } from 'react-dom/test-utils';
 import { fireEvent, render, screen } from '@testing-library/react';
-
-import { reducer } from '../src/reducer.js';
+import React, { act, useReducer } from 'react';
 import {
-  init_context_default,
-  InitContext,
-  StateContext,
-} from '../src/context.js';
-import {
-  reduce_flags,
   Comment,
+  CommentBodyPart,
   FeedbackPart,
   ReplyFormPart,
-  UserPart,
+  reduce_flags,
   TopRightPart,
-  CommentBodyPart
+  UserPart
 } from "../src/comment.jsx";
+import {
+  InitContext,
+  init_context_default,
+  StateContext,
+} from '../src/context.js';
+import { reducer } from '../src/reducer.js';
 
 
 const initial_state = {
@@ -855,7 +853,7 @@ describe("Test <Comment /> with comment_data", () => {
     own_like_link = container.querySelector("i.bi-hand-thumbs-up-fill");
     expect(own_like_link).toBeNull();
 
-    let like_link = container.querySelector("i.bi-hand-thumbs-up");
+    const like_link = container.querySelector("i.bi-hand-thumbs-up");
     expect(like_link).toBeInTheDocument();
   });
 
@@ -952,7 +950,7 @@ describe("Test <Comment /> with comment_data", () => {
     own_dislike = container.querySelector("i.bi-hand-thumbs-down-fill");
     expect(own_dislike).toBeNull();
 
-    let dislike_link = container.querySelector("i.bi-hand-thumbs-down");
+    const dislike_link = container.querySelector("i.bi-hand-thumbs-down");
     expect(dislike_link).toBeInTheDocument();
   });
 

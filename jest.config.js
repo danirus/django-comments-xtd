@@ -101,7 +101,7 @@ module.exports = {
   // notifyMode: "failure-change",
 
   // A preset that is used as a base for Jest's configuration
-  preset: "rollup-jest",
+  // preset: "rollup-jest",
 
   // Run tests from one or more projects
   // projects: undefined,

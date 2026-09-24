@@ -33,7 +33,7 @@
     "eslint": "^9.39.5",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-unicorn": "^62.0.0",
+    "eslint-plugin-unicorn": "^76.0.0",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^29.7.0",
     "nodemon": "^3.1.14",

@@ -15,7 +15,7 @@
   "author": "Daniela Rus Morales",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.29.7",
+    "@babel/cli": "^8.0.6",
     "@babel/core": "^7.29.7",
     "@babel/plugin-syntax-jsx": "^7.29.7",
     "@babel/plugin-transform-modules-commonjs": "^7.29.7",

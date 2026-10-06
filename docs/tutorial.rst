@@ -9,7 +9,7 @@ django-comments-xtd together with the `Django Comments Framework
 <https://github.com/django/django-contrib-comments>`_. The Django project
 used throughout the tutorial is available to `download
 <https://github.com/danirus/django-comments-xtd
-/raw/master/example/tutorial.tar.gz>`_. Following the tutorial will take
+/raw/v2/example/tutorial.tar.gz>`_. Following the tutorial will take
 about an hour, and it is highly recommended to get a comprehensive
 understanding of django-comments-xtd.
 
@@ -51,7 +51,7 @@ And we will install everything we need in it:
 .. code-block:: bash
 
     pip install django-comments-xtd
-    wget https://github.com/danirus/django-comments-xtd/raw/master/example/tutorial.tar.gz
+    wget https://github.com/danirus/django-comments-xtd/raw/v2/example/tutorial.tar.gz
     tar -xvzf tutorial.tar.gz
     cd tutorial
 

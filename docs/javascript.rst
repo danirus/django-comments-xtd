@@ -101,7 +101,7 @@ Django will fetch it from there when rendering the article's detail page:
 
     {% block extra-js %}
     [...]
-    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-5.js' %}"></script>
+    <script src="{% static 'django_comments_xtd/js/django-comments-xtd-2.10.13.js' %}"></script>
     {% endblock extra-js %}
 
 Code structure

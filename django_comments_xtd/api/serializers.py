@@ -223,6 +223,10 @@ class WriteCommentSerializer(serializers.Serializer):
         return resp
 
 
+class PreviewUserAvatarSerializer(serializers.Serializer):
+    email = serializers.CharField(allow_blank=True)
+
+
 class FlagSerializer(serializers.ModelSerializer):
     flag_choices: ClassVar[dict] = {
         "like": LIKEDIT_FLAG,

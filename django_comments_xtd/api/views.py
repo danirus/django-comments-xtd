@@ -189,19 +189,23 @@ class CreateReportFlag(DefaultsMixin, generics.CreateAPIView):
         perform_flag(self.request, serializer.validated_data["comment"])
 
 
+def _user_avatar_response(request):
+    serializer = serializers.PreviewUserAvatarSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    temp_comment = TmpXtdComment(
+        {"user": None, "user_email": serializer.validated_data["email"]}
+    )
+    if request.user.is_authenticated:
+        temp_comment["user"] = request.user
+    get_user_avatar = import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)
+    return Response({"url": get_user_avatar(temp_comment)})
+
+
 class PreviewUserAvatar(DefaultsMixin, generics.GenericAPIView):
     serializer_class = serializers.ReadCommentSerializer
 
     def post(self, request, *args, **kwargs):
-        temp_comment = TmpXtdComment(
-            {"user": None, "user_email": request.data["email"]}
-        )
-        if self.request.user.is_authenticated:
-            temp_comment["user"] = self.request.user
-        get_user_avatar = import_string(
-            settings.COMMENTS_XTD_API_GET_USER_AVATAR
-        )
-        return Response({"url": get_user_avatar(temp_comment)})
+        return _user_avatar_response(request)
 
 
 # ----------------------------------------------------------------
@@ -213,10 +217,4 @@ class PreviewUserAvatar(DefaultsMixin, generics.GenericAPIView):
 @api_view(["POST"])
 def preview_user_avatar(request, *args, **kwargs):
     """Fetch the image associated with the user previewing the comment."""
-    temp_comment = TmpXtdComment(
-        {"user": None, "user_email": request.data["email"]}
-    )
-    if request.user.is_authenticated:
-        temp_comment["user"] = request.user
-    get_user_avatar = import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)
-    return Response({"url": get_user_avatar(temp_comment)})
+    return _user_avatar_response(request)

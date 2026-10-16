@@ -163,3 +163,29 @@ def test_PreviewUserAvatar_returns_avatar_url():
     )
     get_user_avatar = import_string(settings.COMMENTS_XTD_API_GET_USER_AVATAR)
     assert resp_data["url"] == get_user_avatar(temp_comment)
+
+
+preview_user_avatar_views = [
+    api_views.PreviewUserAvatar.as_view(),
+    api_views.preview_user_avatar,
+]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("view", preview_user_avatar_views)
+@pytest.mark.parametrize("req_data", [{}, ["joe.bloggs@example.com"]])
+def test_preview_user_avatar_without_email_returns_400(view, req_data):
+    url = reverse("comments-xtd-api-preview")
+    request = factory.post(url, req_data, format="json")
+    response = view(request)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("view", preview_user_avatar_views)
+def test_preview_user_avatar_accepts_blank_email(view):
+    # The JS client sends a blank email for authenticated users.
+    url = reverse("comments-xtd-api-preview")
+    request = factory.post(url, {"email": ""}, format="json")
+    response = view(request)
+    assert response.status_code == status.HTTP_200_OK

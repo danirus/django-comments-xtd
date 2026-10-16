@@ -149,6 +149,34 @@ class CommentCreateTestCase(TestCase):
         self.assertEqual(XtdComment.objects.count(), 1)  # Comment not added.
         self.assertEqual(response.status_code, 400)
 
+    @patch.multiple(
+        "django_comments_xtd.conf.settings", COMMENTS_XTD_CONFIRM_EMAIL=False
+    )
+    def test_post_reply_to_comment_on_another_object_returns_400_code(self):
+        other_article = Article.objects.create(
+            title="November", slug="november", body="What I did on November"
+        )
+        other_parent = XtdComment.objects.create(
+            content_object=other_article,
+            site=Site.objects.get(pk=1),
+            comment="comment to another article",
+        )
+        data = {
+            "name": "Bob",
+            "email": "fulanito@detal.com",
+            "followup": True,
+            "reply_to": other_parent.id,
+            "comment": "Es war einmal eine kleine...",
+            "honeypot": "",
+        }
+        data.update(self.form.initial)  # The form of self.article.
+        response = post_comment(data)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("reply_to", response.data)
+        self.assertEqual(XtdComment.objects.count(), 1)  # Comment not added.
+        other_parent.refresh_from_db()
+        self.assertEqual(other_parent.nested_count, 0)
+
 
 @pytest.mark.django_db
 def test_PreviewUserAvatar_returns_avatar_url():

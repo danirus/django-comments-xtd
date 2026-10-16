@@ -76,6 +76,43 @@ class XtdCommentFormTestCase(TestCase):
         # it does have the new field 'followup'
         self.assertTrue("followup" in comment)
 
+    def _reply_data(self, reply_to):
+        data = {
+            "name": "Daniela",
+            "email": "danirus@eml.cc",
+            "followup": False,
+            "reply_to": reply_to,
+            "comment": "Es war einmal eine kleine...",
+        }
+        data.update(self.form.initial)
+        return data
+
+    def test_reply_to_comment_on_same_object_is_valid(self):
+        parent = XtdComment.objects.create(
+            content_object=self.article,
+            site=Site.objects.get(pk=1),
+            comment="comment to article",
+        )
+        form = django_comments.get_form()(
+            self.article, self._reply_data(parent.pk)
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_reply_to_comment_on_another_object_is_invalid(self):
+        other_article = Article.objects.create(
+            title="October", slug="october", body="What I did on October..."
+        )
+        other_parent = XtdComment.objects.create(
+            content_object=other_article,
+            site=Site.objects.get(pk=1),
+            comment="comment to another article",
+        )
+        form = django_comments.get_form()(
+            self.article, self._reply_data(other_parent.pk)
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("reply_to", form.errors)
+
     @patch.multiple(
         "django_comments_xtd.conf.settings", COMMENTS_XTD_DEFAULT_FOLLOWUP=False
     )

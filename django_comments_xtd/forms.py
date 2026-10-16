@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django_comments.forms import CommentForm
 
 from django_comments_xtd.conf import settings
-from django_comments_xtd.models import TmpXtdComment
+from django_comments_xtd.models import TmpXtdComment, XtdComment
 
 
 class XtdCommentForm(CommentForm):
@@ -65,6 +65,17 @@ class XtdCommentForm(CommentForm):
 
     def get_comment_model(self):
         return TmpXtdComment
+
+    def clean_reply_to(self):
+        # A reply joins its parent's thread, so the parent has to be a
+        # comment on the object being commented.
+        reply_to = self.cleaned_data["reply_to"]
+        target_comments = XtdComment.objects.for_model(self.target_object)
+        if reply_to and not target_comments.filter(pk=reply_to).exists():
+            raise forms.ValidationError(
+                _("The comment you reply to does not belong to this object.")
+            )
+        return reply_to
 
     def get_comment_create_data(self, site_id=None):
         data = {

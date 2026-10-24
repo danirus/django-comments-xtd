@@ -128,6 +128,15 @@ class WriteCommentSerializer(serializers.Serializer):
             if whocan == "users" and not self.request.user.is_authenticated:
                 raise serializers.ValidationError("User not authenticated")
 
+        # Same check as XtdCommentForm.clean_reply_to(): only the form's
+        # security errors are acted on below.
+        reply_to = data["reply_to"]
+        target_comments = get_model().objects.for_model(target)
+        if reply_to and not target_comments.filter(pk=reply_to).exists():
+            raise serializers.ValidationError(
+                {"reply_to": "reply_to comment does not belong to this object"}
+            )
+
         # Signal that the request allows to be authorized.
         responses = should_request_be_authorized.send(
             sender=target.__class__, comment=target, request=self.request

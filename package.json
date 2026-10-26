@@ -56,7 +56,7 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-unicorn": "^62.0.0",
     "find-unused-sass-variables": "^6.1.0",
-    "grunt": "^1.6.1",
+    "grunt": "^1.6.3",
     "grunt-cli": "^1.5.0",
     "grunt-contrib-qunit": "^10.2.0",
     "grunt-shell": "^4.0.0",

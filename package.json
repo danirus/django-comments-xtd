@@ -40,7 +40,7 @@
   "author": "Daniela Rus Morales",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.25.9",
+    "@babel/cli": "^8.0.6",
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@eslint/compat": "^2.0.0",
